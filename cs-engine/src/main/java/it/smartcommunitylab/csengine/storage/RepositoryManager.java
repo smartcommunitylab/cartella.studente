@@ -1,5 +1,6 @@
 package it.smartcommunitylab.csengine.storage;
 
+import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.Student;
 
@@ -61,21 +62,54 @@ public class RepositoryManager {
 		return UUID.randomUUID().toString();
 	}
 
-	public List<Student> searchStudent(String instituteId, String schoolYear, Integer page, Integer limit, String orderBy) {
+	public List<Student> searchStudentByInstitute(String instituteId, String schoolYear, Integer page, Integer limit, String orderBy) {
 		// TODO Auto-generated method stub
 		return new ArrayList<Student>();
 	}
 
-	public List<Experience> searchExperience(String studentId, String expType, Boolean institutional, String instituteId,
-			String schoolYear, String dateFrom, String dateTo, Integer page, Integer limit, String orderBy) {
+	public List<Experience> searchExperience(String studentId, String expType, Boolean institutional, 
+			String instituteId,	String schoolYear, String certifierId, String dateFrom, String dateTo, 
+			String text, Integer page, Integer limit, String orderBy) {
 		// TODO Auto-generated method stub
 		return new ArrayList<Experience>();
 	}
 
-	public Experience saveExperience(Experience experience) {
+	public List<Student> searchStudentByCertifier(String certifierId, Integer page, Integer limit,
+			String orderBy) {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	public Experience saveMyExperience(String studentId, Experience experience) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Experience updateMyExperience(String studentId, Experience experience) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public Experience saveIsExperience(List<String> studentIds, Experience experience) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Experience updateIsExperience(List<String> studentIds, Experience experience) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public Experience removeExperience(String experienceId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Student getStudent(String studentId) throws EntityNotFoundException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 
 
 

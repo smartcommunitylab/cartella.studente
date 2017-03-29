@@ -1,5 +1,6 @@
 package it.smartcommunitylab.csengine.controller;
 
+import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.UnauthorizedException;
@@ -21,8 +22,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -49,15 +52,70 @@ public class InstituteController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/api/institute/{instituteId}/year/{schoolYear}", method = RequestMethod.GET)
-	public @ResponseBody List<Experience> getCoursesByInstitute(@PathVariable String instituteId,
-			@PathVariable String schoolYear, HttpServletRequest request) throws Exception {
+	@RequestMapping(value = "/api/institute/{instituteId}/year/{schoolYear}/experience/{type}", method = RequestMethod.GET)
+	public @ResponseBody List<Experience> getExperienceByInstitute(
+			@PathVariable String instituteId,
+			@PathVariable String schoolYear,
+			@PathVariable String expType,
+			@RequestParam(required=false) Integer page, 
+			@RequestParam(required=false) Integer limit,
+			@RequestParam(required=false) String orderBy,
+			@RequestParam(required=false) String dateFrom,
+			@RequestParam(required=false) String dateTo,
+			@RequestParam(required=false) String text,
+			HttpServletRequest request) throws Exception {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		List<Experience> result = new ArrayList<Experience>();
+		if(page == null) {
+			page = 1;
+		}
+		if(limit == null) {
+			limit = 10;
+		}
+		List<Experience> result = storage.searchExperience(null, expType, true, 
+				instituteId, schoolYear, null, dateFrom, dateTo, text, page, limit, orderBy);
 		if(logger.isInfoEnabled()) {
-			logger.info(String.format("getCoursesByInstitute[%s]: %s", "tenant", result.size()));
+			logger.info(String.format("getExperienceByInstitute[%s]: %s", "tenant", result.size()));
+		}
+		return result;
+	}
+	
+	@RequestMapping(value = "/api/institute/{instituteId}/is/experience", method = RequestMethod.POST)
+	public @ResponseBody Experience addIsExperience(
+			@PathVariable String instituteId,
+			@RequestParam(name="studentIds") List<String> studentIds,
+			@RequestBody Experience experience,
+			HttpServletRequest request) throws Exception {
+		if (!Utils.validateAPIRequest(request, apiToken)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+		}
+		experience.getAttributes().put(Const.ATTR_INSTITUTIONAL, Boolean.TRUE);
+		if(Utils.isNotEmpty(instituteId)) {
+			experience.getAttributes().put(Const.ATTR_INSTITUTEID, instituteId);
+		}
+		Experience result = storage.saveIsExperience(studentIds, experience);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("addIsExperience[%s]: %s - %s", "tenant", studentIds.toString(), result.getId()));
+		}
+		return result;
+	}
+	
+	@RequestMapping(value = "/api/institute/{instituteId}/is/experience/{experienceId}", method = RequestMethod.PUT)
+	public @ResponseBody Experience updateIsExperience(
+			@PathVariable String instituteId,
+			@PathVariable String experienceId,
+			@RequestParam(name="studentIds") List<String> studentIds,
+			@RequestBody Experience experience,
+			HttpServletRequest request) throws Exception {
+		if (!Utils.validateAPIRequest(request, apiToken)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+		}
+		experience.setId(experienceId);
+		experience.getAttributes().put(Const.ATTR_INSTITUTIONAL, Boolean.TRUE);
+		Experience result = storage.updateIsExperience(studentIds, experience);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("updateIsExperience[%s]: %s - %s", "tenant", studentIds.toString(), result.getId()));
 		}
 		return result;
 	}
