@@ -1,11 +1,14 @@
 package it.smartcommunitylab.csengine.storage;
 
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
+import it.smartcommunitylab.csengine.model.Certificate;
+import it.smartcommunitylab.csengine.model.CertificationRequest;
 import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.Student;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -14,6 +17,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.web.multipart.MultipartFile;
 
 public class RepositoryManager {
 	private static final transient Logger logger = LoggerFactory.getLogger(RepositoryManager.class);
@@ -80,7 +84,7 @@ public class RepositoryManager {
 		return null;
 	}
 	
-	public Experience saveMyExperience(String studentId, Experience experience) {
+	public Experience addMyExperience(String studentId, Experience experience) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -90,7 +94,7 @@ public class RepositoryManager {
 		return null;
 	}
 	
-	public Experience saveIsExperience(List<String> studentIds, Experience experience) {
+	public Experience addIsExperience(List<String> studentIds, Experience experience) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -110,7 +114,51 @@ public class RepositoryManager {
 		return null;
 	}
 
+	public Certificate getCertificate(String certificateId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
+	public Certificate getCertificateByExperience(String experienceId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
+	public Certificate updateCertificateAttributes(String certificateId,
+			Map<String, Object> attributes) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Certificate removeCertificate(String certificateId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Certificate addCertificateToExperience(String certifierId, Certificate certificate) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Experience certifyExperience(String studentId, String experienceId, String certifierId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<CertificationRequest> getCertificationRequest(String certifierId, Integer page,
+			Integer limit, String orderBy) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public CertificationRequest addCertificationRequest(CertificationRequest certificationRequest) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public CertificationRequest removeCertificationRequest(String certificationId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 }

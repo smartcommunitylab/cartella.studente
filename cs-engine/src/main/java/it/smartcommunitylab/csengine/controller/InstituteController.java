@@ -38,7 +38,7 @@ public class InstituteController {
 	private String apiToken;
 	
 	@Autowired
-	private RepositoryManager storage;
+	private RepositoryManager dataManager;
 	
 	@RequestMapping(value = "/api/institute/", method = RequestMethod.GET)
 	public @ResponseBody List<Institute> getInstitutes(HttpServletRequest request) throws Exception {
@@ -73,7 +73,7 @@ public class InstituteController {
 		if(limit == null) {
 			limit = 10;
 		}
-		List<Experience> result = storage.searchExperience(null, expType, true, 
+		List<Experience> result = dataManager.searchExperience(null, expType, true, 
 				instituteId, schoolYear, null, dateFrom, dateTo, text, page, limit, orderBy);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getExperienceByInstitute[%s]: %s", "tenant", result.size()));
@@ -94,7 +94,7 @@ public class InstituteController {
 		if(Utils.isNotEmpty(instituteId)) {
 			experience.getAttributes().put(Const.ATTR_INSTITUTEID, instituteId);
 		}
-		Experience result = storage.saveIsExperience(studentIds, experience);
+		Experience result = dataManager.addIsExperience(studentIds, experience);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("addIsExperience[%s]: %s - %s", "tenant", studentIds.toString(), result.getId()));
 		}
@@ -113,7 +113,7 @@ public class InstituteController {
 		}
 		experience.setId(experienceId);
 		experience.getAttributes().put(Const.ATTR_INSTITUTIONAL, Boolean.TRUE);
-		Experience result = storage.updateIsExperience(studentIds, experience);
+		Experience result = dataManager.updateIsExperience(studentIds, experience);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("updateIsExperience[%s]: %s - %s", "tenant", studentIds.toString(), result.getId()));
 		}

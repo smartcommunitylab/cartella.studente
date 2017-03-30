@@ -37,7 +37,7 @@ public class StudentController {
 	private String apiToken;
 	
 	@Autowired
-	private RepositoryManager storage;
+	private RepositoryManager dataManager;
 
 	
 	public @ResponseBody Student getStudentById(@PathVariable String studentId,
@@ -45,7 +45,7 @@ public class StudentController {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		Student result = storage.getStudent(studentId);
+		Student result = dataManager.getStudent(studentId);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getStudentById[%s]: %s", "tenant", result.getId()));
 		}
@@ -69,7 +69,7 @@ public class StudentController {
 		if(limit == null) {
 			limit = 10;
 		}
-		List<Student> result = storage.searchStudentByInstitute(instituteId, schoolYear, page, limit, orderBy);
+		List<Student> result = dataManager.searchStudentByInstitute(instituteId, schoolYear, page, limit, orderBy);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getStudentsByInstitute[%s]: %s", "tenant", result.size()));
 		}
@@ -92,7 +92,7 @@ public class StudentController {
 		if(limit == null) {
 			limit = 10;
 		}
-		List<Student> result = storage.searchStudentByCertifier(certifierId, page, limit, orderBy);
+		List<Student> result = dataManager.searchStudentByCertifier(certifierId, page, limit, orderBy);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getStudentsByCertifier[%s]: %s", "tenant", result.size()));
 		}
@@ -123,7 +123,7 @@ public class StudentController {
 		if(limit == null) {
 			limit = 10;
 		}
-		List<Experience> result = storage.searchExperience(studentId, expType, institutional, 
+		List<Experience> result = dataManager.searchExperience(studentId, expType, institutional, 
 				instituteId, schoolYear, certifierId, dateFrom, dateTo, text, page, limit, orderBy);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getExperiencesByStudent[%s]: %s", "tenant", result.size()));
@@ -144,7 +144,7 @@ public class StudentController {
 		if(Utils.isNotEmpty(certifierId)) {
 			experience.getAttributes().put(Const.ATTR_CERTIFIERID, certifierId);
 		}
-		Experience result = storage.saveMyExperience(studentId, experience);
+		Experience result = dataManager.addMyExperience(studentId, experience);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("addMyExperience[%s]: %s - %s", "tenant", studentId, result.getId()));
 		}
@@ -167,7 +167,7 @@ public class StudentController {
 		if(Utils.isNotEmpty(certifierId)) {
 			experience.getAttributes().put(Const.ATTR_CERTIFIERID, certifierId);
 		}
-		Experience result = storage.updateMyExperience(studentId, experience);
+		Experience result = dataManager.updateMyExperience(studentId, experience);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("updateMyExperience[%s]: %s - %s", "tenant", studentId, result.getId()));
 		}
@@ -182,13 +182,27 @@ public class StudentController {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		Experience result = storage.removeExperience(experienceId);
+		Experience result = dataManager.removeExperience(experienceId);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("deleteMyExperience[%s]: %s - %s", "tenant", studentId, result.getId()));
 		}
 		return result;
 	}
 	
+	public @ResponseBody Experience certifyExperience(
+			@PathVariable String studentId,
+			@PathVariable String experienceId,
+			@RequestParam String certifierId,
+			HttpServletRequest request) throws Exception {
+		if (!Utils.validateAPIRequest(request, apiToken)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+		}
+		Experience result = dataManager.certifyExperience(studentId, experienceId, certifierId);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("certifyExperience[%s]: %s - %s - %s", "tenant", studentId, experienceId, certifierId));
+		}
+		return result;
+	}
 	
 	@ExceptionHandler(EntityNotFoundException.class)
 	@ResponseStatus(value=HttpStatus.BAD_REQUEST)

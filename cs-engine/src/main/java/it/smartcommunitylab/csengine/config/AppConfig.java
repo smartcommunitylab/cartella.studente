@@ -16,6 +16,7 @@
 
 package it.smartcommunitylab.csengine.config;
 
+import it.smartcommunitylab.csengine.storage.DocumentManager;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
 
 import java.net.UnknownHostException;
@@ -102,6 +103,11 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 	@Bean
 	RepositoryManager getRepositoryManager() throws UnknownHostException, MongoException {
 		return new RepositoryManager(getMongo(), defaultLang);
+	}
+	
+	@Bean
+	DocumentManager getDocumentManager() {
+		return new DocumentManager();
 	}
 	
 	@Override

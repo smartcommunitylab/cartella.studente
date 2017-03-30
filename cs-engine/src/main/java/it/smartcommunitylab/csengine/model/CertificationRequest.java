@@ -3,6 +3,7 @@ package it.smartcommunitylab.csengine.model;
 import java.util.Date;
 
 public class CertificationRequest {
+	private String id;
 	private String studentId;
 	private String experienceId;
 	private String certifierId;
@@ -38,5 +39,11 @@ public class CertificationRequest {
 	}
 	public void setExperience(Experience experience) {
 		this.experience = experience;
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
 	}
 }
