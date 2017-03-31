@@ -91,18 +91,16 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 	@Autowired
 	@Value("${swagger.license.url}")
 	private String swaggerLicenseUrl;
+	
+	@Autowired
+	private MongoTemplate mongoTemplate;
 
 	public AppConfig() {
 	}
 
 	@Bean
-	public MongoTemplate getMongo() throws UnknownHostException, MongoException {
-		return new MongoTemplate(new MongoClient(), dbName);
-	}
-
-	@Bean
 	RepositoryManager getRepositoryManager() throws UnknownHostException, MongoException {
-		return new RepositoryManager(getMongo(), defaultLang);
+		return new RepositoryManager(mongoTemplate, defaultLang);
 	}
 	
 	@Bean

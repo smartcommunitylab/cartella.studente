@@ -2,7 +2,10 @@ package it.smartcommunitylab.csengine.model;
 
 import java.util.Date;
 
+import org.springframework.data.annotation.Id;
+
 public class CertificationRequest {
+	@Id
 	private String id;
 	private String studentId;
 	private String experienceId;

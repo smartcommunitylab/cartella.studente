@@ -1,5 +1,6 @@
 package it.smartcommunitylab.csengine.controller;
 
+import io.swagger.annotations.ApiParam;
 import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
@@ -17,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -99,6 +101,22 @@ public class StudentController {
 		return result;
 	}
 	
+	@RequestMapping(value = "/api/student/experience/{experienceId}", method = RequestMethod.GET)
+	public @ResponseBody List<Student> getStudentsByExperience(
+			@PathVariable String experienceId,
+			@RequestParam(required=false) String instituteId,
+			@RequestParam(required=false) String schoolYear,
+			HttpServletRequest request) throws Exception {
+		if (!Utils.validateAPIRequest(request, apiToken)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+		}
+		List<Student> result = dataManager.searchStudentByExperience(experienceId, instituteId, schoolYear);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("getStudentsByCertifier[%s]: %s", "tenant", result.size()));
+		}
+		return result;
+	}
+	
 	@RequestMapping(value = "/api/student/{studentId}/experience/{type}", method = RequestMethod.GET)
 	public @ResponseBody List<Experience> getExperiencesByStudent(
 			@PathVariable String studentId,
@@ -107,24 +125,16 @@ public class StudentController {
 			@RequestParam(required=false) String instituteId,
 			@RequestParam(required=false) String schoolYear,
 			@RequestParam(required=false) String certifierId,
-			@RequestParam(required=false) Integer page, 
-			@RequestParam(required=false) Integer limit,
-			@RequestParam(required=false) String orderBy,
-			@RequestParam(required=false) String dateFrom,
-			@RequestParam(required=false) String dateTo,
+			@RequestParam(required=false) Long dateFrom,
+			@RequestParam(required=false) Long dateTo,
 			@RequestParam(required=false) String text,
+			@ApiParam Pageable pageable,
 			HttpServletRequest request) throws Exception {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		if(page == null) {
-			page = 1;
-		}
-		if(limit == null) {
-			limit = 10;
-		}
 		List<Experience> result = dataManager.searchExperience(studentId, expType, institutional, 
-				instituteId, schoolYear, certifierId, dateFrom, dateTo, text, page, limit, orderBy);
+				instituteId, schoolYear, certifierId, dateFrom, dateTo, text, pageable);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getExperiencesByStudent[%s]: %s", "tenant", result.size()));
 		}

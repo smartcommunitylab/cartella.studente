@@ -1,6 +1,10 @@
 package it.smartcommunitylab.csengine.model;
 
+import org.springframework.data.annotation.Id;
+
 public class StudentExperience {
+	@Id
+	private String id;
 	private String studentId;
 	private String experienceId;
 	private Experience experience;
@@ -29,6 +33,12 @@ public class StudentExperience {
 	}
 	public void setCertificate(Certificate certificate) {
 		this.certificate = certificate;
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
 	}
 	
 }

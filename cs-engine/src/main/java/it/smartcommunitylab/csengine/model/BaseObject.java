@@ -1,8 +1,14 @@
 package it.smartcommunitylab.csengine.model;
 
+import it.smartcommunitylab.csengine.common.Utils;
+
 import java.util.Date;
+import java.util.Objects;
+
+import org.springframework.data.annotation.Id;
 
 public class BaseObject {
+	@Id
 	private String id;
 	private String origin;
 	private String extId;
@@ -39,5 +45,25 @@ public class BaseObject {
 	public void setLastUpdate(Date lastUpdate) {
 		this.lastUpdate = lastUpdate;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		boolean result = false; 
+		if(o instanceof BaseObject) {
+			BaseObject object = (BaseObject) o;
+			if(Utils.isNotEmpty(object.getId())) {
+				if(object.getId().equals(id)) {
+					result = true;
+				}
+			}
+		}
+		return result;
+	}
+	
+	@Override
+  public int hashCode() {
+      return Objects.hash(id);
+  }
+
 
 }

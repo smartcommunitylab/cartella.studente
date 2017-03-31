@@ -5,7 +5,10 @@ import it.smartcommunitylab.csengine.storage.RepositoryManager;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class Utils {
+	private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
 	private static ObjectMapper fullMapper = new ObjectMapper();
 	static {
 		Utils.fullMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
@@ -108,4 +112,17 @@ public class Utils {
 		}
 		return result;
 	}
+	
+	public Date parseDate(String stringDate) throws ParseException {
+		return sdf.parse(stringDate);
+	}
+	
+	public String formatDate(Date date) {
+		return sdf.format(date);
+	}
+	
+	public String formatDate(long timestamp) {
+		return sdf.format(new Date(timestamp));
+	}
+	
 }

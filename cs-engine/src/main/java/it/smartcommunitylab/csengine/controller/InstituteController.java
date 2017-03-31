@@ -1,5 +1,6 @@
 package it.smartcommunitylab.csengine.controller;
 
+import io.swagger.annotations.ApiParam;
 import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
@@ -8,7 +9,6 @@ import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -45,7 +46,7 @@ public class InstituteController {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		List<Institute> result = new ArrayList<Institute>();
+		List<Institute> result = dataManager.getInstitute();
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getInstitutes[%s]: %s", "tenant", result.size()));
 		}
@@ -57,30 +58,22 @@ public class InstituteController {
 			@PathVariable String instituteId,
 			@PathVariable String schoolYear,
 			@PathVariable String expType,
-			@RequestParam(required=false) Integer page, 
-			@RequestParam(required=false) Integer limit,
-			@RequestParam(required=false) String orderBy,
-			@RequestParam(required=false) String dateFrom,
-			@RequestParam(required=false) String dateTo,
+			@RequestParam(required=false) Long dateFrom,
+			@RequestParam(required=false) Long dateTo,
 			@RequestParam(required=false) String text,
+			@ApiParam Pageable pageable,
 			HttpServletRequest request) throws Exception {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		if(page == null) {
-			page = 1;
-		}
-		if(limit == null) {
-			limit = 10;
-		}
 		List<Experience> result = dataManager.searchExperience(null, expType, true, 
-				instituteId, schoolYear, null, dateFrom, dateTo, text, page, limit, orderBy);
+				instituteId, schoolYear, null, dateFrom, dateTo, text, pageable);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getExperienceByInstitute[%s]: %s", "tenant", result.size()));
 		}
 		return result;
 	}
-	
+		
 	@RequestMapping(value = "/api/institute/{instituteId}/is/experience", method = RequestMethod.POST)
 	public @ResponseBody Experience addIsExperience(
 			@PathVariable String instituteId,

@@ -1,6 +1,10 @@
 package it.smartcommunitylab.csengine.model;
 
+import org.springframework.data.annotation.Id;
+
 public class Registration {
+	@Id
+	private String id;
 	private String studentId;
 	private String instituteId;
 	private String schoolYear;
@@ -22,5 +26,11 @@ public class Registration {
 	}
 	public void setSchoolYear(String schoolYear) {
 		this.schoolYear = schoolYear;
+	}
+	public String getId() {
+		return id;
+	}
+	public void setId(String id) {
+		this.id = id;
 	}
 }
