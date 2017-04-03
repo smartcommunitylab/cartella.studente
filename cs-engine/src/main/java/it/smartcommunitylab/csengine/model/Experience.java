@@ -6,7 +6,6 @@ import java.util.Map;
 public class Experience extends BaseObject {
 	private String type;
 	private Map<String, Object> attributes = new HashMap<String, Object>();
-	private Certificate certificate;
 	
 	public Map<String, Object> getAttributes() {
 		return attributes;
@@ -20,11 +19,4 @@ public class Experience extends BaseObject {
 	public void setType(String type) {
 		this.type = type;
 	}
-	public Certificate getCertificate() {
-		return certificate;
-	}
-	public void setCertificate(Certificate certificate) {
-		this.certificate = certificate;
-	}
-	
 }

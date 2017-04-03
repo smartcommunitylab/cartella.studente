@@ -5,6 +5,7 @@ import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.UnauthorizedException;
+import it.smartcommunitylab.csengine.model.Certificate;
 import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
@@ -74,9 +75,10 @@ public class InstituteController {
 		return result;
 	}
 		
-	@RequestMapping(value = "/api/institute/{instituteId}/is/experience", method = RequestMethod.POST)
+	@RequestMapping(value = "/api/institute/{instituteId}/is/experience/year/{schoolYear}", method = RequestMethod.POST)
 	public @ResponseBody Experience addIsExperience(
 			@PathVariable String instituteId,
+			@PathVariable String schoolYear,
 			@RequestParam(name="studentIds") List<String> studentIds,
 			@RequestBody Experience experience,
 			HttpServletRequest request) throws Exception {
@@ -84,9 +86,8 @@ public class InstituteController {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
 		experience.getAttributes().put(Const.ATTR_INSTITUTIONAL, Boolean.TRUE);
-		if(Utils.isNotEmpty(instituteId)) {
-			experience.getAttributes().put(Const.ATTR_INSTITUTEID, instituteId);
-		}
+		experience.getAttributes().put(Const.ATTR_INSTITUTEID, instituteId);
+		experience.getAttributes().put(Const.ATTR_SCHOOLYEAR, schoolYear);
 		Experience result = dataManager.addIsExperience(studentIds, experience);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("addIsExperience[%s]: %s - %s", "tenant", studentIds.toString(), result.getId()));
@@ -112,6 +113,22 @@ public class InstituteController {
 		}
 		return result;
 	}
+	
+	@RequestMapping(value = "/api/institute/{instituteId}/is/experience/{experienceId}/certify", method = RequestMethod.PUT)
+	public @ResponseBody void certifyIsExperience(
+			@PathVariable String instituteId,
+			@PathVariable String experienceId,
+			@RequestBody List<Certificate> certificates,
+			HttpServletRequest request) throws Exception {
+		if (!Utils.validateAPIRequest(request, apiToken)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+		}
+		dataManager.certifyIsExperience(experienceId, certificates);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("certifyIsExperience[%s]: %s - %s", "tenant", instituteId, experienceId));
+		}
+	}
+	
 	
 	@ExceptionHandler(EntityNotFoundException.class)
 	@ResponseStatus(value=HttpStatus.BAD_REQUEST)

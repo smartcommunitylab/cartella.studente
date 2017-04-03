@@ -5,6 +5,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import io.swagger.annotations.ApiParam;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.UnauthorizedException;
@@ -15,6 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -40,20 +42,12 @@ public class CertificationController {
 	@RequestMapping(value = "/api/certification/certifier/{certifierId}", method = RequestMethod.GET)
 	public @ResponseBody List<CertificationRequest> getCertificationRequest(
 			@PathVariable String certifierId,
-			@RequestParam(required=false) Integer page, 
-			@RequestParam(required=false) Integer limit,
-			@RequestParam(required=false) String orderBy,
+			@ApiParam Pageable pageable,
 			HttpServletRequest request) throws Exception {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		if(page == null) {
-			page = 1;
-		}
-		if(limit == null) {
-			limit = 10;
-		}
-		List<CertificationRequest> result = dataManager.getCertificationRequest(certifierId, page, limit, orderBy);
+		List<CertificationRequest> result = dataManager.getCertificationRequest(certifierId, pageable);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getCertificationRequest[%s]: %s - %s", "tenant", certifierId, result.size()));
 		}

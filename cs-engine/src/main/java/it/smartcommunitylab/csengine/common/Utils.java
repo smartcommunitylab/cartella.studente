@@ -1,6 +1,6 @@
 package it.smartcommunitylab.csengine.common;
 
-import it.smartcommunitylab.csengine.storage.RepositoryManager;
+import it.smartcommunitylab.csengine.model.Experience;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -113,16 +113,27 @@ public class Utils {
 		return result;
 	}
 	
-	public Date parseDate(String stringDate) throws ParseException {
+	public static Date parseDate(String stringDate) throws ParseException {
 		return sdf.parse(stringDate);
 	}
 	
-	public String formatDate(Date date) {
+	public static String formatDate(Date date) {
 		return sdf.format(date);
 	}
 	
-	public String formatDate(long timestamp) {
+	public static String formatDate(long timestamp) {
 		return sdf.format(new Date(timestamp));
+	}
+	
+	public static boolean isCertified(Experience experience) {
+		boolean result = false;
+		if(experience!= null) {
+			Boolean certified = (Boolean) experience.getAttributes().get(Const.ATTR_CERTIFIED);
+			if(certified != null) {
+				result = certified.booleanValue();
+			}
+		}
+		return result;
 	}
 	
 }

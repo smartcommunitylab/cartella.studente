@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Certificate extends BaseObject {
+	private String studentId;
 	private String experienceId;
 	private Map<String, Object> attributes = new HashMap<String, Object>();
 	private String documentUri;
@@ -25,6 +26,12 @@ public class Certificate extends BaseObject {
 	}
 	public void setDocumentUri(String documentUri) {
 		this.documentUri = documentUri;
+	}
+	public String getStudentId() {
+		return studentId;
+	}
+	public void setStudentId(String studentId) {
+		this.studentId = studentId;
 	}
 	
 }

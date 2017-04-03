@@ -6,6 +6,7 @@ public class Const {
 	
 	public static final String ATTR_INSTITUTIONAL = "institutional";
 	public static final String ATTR_CERTIFIERID = "certifierId";
+	public static final String ATTR_CERTIFIED = "certified";
 	public static final String ATTR_INSTITUTEID = "instituteId";
 	public static final String ATTR_SCHOOLYEAR = "schoolYear";
 	public static final String ATTR_DATEFROM = "dateFrom";

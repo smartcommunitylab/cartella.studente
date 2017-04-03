@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,74 +43,65 @@ public class CertificateController {
 	@Autowired
 	private DocumentManager documentManager;
 
-	@RequestMapping(value = "/api/certificate/{certificateId}", method = RequestMethod.GET)
-	public @ResponseBody Certificate getCertificate(
-			@PathVariable String certificateId,
-			HttpServletRequest request) throws Exception {
-		if (!Utils.validateAPIRequest(request, apiToken)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
-		}
-		Certificate result = dataManager.getCertificate(certificateId);
-		if(logger.isInfoEnabled()) {
-			logger.info(String.format("getCertificate[%s]: %s", "tenant", result.getId()));
-		}
-		return result;
-	}
-	
-	@RequestMapping(value = "/api/certificate/experience/{experienceId}", method = RequestMethod.GET)
-	public @ResponseBody Certificate getCertificateByExperience(
+	@RequestMapping(value = "/api/certificate/experience/{experienceId}/student/{studentId}", method = RequestMethod.GET)
+	public @ResponseBody Certificate getCertificateByExperienceAndStudent(
 			@PathVariable String experienceId,
+			@PathVariable String studentId,
 			HttpServletRequest request) throws Exception {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		Certificate result = dataManager.getCertificateByExperience(experienceId);
+		Certificate result = dataManager.getCertificate(experienceId, studentId);
 		if(logger.isInfoEnabled()) {
-			logger.info(String.format("getCertificateByExperience[%s]: %s", "tenant", result.getId()));
+			logger.info(String.format("getCertificateByExperienceAndStudent[%s]: %s", "tenant", result.getId()));
 		}
 		return result;
 	}
 	
-	@RequestMapping(value = "/api/certificate/experience/{experienceId}", method = RequestMethod.POST)
+	@RequestMapping(value = "/api/certificate/experience/{experienceId}/student/{studentId}", method = RequestMethod.POST)
 	public @ResponseBody Certificate addCertificateToExperience(
 			@PathVariable String experienceId,
-			@RequestParam(required=false) String certifierId,
+			@PathVariable String studentId,
 			@RequestBody Certificate certificate,
 			HttpServletRequest request) throws Exception {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
 		certificate.setExperienceId(experienceId);
-		Certificate result = dataManager.addCertificateToExperience(certifierId, certificate);
+		certificate.setStudentId(studentId);
+		Certificate result = dataManager.addCertificate(certificate);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("addCertificateToExperience[%s]: %s", "tenant", result.getId()));
 		}
 		return result;
 	}
 	
-	@RequestMapping(value = "/api/certificate/{certificateId}/attributes", method = RequestMethod.PATCH)
+	@RequestMapping(value = "/api/certificate/experience/{experienceId}/student/{studentId}/attributes", 
+			method = RequestMethod.PATCH)
 	public @ResponseBody Certificate updateCertificateAttributes(
-			@PathVariable String certificateId,
+			@PathVariable String experienceId,
+			@PathVariable String studentId,
 			@RequestBody Map<String, Object> attributes,
 			HttpServletRequest request) throws Exception {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		Certificate result = dataManager.updateCertificateAttributes(certificateId, attributes);
+		Certificate result = dataManager.updateCertificateAttributes(experienceId, studentId, attributes);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("updateCertificateAttributes[%s]: %s", "tenant", result.getId()));
 		}
 		return result;
 	}
 	
-	@RequestMapping(value = "/api/certificate/{certificateId}", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/api/certificate/experience/{experienceId}/student/{studentId}", method = RequestMethod.DELETE)
 	public @ResponseBody Certificate deleteCertificate(
-			@PathVariable String certificateId,
+			@PathVariable String experienceId,
+			@PathVariable String studentId,
 			HttpServletRequest request) throws Exception {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		Certificate result = dataManager.removeCertificate(certificateId);
+		Certificate result = dataManager.removeCertificate(experienceId, studentId);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("deleteCertificate[%s]: %s", "tenant", result.getId()));
 		}
