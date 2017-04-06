@@ -12,6 +12,7 @@ public class CertificationRequest {
 	private String certifierId;
 	private Date timestamp;
 	private Experience experience;
+	private Student student;
 	
 	public String getStudentId() {
 		return studentId;
@@ -48,5 +49,11 @@ public class CertificationRequest {
 	}
 	public void setId(String id) {
 		this.id = id;
+	}
+	public Student getStudent() {
+		return student;
+	}
+	public void setStudent(Student student) {
+		this.student = student;
 	}
 }

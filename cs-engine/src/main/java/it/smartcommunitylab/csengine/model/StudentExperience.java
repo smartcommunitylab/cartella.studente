@@ -8,6 +8,7 @@ public class StudentExperience {
 	private String studentId;
 	private String experienceId;
 	private Experience experience;
+	private Student student; 
 	private Certificate certificate;
 	
 	public String getStudentId() {
@@ -39,6 +40,12 @@ public class StudentExperience {
 	}
 	public void setId(String id) {
 		this.id = id;
+	}
+	public Student getStudent() {
+		return student;
+	}
+	public void setStudent(Student student) {
+		this.student = student;
 	}
 	
 }

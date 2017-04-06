@@ -22,7 +22,6 @@ public class ExperienceRepositoryCustomImpl implements ExperienceRepositoryCusto
 	public List<Experience> searchExperience(String studentId, String expType, Boolean institutional,
 			String instituteId, String schoolYear, String certifierId, Long dateFrom, Long dateTo,
 			String text, Pageable pageable) {
-		// TODO Auto-generated method stub
 		Criteria criteria = new Criteria("experience.type").is(expType)
 				.and("experience.attributes." + Const.ATTR_INSTITUTIONAL).is(institutional);
 		if(Utils.isNotEmpty(studentId)) {

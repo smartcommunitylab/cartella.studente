@@ -8,6 +8,7 @@ import it.smartcommunitylab.csengine.exception.UnauthorizedException;
 import it.smartcommunitylab.csengine.model.Certificate;
 import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.Institute;
+import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
 
 import java.util.List;
@@ -74,7 +75,26 @@ public class InstituteController {
 		}
 		return result;
 	}
-		
+	
+	@RequestMapping(value = "/api/institute/{instituteId}/year/{schoolYear}/registration", method = RequestMethod.GET)
+	public @ResponseBody List<Registration> getRegistrationByInstitute(
+			@PathVariable String instituteId,
+			@PathVariable String schoolYear,
+			@RequestParam(required=false) Long dateFrom,
+			@RequestParam(required=false) Long dateTo,
+			@ApiParam Pageable pageable,
+			HttpServletRequest request) throws Exception {
+		if (!Utils.validateAPIRequest(request, apiToken)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+		}
+		List<Registration> result = dataManager.searchRegistration(null, instituteId, schoolYear, 
+				dateFrom, dateTo, pageable);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("getRegistrationByInstitute[%s]: %s", "tenant", result.size()));
+		}
+		return result;
+	}
+	
 	@RequestMapping(value = "/api/institute/{instituteId}/is/experience/year/{schoolYear}", method = RequestMethod.POST)
 	public @ResponseBody Experience addIsExperience(
 			@PathVariable String instituteId,

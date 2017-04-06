@@ -1,13 +1,19 @@
 package it.smartcommunitylab.csengine.model;
 
-import org.springframework.data.annotation.Id;
+import java.util.Date;
 
-public class Registration {
-	@Id
-	private String id;
+public class Registration extends BaseObject {
 	private String studentId;
 	private String instituteId;
 	private String schoolYear;
+	private Date dateFrom;
+	private Date dateTo;
+	private String course;
+	private String classroom;
+	private String courseOrigin;
+	private String courseExtId; 
+	private Institute institute;
+	private Student student; 
 	
 	public String getStudentId() {
 		return studentId;
@@ -27,10 +33,52 @@ public class Registration {
 	public void setSchoolYear(String schoolYear) {
 		this.schoolYear = schoolYear;
 	}
-	public String getId() {
-		return id;
+	public Date getDateFrom() {
+		return dateFrom;
 	}
-	public void setId(String id) {
-		this.id = id;
+	public void setDateFrom(Date dateFrom) {
+		this.dateFrom = dateFrom;
+	}
+	public Date getDateTo() {
+		return dateTo;
+	}
+	public void setDateTo(Date dateTo) {
+		this.dateTo = dateTo;
+	}
+	public String getCourse() {
+		return course;
+	}
+	public void setCourse(String course) {
+		this.course = course;
+	}
+	public String getClassroom() {
+		return classroom;
+	}
+	public void setClassroom(String classroom) {
+		this.classroom = classroom;
+	}
+	public Institute getInstitute() {
+		return institute;
+	}
+	public void setInstitute(Institute institute) {
+		this.institute = institute;
+	}
+	public String getCourseOrigin() {
+		return courseOrigin;
+	}
+	public void setCourseOrigin(String courseOrigin) {
+		this.courseOrigin = courseOrigin;
+	}
+	public String getCourseExtId() {
+		return courseExtId;
+	}
+	public void setCourseExtId(String courseExtId) {
+		this.courseExtId = courseExtId;
+	}
+	public Student getStudent() {
+		return student;
+	}
+	public void setStudent(Student student) {
+		this.student = student;
 	}
 }

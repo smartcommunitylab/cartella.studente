@@ -58,20 +58,12 @@ public class StudentController {
 	public @ResponseBody List<Student> getStudentsByInstitute(
 			@PathVariable String instituteId,
 			@PathVariable String schoolYear,
-			@RequestParam(required=false) Integer page, 
-			@RequestParam(required=false) Integer limit,
-			@RequestParam(required=false) String orderBy,
+			@ApiParam Pageable pageable,
 			HttpServletRequest request) throws Exception {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		if(page == null) {
-			page = 1;
-		}
-		if(limit == null) {
-			limit = 10;
-		}
-		List<Student> result = dataManager.searchStudentByInstitute(instituteId, schoolYear, page, limit, orderBy);
+		List<Student> result = dataManager.searchStudentByInstitute(instituteId, schoolYear, pageable);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getStudentsByInstitute[%s]: %s", "tenant", result.size()));
 		}
@@ -81,20 +73,12 @@ public class StudentController {
 	@RequestMapping(value = "/api/student/certifier/{certifierId}", method = RequestMethod.GET)
 	public @ResponseBody List<Student> getStudentsByCertifier(
 			@PathVariable String certifierId,
-			@RequestParam(required=false) Integer page, 
-			@RequestParam(required=false) Integer limit,
-			@RequestParam(required=false) String orderBy,
+			@ApiParam Pageable pageable,
 			HttpServletRequest request) throws Exception {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		if(page == null) {
-			page = 1;
-		}
-		if(limit == null) {
-			limit = 10;
-		}
-		List<Student> result = dataManager.searchStudentByCertifier(certifierId, page, limit, orderBy);
+		List<Student> result = dataManager.searchStudentByCertifier(certifierId, pageable);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getStudentsByCertifier[%s]: %s", "tenant", result.size()));
 		}
@@ -106,11 +90,12 @@ public class StudentController {
 			@PathVariable String experienceId,
 			@RequestParam(required=false) String instituteId,
 			@RequestParam(required=false) String schoolYear,
+			@ApiParam Pageable pageable,
 			HttpServletRequest request) throws Exception {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		List<Student> result = dataManager.searchStudentByExperience(experienceId, instituteId, schoolYear);
+		List<Student> result = dataManager.searchStudentByExperience(experienceId, instituteId, schoolYear, pageable);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getStudentsByCertifier[%s]: %s", "tenant", result.size()));
 		}
