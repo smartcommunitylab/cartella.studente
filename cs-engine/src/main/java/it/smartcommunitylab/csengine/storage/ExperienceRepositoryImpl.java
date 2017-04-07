@@ -13,7 +13,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-public class ExperienceRepositoryCustomImpl implements ExperienceRepositoryCustom {
+public class ExperienceRepositoryImpl implements ExperienceRepositoryCustom {
 	
 	@Autowired
 	private MongoTemplate mongoTemplate;

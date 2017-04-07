@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-public class RegistrationRepositoryCustomImpl implements RegistrationRepositoryCustom {
+public class RegistrationRepositoryImpl implements RegistrationRepositoryCustom {
 	
 	@Autowired
 	private MongoTemplate mongoTemplate;

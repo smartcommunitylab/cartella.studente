@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.core.MongoTemplate;
 
-public class StudentExperienceRepositoryCustomImpl implements StudentExperienceRepositoryCustom {
+public class StudentExperienceRepositoryImpl implements StudentExperienceRepositoryCustom {
 	
 	@Autowired
 	private MongoTemplate mongoTemplate;

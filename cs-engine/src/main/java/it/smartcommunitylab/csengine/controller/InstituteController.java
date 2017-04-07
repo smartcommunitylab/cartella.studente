@@ -44,7 +44,7 @@ public class InstituteController {
 	@Autowired
 	private RepositoryManager dataManager;
 	
-	@RequestMapping(value = "/api/institute/", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/institute", method = RequestMethod.GET)
 	public @ResponseBody List<Institute> getInstitutes(HttpServletRequest request) throws Exception {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
@@ -55,6 +55,20 @@ public class InstituteController {
 		}
 		return result;
 	}
+	
+	@RequestMapping(value = "/api/institute", method = RequestMethod.POST)
+	public @ResponseBody Institute addInstitute(@RequestBody Institute institute,
+			HttpServletRequest request) throws Exception {
+		if (!Utils.validateAPIRequest(request, apiToken)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+		}
+		Institute result = dataManager.addInstitute(institute);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("addInstitute[%s]: %s", "tenant", result.getId()));
+		}
+		return result;
+	}
+
 	
 	@RequestMapping(value = "/api/institute/{instituteId}/year/{schoolYear}/experience/{type}", method = RequestMethod.GET)
 	public @ResponseBody List<Experience> getExperienceByInstitute(
@@ -114,7 +128,7 @@ public class InstituteController {
 			logger.info(String.format("addIsExperience[%s]: %s - %s", "tenant", studentIds.toString(), result.getId()));
 		}
 		return result;
-	}
+	}	
 	
 	@RequestMapping(value = "/api/institute/{instituteId}/is/experience/{experienceId}", method = RequestMethod.PUT)
 	public @ResponseBody Experience updateIsExperience(

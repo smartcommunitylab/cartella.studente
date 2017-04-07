@@ -406,4 +406,10 @@ public class RepositoryManager {
 		return result;
 	}
 
+	public Institute addInstitute(Institute institute) {
+		institute.setId(Utils.getUUID());
+		Institute instituteDb = instituteRepository.save(institute);
+		return instituteDb;
+	}
+
 }

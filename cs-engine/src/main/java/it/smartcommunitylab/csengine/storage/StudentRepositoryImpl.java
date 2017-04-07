@@ -21,7 +21,7 @@ import org.springframework.data.mongodb.core.aggregation.SkipOperation;
 import org.springframework.data.mongodb.core.aggregation.SortOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 
-public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
+public class StudentRepositoryImpl implements StudentRepositoryCustom {
 	
 	@Autowired
 	private MongoTemplate mongoTemplate;

@@ -57,10 +57,6 @@ import com.mongodb.MongoException;
 public class AppConfig extends WebMvcConfigurerAdapter {
 
 	@Autowired
-	@Value("${db.name}")
-	private String dbName;
-	
-	@Autowired
 	@Value("${defaultLang}")
 	private String defaultLang;
 
