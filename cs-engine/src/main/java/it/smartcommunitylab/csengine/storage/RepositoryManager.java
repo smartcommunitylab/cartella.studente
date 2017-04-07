@@ -12,11 +12,8 @@ import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentExperience;
 
-import java.awt.image.LookupOp;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -207,15 +204,19 @@ public class RepositoryManager {
 		return null;
 	}
 	
-	public Experience removeExperience(String experienceId) throws EntityNotFoundException {
-		// TODO Auto-generated method stub
-		Experience experience = experienceRepository.findOne(experienceId);
-		if(experience == null) {
+	public Experience removeExperience(String experienceId) 
+			throws EntityNotFoundException, StorageException {
+		Experience experienceDb = experienceRepository.findOne(experienceId);
+		if(experienceDb == null) {
 			throw new EntityNotFoundException("entity not found");
 		}
-		experienceRepository.delete(experience);
-		// TODO delete from StudentExperience 
-		return null;
+		if(Utils.isCertified(experienceDb)) {
+			throw new StorageException("modify is not allowed");
+		}
+		experienceRepository.delete(experienceDb);
+		List<StudentExperience> list = studentExperienceRepository.findByExperienceId(experienceId);
+		studentExperienceRepository.delete(list);
+		return experienceDb;
 	}
 
 	public Student getStudent(String studentId) throws EntityNotFoundException {
@@ -285,9 +286,33 @@ public class RepositoryManager {
 		return certificate;
 	}
 
-	public Experience certifyExperience(String studentId, String experienceId, String certifierId) {
-		// TODO Auto-generated method stub
-		return null;
+	public Experience certifyMyExperience(Certificate certificate, String certifierId) 
+			throws StorageException, EntityNotFoundException {
+		String experienceId = certificate.getExperienceId();
+		String studentId = certificate.getStudentId();
+		Experience experienceDb = experienceRepository.findOne(experienceId);
+		if(experienceDb != null) {
+			if(Utils.isCertified(experienceDb)) {
+				throw new StorageException("modify is not allowed");
+			}
+			String refCertifierId = (String) experienceDb.getAttributes().get(Const.ATTR_CERTIFIERID);
+			if(Utils.isEmpty(refCertifierId) || refCertifierId.equals(certifierId)) {
+				throw new StorageException("ceritfier not allowed");
+			}
+			experienceDb.getAttributes().put(Const.ATTR_CERTIFIED, Boolean.TRUE);
+			experienceRepository.save(experienceDb);
+			updateExperienceAttributes(experienceId, experienceDb.getAttributes());
+			List<StudentExperience> list = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
+			if(!list.isEmpty()) {
+				StudentExperience studentExperience = list.get(0);
+				studentExperience.setCertificate(certificate);
+				studentExperience.setExperience(experienceDb);
+				studentExperienceRepository.save(studentExperience);
+			}
+		} else {
+			throw new EntityNotFoundException("entity not found");
+		}
+		return experienceDb;
 	}
 
 	public List<CertificationRequest> getCertificationRequest(String certifierId, Pageable pageable) {

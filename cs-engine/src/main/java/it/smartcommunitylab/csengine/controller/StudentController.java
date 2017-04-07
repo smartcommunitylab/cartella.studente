@@ -5,6 +5,7 @@ import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.UnauthorizedException;
+import it.smartcommunitylab.csengine.model.Certificate;
 import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
@@ -184,17 +185,21 @@ public class StudentController {
 		return result;
 	}
 	
-	public @ResponseBody Experience certifyExperience(
+	@RequestMapping(value = "/api/student/{studentId}/my/experience/{experienceId}/certify", method = RequestMethod.PUT)
+	public @ResponseBody Experience certifyMyExperience(
 			@PathVariable String studentId,
 			@PathVariable String experienceId,
 			@RequestParam String certifierId,
+			@RequestBody Certificate certificate,
 			HttpServletRequest request) throws Exception {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		Experience result = dataManager.certifyExperience(studentId, experienceId, certifierId);
+		certificate.setStudentId(studentId);
+		certificate.setExperienceId(experienceId);
+		Experience result = dataManager.certifyMyExperience(certificate, certifierId);
 		if(logger.isInfoEnabled()) {
-			logger.info(String.format("certifyExperience[%s]: %s - %s - %s", "tenant", studentId, experienceId, certifierId));
+			logger.info(String.format("certifyMyExperience[%s]: %s - %s - %s", "tenant", studentId, experienceId, certifierId));
 		}
 		return result;
 	}

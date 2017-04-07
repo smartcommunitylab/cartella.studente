@@ -1,7 +1,6 @@
 package it.smartcommunitylab.csengine.storage;
 
 import it.smartcommunitylab.csengine.model.Experience;
-import it.smartcommunitylab.csengine.model.StudentExperience;
 
 import java.util.List;
 

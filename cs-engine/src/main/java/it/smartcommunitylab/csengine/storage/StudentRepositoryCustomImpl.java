@@ -78,4 +78,9 @@ public class StudentRepositoryCustomImpl implements StudentRepositoryCustom {
 		AggregationResults<Student> result = mongoTemplate.aggregate(aggregation, Registration.class, Student.class);
 		return result.getMappedResults();
 	}
+
+	@Override
+	public void deleteByExperience(String experienceId) {
+		// TODO Auto-generated method stub
+	}
 }
