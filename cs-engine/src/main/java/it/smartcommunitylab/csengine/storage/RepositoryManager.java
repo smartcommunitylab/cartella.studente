@@ -29,6 +29,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 
 public class RepositoryManager {
+	@SuppressWarnings("unused")
 	private static final transient Logger logger = LoggerFactory.getLogger(RepositoryManager.class);
 	
 	@Autowired
@@ -400,8 +401,9 @@ public class RepositoryManager {
 	
 	public List<Registration> searchRegistration(String studentId, String instituteId,
 			String schoolYear, Long dateFrom, Long dateTo, Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
+		List<Registration> result = registrationRepository.searchRegistration(studentId, instituteId, schoolYear, 
+				dateFrom, dateTo, pageable);
+		return result;
 	}
 
 }

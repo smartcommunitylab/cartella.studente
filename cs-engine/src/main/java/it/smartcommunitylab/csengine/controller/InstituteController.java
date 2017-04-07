@@ -4,6 +4,7 @@ import io.swagger.annotations.ApiParam;
 import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
+import it.smartcommunitylab.csengine.exception.StorageException;
 import it.smartcommunitylab.csengine.exception.UnauthorizedException;
 import it.smartcommunitylab.csengine.model.Certificate;
 import it.smartcommunitylab.csengine.model.Experience;
@@ -150,7 +151,7 @@ public class InstituteController {
 	}
 	
 	
-	@ExceptionHandler(EntityNotFoundException.class)
+	@ExceptionHandler({EntityNotFoundException.class, StorageException.class})
 	@ResponseStatus(value=HttpStatus.BAD_REQUEST)
 	@ResponseBody
 	public Map<String,String> handleEntityNotFoundError(HttpServletRequest request, Exception exception) {

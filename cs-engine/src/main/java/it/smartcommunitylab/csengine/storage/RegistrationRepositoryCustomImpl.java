@@ -30,7 +30,7 @@ public class RegistrationRepositoryCustomImpl implements RegistrationRepositoryC
 		if(dateTo != null) {
 			criteria = criteria.andOperator(new Criteria("dateFrom").lte(new Date(dateTo)));
 		}
-		Query query = new Query(criteria);
+		Query query = new Query(criteria).with(pageable);
 		List<Registration> result = mongoTemplate.find(query, Registration.class);
 		return result;
 	}

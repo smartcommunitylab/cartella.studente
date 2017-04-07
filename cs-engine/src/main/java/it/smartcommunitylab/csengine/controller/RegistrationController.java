@@ -5,7 +5,7 @@ import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
 import it.smartcommunitylab.csengine.exception.UnauthorizedException;
-import it.smartcommunitylab.csengine.model.CertificationRequest;
+import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
 
 import java.util.List;
@@ -22,15 +22,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
-public class CertificationController {
-	private static final transient Logger logger = LoggerFactory.getLogger(CertificationController.class);
+public class RegistrationController {
+	private static final transient Logger logger = LoggerFactory.getLogger(RegistrationController.class);
 	
 	@Autowired
 	@Value("${apiToken}")	
@@ -39,49 +39,24 @@ public class CertificationController {
 	@Autowired
 	private RepositoryManager dataManager;
 	
-	@RequestMapping(value = "/api/certification/certifier/{certifierId}", method = RequestMethod.GET)
-	public @ResponseBody List<CertificationRequest> getCertificationRequest(
-			@PathVariable String certifierId,
+	@RequestMapping(value = "/api/registration/institute/{instituteId}/year/{schoolYear}", method = RequestMethod.GET)
+	public @ResponseBody List<Registration> searchRegistration(
+			@PathVariable String instituteId,
+			@PathVariable String schoolYear,
+			@RequestParam(required=false) String studentId,
+			@RequestParam(required=false) Long dateFrom,
+			@RequestParam(required=false) Long dateTo,
 			@ApiParam Pageable pageable,
 			HttpServletRequest request) throws Exception {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		List<CertificationRequest> result = dataManager.getCertificationRequest(certifierId, pageable);
+		List<Registration> result = dataManager.searchRegistration(studentId, instituteId, schoolYear, 
+				dateFrom, dateTo, pageable);
 		if(logger.isInfoEnabled()) {
-			logger.info(String.format("getCertificationRequest[%s]: %s - %s", "tenant", certifierId, result.size()));
+			logger.info(String.format("searchRegistration[%s]: %s", "tenant", result.size()));
 		}
-		return result;		
-	}
-	
-	@RequestMapping(value = "/api/certification/certifier/{certifierId}", method = RequestMethod.POST)
-	public @ResponseBody CertificationRequest addCertificationRequest(
-			@PathVariable String certifierId,
-			@RequestBody CertificationRequest certificationRequest,
-			HttpServletRequest request) throws Exception {
-		if (!Utils.validateAPIRequest(request, apiToken)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
-		}
-		certificationRequest.setCertifierId(certifierId);
-		CertificationRequest result = dataManager.addCertificationRequest(certificationRequest);
-		if(logger.isInfoEnabled()) {
-			logger.info(String.format("getCertificationRequest[%s]: %s - %s", "tenant", certifierId, result.getId()));
-		}
-		return result;		
-	}
-	
-	@RequestMapping(value = "/api/certification/{certificationId}", method = RequestMethod.DELETE)
-	public @ResponseBody CertificationRequest deleteCertificationRequest(
-			@PathVariable String certificationId,
-			HttpServletRequest request) throws Exception {
-		if (!Utils.validateAPIRequest(request, apiToken)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
-		}
-		CertificationRequest result = dataManager.removeCertificationRequest(certificationId);
-		if(logger.isInfoEnabled()) {
-			logger.info(String.format("deleteCertificationRequest[%s]: %s", "tenant", result.getId()));
-		}
-		return result;		
+		return result;
 	}
 	
 	@ExceptionHandler({EntityNotFoundException.class, StorageException.class})
@@ -106,5 +81,5 @@ public class CertificationController {
 	public Map<String,String> handleGenericError(HttpServletRequest request, Exception exception) {
 		logger.error(exception.getMessage());
 		return Utils.handleError(exception);
-	}		
+	}	
 }

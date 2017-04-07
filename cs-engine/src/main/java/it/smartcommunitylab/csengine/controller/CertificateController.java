@@ -2,6 +2,7 @@ package it.smartcommunitylab.csengine.controller;
 
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
+import it.smartcommunitylab.csengine.exception.StorageException;
 import it.smartcommunitylab.csengine.exception.UnauthorizedException;
 import it.smartcommunitylab.csengine.model.Certificate;
 import it.smartcommunitylab.csengine.storage.DocumentManager;
@@ -155,7 +156,7 @@ public class CertificateController {
 	}
 	
 	
-	@ExceptionHandler(EntityNotFoundException.class)
+	@ExceptionHandler({EntityNotFoundException.class, StorageException.class})
 	@ResponseStatus(value=HttpStatus.BAD_REQUEST)
 	@ResponseBody
 	public Map<String,String> handleEntityNotFoundError(HttpServletRequest request, Exception exception) {
