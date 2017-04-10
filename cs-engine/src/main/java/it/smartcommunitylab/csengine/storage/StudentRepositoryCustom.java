@@ -15,5 +15,4 @@ public interface StudentRepositoryCustom {
 	List<Student> findByExperience(String experienceId, String instituteId,	
 			String schoolYear, Pageable pageable);
 	
-	void deleteByExperience(String experienceId);
 }

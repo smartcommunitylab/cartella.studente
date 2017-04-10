@@ -10,6 +10,7 @@ import it.smartcommunitylab.csengine.model.Certificate;
 import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.Registration;
+import it.smartcommunitylab.csengine.model.StudentExperience;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
 
 import java.util.List;
@@ -70,8 +71,8 @@ public class InstituteController {
 	}
 
 	
-	@RequestMapping(value = "/api/institute/{instituteId}/year/{schoolYear}/experience/{type}", method = RequestMethod.GET)
-	public @ResponseBody List<Experience> getExperienceByInstitute(
+	@RequestMapping(value = "/api/institute/{instituteId}/year/{schoolYear}/experience/{expType}", method = RequestMethod.GET)
+	public @ResponseBody List<StudentExperience> getExperienceByInstitute(
 			@PathVariable String instituteId,
 			@PathVariable String schoolYear,
 			@PathVariable String expType,
@@ -83,7 +84,7 @@ public class InstituteController {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		List<Experience> result = dataManager.searchExperience(null, expType, true, 
+		List<StudentExperience> result = dataManager.searchExperience(null, expType, true, 
 				instituteId, schoolYear, null, dateFrom, dateTo, text, pageable);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getExperienceByInstitute[%s]: %s", "tenant", result.size()));

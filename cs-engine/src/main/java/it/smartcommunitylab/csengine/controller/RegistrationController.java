@@ -22,6 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -38,6 +39,19 @@ public class RegistrationController {
 	
 	@Autowired
 	private RepositoryManager dataManager;
+	
+	@RequestMapping(value = "/api/registration", method = RequestMethod.POST)
+	public @ResponseBody Registration addRegistration(@RequestBody Registration registration,
+			HttpServletRequest request) throws Exception {
+		if (!Utils.validateAPIRequest(request, apiToken)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+		}
+		Registration result = dataManager.addRegistration(registration);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("addRegistration[%s]: %s", "tenant", result.getId()));
+		}
+		return result;		
+	}
 	
 	@RequestMapping(value = "/api/registration/institute/{instituteId}/year/{schoolYear}", method = RequestMethod.GET)
 	public @ResponseBody List<Registration> searchRegistration(

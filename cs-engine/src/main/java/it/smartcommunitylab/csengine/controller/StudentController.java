@@ -9,6 +9,7 @@ import it.smartcommunitylab.csengine.exception.UnauthorizedException;
 import it.smartcommunitylab.csengine.model.Certificate;
 import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.Student;
+import it.smartcommunitylab.csengine.model.StudentExperience;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
 
 import java.util.List;
@@ -44,6 +45,7 @@ public class StudentController {
 	private RepositoryManager dataManager;
 
 	
+	@RequestMapping(value = "/api/student/{studentId}", method = RequestMethod.GET)
 	public @ResponseBody Student getStudentById(@PathVariable String studentId,
 			HttpServletRequest request) throws Exception {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
@@ -104,8 +106,21 @@ public class StudentController {
 		return result;
 	}
 	
+	@RequestMapping(value = "/api/student", method = RequestMethod.POST)
+	public @ResponseBody Student addStudent(@RequestBody Student student,
+			HttpServletRequest request) throws Exception {
+		if (!Utils.validateAPIRequest(request, apiToken)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+		}
+		Student result = dataManager.addStudent(student);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("addStudent[%s]: %s", "tenant", result.getId()));
+		}
+		return result;		
+	}
+	
 	@RequestMapping(value = "/api/student/{studentId}/experience/{type}", method = RequestMethod.GET)
-	public @ResponseBody List<Experience> getExperiencesByStudent(
+	public @ResponseBody List<StudentExperience> getExperiencesByStudent(
 			@PathVariable String studentId,
 			@PathVariable String expType,
 			@RequestParam Boolean institutional,
@@ -120,7 +135,7 @@ public class StudentController {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		List<Experience> result = dataManager.searchExperience(studentId, expType, institutional, 
+		List<StudentExperience> result = dataManager.searchExperience(studentId, expType, institutional, 
 				instituteId, schoolYear, certifierId, dateFrom, dateTo, text, pageable);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getExperiencesByStudent[%s]: %s", "tenant", result.size()));

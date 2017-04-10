@@ -79,8 +79,4 @@ public class StudentRepositoryImpl implements StudentRepositoryCustom {
 		return result.getMappedResults();
 	}
 
-	@Override
-	public void deleteByExperience(String experienceId) {
-		// TODO Auto-generated method stub
-	}
 }

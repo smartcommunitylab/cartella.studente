@@ -22,13 +22,13 @@ public class RegistrationRepositoryImpl implements RegistrationRepositoryCustom 
 			String schoolYear, Long dateFrom, Long dateTo, Pageable pageable) {
 		Criteria criteria = new Criteria("instituteId").is(instituteId).and("schoolYear").is(schoolYear);
 		if(Utils.isNotEmpty(studentId)) {
-			criteria = criteria.andOperator(new Criteria("studentId").is(studentId));
+			criteria = criteria.and("studentId").is(studentId);
 		}
 		if(dateFrom != null) {
-			criteria = criteria.andOperator(new Criteria("dateFrom").gte(new Date(dateFrom)));
+			criteria = criteria.and("dateFrom").gte(new Date(dateFrom));
 		}
 		if(dateTo != null) {
-			criteria = criteria.andOperator(new Criteria("dateFrom").lte(new Date(dateTo)));
+			criteria = criteria.and("dateFrom").lte(new Date(dateTo));
 		}
 		Query query = new Query(criteria).with(pageable);
 		List<Registration> result = mongoTemplate.find(query, Registration.class);

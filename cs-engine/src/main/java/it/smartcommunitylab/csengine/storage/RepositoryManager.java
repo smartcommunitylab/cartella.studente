@@ -12,6 +12,7 @@ import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentExperience;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -104,12 +105,20 @@ public class RepositoryManager {
 		return result;
 	}
 
-	public List<Experience> searchExperience(String studentId, String expType, Boolean institutional, 
+	public List<StudentExperience> searchExperience(String studentId, String expType, Boolean institutional, 
 			String instituteId,	String schoolYear, String certifierId, Long dateFrom, Long dateTo, 
 			String text, Pageable pageable) {
-		List<Experience> result = experienceRepository.searchExperience(
-				studentId, expType, institutional, instituteId, schoolYear, certifierId, dateFrom, dateTo, 
-				text, pageable);
+		List<StudentExperience> result = new ArrayList<StudentExperience>();
+		if(Utils.isNotEmpty(instituteId)) {
+			result = studentExperienceRepository.searchExperienceByInstitute(expType, 
+					instituteId, schoolYear, dateFrom, dateTo, text, pageable);
+		} else if(Utils.isNotEmpty(studentId)) {
+			result = studentExperienceRepository.searchExperienceByStudent(studentId, expType, institutional, 
+					instituteId,	schoolYear, certifierId, dateFrom, dateTo, text, pageable);
+		} else if(Utils.isNotEmpty(certifierId)) {
+			result = studentExperienceRepository.searchExperienceByCertifier(expType, 
+					certifierId, dateFrom, dateTo, text, pageable);
+		}
 		return result;
 	}
 
@@ -410,6 +419,27 @@ public class RepositoryManager {
 		institute.setId(Utils.getUUID());
 		Institute instituteDb = instituteRepository.save(institute);
 		return instituteDb;
+	}
+
+	public Student addStudent(Student student) {
+		student.setId(Utils.getUUID());
+		Student studentDb = studentRepository.save(student);
+		return studentDb;
+	}
+
+	public Registration addRegistration(Registration registration) throws StorageException {
+		registration.setId(Utils.getUUID());
+		String studentId = registration.getStudentId();
+		String instituteId = registration.getInstituteId();
+		Student student = studentRepository.findOne(studentId);
+		Institute institute = instituteRepository.findOne(instituteId);
+		if((student == null) || (institute == null)) {
+			throw new StorageException("student or institute not found");
+		}
+		registration.setStudent(student);
+		registration.setInstitute(institute);
+		Registration registrationDb = registrationRepository.save(registration);
+		return registrationDb;
 	}
 
 }

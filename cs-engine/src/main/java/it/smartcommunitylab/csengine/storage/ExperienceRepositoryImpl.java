@@ -25,24 +25,20 @@ public class ExperienceRepositoryImpl implements ExperienceRepositoryCustom {
 		Criteria criteria = new Criteria("experience.type").is(expType)
 				.and("experience.attributes." + Const.ATTR_INSTITUTIONAL).is(institutional);
 		if(Utils.isNotEmpty(studentId)) {
-			criteria = criteria.andOperator(new Criteria("studentId").is(studentId));
+			criteria = criteria.and("studentId").is(studentId);
 		}
 		if(Utils.isNotEmpty(instituteId) && Utils.isNotEmpty(schoolYear)) {
-			criteria = criteria.andOperator(
-					new Criteria("experience.attributes." + Const.ATTR_INSTITUTEID).is(instituteId)
-					.and("experience.attributes." + Const.ATTR_SCHOOLYEAR).is(schoolYear));
+			criteria = criteria.and("experience.attributes." + Const.ATTR_INSTITUTEID).is(instituteId)
+					.and("experience.attributes." + Const.ATTR_SCHOOLYEAR).is(schoolYear);
 		}
 		if(Utils.isNotEmpty(certifierId)) {
-			criteria = criteria.andOperator(new Criteria("experience.attributes." + Const.ATTR_CERTIFIERID)
-					.is(certifierId));
+			criteria = criteria.and("experience.attributes." + Const.ATTR_CERTIFIERID).is(certifierId);
 		}
 		if(dateFrom != null) {
-			criteria = criteria.andOperator(new Criteria("experience.attributes." + Const.ATTR_DATEFROM)
-					.gte(new Date(dateFrom)));
+			criteria = criteria.and("experience.attributes." + Const.ATTR_DATEFROM).gte(new Date(dateFrom));
 		}
 		if(dateTo != null) {
-			criteria = criteria.andOperator(new Criteria("experience.attributes." + Const.ATTR_DATEFROM)
-					.lte(new Date(dateTo)));
+			criteria = criteria.and("experience.attributes." + Const.ATTR_DATEFROM).lte(new Date(dateTo));
 		}
 		Query query = new Query(criteria);
 		List<Experience> result = mongoTemplate.find(query, Experience.class);
