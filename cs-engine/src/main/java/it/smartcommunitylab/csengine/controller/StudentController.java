@@ -135,7 +135,7 @@ public class StudentController {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		List<StudentExperience> result = dataManager.searchExperience(studentId, expType, institutional, 
+		List<StudentExperience> result = dataManager.searchStudentExperience(studentId, expType, institutional, 
 				instituteId, schoolYear, certifierId, dateFrom, dateTo, text, pageable);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getExperiencesByStudent[%s]: %s", "tenant", result.size()));

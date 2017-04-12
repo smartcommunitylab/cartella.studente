@@ -16,6 +16,9 @@
 
 package it.smartcommunitylab.csengine.config;
 
+import it.smartcommunitylab.csengine.model.Institute;
+import it.smartcommunitylab.csengine.model.Registration;
+import it.smartcommunitylab.csengine.model.StudentExperience;
 import it.smartcommunitylab.csengine.storage.DocumentManager;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
 
@@ -29,7 +32,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.index.GeospatialIndex;
+import org.springframework.data.mongodb.core.index.Index;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -47,7 +53,6 @@ import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
-import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
 
 @Configuration
@@ -96,6 +101,12 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 
 	@Bean
 	RepositoryManager getRepositoryManager() throws UnknownHostException, MongoException {
+		mongoTemplate.indexOps(StudentExperience.class).ensureIndex(new Index().on("studentId", Direction.ASC));
+		mongoTemplate.indexOps(StudentExperience.class).ensureIndex(new Index().on("experienceId", Direction.ASC));
+		mongoTemplate.indexOps(StudentExperience.class).ensureIndex(new Index().on("experience.type", Direction.ASC));
+		mongoTemplate.indexOps(Registration.class).ensureIndex(new Index().on("instituteId", Direction.ASC));
+		mongoTemplate.indexOps(Registration.class).ensureIndex(new Index().on("schoolYear", Direction.ASC));
+		mongoTemplate.indexOps(Institute.class).ensureIndex(new GeospatialIndex("geocode"));
 		return new RepositoryManager(mongoTemplate, defaultLang);
 	}
 	

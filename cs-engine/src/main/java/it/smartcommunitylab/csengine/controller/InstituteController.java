@@ -71,8 +71,8 @@ public class InstituteController {
 	}
 
 	
-	@RequestMapping(value = "/api/institute/{instituteId}/year/{schoolYear}/experience/{expType}", method = RequestMethod.GET)
-	public @ResponseBody List<StudentExperience> getExperienceByInstitute(
+	@RequestMapping(value = "/api/institute/{instituteId}/year/{schoolYear}/studentexperience/{expType}", method = RequestMethod.GET)
+	public @ResponseBody List<StudentExperience> getStudentExperienceByInstitute(
 			@PathVariable String instituteId,
 			@PathVariable String schoolYear,
 			@PathVariable String expType,
@@ -84,7 +84,43 @@ public class InstituteController {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		List<StudentExperience> result = dataManager.searchExperience(null, expType, true, 
+		List<StudentExperience> result = dataManager.searchStudentExperience(null, expType, true, 
+				instituteId, schoolYear, null, dateFrom, dateTo, text, pageable);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("getStudentExperienceByInstitute[%s]: %s", "tenant", result.size()));
+		}
+		return result;
+	}
+	
+	@RequestMapping(value = "/api/institute/{instituteId}/experience/{experienceId}", method = RequestMethod.GET)
+	public @ResponseBody List<StudentExperience> getStudentExperienceById(
+			@PathVariable String instituteId,
+			@PathVariable String experienceId,
+			HttpServletRequest request) throws Exception {
+		if (!Utils.validateAPIRequest(request, apiToken)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+		}
+		List<StudentExperience> result = dataManager.searchStudentExperienceById(null, instituteId, experienceId);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("getStudentExperienceById[%s]: %s", "tenant", result.size()));
+		}
+		return result;
+	}
+	
+	@RequestMapping(value = "/api/institute/{instituteId}/year/{schoolYear}/experience/{expType}", method = RequestMethod.GET)
+	public @ResponseBody List<Experience> getExperienceByInstitute(
+			@PathVariable String instituteId,
+			@PathVariable String schoolYear,
+			@PathVariable String expType,
+			@RequestParam(required=false) Long dateFrom,
+			@RequestParam(required=false) Long dateTo,
+			@RequestParam(required=false) String text,
+			@ApiParam Pageable pageable,
+			HttpServletRequest request) throws Exception {
+		if (!Utils.validateAPIRequest(request, apiToken)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+		}
+		List<Experience> result = dataManager.searchExperience(expType, true, 
 				instituteId, schoolYear, null, dateFrom, dateTo, text, pageable);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getExperienceByInstitute[%s]: %s", "tenant", result.size()));
@@ -111,7 +147,7 @@ public class InstituteController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/api/institute/{instituteId}/is/experience/year/{schoolYear}", method = RequestMethod.POST)
+	@RequestMapping(value = "/api/institute/{instituteId}/year/{schoolYear}/is/experience", method = RequestMethod.POST)
 	public @ResponseBody Experience addIsExperience(
 			@PathVariable String instituteId,
 			@PathVariable String schoolYear,
@@ -164,7 +200,6 @@ public class InstituteController {
 			logger.info(String.format("certifyIsExperience[%s]: %s - %s", "tenant", instituteId, experienceId));
 		}
 	}
-	
 	
 	@ExceptionHandler({EntityNotFoundException.class, StorageException.class})
 	@ResponseStatus(value=HttpStatus.BAD_REQUEST)

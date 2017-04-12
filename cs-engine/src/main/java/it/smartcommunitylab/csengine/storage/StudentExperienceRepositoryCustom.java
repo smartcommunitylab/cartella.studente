@@ -19,4 +19,7 @@ public interface StudentExperienceRepositoryCustom {
 	public List<StudentExperience> searchExperienceByCertifier(String expType, String certifierId, 
 			Long dateFrom, Long dateTo, String text, Pageable pageable);
 	
+	public List<StudentExperience> searchExperienceById(String studentId, String instituteId,
+			String experienceId);
+	
 }

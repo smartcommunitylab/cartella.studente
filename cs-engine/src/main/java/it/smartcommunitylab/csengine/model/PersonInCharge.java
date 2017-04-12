@@ -1,5 +1,8 @@
 package it.smartcommunitylab.csengine.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class PersonInCharge extends BaseObject {
 	private String name;
 	private String surname;
@@ -8,6 +11,8 @@ public class PersonInCharge extends BaseObject {
 	private String phone;
 	private String mobilePhone;
 	private String email;
+	private String type;
+	private List<String> studentIds = new ArrayList<String>();
 	
 	public String getName() {
 		return name;
@@ -50,6 +55,18 @@ public class PersonInCharge extends BaseObject {
 	}
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	public String getType() {
+		return type;
+	}
+	public void setType(String type) {
+		this.type = type;
+	}
+	public List<String> getStudentIds() {
+		return studentIds;
+	}
+	public void setStudentIds(List<String> studentIds) {
+		this.studentIds = studentIds;
 	}
 
 }

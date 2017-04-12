@@ -9,6 +9,8 @@ public class Student extends BaseObject {
 	private String phone;
 	private String mobilePhone;
 	private String email;
+	private String nationality;
+	private String sex;
 	
 	public String getName() {
 		return name;
@@ -57,6 +59,18 @@ public class Student extends BaseObject {
 	}
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	public String getNationality() {
+		return nationality;
+	}
+	public void setNationality(String nationality) {
+		this.nationality = nationality;
+	}
+	public String getSex() {
+		return sex;
+	}
+	public void setSex(String sex) {
+		this.sex = sex;
 	}
 	
 }

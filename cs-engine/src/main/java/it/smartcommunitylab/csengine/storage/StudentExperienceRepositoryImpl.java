@@ -68,8 +68,32 @@ public class StudentExperienceRepositoryImpl implements StudentExperienceReposit
 	@Override
 	public List<StudentExperience> searchExperienceByCertifier(String expType, String certifierId,
 			Long dateFrom, Long dateTo, String text, Pageable pageable) {
-		// TODO Auto-generated method stub
-		return null;
+		Criteria criteria = new Criteria("experience.type").is(expType)
+				.and("experience.attributes." + Const.ATTR_CERTIFIERID).is(certifierId);
+		if(dateFrom != null) {
+			criteria = criteria.and("experience.attributes." + Const.ATTR_DATEFROM).gte(new Date(dateFrom));
+		}
+		if(dateTo != null) {
+			criteria = criteria.and("experience.attributes." + Const.ATTR_DATEFROM).lte(new Date(dateTo));
+		}
+		Query query = new Query(criteria).with(pageable);
+		List<StudentExperience> result = mongoTemplate.find(query, StudentExperience.class);
+		return result;
+	}
+
+	@Override
+	public List<StudentExperience> searchExperienceById(String studentId, String instituteId,
+			String experienceId) {
+		Criteria criteria = new Criteria("experienceId").is(experienceId);
+		if(Utils.isNotEmpty(studentId)) {
+			criteria = criteria.and("studentId").is(studentId);
+		}
+		if(Utils.isNotEmpty(instituteId)) {
+			criteria = criteria.and("experience.attributes." + Const.ATTR_INSTITUTEID).is(instituteId);
+		}
+		Query query = new Query(criteria);
+		List<StudentExperience> result = mongoTemplate.find(query, StudentExperience.class);
+		return result;
 	}
 
 }

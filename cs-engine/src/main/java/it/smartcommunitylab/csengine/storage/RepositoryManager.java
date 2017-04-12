@@ -105,7 +105,7 @@ public class RepositoryManager {
 		return result;
 	}
 
-	public List<StudentExperience> searchExperience(String studentId, String expType, Boolean institutional, 
+	public List<StudentExperience> searchStudentExperience(String studentId, String expType, Boolean institutional, 
 			String instituteId,	String schoolYear, String certifierId, Long dateFrom, Long dateTo, 
 			String text, Pageable pageable) {
 		List<StudentExperience> result = new ArrayList<StudentExperience>();
@@ -119,6 +119,21 @@ public class RepositoryManager {
 			result = studentExperienceRepository.searchExperienceByCertifier(expType, 
 					certifierId, dateFrom, dateTo, text, pageable);
 		}
+		return result;
+	}
+	
+	public List<StudentExperience> searchStudentExperienceById(String studentId, String instituteId,
+			String experienceId) {
+		List<StudentExperience> result = studentExperienceRepository.searchExperienceById(studentId, instituteId, 
+				experienceId);
+		return result;
+	}
+	
+	public List<Experience> searchExperience(String expType, Boolean institutional, 
+			String instituteId,	String schoolYear, String certifierId, Long dateFrom, Long dateTo, 
+			String text, Pageable pageable) {
+		List<Experience> result = experienceRepository.searchExperience(expType, institutional, 
+				instituteId, schoolYear, certifierId, dateFrom, dateTo, text, pageable);
 		return result;
 	}
 

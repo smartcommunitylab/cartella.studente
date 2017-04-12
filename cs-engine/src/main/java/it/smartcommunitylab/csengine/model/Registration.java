@@ -9,6 +9,7 @@ public class Registration extends BaseObject {
 	private Date dateFrom;
 	private Date dateTo;
 	private String course;
+	private String teachingUnit;
 	private String classroom;
 	private String courseOrigin;
 	private String courseExtId; 
@@ -80,5 +81,11 @@ public class Registration extends BaseObject {
 	}
 	public void setStudent(Student student) {
 		this.student = student;
+	}
+	public String getTeachingUnit() {
+		return teachingUnit;
+	}
+	public void setTeachingUnit(String teachingUnit) {
+		this.teachingUnit = teachingUnit;
 	}
 }

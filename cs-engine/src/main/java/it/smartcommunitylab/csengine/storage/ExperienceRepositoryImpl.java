@@ -19,28 +19,25 @@ public class ExperienceRepositoryImpl implements ExperienceRepositoryCustom {
 	private MongoTemplate mongoTemplate;
 
 	@Override
-	public List<Experience> searchExperience(String studentId, String expType, Boolean institutional,
+	public List<Experience> searchExperience(String expType, Boolean institutional,
 			String instituteId, String schoolYear, String certifierId, Long dateFrom, Long dateTo,
 			String text, Pageable pageable) {
-		Criteria criteria = new Criteria("experience.type").is(expType)
-				.and("experience.attributes." + Const.ATTR_INSTITUTIONAL).is(institutional);
-		if(Utils.isNotEmpty(studentId)) {
-			criteria = criteria.and("studentId").is(studentId);
-		}
+		Criteria criteria = new Criteria("type").is(expType)
+				.and("attributes." + Const.ATTR_INSTITUTIONAL).is(institutional);
 		if(Utils.isNotEmpty(instituteId) && Utils.isNotEmpty(schoolYear)) {
-			criteria = criteria.and("experience.attributes." + Const.ATTR_INSTITUTEID).is(instituteId)
-					.and("experience.attributes." + Const.ATTR_SCHOOLYEAR).is(schoolYear);
+			criteria = criteria.and("attributes." + Const.ATTR_INSTITUTEID).is(instituteId)
+					.and("attributes." + Const.ATTR_SCHOOLYEAR).is(schoolYear);
 		}
 		if(Utils.isNotEmpty(certifierId)) {
-			criteria = criteria.and("experience.attributes." + Const.ATTR_CERTIFIERID).is(certifierId);
+			criteria = criteria.and("attributes." + Const.ATTR_CERTIFIERID).is(certifierId);
 		}
 		if(dateFrom != null) {
-			criteria = criteria.and("experience.attributes." + Const.ATTR_DATEFROM).gte(new Date(dateFrom));
+			criteria = criteria.and("attributes." + Const.ATTR_DATEFROM).gte(new Date(dateFrom));
 		}
 		if(dateTo != null) {
-			criteria = criteria.and("experience.attributes." + Const.ATTR_DATEFROM).lte(new Date(dateTo));
+			criteria = criteria.and("attributes." + Const.ATTR_DATEFROM).lte(new Date(dateTo));
 		}
-		Query query = new Query(criteria);
+		Query query = new Query(criteria).with(pageable);
 		List<Experience> result = mongoTemplate.find(query, Experience.class);
 		return result;
 	}
