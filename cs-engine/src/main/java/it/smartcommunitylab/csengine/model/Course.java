@@ -2,25 +2,14 @@ package it.smartcommunitylab.csengine.model;
 
 import java.util.Date;
 
-public class Registration extends BaseObject {
-	private String studentId;
+public class Course extends BaseObject {
 	private String instituteId;
-	private String courseId;
 	private String schoolYear;
 	private Date dateFrom;
 	private Date dateTo;
 	private String course;
 	private String teachingUnit;
-	private String classroom;
-	private Institute institute;
-	private Student student; 
 	
-	public String getStudentId() {
-		return studentId;
-	}
-	public void setStudentId(String studentId) {
-		this.studentId = studentId;
-	}
 	public String getInstituteId() {
 		return instituteId;
 	}
@@ -51,34 +40,12 @@ public class Registration extends BaseObject {
 	public void setCourse(String course) {
 		this.course = course;
 	}
-	public String getClassroom() {
-		return classroom;
-	}
-	public void setClassroom(String classroom) {
-		this.classroom = classroom;
-	}
-	public Institute getInstitute() {
-		return institute;
-	}
-	public void setInstitute(Institute institute) {
-		this.institute = institute;
-	}
-	public Student getStudent() {
-		return student;
-	}
-	public void setStudent(Student student) {
-		this.student = student;
-	}
 	public String getTeachingUnit() {
 		return teachingUnit;
 	}
 	public void setTeachingUnit(String teachingUnit) {
 		this.teachingUnit = teachingUnit;
 	}
-	public String getCourseId() {
-		return courseId;
-	}
-	public void setCourseId(String courseId) {
-		this.courseId = courseId;
-	}
+	
+
 }
