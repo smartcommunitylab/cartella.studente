@@ -16,6 +16,8 @@
 
 package it.smartcommunitylab.csengine.config;
 
+import it.smartcommunitylab.csengine.common.Const;
+import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.model.StudentExperience;
@@ -36,6 +38,8 @@ import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.index.GeospatialIndex;
 import org.springframework.data.mongodb.core.index.Index;
+import org.springframework.data.mongodb.core.index.TextIndexDefinition;
+import org.springframework.data.mongodb.core.index.TextIndexDefinition.TextIndexDefinitionBuilder;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
@@ -107,6 +111,15 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 		mongoTemplate.indexOps(Registration.class).ensureIndex(new Index().on("instituteId", Direction.ASC));
 		mongoTemplate.indexOps(Registration.class).ensureIndex(new Index().on("schoolYear", Direction.ASC));
 		mongoTemplate.indexOps(Institute.class).ensureIndex(new GeospatialIndex("geocode"));
+		TextIndexDefinition textIndex = new TextIndexDefinitionBuilder()
+	  .onField("type")
+	  .onField("attributes." + Const.ATTR_TITLE)
+	  .onField("attributes." + Const.ATTR_DESCRIPTION)
+	  .onField("attributes." + Const.ATTR_CATEGORIZATION)
+	  .build(); 
+		this.mongoTemplate.indexOps(Experience.class).ensureIndex(textIndex);
+		this.mongoTemplate.indexOps(StudentExperience.class).ensureIndex(textIndex);
+		this.mongoTemplate.indexOps(Institute.class).ensureIndex(new GeospatialIndex("geocode"));
 		return new RepositoryManager(mongoTemplate, defaultLang);
 	}
 	

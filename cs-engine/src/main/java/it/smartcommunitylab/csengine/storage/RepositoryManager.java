@@ -6,6 +6,8 @@ import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
 import it.smartcommunitylab.csengine.model.Certificate;
 import it.smartcommunitylab.csengine.model.CertificationRequest;
+import it.smartcommunitylab.csengine.model.Consent;
+import it.smartcommunitylab.csengine.model.Course;
 import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.Registration;
@@ -13,6 +15,7 @@ import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentExperience;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -23,8 +26,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.index.TextIndexDefinition;
-import org.springframework.data.mongodb.core.index.TextIndexDefinition.TextIndexDefinitionBuilder;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
@@ -51,21 +52,18 @@ public class RepositoryManager {
 	@Autowired
 	private RegistrationRepository registrationRepository;
 	
+	@Autowired
+	private CourseRepository courseRepository;
+	
+	@Autowired
+	private ConsentRepository consentRepository;
+	
 	private MongoTemplate mongoTemplate;
 	private String defaultLang;
 	
 	public RepositoryManager(MongoTemplate template, String defaultLang) {
 		this.mongoTemplate = template;
 		this.defaultLang = defaultLang;
-		TextIndexDefinition textIndex = new TextIndexDefinitionBuilder()
-	  .onField("type")
-	  .onField("attributes." + Const.ATTR_TITLE)
-	  .onField("attributes." + Const.ATTR_DESCRIPTION)
-	  .onField("attributes." + Const.ATTR_CATEGORIZATION)
-	  .build(); 
-		this.mongoTemplate.indexOps(Experience.class).ensureIndex(textIndex);
-		this.mongoTemplate.indexOps(StudentExperience.class).ensureIndex(textIndex);
-		//this.mongoTemplate.indexOps(Poi.class).ensureIndex(new GeospatialIndex("coordinates"));
 	}
 	
 	public String getDefaultLang() {
@@ -254,20 +252,19 @@ public class RepositoryManager {
 
 	public Certificate getCertificate(String experienceId, String studentId) 
 			throws EntityNotFoundException {
-		List<StudentExperience> list = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
-		if(list.isEmpty()) {
+		StudentExperience result = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
+		if(result == null) {
 			throw new EntityNotFoundException("entity not found");
 		}
-		return list.get(0).getCertificate();
+		return result.getCertificate();
 	}
 
 	public Certificate updateCertificateAttributes(String experienceId, String studentId, 
 			Map<String, Object> attributes) throws EntityNotFoundException, StorageException {
-		List<StudentExperience> list = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
-		if(list.isEmpty()) {
+		StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
+		if(studentExperience == null) {
 			throw new EntityNotFoundException("entity not found");
 		}
-		StudentExperience studentExperience = list.get(0);
 		if(Utils.isCertified(studentExperience.getExperience())) {
 			throw new StorageException("modify is not allowed");
 		}
@@ -281,11 +278,10 @@ public class RepositoryManager {
 
 	public Certificate removeCertificate(String experienceId, String studentId) 
 			throws EntityNotFoundException, StorageException {
-		List<StudentExperience> list = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
-		if(list.isEmpty()) {
+		StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
+		if(studentExperience == null) {
 			throw new EntityNotFoundException("entity not found");
 		}
-		StudentExperience studentExperience = list.get(0);
 		if(Utils.isCertified(studentExperience.getExperience())) {
 			throw new StorageException("modify is not allowed");
 		}
@@ -297,12 +293,11 @@ public class RepositoryManager {
 
 	public Certificate addCertificate(Certificate certificate) 
 			throws EntityNotFoundException, StorageException {
-		List<StudentExperience> list = studentExperienceRepository.findByStudentAndExperience(
+		StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(
 				certificate.getStudentId(), certificate.getExperienceId());
-		if(list.isEmpty()) {
+		if(studentExperience == null) {
 			throw new EntityNotFoundException("entity not found");
 		}
-		StudentExperience studentExperience = list.get(0);
 		if(Utils.isCertified(studentExperience.getExperience())) {
 			throw new StorageException("modify is not allowed");
 		}
@@ -327,9 +322,8 @@ public class RepositoryManager {
 			experienceDb.getAttributes().put(Const.ATTR_CERTIFIED, Boolean.TRUE);
 			experienceRepository.save(experienceDb);
 			updateExperienceAttributes(experienceId, experienceDb.getAttributes());
-			List<StudentExperience> list = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
-			if(!list.isEmpty()) {
-				StudentExperience studentExperience = list.get(0);
+			StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
+			if(studentExperience != null) {
 				studentExperience.setCertificate(certificate);
 				studentExperience.setExperience(experienceDb);
 				studentExperienceRepository.save(studentExperience);
@@ -344,11 +338,11 @@ public class RepositoryManager {
 		Page<CertificationRequest> page = certificationRequestRepository.findByCertifierId(certifierId, pageable);
 		List<CertificationRequest> requestList = page.getContent();
 		for(CertificationRequest request : requestList) {
-			List<StudentExperience> attendanceList = studentExperienceRepository.findByStudentAndExperience(request.getStudentId(), request.getExperienceId());
-			if(attendanceList.isEmpty()) {
+			StudentExperience attendance = studentExperienceRepository.findByStudentAndExperience(
+					request.getStudentId(), request.getExperienceId());
+			if(attendance == null) {
 				continue;
 			}
-			StudentExperience attendance = attendanceList.get(0);
 			request.setExperience(attendance.getExperience());
 			request.setStudent(attendance.getStudent());
 		}
@@ -402,11 +396,11 @@ public class RepositoryManager {
 			updateExperienceAttributes(experienceId, experienceDb.getAttributes());
 			for(Certificate certificate : certificates) {
 				String studentId = certificate.getStudentId();
-				List<StudentExperience> list = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
-				if(list.isEmpty()) {
+				StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(
+						studentId, experienceId);
+				if(studentExperience == null) {
 					continue;
 				}
-				StudentExperience studentExperience = list.get(0);
 				certificate.setExperienceId(experienceId);
 				studentExperience.setCertificate(certificate);
 				studentExperience.setExperience(experienceDb);
@@ -431,18 +425,27 @@ public class RepositoryManager {
 	}
 
 	public Institute addInstitute(Institute institute) {
+		Date now = new Date();
+		institute.setCreationDate(now);
+		institute.setLastUpdate(now);
 		institute.setId(Utils.getUUID());
 		Institute instituteDb = instituteRepository.save(institute);
 		return instituteDb;
 	}
 
 	public Student addStudent(Student student) {
+		Date now = new Date();
+		student.setCreationDate(now);
+		student.setLastUpdate(now);
 		student.setId(Utils.getUUID());
 		Student studentDb = studentRepository.save(student);
 		return studentDb;
 	}
 
 	public Registration addRegistration(Registration registration) throws StorageException {
+		Date now = new Date();
+		registration.setCreationDate(now);
+		registration.setLastUpdate(now);
 		registration.setId(Utils.getUUID());
 		String studentId = registration.getStudentId();
 		String instituteId = registration.getInstituteId();
@@ -455,6 +458,61 @@ public class RepositoryManager {
 		registration.setInstitute(institute);
 		Registration registrationDb = registrationRepository.save(registration);
 		return registrationDb;
+	}
+
+	public List<Course> searchCourseByInstitute(String instituteId, String schoolYear) {
+		List<Course> result = courseRepository.findByInstitute(instituteId, schoolYear);
+		return result;
+	}
+
+	public Consent addConsent(Consent consent) {
+		Date now = new Date();
+		consent.setCreationDate(now);
+		consent.setLastUpdate(now);
+		consent.setId(Utils.getUUID());
+		consent.setAuthorized(Boolean.TRUE);
+		Consent consentDb = consentRepository.save(consent);
+		return consentDb;
+	}
+
+	public Consent removeAuthorization(String subject) throws EntityNotFoundException {
+		Consent consentDb = consentRepository.findBySubject(subject);
+		if(consentDb == null) {
+			throw new EntityNotFoundException("entity not found");
+		}
+		Date now = new Date();
+		consentDb.setAuthorized(Boolean.FALSE);
+		consentDb.setLastUpdate(now);
+		consentRepository.save(consentDb);
+		return consentDb;
+	}
+
+	public Consent addAuthorization(String subject) throws EntityNotFoundException {
+		Consent consentDb = consentRepository.findBySubject(subject);
+		if(consentDb == null) {
+			throw new EntityNotFoundException("entity not found");
+		}
+		Date now = new Date();
+		consentDb.setAuthorized(Boolean.TRUE);
+		consentDb.setLastUpdate(now);
+		consentRepository.save(consentDb);
+		return consentDb;
+	}
+
+	public Consent getConsentBySubject(String subject) throws EntityNotFoundException {
+		Consent consentDb = consentRepository.findBySubject(subject);
+		if(consentDb == null) {
+			throw new EntityNotFoundException("entity not found");
+		}
+		return consentDb;
+	}
+
+	public Consent getConsentByStudent(String studentId) throws EntityNotFoundException {
+		Consent consentDb = consentRepository.findByStudent(studentId);
+		if(consentDb == null) {
+			throw new EntityNotFoundException("entity not found");
+		}
+		return consentDb;
 	}
 
 }
