@@ -1,5 +1,8 @@
 package it.smartcommunitylab.csengine.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Student extends BaseObject {
 	private String name;
 	private String surname;
@@ -11,6 +14,7 @@ public class Student extends BaseObject {
 	private String email;
 	private String nationality;
 	private String sex;
+	private Map<String, String> socialMap = new HashMap<String, String>();
 	
 	public String getName() {
 		return name;
@@ -71,6 +75,12 @@ public class Student extends BaseObject {
 	}
 	public void setSex(String sex) {
 		this.sex = sex;
+	}
+	public Map<String, String> getSocialMap() {
+		return socialMap;
+	}
+	public void setSocialMap(Map<String, String> socialMap) {
+		this.socialMap = socialMap;
 	}
 	
 }

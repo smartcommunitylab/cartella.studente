@@ -1,5 +1,7 @@
 package it.smartcommunitylab.csengine.storage;
 
+import java.util.List;
+
 import it.smartcommunitylab.csengine.model.Registration;
 
 import org.springframework.data.domain.Page;
@@ -12,4 +14,11 @@ public interface RegistrationRepository extends MongoRepository<Registration, St
 
 	@Query(value="{instituteId:?0, schoolYear:?1}")
 	Page<Registration> findByInstitute(String instituteId, String schoolYear, Pageable pageable);
+	
+	@Query(value="{studentId:?0}")
+	List<Registration> findByStudent(String studentId);
+	
+	@Query(value="{courseId:?0}")
+	List<Registration> findByCourse(String courseId);
+
 }

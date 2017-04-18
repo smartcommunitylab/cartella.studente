@@ -44,7 +44,7 @@ public class CourseController {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		List<Course> result = dataManager.searchCourseByInstitute(instituteId, schoolYear);
+		List<Course> result = dataManager.getCourseByInstitute(instituteId, schoolYear);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getCourseByInstitute[%s]: %s", "tenant", result.size()));
 		}

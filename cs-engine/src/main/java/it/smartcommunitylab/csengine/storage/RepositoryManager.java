@@ -4,6 +4,7 @@ import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
+import it.smartcommunitylab.csengine.model.CV;
 import it.smartcommunitylab.csengine.model.Certificate;
 import it.smartcommunitylab.csengine.model.CertificationRequest;
 import it.smartcommunitylab.csengine.model.Consent;
@@ -14,7 +15,6 @@ import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentExperience;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -57,6 +57,9 @@ public class RepositoryManager {
 	
 	@Autowired
 	private ConsentRepository consentRepository;
+	
+	@Autowired
+	private CVRepository cvRepository;
 	
 	private MongoTemplate mongoTemplate;
 	private String defaultLang;
@@ -106,17 +109,8 @@ public class RepositoryManager {
 	public List<StudentExperience> searchStudentExperience(String studentId, String expType, Boolean institutional, 
 			String instituteId,	String schoolYear, String certifierId, Long dateFrom, Long dateTo, 
 			String text, Pageable pageable) {
-		List<StudentExperience> result = new ArrayList<StudentExperience>();
-		if(Utils.isNotEmpty(instituteId)) {
-			result = studentExperienceRepository.searchExperienceByInstitute(expType, 
-					instituteId, schoolYear, dateFrom, dateTo, text, pageable);
-		} else if(Utils.isNotEmpty(studentId)) {
-			result = studentExperienceRepository.searchExperienceByStudent(studentId, expType, institutional, 
-					instituteId,	schoolYear, certifierId, dateFrom, dateTo, text, pageable);
-		} else if(Utils.isNotEmpty(certifierId)) {
-			result = studentExperienceRepository.searchExperienceByCertifier(expType, 
-					certifierId, dateFrom, dateTo, text, pageable);
-		}
+		List<StudentExperience> result = studentExperienceRepository.searchExperience(studentId, expType, institutional, 
+				instituteId,	schoolYear, certifierId, dateFrom, dateTo, text, pageable);
 		return result;
 	}
 	
@@ -460,18 +454,31 @@ public class RepositoryManager {
 		return registrationDb;
 	}
 
-	public List<Course> searchCourseByInstitute(String instituteId, String schoolYear) {
+	public List<Course> getCourseByInstitute(String instituteId, String schoolYear) {
 		List<Course> result = courseRepository.findByInstitute(instituteId, schoolYear);
 		return result;
 	}
 
-	public Consent addConsent(Consent consent) {
+	public Consent addConsent(Consent consent) throws StorageException {
+		Consent consentDb = null;
+		if(Utils.isNotEmpty(consent.getSubject())) {
+			consentDb = consentRepository.findBySubject(consent.getSubject());
+			if(consentDb != null) {
+				throw new StorageException("consent already exists for this subject");
+			}
+		}
+		if(Utils.isNotEmpty(consent.getStudentId())) {
+			consentDb = consentRepository.findByStudent(consent.getStudentId());
+			if(consentDb != null) {
+				throw new StorageException("consent already exists for this studentId");
+			}
+		}
 		Date now = new Date();
 		consent.setCreationDate(now);
 		consent.setLastUpdate(now);
 		consent.setId(Utils.getUUID());
 		consent.setAuthorized(Boolean.TRUE);
-		Consent consentDb = consentRepository.save(consent);
+		consentDb = consentRepository.save(consent);
 		return consentDb;
 	}
 
@@ -514,5 +521,72 @@ public class RepositoryManager {
 		}
 		return consentDb;
 	}
+
+	public List<Registration> getRegistrationByStudent(String studentId) {
+		List<Registration> result = registrationRepository.findByStudent(studentId);
+		return result;
+	}
+	
+	public List<Registration> getRegistrationByCourse(String courseId) {
+		List<Registration> result = registrationRepository.findByCourse(courseId);
+		return result;
+	}
+
+	public Student updateStudentContact(Student student) throws EntityNotFoundException {
+		Student studentDb = studentRepository.findOne(student.getId());
+		if(studentDb == null) {
+			throw new EntityNotFoundException("entity not found");
+		}
+		studentDb.setAddress(student.getAddress());
+		studentDb.setEmail(student.getEmail());
+		studentDb.setMobilePhone(student.getMobilePhone());
+		studentDb.setSocialMap(student.getSocialMap());
+		Date now = new Date();
+		studentDb.setLastUpdate(now);
+		studentRepository.save(studentDb);
+		return studentDb;
+	}
+
+	public CV getStudentCV(String studentId) throws EntityNotFoundException {
+		CV cv = cvRepository.findByStudent(studentId);
+		if(cv == null) {
+			throw new EntityNotFoundException("entity not found");
+		}
+		Student student = studentRepository.findOne(studentId);
+		if(student != null) {
+			cv.setStudent(student);
+		}
+		for(String studentExperienceId : cv.getStudentExperienceIds()) {
+			StudentExperience studentExperience = studentExperienceRepository.findOne(studentExperienceId);
+			if(studentExperience!= null) {
+				cv.getExperiences().add(studentExperience);
+			}
+		}
+		return cv;
+	}
+
+	public CV addStudentCV(CV cv) {
+		Date now = new Date();
+		cv.setCreationDate(now);
+		cv.setLastUpdate(now);
+		cv.setId(Utils.getUUID());
+		CV cvDb = cvRepository.save(cv);
+		return cvDb;
+	}
+
+	public CV updateStudentCV(CV cv) throws EntityNotFoundException {
+		Date now = new Date();
+		CV cvDb = cvRepository.findOne(cv.getId());
+		if(cvDb == null) {
+			throw new EntityNotFoundException("entity not found");
+		}
+		cvDb.setStudentExperienceIds(cv.getStudentExperienceIds());
+		cvDb.setDrivingLicence(cv.getDrivingLicence());
+		cvDb.setManagementSkills(cv.getManagementSkills());
+		cvDb.setLastUpdate(now);
+		cvRepository.save(cvDb);
+		return cvDb;
+	}
+	
 
 }
