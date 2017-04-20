@@ -295,6 +295,8 @@ public class RepositoryManager {
 		if(Utils.isCertified(studentExperience.getExperience())) {
 			throw new StorageException("modify is not allowed");
 		}
+		certificate.setStorageId(Utils.getUUID());
+		certificate.setDocumentPresent(Boolean.FALSE);
 		studentExperience.setCertificate(certificate);
 		studentExperienceRepository.save(studentExperience);
 		return certificate;
@@ -586,6 +588,38 @@ public class RepositoryManager {
 		cvDb.setLastUpdate(now);
 		cvRepository.save(cvDb);
 		return cvDb;
+	}
+
+	public Certificate updateCertificateUri(String experienceId, String studentId, String documentUri, String contentType) 
+			throws EntityNotFoundException, StorageException {
+		StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
+		if(studentExperience == null) {
+			throw new EntityNotFoundException("entity not found");
+		}
+		if(studentExperience.getCertificate() == null) {
+			throw new StorageException("certificate does not exist");
+		}
+		studentExperience.getCertificate().setDocumentUri(documentUri);
+		studentExperience.getCertificate().setContentType(contentType);
+		studentExperience.getCertificate().setDocumentPresent(Boolean.TRUE);
+		studentExperienceRepository.save(studentExperience);
+		return studentExperience.getCertificate();
+	}
+
+	public Certificate removeCertificateUri(String experienceId, String studentId) 
+			throws EntityNotFoundException, StorageException {
+		StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
+		if(studentExperience == null) {
+			throw new EntityNotFoundException("entity not found");
+		}
+		if(studentExperience.getCertificate() == null) {
+			throw new StorageException("certificate does not exist");
+		}
+		studentExperience.getCertificate().setDocumentUri(null);
+		studentExperience.getCertificate().setContentType(null);
+		studentExperience.getCertificate().setDocumentPresent(Boolean.FALSE);
+		studentExperienceRepository.save(studentExperience);
+		return studentExperience.getCertificate();
 	}
 	
 

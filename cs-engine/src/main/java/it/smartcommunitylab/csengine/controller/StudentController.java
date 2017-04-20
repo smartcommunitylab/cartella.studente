@@ -13,6 +13,7 @@ import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentExperience;
+import it.smartcommunitylab.csengine.storage.DocumentManager;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
 import it.smartcommunitylab.csengine.ui.StudentExtended;
 import it.smartcommunitylab.csengine.ui.StudentRegistration;
@@ -50,8 +51,10 @@ public class StudentController {
 	
 	@Autowired
 	private RepositoryManager dataManager;
-
 	
+	@Autowired
+	private DocumentManager documentManager;
+
 	@RequestMapping(value = "/api/student/{studentId}", method = RequestMethod.GET)
 	public @ResponseBody Student getStudentById(@PathVariable String studentId,
 			HttpServletRequest request) throws Exception {
@@ -159,6 +162,9 @@ public class StudentController {
 		}
 		List<StudentExperience> result = dataManager.searchStudentExperience(studentId, expType, institutional, 
 				instituteId, schoolYear, certifierId, dateFrom, dateTo, text, pageable);
+		for(StudentExperience studentExperience : result) {
+			documentManager.setSignedUrl(studentExperience.getCertificate());
+		}
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getExperiencesByStudent[%s]: %s", "tenant", result.size()));
 		}
@@ -180,6 +186,9 @@ public class StudentController {
 		}
 		List<StudentExperience> studentExperienceList = dataManager.searchStudentExperience(studentId, null, Boolean.TRUE, 
 				instituteId, schoolYear, null, dateFrom, dateTo, text, pageable);
+		for(StudentExperience studentExperience : studentExperienceList) {
+			documentManager.setSignedUrl(studentExperience.getCertificate());
+		}
 		StudentExtended result = convertStudentExperience(studentExperienceList);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getExtendedExperiencesByInstitute[%s]: %s", "tenant", studentId));

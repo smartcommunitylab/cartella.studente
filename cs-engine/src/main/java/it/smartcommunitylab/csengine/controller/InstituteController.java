@@ -13,6 +13,7 @@ import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentExperience;
+import it.smartcommunitylab.csengine.storage.DocumentManager;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
 import it.smartcommunitylab.csengine.ui.ExperienceExtended;
 
@@ -49,6 +50,9 @@ public class InstituteController {
 	
 	@Autowired
 	private RepositoryManager dataManager;
+	
+	@Autowired
+	private DocumentManager documentManager;
 	
 	@RequestMapping(value = "/api/institute", method = RequestMethod.GET)
 	public @ResponseBody List<Institute> getInstitutes(HttpServletRequest request) throws Exception {
@@ -154,6 +158,9 @@ public class InstituteController {
 		}
 		List<StudentExperience> result = dataManager.searchStudentExperience(null, expType, true, 
 				instituteId, schoolYear, null, dateFrom, dateTo, text, pageable);
+		for(StudentExperience studentExperience : result) {
+			documentManager.setSignedUrl(studentExperience.getCertificate());
+		}
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getStudentExperienceByInstitute[%s]: %s", "tenant", result.size()));
 		}
@@ -169,6 +176,9 @@ public class InstituteController {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
 		List<StudentExperience> result = dataManager.searchStudentExperienceById(null, instituteId, experienceId);
+		for(StudentExperience studentExperience : result) {
+			documentManager.setSignedUrl(studentExperience.getCertificate());
+		}
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getStudentExperienceById[%s]: %s", "tenant", result.size()));
 		}
@@ -287,6 +297,7 @@ public class InstituteController {
 		List<StudentExperience> studentExperiences = dataManager.searchStudentExperience(null, expType, Boolean.TRUE, 
 				instituteId, schoolYear, null, dateFrom, dateTo, text, pageable);
 		for(StudentExperience studentExperience : studentExperiences) {
+			documentManager.setSignedUrl(studentExperience.getCertificate());
 			ExperienceExtended experienceExtended = extendedExpMap.get(studentExperience.getExperienceId());
 			if(experienceExtended == null) {
 				experienceExtended = new ExperienceExtended(studentExperience.getExperience());
