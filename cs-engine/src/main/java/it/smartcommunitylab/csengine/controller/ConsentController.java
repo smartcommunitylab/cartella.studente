@@ -83,7 +83,7 @@ public class ConsentController {
 		}
 		Consent result = dataManager.getConsentBySubject(subject);
 		if(logger.isInfoEnabled()) {
-			logger.info(String.format("getConsentBySubject[%s]: %s", "tenant", result.getId()));
+			logger.info(String.format("getConsentBySubject[%s]: %s", "tenant", subject));
 		}
 		return result;
 	}
@@ -96,7 +96,7 @@ public class ConsentController {
 		}
 		Consent result = dataManager.getConsentByStudent(studentId);
 		if(logger.isInfoEnabled()) {
-			logger.info(String.format("getConsentByStudent[%s]: %s", "tenant", result.getId()));
+			logger.info(String.format("getConsentByStudent[%s]: %s", "tenant", studentId));
 		}
 		return result;
 	}

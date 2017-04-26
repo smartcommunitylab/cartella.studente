@@ -508,19 +508,13 @@ public class RepositoryManager {
 		return consentDb;
 	}
 
-	public Consent getConsentBySubject(String subject) throws EntityNotFoundException {
+	public Consent getConsentBySubject(String subject) {
 		Consent consentDb = consentRepository.findBySubject(subject);
-		if(consentDb == null) {
-			throw new EntityNotFoundException("entity not found");
-		}
 		return consentDb;
 	}
 
-	public Consent getConsentByStudent(String studentId) throws EntityNotFoundException {
+	public Consent getConsentByStudent(String studentId) {
 		Consent consentDb = consentRepository.findByStudent(studentId);
-		if(consentDb == null) {
-			throw new EntityNotFoundException("entity not found");
-		}
 		return consentDb;
 	}
 
