@@ -4,6 +4,8 @@ public class CVRegistration {
 	private String dateFrom;
 	private String dateTo;
 	private String course;
+	private String teachingUnit;
+	private String instituteName;
 	
 	public String getDateFrom() {
 		return dateFrom;
@@ -22,5 +24,17 @@ public class CVRegistration {
 	}
 	public void setCourse(String course) {
 		this.course = course;
+	}
+	public String getTeachingUnit() {
+		return teachingUnit;
+	}
+	public void setTeachingUnit(String teachingUnit) {
+		this.teachingUnit = teachingUnit;
+	}
+	public String getInstituteName() {
+		return instituteName;
+	}
+	public void setInstituteName(String instituteName) {
+		this.instituteName = instituteName;
 	}
 }
