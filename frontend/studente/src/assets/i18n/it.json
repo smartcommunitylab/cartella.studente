@@ -1,5 +1,11 @@
 
 {
-"home_experiences_label": "Esperienze",
-  "home_training_label": "Training"
+"home_experiences_label": "Le mie esperience",
+  "home_training_label": "Percorso formativo",
+  "home_experiences_label":"Le mie esperience",
+  "home_stage_label":"Alternanza scuola-lavoro",
+  "home_activity_label":"Attivita`",
+  "home_events_label":"Eventi",
+  "home_cv_label":"Curriculum Vitae",
+  "home_certifications_label":"Certificazioni"
 }

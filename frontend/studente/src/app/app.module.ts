@@ -13,16 +13,26 @@ import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
 import { LoginPage } from '../pages/login/login';
 import { InstitutePage } from '../pages/institute/institute';
+import { ActivitiesPage } from '../pages/activities/activities';
+import { CertificationsPage } from '../pages/certifications/certifications';
+import { CurriculumPage } from '../pages/curriculum/curriculum';
+import { EventsPage } from '../pages/events/events';
+import { StagesPage } from '../pages/stages/stages';
 import { AppBar } from '../pages/components/app-bar.component';
 import {LoginService} from '../services/login.service';
 import {WebAPIConnectorService} from '../services/webAPIConnector.service';
 import {TrainingService} from '../services/training.service';
+import {UserService} from '../services/user.service';
 
 export const deepLinkConfig: DeepLinkConfig = {
       links: [
     { component: LoginPage, name: 'Login', segment: 'login' },
     { component: HomePage, name: 'Home', segment: 'home' },
-    { component: InstitutePage, name: 'Institute', segment: 'institute' }
+    { component: InstitutePage, name: 'Institute', segment: 'institute' },
+    { component: CertificationsPage, name: 'Certifications', segment: 'certifications' },
+    { component: CurriculumPage, name: 'Curriculum', segment: 'curriculum' },
+    { component: EventsPage, name: 'Events', segment: 'events' },
+    { component: StagesPage, name: 'Stage', segment: 'stage' }
   ]
     }
 function initConfig(config: ConfigService){
@@ -34,6 +44,11 @@ function initConfig(config: ConfigService){
     LoginPage,
     HomePage,
     InstitutePage,
+    CertificationsPage,
+    ActivitiesPage,
+    CurriculumPage,
+    EventsPage,
+    StagesPage,
     AppBar
   ],
   imports: [
@@ -51,7 +66,12 @@ function initConfig(config: ConfigService){
     MyApp,
     LoginPage,
     HomePage,
-    InstitutePage
+    InstitutePage,
+    CertificationsPage,
+    ActivitiesPage,
+    CurriculumPage,
+    EventsPage,
+    StagesPage
   ],
   providers: [
     StatusBar,
@@ -59,6 +79,7 @@ function initConfig(config: ConfigService){
     {provide: ErrorHandler, useClass: IonicErrorHandler},
     LoginService,
     ConfigService,
+    UserService,
     { provide: APP_INITIALIZER, useFactory: initConfig, deps: [ConfigService], multi: true },
 
     WebAPIConnectorService,

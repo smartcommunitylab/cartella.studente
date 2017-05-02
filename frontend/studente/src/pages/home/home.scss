@@ -3,10 +3,26 @@ page-home {
   float:left;
   display:inline-block;
   width: 50%;
+    .home-registration {
+    height: 50px;
+    margin: 5px;
+    padding: 10px;
+    }
+    .home-exams{
+    height: 50px;
+    margin: 5px;
+    padding: 10px;
+    }
 }
 .experiences-list {
   float:right;
   display:inline-block;
   width: 50%;
-}
-}
+  .home-experience{
+        height: 50px;
+    margin: 5px;
+    padding: 10px;
+    }
+  }
+  }
+
