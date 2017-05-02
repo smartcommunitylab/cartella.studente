@@ -3,7 +3,7 @@ package it.smartcommunitylab.csengine.model;
 public class Consent extends BaseObject {
 	private String studentId;
 	private String subject;
-	private Boolean authorized;
+	private Boolean authorized = Boolean.FALSE;
 	
 	public String getStudentId() {
 		return studentId;
