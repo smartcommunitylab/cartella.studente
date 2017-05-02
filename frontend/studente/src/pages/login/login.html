@@ -1,0 +1,19 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Login Page
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content padding>
+  <ion-grid>
+    <ion-row>
+      <ion-col col-4 *ngFor="let type of types">
+          <div><button [block]="true" ion-button (click)="login(type)">{{type.title}}</button>
+        </div>
+        <div>{{type.text}}</div>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+  <app-bar></app-bar>
+</ion-content>

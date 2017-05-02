@@ -1,0 +1,29 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      Home Page
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <div class="training-list">
+   <div>{{ 'home_training_label' | translate }}</div>
+    <ion-list>
+      <ion-card *ngFor="let registration of registrations" (click)="openRegistration(registration)">
+        <div>Nome:{{registration.institute.name}}
+          </div>
+      </ion-card>
+    </ion-list>
+  </div>
+  <div class="experiences-list">
+   <div>{{ 'home_experiences_label' | translate }}</div>
+    <ion-list>
+    <ion-item>I</ion-item>
+    <ion-item>am</ion-item>
+    <ion-item>a</ion-item>
+    <ion-item>list</ion-item>
+  </ion-list>
+    </div>
+  <app-bar></app-bar>
+</ion-content>
