@@ -49,7 +49,7 @@ public class CvTemplateTest {
 		student = new Student();
 		student.setName("Gino");
 		student.setSurname("Rivieccio");
-		student.setAddress("via le man dal cul 8, 38100 Trento");
+		student.setAddress("via del lavaman del sindec 8, 38100 Trento");
 		student.setMobilePhone("388.1234567");
 		student.setPhone("0461.123456");
 		student.setSex("M");
