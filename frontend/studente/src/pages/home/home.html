@@ -10,8 +10,12 @@
   <div class="training-list">
    <div>{{ 'home_training_label' | translate }}</div>
     <ion-list>
-      <ion-card *ngFor="let registration of registrations" (click)="openRegistration(registration)">
-        <div>Nome:{{registration.institute.name}}
+      <ion-card class="home-registration" *ngFor="let registration of registrations" (click)="openRegistration(registration)">
+        <div>{{registration.institute.name}}
+          </div>
+      </ion-card>
+            <ion-card class="home-exams" *ngFor="let exam of exams" (click)="openExam(exam)">
+        <div>{{exam.experience.attributes.titoloStudio}}
           </div>
       </ion-card>
     </ion-list>
@@ -19,10 +23,31 @@
   <div class="experiences-list">
    <div>{{ 'home_experiences_label' | translate }}</div>
     <ion-list>
-    <ion-item>I</ion-item>
-    <ion-item>am</ion-item>
-    <ion-item>a</ion-item>
-    <ion-item>list</ion-item>
+      <ion-card class="home-experience" (click)="openStages()">
+        <div>
+          {{ 'home_stage_label' | translate }}
+        </div>
+      </ion-card>
+            <ion-card class="home-experience" (click)="openActivities()">
+        <div>
+          {{ 'home_activity_label' | translate }}
+        </div>
+      </ion-card>
+            <ion-card class="home-experience" (click)="openEvents()">
+        <div>
+          {{ 'home_events_label' | translate }}
+        </div>
+      </ion-card>
+            <ion-card class="home-experience" (click)="openCV()">
+        <div>
+          {{ 'home_cv_label' | translate }}
+        </div>
+      </ion-card>
+            <ion-card class="home-experience" (click)="openCertifications()">
+        <div>
+          {{ 'home_certifications_label' | translate }}
+        </div>
+      </ion-card>
   </ion-list>
     </div>
   <app-bar></app-bar>

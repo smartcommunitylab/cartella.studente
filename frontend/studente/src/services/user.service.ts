@@ -9,13 +9,28 @@ export class UserService  {
   private registrations: Registration[]=[];
   constructor(private webAPIConnector: WebAPIConnectorService) {
 };
-  getUserExams() {
-    this.webAPIConnector.getExams().then(exams=>this.exams=exams);
-  }
-  getUserRegistrations() {
-        this.webAPIConnector.getRegistrations().then(registrations=>this.registrations=registrations);
+  getUserExams():Promise<Exam[]> {
+    return new Promise<Exam[]>((resolve, reject) => {
+      this.webAPIConnector.getExams('84f01dc1-694d-40eb-9296-01ca5014ef5d').then(exams=>{
+       this.exams=exams;
+      resolve(this.exams);
 
-  }
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })}
+  getUserRegistrations():Promise<Registration[]> {
+     return new Promise<Registration[]>((resolve, reject) => {
+      this.webAPIConnector.getRegistrations('84f01dc1-694d-40eb-9296-01ca5014ef5d').then(registrations=>{
+       this.registrations=registrations;
+        resolve(this.registrations)
+
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })}
   getUserTraining(){
     //get exams
     //get registrations
