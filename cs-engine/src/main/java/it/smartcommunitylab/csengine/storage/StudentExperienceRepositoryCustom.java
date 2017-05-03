@@ -14,6 +14,6 @@ public interface StudentExperienceRepositoryCustom {
 			String text, Pageable pageable);
 	
 	public List<StudentExperience> searchExperienceById(String studentId, String instituteId,
-			String experienceId);
+			String experienceId, Boolean institutional);
 	
 }

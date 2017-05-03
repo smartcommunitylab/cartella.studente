@@ -20,8 +20,9 @@ public class StudentExperienceRepositoryImpl implements StudentExperienceReposit
 
 	@Override
 	public List<StudentExperience> searchExperienceById(String studentId, String instituteId,
-			String experienceId) {
+			String experienceId, Boolean institutional) {
 		Criteria criteria = new Criteria("experienceId").is(experienceId);
+		criteria = criteria.and("experience.attributes." + Const.ATTR_INSTITUTIONAL).is(institutional);
 		if(Utils.isNotEmpty(studentId)) {
 			criteria = criteria.and("studentId").is(studentId);
 		}

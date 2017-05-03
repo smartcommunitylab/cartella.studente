@@ -10,4 +10,6 @@ public interface CertificationRequestRepository extends MongoRepository<Certific
 	
 	Page<CertificationRequest> findByCertifierId(String certifierId, Pageable pageable);
 	
+	Page<CertificationRequest> findByStudentId(String studentId, Pageable pageable);
+	
 }

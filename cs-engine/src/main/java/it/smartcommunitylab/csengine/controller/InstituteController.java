@@ -143,7 +143,8 @@ public class InstituteController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/api/institute/{instituteId}/year/{schoolYear}/studentexperience/{expType}", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/institute/{instituteId}/year/{schoolYear}/studentexperience/{expType}", 
+			method = RequestMethod.GET)
 	public @ResponseBody List<StudentExperience> getStudentExperienceByInstitute(
 			@PathVariable String instituteId,
 			@PathVariable String schoolYear,
@@ -167,7 +168,8 @@ public class InstituteController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/api/institute/{instituteId}/experience/{experienceId}", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/institute/{instituteId}/studentexperience/{experienceId}", 
+			method = RequestMethod.GET)
 	public @ResponseBody List<StudentExperience> getStudentExperienceById(
 			@PathVariable String instituteId,
 			@PathVariable String experienceId,
@@ -175,7 +177,7 @@ public class InstituteController {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		List<StudentExperience> result = dataManager.searchStudentExperienceById(null, instituteId, experienceId);
+		List<StudentExperience> result = dataManager.searchStudentExperienceById(null, instituteId, experienceId, true);
 		for(StudentExperience studentExperience : result) {
 			documentManager.setSignedUrl(studentExperience.getCertificate());
 		}
@@ -185,7 +187,8 @@ public class InstituteController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/api/institute/{instituteId}/year/{schoolYear}/experience/{expType}", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/institute/{instituteId}/year/{schoolYear}/experience/{expType}", 
+			method = RequestMethod.GET)
 	public @ResponseBody List<Experience> getExperienceByInstitute(
 			@PathVariable String instituteId,
 			@PathVariable String schoolYear,
@@ -245,7 +248,8 @@ public class InstituteController {
 		return result;
 	}	
 	
-	@RequestMapping(value = "/api/institute/{instituteId}/is/experience/{experienceId}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/api/institute/{instituteId}/is/experience/{experienceId}", 
+			method = RequestMethod.PUT)
 	public @ResponseBody Experience updateIsExperience(
 			@PathVariable String instituteId,
 			@PathVariable String experienceId,
@@ -264,7 +268,8 @@ public class InstituteController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/api/institute/{instituteId}/is/experience/{experienceId}/certify", method = RequestMethod.PUT)
+	@RequestMapping(value = "/api/institute/{instituteId}/is/experience/{experienceId}/certify", 
+			method = RequestMethod.PUT)
 	public @ResponseBody void certifyIsExperience(
 			@PathVariable String instituteId,
 			@PathVariable String experienceId,
@@ -279,7 +284,8 @@ public class InstituteController {
 		}
 	}
 
-	@RequestMapping(value = "/api/institute/{instituteId}/year/{schoolYear}/extendedexp/{expType}", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/institute/{instituteId}/year/{schoolYear}/extendedexp/{expType}", 
+			method = RequestMethod.GET)
 	public @ResponseBody List<ExperienceExtended> getExperienceExtendedByInstitute(
 			@PathVariable String instituteId,
 			@PathVariable String schoolYear,

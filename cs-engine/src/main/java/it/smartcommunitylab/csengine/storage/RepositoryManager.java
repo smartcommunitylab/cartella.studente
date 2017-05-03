@@ -115,9 +115,9 @@ public class RepositoryManager {
 	}
 	
 	public List<StudentExperience> searchStudentExperienceById(String studentId, String instituteId,
-			String experienceId) {
+			String experienceId, Boolean institutional) {
 		List<StudentExperience> result = studentExperienceRepository.searchExperienceById(studentId, instituteId, 
-				experienceId);
+				experienceId, institutional);
 		return result;
 	}
 	
@@ -161,7 +161,7 @@ public class RepositoryManager {
 			}
 			experienceDb.setAttributes(experience.getAttributes());
 			experienceRepository.save(experienceDb);
-			updateExperienceAttributes(experienceId, experience.getAttributes(), null);
+			updateExperienceAttributes(experienceId, experience.getAttributes());
 		} else {
 			throw new EntityNotFoundException("entity not found");
 		}
@@ -302,9 +302,8 @@ public class RepositoryManager {
 		return certificate;
 	}
 
-	public Experience certifyMyExperience(Certificate certificate, String certifierId) 
+	public Experience certifyMyExperience(String experienceId, String studentId, String certifierId) 
 			throws StorageException, EntityNotFoundException {
-		String experienceId = certificate.getExperienceId();
 		Experience experienceDb = experienceRepository.findOne(experienceId);
 		if(experienceDb != null) {
 			if(Utils.isCertified(experienceDb)) {
@@ -314,16 +313,23 @@ public class RepositoryManager {
 			if(Utils.isEmpty(refCertifierId) || refCertifierId.equals(certifierId)) {
 				throw new StorageException("ceritfier not allowed");
 			}
+			StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
+			if(studentExperience == null) {
+				throw new EntityNotFoundException("entity not found");
+			}
+			if(studentExperience.getCertificate() == null) {
+				throw new StorageException("certificate not present");
+			}
 			experienceDb.getAttributes().put(Const.ATTR_CERTIFIED, Boolean.TRUE);
 			experienceRepository.save(experienceDb);
-			updateExperienceAttributes(experienceId, experienceDb.getAttributes(), certificate);
+			updateExperienceAttributes(experienceId, experienceDb.getAttributes());
 		} else {
 			throw new EntityNotFoundException("entity not found");
 		}
 		return experienceDb;
 	}
 
-	public List<CertificationRequest> getCertificationRequest(String certifierId, Pageable pageable) {
+	public List<CertificationRequest> getCertificationRequestByCertifier(String certifierId, Pageable pageable) {
 		Page<CertificationRequest> page = certificationRequestRepository.findByCertifierId(certifierId, pageable);
 		List<CertificationRequest> requestList = page.getContent();
 		for(CertificationRequest request : requestList) {
@@ -338,6 +344,21 @@ public class RepositoryManager {
 		return requestList;
 	}
 
+	public List<CertificationRequest> getCertificationRequestByStudent(String studentId, Pageable pageable) {
+		Page<CertificationRequest> page = certificationRequestRepository.findByStudentId(studentId, pageable);
+		List<CertificationRequest> requestList = page.getContent();
+		for(CertificationRequest request : requestList) {
+			StudentExperience attendance = studentExperienceRepository.findByStudentAndExperience(
+					request.getStudentId(), request.getExperienceId());
+			if(attendance == null) {
+				continue;
+			}
+			request.setExperience(attendance.getExperience());
+			request.setStudent(attendance.getStudent());
+		}
+		return requestList;
+	}
+	
 	public CertificationRequest addCertificationRequest(CertificationRequest certificationRequest) 
 			throws StorageException {
 		certificationRequest.setId(Utils.getUUID());
@@ -382,7 +403,7 @@ public class RepositoryManager {
 			}
 			experienceDb.getAttributes().put(Const.ATTR_CERTIFIED, Boolean.TRUE);
 			experienceRepository.save(experienceDb);
-			updateExperienceAttributes(experienceId, experienceDb.getAttributes(), null);
+			updateExperienceAttributes(experienceId, experienceDb.getAttributes());
 			for(Certificate certificate : certificates) {
 				String studentId = certificate.getStudentId();
 				StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(
@@ -400,12 +421,9 @@ public class RepositoryManager {
 		}
 	}
 
-	private void updateExperienceAttributes(String experienceId, Map<String, Object> attributes, Certificate certificate) {
+	private void updateExperienceAttributes(String experienceId, Map<String, Object> attributes) {
 		Query query = new Query(Criteria.where("experienceId").is(experienceId));
 		Update update = new Update().set("experience.attributes", attributes);
-		if(certificate!= null) {
-			update.set("certificate", certificate);
-		}
 		mongoTemplate.upsert(query, update, StudentExperience.class);
 	}
 	
@@ -611,6 +629,5 @@ public class RepositoryManager {
 		studentExperienceRepository.save(studentExperience);
 		return studentExperience.getCertificate();
 	}
-	
 
 }
