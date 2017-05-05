@@ -10,10 +10,10 @@ import it.smartcommunitylab.csengine.model.CV;
 import it.smartcommunitylab.csengine.model.Certificate;
 import it.smartcommunitylab.csengine.model.CertificationRequest;
 import it.smartcommunitylab.csengine.model.Experience;
-import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentExperience;
+import it.smartcommunitylab.csengine.model.TeachingUnit;
 import it.smartcommunitylab.csengine.storage.DocumentManager;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
 import it.smartcommunitylab.csengine.ui.StudentExtended;
@@ -85,16 +85,16 @@ public class StudentController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/api/student/institute/{instituteId}/year/{schoolYear}", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/student/tu/{teachingUnitId}/year/{schoolYear}", method = RequestMethod.GET)
 	public @ResponseBody List<Student> getStudentsByInstitute(
-			@PathVariable String instituteId,
+			@PathVariable String teachingUnitId,
 			@PathVariable String schoolYear,
 			@ApiParam Pageable pageable,
 			HttpServletRequest request) throws Exception {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		List<Student> result = dataManager.searchStudentByInstitute(instituteId, schoolYear, pageable);
+		List<Student> result = dataManager.searchStudentByInstitute(teachingUnitId, schoolYear, pageable);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getStudentsByInstitute[%s]: %s", "tenant", result.size()));
 		}
@@ -119,14 +119,14 @@ public class StudentController {
 	@RequestMapping(value = "/api/student/experience/{experienceId}", method = RequestMethod.GET)
 	public @ResponseBody List<Student> getStudentsByExperience(
 			@PathVariable String experienceId,
-			@RequestParam(required=false) String instituteId,
+			@RequestParam(required=false) String teachingUnitId,
 			@RequestParam(required=false) String schoolYear,
 			@ApiParam Pageable pageable,
 			HttpServletRequest request) throws Exception {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		List<Student> result = dataManager.searchStudentByExperience(experienceId, instituteId, schoolYear, pageable);
+		List<Student> result = dataManager.searchStudentByExperience(experienceId, teachingUnitId, schoolYear, pageable);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getStudentsByCertifier[%s]: %s", "tenant", result.size()));
 		}
@@ -151,7 +151,7 @@ public class StudentController {
 			@PathVariable String studentId,
 			@PathVariable String expType,
 			@RequestParam(required=false) Boolean institutional,
-			@RequestParam(required=false) String instituteId,
+			@RequestParam(required=false) String teachingUnitId,
 			@RequestParam(required=false) String schoolYear,
 			@RequestParam(required=false) String certifierId,
 			@RequestParam(required=false) Long dateFrom,
@@ -163,7 +163,7 @@ public class StudentController {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
 		List<StudentExperience> result = dataManager.searchStudentExperience(studentId, expType, institutional, 
-				instituteId, schoolYear, certifierId, dateFrom, dateTo, text, pageable);
+				teachingUnitId, schoolYear, certifierId, dateFrom, dateTo, text, pageable);
 		for(StudentExperience studentExperience : result) {
 			documentManager.setSignedUrl(studentExperience.getCertificate());
 		}
@@ -174,9 +174,9 @@ public class StudentController {
 	}
 	
 	@RequestMapping(value = "/api/student/{studentId}/is/extendedexp/", method = RequestMethod.GET)
-	public @ResponseBody StudentExtended getExtendedExperiencesByInstitute(
+	public @ResponseBody StudentExtended getExtendedExperiencesByTeachingUnit(
 			@PathVariable String studentId,
-			@RequestParam String instituteId,
+			@RequestParam String teachingUnitId,
 			@RequestParam String schoolYear,
 			@RequestParam(required=false) Long dateFrom,
 			@RequestParam(required=false) Long dateTo,
@@ -187,13 +187,13 @@ public class StudentController {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
 		List<StudentExperience> studentExperienceList = dataManager.searchStudentExperience(studentId, null, Boolean.TRUE, 
-				instituteId, schoolYear, null, dateFrom, dateTo, text, pageable);
+				teachingUnitId, schoolYear, null, dateFrom, dateTo, text, pageable);
 		for(StudentExperience studentExperience : studentExperienceList) {
 			documentManager.setSignedUrl(studentExperience.getCertificate());
 		}
 		StudentExtended result = convertStudentExperience(studentExperienceList);
 		if(logger.isInfoEnabled()) {
-			logger.info(String.format("getExtendedExperiencesByInstitute[%s]: %s", "tenant", studentId));
+			logger.info(String.format("getExtendedExperiencesByTeachingUnit[%s]: %s", "tenant", studentId));
 		}
 		return result;		
 	}	
@@ -264,22 +264,22 @@ public class StudentController {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
 		//convert to StudentRegistration
-		Map<Institute, List<Registration>> registrationMap = new HashMap<Institute, List<Registration>>();
+		Map<TeachingUnit, List<Registration>> registrationMap = new HashMap<TeachingUnit, List<Registration>>();
 		List<Registration> registrations = dataManager.getRegistrationByStudent(studentId);
 		for(Registration registration : registrations) {
-			Institute institute = registration.getInstitute();
-			List<Registration> registrationList = registrationMap.get(institute);
+			TeachingUnit teachingUnit = registration.getTeachingUnit();
+			List<Registration> registrationList = registrationMap.get(teachingUnit);
 			if(registrationList == null) {
 				registrationList = new ArrayList<Registration>();
-				registrationMap.put(institute, registrationList);
+				registrationMap.put(teachingUnit, registrationList);
 			}
 			registrationList.add(registration);
 		}
 		List<StudentRegistration> result = new ArrayList<StudentRegistration>();
-		for(Institute institute : registrationMap.keySet()) {
+		for(TeachingUnit teachingUnit : registrationMap.keySet()) {
 			StudentRegistration studentRegistration = new StudentRegistration();
-			studentRegistration.setInstitute(institute);
-			studentRegistration.setRegistrations(registrationMap.get(institute));
+			studentRegistration.setTeachingUnit(teachingUnit);
+			studentRegistration.setRegistrations(registrationMap.get(teachingUnit));
 			result.add(studentRegistration);
 		}
 		if(logger.isInfoEnabled()) {

@@ -14,6 +14,7 @@ import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentExperience;
+import it.smartcommunitylab.csengine.model.TeachingUnit;
 
 import java.util.Date;
 import java.util.List;
@@ -36,6 +37,9 @@ public class RepositoryManager {
 	
 	@Autowired
 	private InstituteRepository instituteRepository;
+	
+	@Autowired
+	private TeachingUnitRepository teachingUnitRepository;  
 	
 	@Autowired
 	private ExperienceRepository experienceRepository;
@@ -101,31 +105,31 @@ public class RepositoryManager {
 		return result;
 	}
 
-	public List<Student> searchStudentByInstitute(String instituteId, String schoolYear, Pageable pageable) {
-		List<Student> result = studentRepository.findByInstitute(instituteId, schoolYear, pageable);
+	public List<Student> searchStudentByInstitute(String teachingUnitId, String schoolYear, Pageable pageable) {
+		List<Student> result = studentRepository.findByInstitute(teachingUnitId, schoolYear, pageable);
 		return result;
 	}
 
 	public List<StudentExperience> searchStudentExperience(String studentId, String expType, Boolean institutional, 
-			String instituteId,	String schoolYear, String certifierId, Long dateFrom, Long dateTo, 
+			String teachingUnitId, String schoolYear, String certifierId, Long dateFrom, Long dateTo, 
 			String text, Pageable pageable) {
 		List<StudentExperience> result = studentExperienceRepository.searchExperience(studentId, expType, institutional, 
-				instituteId,	schoolYear, certifierId, dateFrom, dateTo, text, pageable);
+				teachingUnitId,	schoolYear, certifierId, dateFrom, dateTo, text, pageable);
 		return result;
 	}
 	
-	public List<StudentExperience> searchStudentExperienceById(String studentId, String instituteId,
+	public List<StudentExperience> searchStudentExperienceById(String studentId, String teachingUnitId,
 			String experienceId, Boolean institutional) {
-		List<StudentExperience> result = studentExperienceRepository.searchExperienceById(studentId, instituteId, 
+		List<StudentExperience> result = studentExperienceRepository.searchExperienceById(studentId, teachingUnitId, 
 				experienceId, institutional);
 		return result;
 	}
 	
 	public List<Experience> searchExperience(String expType, Boolean institutional, 
-			String instituteId,	String schoolYear, String certifierId, Long dateFrom, Long dateTo, 
+			String teachingUnitId,	String schoolYear, String certifierId, Long dateFrom, Long dateTo, 
 			String text, Pageable pageable) {
 		List<Experience> result = experienceRepository.searchExperience(expType, institutional, 
-				instituteId, schoolYear, certifierId, dateFrom, dateTo, text, pageable);
+				teachingUnitId, schoolYear, certifierId, dateFrom, dateTo, text, pageable);
 		return result;
 	}
 
@@ -388,9 +392,9 @@ public class RepositoryManager {
 		return result;
 	}
 
-	public List<Student> searchStudentByExperience(String experienceId, String instituteId,
+	public List<Student> searchStudentByExperience(String experienceId, String teachingUnitId,
 			String schoolYear, Pageable pageable) {
-		List<Student> result = studentRepository.findByExperience(experienceId, instituteId, schoolYear, pageable);
+		List<Student> result = studentRepository.findByExperience(experienceId, teachingUnitId, schoolYear, pageable);
 		return result;
 	}
 
@@ -427,9 +431,9 @@ public class RepositoryManager {
 		mongoTemplate.upsert(query, update, StudentExperience.class);
 	}
 	
-	public List<Registration> searchRegistration(String studentId, String instituteId,
+	public List<Registration> searchRegistration(String studentId, String teachingUnitId,
 			String schoolYear, Long dateFrom, Long dateTo, Pageable pageable) {
-		List<Registration> result = registrationRepository.searchRegistration(studentId, instituteId, schoolYear, 
+		List<Registration> result = registrationRepository.searchRegistration(studentId, teachingUnitId, schoolYear, 
 				dateFrom, dateTo, pageable);
 		return result;
 	}
@@ -458,9 +462,9 @@ public class RepositoryManager {
 		registration.setLastUpdate(now);
 		registration.setId(Utils.getUUID());
 		String studentId = registration.getStudentId();
-		String instituteId = registration.getInstituteId();
+		String teachingUnitId = registration.getTeachingUnitId();
 		Student student = studentRepository.findOne(studentId);
-		Institute institute = instituteRepository.findOne(instituteId);
+		Institute institute = instituteRepository.findOne(teachingUnitId);
 		if((student == null) || (institute == null)) {
 			throw new StorageException("student or institute not found");
 		}
@@ -470,11 +474,16 @@ public class RepositoryManager {
 		return registrationDb;
 	}
 
-	public List<Course> getCourseByInstitute(String instituteId, String schoolYear) {
-		List<Course> result = courseRepository.findByInstitute(instituteId, schoolYear);
+	public List<Course> getCourseByInstitute(String teachingUnitId, String schoolYear) {
+		List<Course> result = courseRepository.findByInstitute(teachingUnitId, schoolYear);
 		return result;
 	}
 
+	public List<Course> getCourseByTeachingUnit(String teachingUnitId, String schoolYear) {
+		List<Course> result = courseRepository.findByTeachingUnit(teachingUnitId, schoolYear);
+		return result;
+	}
+	
 	public Consent addConsent(Consent consent) throws StorageException {
 		Consent consentDb = null;
 		if(Utils.isNotEmpty(consent.getSubject())) {
@@ -628,6 +637,16 @@ public class RepositoryManager {
 		studentExperience.getCertificate().setDocumentPresent(Boolean.FALSE);
 		studentExperienceRepository.save(studentExperience);
 		return studentExperience.getCertificate();
+	}
+
+	public List<TeachingUnit> getTeachingUnit() {
+		return teachingUnitRepository.findAll();
+	}
+
+	public List<Registration> getRegistrationByTeachingUnit(String teachingUnitId, String schoolYear) {
+		List<Registration> result = registrationRepository.searchRegistration(null, teachingUnitId, schoolYear, 
+				null, null, null);
+		return result;
 	}
 
 }

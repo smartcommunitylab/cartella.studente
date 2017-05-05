@@ -19,15 +19,15 @@ public class StudentExperienceRepositoryImpl implements StudentExperienceReposit
 	private MongoTemplate mongoTemplate;
 
 	@Override
-	public List<StudentExperience> searchExperienceById(String studentId, String instituteId,
+	public List<StudentExperience> searchExperienceById(String studentId, String teachingUnitId,
 			String experienceId, Boolean institutional) {
 		Criteria criteria = new Criteria("experienceId").is(experienceId);
 		criteria = criteria.and("experience.attributes." + Const.ATTR_INSTITUTIONAL).is(institutional);
 		if(Utils.isNotEmpty(studentId)) {
 			criteria = criteria.and("studentId").is(studentId);
 		}
-		if(Utils.isNotEmpty(instituteId)) {
-			criteria = criteria.and("experience.attributes." + Const.ATTR_INSTITUTEID).is(instituteId);
+		if(Utils.isNotEmpty(teachingUnitId)) {
+			criteria = criteria.and("experience.attributes." + Const.ATTR_TUID).is(teachingUnitId);
 		}
 		Query query = new Query(criteria);
 		List<StudentExperience> result = mongoTemplate.find(query, StudentExperience.class);
@@ -36,7 +36,7 @@ public class StudentExperienceRepositoryImpl implements StudentExperienceReposit
 
 	@Override
 	public List<StudentExperience> searchExperience(String studentId, String expType,
-			Boolean institutional, String instituteId, String schoolYear, String certifierId,
+			Boolean institutional, String teachingUnitId, String schoolYear, String certifierId,
 			Long dateFrom, Long dateTo, String text, Pageable pageable) {
 		Criteria criteria = new Criteria();
 		if(Utils.isNotEmpty(studentId)) {
@@ -48,8 +48,8 @@ public class StudentExperienceRepositoryImpl implements StudentExperienceReposit
 		if(institutional != null) {
 			criteria = criteria.and("experience.attributes." + Const.ATTR_INSTITUTIONAL).is(institutional);
 		}
-		if(Utils.isNotEmpty(instituteId)) {
-			criteria = criteria.and("experience.attributes." + Const.ATTR_INSTITUTEID).is(instituteId);
+		if(Utils.isNotEmpty(teachingUnitId)) {
+			criteria = criteria.and("experience.attributes." + Const.ATTR_TUID).is(teachingUnitId);
 		}
 		if(Utils.isNotEmpty(schoolYear)) {
 			criteria = criteria.and("experience.attributes." + Const.ATTR_SCHOOLYEAR).is(schoolYear);

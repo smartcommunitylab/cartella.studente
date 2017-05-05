@@ -108,7 +108,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 		mongoTemplate.indexOps(StudentExperience.class).ensureIndex(new Index().on("studentId", Direction.ASC));
 		mongoTemplate.indexOps(StudentExperience.class).ensureIndex(new Index().on("experienceId", Direction.ASC));
 		mongoTemplate.indexOps(StudentExperience.class).ensureIndex(new Index().on("experience.type", Direction.ASC));
-		mongoTemplate.indexOps(Registration.class).ensureIndex(new Index().on("instituteId", Direction.ASC));
+		mongoTemplate.indexOps(Registration.class).ensureIndex(new Index().on("teachingUnitId", Direction.ASC));
 		mongoTemplate.indexOps(Registration.class).ensureIndex(new Index().on("schoolYear", Direction.ASC));
 		mongoTemplate.indexOps(Institute.class).ensureIndex(new GeospatialIndex("geocode"));
 		TextIndexDefinition textIndex = new TextIndexDefinitionBuilder()

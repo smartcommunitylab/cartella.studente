@@ -8,7 +8,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface RegistrationRepositoryCustom {
 
-	public List<Registration> searchRegistration(String studentId, String instituteId,
+	public List<Registration> searchRegistration(String studentId, String teachingUnitId,
 			String schoolYear, Long dateFrom, Long dateTo, Pageable pageable);
 			
 }

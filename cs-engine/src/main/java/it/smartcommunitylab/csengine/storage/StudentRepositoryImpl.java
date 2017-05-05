@@ -22,8 +22,8 @@ public class StudentRepositoryImpl implements StudentRepositoryCustom {
 	private MongoTemplate mongoTemplate;
 
 	@Override
-	public List<Student> findByInstitute(String instituteId, String schoolYear, Pageable pageable) {
-		Criteria criteria = new Criteria("instituteId").is(instituteId).and("schoolYear").is(schoolYear);
+	public List<Student> findByInstitute(String teachingUnitId, String schoolYear, Pageable pageable) {
+		Criteria criteria = new Criteria("teachingUnitId").is(teachingUnitId).and("schoolYear").is(schoolYear);
 		Query query = new Query(criteria);
 		if(pageable != null) {
 			query = query.with(pageable);
@@ -46,12 +46,12 @@ public class StudentRepositoryImpl implements StudentRepositoryCustom {
 	}
 
 	@Override
-	public List<Student> findByExperience(String experienceId, String instituteId,
+	public List<Student> findByExperience(String experienceId, String teachingUnitId,
 			String schoolYear, Pageable pageable) {
 		Criteria criteria = Criteria.where("experienceId").is(experienceId);
-		if(Utils.isNotEmpty(instituteId)) {
+		if(Utils.isNotEmpty(teachingUnitId)) {
 			criteria = criteria.andOperator(new Criteria(
-					"experience.attributes." + Const.ATTR_INSTITUTEID).is(instituteId));
+					"experience.attributes." + Const.ATTR_TUID).is(teachingUnitId));
 		}
 		if(Utils.isNotEmpty(schoolYear)) {
 			criteria = criteria.andOperator(new Criteria(

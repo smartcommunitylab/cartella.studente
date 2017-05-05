@@ -10,10 +10,10 @@ import org.springframework.data.domain.Pageable;
 public interface StudentExperienceRepositoryCustom {
 	
 	public List<StudentExperience> searchExperience(String studentId, String expType, Boolean institutional, 
-			String instituteId,	String schoolYear, String certifierId, Long dateFrom, Long dateTo, 
+			String teachingUnitId,	String schoolYear, String certifierId, Long dateFrom, Long dateTo, 
 			String text, Pageable pageable);
 	
-	public List<StudentExperience> searchExperienceById(String studentId, String instituteId,
+	public List<StudentExperience> searchExperienceById(String studentId, String teachingUnitId,
 			String experienceId, Boolean institutional);
 	
 }

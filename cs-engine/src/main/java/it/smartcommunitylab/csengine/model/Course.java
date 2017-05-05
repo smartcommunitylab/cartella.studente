@@ -4,18 +4,13 @@ import java.util.Date;
 
 public class Course extends BaseObject {
 	private String instituteId;
+	private String teachingUnitId;
 	private String schoolYear;
 	private Date dateFrom;
 	private Date dateTo;
 	private String course;
 	private String teachingUnit;
 	
-	public String getInstituteId() {
-		return instituteId;
-	}
-	public void setInstituteId(String instituteId) {
-		this.instituteId = instituteId;
-	}
 	public String getSchoolYear() {
 		return schoolYear;
 	}
@@ -45,6 +40,18 @@ public class Course extends BaseObject {
 	}
 	public void setTeachingUnit(String teachingUnit) {
 		this.teachingUnit = teachingUnit;
+	}
+	public String getTeachingUnitId() {
+		return teachingUnitId;
+	}
+	public void setTeachingUnitId(String teachingUnitId) {
+		this.teachingUnitId = teachingUnitId;
+	}
+	public String getInstituteId() {
+		return instituteId;
+	}
+	public void setInstituteId(String instituteId) {
+		this.instituteId = instituteId;
 	}
 	
 

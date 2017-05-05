@@ -5,14 +5,15 @@ import java.util.Date;
 public class Registration extends BaseObject {
 	private String studentId;
 	private String instituteId;
+	private String teachingUnitId;
 	private String courseId;
 	private String schoolYear;
 	private Date dateFrom;
 	private Date dateTo;
 	private String course;
-	private String teachingUnit;
 	private String classroom;
 	private Institute institute;
+	private TeachingUnit teachingUnit;
 	private Student student; 
 	
 	public String getStudentId() {
@@ -69,16 +70,22 @@ public class Registration extends BaseObject {
 	public void setStudent(Student student) {
 		this.student = student;
 	}
-	public String getTeachingUnit() {
-		return teachingUnit;
-	}
-	public void setTeachingUnit(String teachingUnit) {
-		this.teachingUnit = teachingUnit;
-	}
 	public String getCourseId() {
 		return courseId;
 	}
 	public void setCourseId(String courseId) {
 		this.courseId = courseId;
+	}
+	public String getTeachingUnitId() {
+		return teachingUnitId;
+	}
+	public void setTeachingUnitId(String teachingUnitId) {
+		this.teachingUnitId = teachingUnitId;
+	}
+	public TeachingUnit getTeachingUnit() {
+		return teachingUnit;
+	}
+	public void setTeachingUnit(TeachingUnit teachingUnit) {
+		this.teachingUnit = teachingUnit;
 	}
 }
