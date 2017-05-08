@@ -16,7 +16,6 @@ import it.smartcommunitylab.csengine.model.StudentExperience;
 import it.smartcommunitylab.csengine.model.TeachingUnit;
 import it.smartcommunitylab.csengine.storage.DocumentManager;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
-import it.smartcommunitylab.csengine.ui.StudentExtended;
 import it.smartcommunitylab.csengine.ui.StudentRegistration;
 
 import java.util.ArrayList;
@@ -86,7 +85,7 @@ public class StudentController {
 	}
 	
 	@RequestMapping(value = "/api/student/tu/{teachingUnitId}/year/{schoolYear}", method = RequestMethod.GET)
-	public @ResponseBody List<Student> getStudentsByInstitute(
+	public @ResponseBody List<Student> getStudentsByTeachingUnit(
 			@PathVariable String teachingUnitId,
 			@PathVariable String schoolYear,
 			@ApiParam Pageable pageable,
@@ -96,7 +95,7 @@ public class StudentController {
 		}
 		List<Student> result = dataManager.searchStudentByInstitute(teachingUnitId, schoolYear, pageable);
 		if(logger.isInfoEnabled()) {
-			logger.info(String.format("getStudentsByInstitute[%s]: %s", "tenant", result.size()));
+			logger.info(String.format("getStudentsByTeachingUnit[%s]: %s", "tenant", result.size()));
 		}
 		return result;
 	}
@@ -151,6 +150,7 @@ public class StudentController {
 			@PathVariable String studentId,
 			@PathVariable String expType,
 			@RequestParam(required=false) Boolean institutional,
+			@RequestParam(required=false) String instituteId,
 			@RequestParam(required=false) String teachingUnitId,
 			@RequestParam(required=false) String schoolYear,
 			@RequestParam(required=false) String certifierId,
@@ -163,7 +163,7 @@ public class StudentController {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
 		List<StudentExperience> result = dataManager.searchStudentExperience(studentId, expType, institutional, 
-				teachingUnitId, schoolYear, certifierId, dateFrom, dateTo, text, pageable);
+				instituteId, teachingUnitId, schoolYear, certifierId, dateFrom, dateTo, text, pageable);
 		for(StudentExperience studentExperience : result) {
 			documentManager.setSignedUrl(studentExperience.getCertificate());
 		}
@@ -172,31 +172,6 @@ public class StudentController {
 		}
 		return result;		
 	}
-	
-	@RequestMapping(value = "/api/student/{studentId}/is/extendedexp/", method = RequestMethod.GET)
-	public @ResponseBody StudentExtended getExtendedExperiencesByTeachingUnit(
-			@PathVariable String studentId,
-			@RequestParam String teachingUnitId,
-			@RequestParam String schoolYear,
-			@RequestParam(required=false) Long dateFrom,
-			@RequestParam(required=false) Long dateTo,
-			@RequestParam(required=false) String text,
-			@ApiParam Pageable pageable,
-			HttpServletRequest request) throws Exception {
-		if (!Utils.validateAPIRequest(request, apiToken)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
-		}
-		List<StudentExperience> studentExperienceList = dataManager.searchStudentExperience(studentId, null, Boolean.TRUE, 
-				teachingUnitId, schoolYear, null, dateFrom, dateTo, text, pageable);
-		for(StudentExperience studentExperience : studentExperienceList) {
-			documentManager.setSignedUrl(studentExperience.getCertificate());
-		}
-		StudentExtended result = convertStudentExperience(studentExperienceList);
-		if(logger.isInfoEnabled()) {
-			logger.info(String.format("getExtendedExperiencesByTeachingUnit[%s]: %s", "tenant", studentId));
-		}
-		return result;		
-	}	
 	
 	@RequestMapping(value = "/api/student/{studentId}/my/experience", method = RequestMethod.POST)
 	public @ResponseBody Experience addMyExperience(
@@ -217,7 +192,6 @@ public class StudentController {
 		}
 		return result;
 	}
-	
 	
 	@RequestMapping(value = "/api/student/{studentId}/my/experience/{experienceId}", method = RequestMethod.PUT)
 	public @ResponseBody Experience updateMyExperience(
@@ -464,22 +438,7 @@ public class StudentController {
 		}
 		return result;		
 	}
-	
-	private StudentExtended convertStudentExperience(List<StudentExperience> studentExperienceList) {
-		StudentExtended result = new StudentExtended();
-		for(StudentExperience studentExperience : studentExperienceList) {
-			String expType = studentExperience.getExperience().getType();
-			List<StudentExperience> experienceList = result.getExperienceMap().get(expType);
-			if(experienceList == null) {
-				experienceList = new ArrayList<StudentExperience>();
-				result.getExperienceMap().put(expType, experienceList);
-			}
-			studentExperience.setStudent(null);
-			experienceList.add(studentExperience);
-		}
-		return result;
-	}
-	
+		
 	@ExceptionHandler({EntityNotFoundException.class, StorageException.class})
 	@ResponseStatus(value=HttpStatus.BAD_REQUEST)
 	@ResponseBody

@@ -111,25 +111,25 @@ public class RepositoryManager {
 	}
 
 	public List<StudentExperience> searchStudentExperience(String studentId, String expType, Boolean institutional, 
-			String teachingUnitId, String schoolYear, String certifierId, Long dateFrom, Long dateTo, 
+			String instituteId, String teachingUnitId, String schoolYear, String certifierId, Long dateFrom, Long dateTo, 
 			String text, Pageable pageable) {
 		List<StudentExperience> result = studentExperienceRepository.searchExperience(studentId, expType, institutional, 
-				teachingUnitId,	schoolYear, certifierId, dateFrom, dateTo, text, pageable);
+				instituteId, teachingUnitId,	schoolYear, certifierId, dateFrom, dateTo, text, pageable);
 		return result;
 	}
 	
-	public List<StudentExperience> searchStudentExperienceById(String studentId, String teachingUnitId,
-			String experienceId, Boolean institutional) {
-		List<StudentExperience> result = studentExperienceRepository.searchExperienceById(studentId, teachingUnitId, 
-				experienceId, institutional);
+	public List<StudentExperience> searchStudentExperienceById(String studentId, String instituteId,
+			String teachingUnitId, String experienceId, Boolean institutional) {
+		List<StudentExperience> result = studentExperienceRepository.searchExperienceById(studentId, instituteId,
+				teachingUnitId, experienceId, institutional);
 		return result;
 	}
 	
-	public List<Experience> searchExperience(String expType, Boolean institutional, 
+	public List<Experience> searchExperience(String expType, Boolean institutional, String instituteId, 
 			String teachingUnitId,	String schoolYear, String certifierId, Long dateFrom, Long dateTo, 
 			String text, Pageable pageable) {
 		List<Experience> result = experienceRepository.searchExperience(expType, institutional, 
-				teachingUnitId, schoolYear, certifierId, dateFrom, dateTo, text, pageable);
+				instituteId, teachingUnitId, schoolYear, certifierId, dateFrom, dateTo, text, pageable);
 		return result;
 	}
 
@@ -646,6 +646,22 @@ public class RepositoryManager {
 	public List<Registration> getRegistrationByTeachingUnit(String teachingUnitId, String schoolYear) {
 		List<Registration> result = registrationRepository.searchRegistration(null, teachingUnitId, schoolYear, 
 				null, null, null);
+		return result;
+	}
+
+	public TeachingUnit getTeachingUnitById(String teachingUnitId) throws EntityNotFoundException {
+		TeachingUnit result = teachingUnitRepository.findOne(teachingUnitId);
+		if(result == null) {
+			throw new EntityNotFoundException("entity not found");
+		}
+		return result;
+	}
+
+	public Experience getExperienceById(String experienceId) throws EntityNotFoundException {
+		Experience result = experienceRepository.findOne(experienceId);
+		if(result == null) {
+			throw new EntityNotFoundException("entity not found");
+		}
 		return result;
 	}
 

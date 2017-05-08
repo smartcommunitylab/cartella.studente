@@ -9,7 +9,7 @@ public class TeachingUnit extends BaseObject {
 	private String email;
 	private String pec;
 	private Double[] geocode;
-	private Institute institute;
+	private String instituteId;
 	
 	public String getName() {
 		return name;
@@ -59,11 +59,11 @@ public class TeachingUnit extends BaseObject {
 	public void setGeocode(Double[] geocode) {
 		this.geocode = geocode;
 	}
-	public Institute getInstitute() {
-		return institute;
+	public String getInstituteId() {
+		return instituteId;
 	}
-	public void setInstitute(Institute institute) {
-		this.institute = institute;
+	public void setInstituteId(String instituteId) {
+		this.instituteId = instituteId;
 	}
 	
 }

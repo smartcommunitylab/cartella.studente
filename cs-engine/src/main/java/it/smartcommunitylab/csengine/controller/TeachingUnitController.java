@@ -16,6 +16,7 @@ import it.smartcommunitylab.csengine.model.TeachingUnit;
 import it.smartcommunitylab.csengine.storage.DocumentManager;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
 import it.smartcommunitylab.csengine.ui.ExperienceExtended;
+import it.smartcommunitylab.csengine.ui.StudentExtended;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -132,7 +133,7 @@ public class TeachingUnitController {
 	
 	@RequestMapping(value = "/api/tu/{teachingUnitId}/year/{schoolYear}/studentexperience/{expType}", 
 			method = RequestMethod.GET)
-	public @ResponseBody List<StudentExperience> getStudentExperienceByInstitute(
+	public @ResponseBody List<StudentExperience> getStudentExperienceByTeachingUnit(
 			@PathVariable String teachingUnitId,
 			@PathVariable String schoolYear,
 			@PathVariable String expType,
@@ -144,13 +145,20 @@ public class TeachingUnitController {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		List<StudentExperience> result = dataManager.searchStudentExperience(null, expType, true, 
-				teachingUnitId, schoolYear, null, dateFrom, dateTo, text, pageable);
+		List<StudentExperience> result = new ArrayList<StudentExperience>();
+		if(expType.equals(Const.EXP_TYPE_EXAM)) {
+			TeachingUnit teachingUnit = dataManager.getTeachingUnitById(teachingUnitId);
+			result = dataManager.searchStudentExperience(null, expType, true, teachingUnit.getInstituteId(), 
+					null, schoolYear, null, dateFrom, dateTo, text, pageable);
+		} else {
+			result = dataManager.searchStudentExperience(null, expType, true, null,
+					teachingUnitId, schoolYear, null, dateFrom, dateTo, text, pageable);
+		}
 		for(StudentExperience studentExperience : result) {
 			documentManager.setSignedUrl(studentExperience.getCertificate());
 		}
 		if(logger.isInfoEnabled()) {
-			logger.info(String.format("getStudentExperienceByInstitute[%s]: %s", "tenant", result.size()));
+			logger.info(String.format("getStudentExperienceByTeachingUnit[%s]: %s", "tenant", result.size()));
 		}
 		return result;
 	}
@@ -164,7 +172,15 @@ public class TeachingUnitController {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		List<StudentExperience> result = dataManager.searchStudentExperienceById(null, teachingUnitId, experienceId, true);
+		List<StudentExperience> result = new ArrayList<StudentExperience>();
+		Experience experience = dataManager.getExperienceById(experienceId);
+		if(experience.getType().equals(Const.EXP_TYPE_EXAM)) {
+			TeachingUnit teachingUnit = dataManager.getTeachingUnitById(teachingUnitId);
+			result = dataManager.searchStudentExperienceById(null, teachingUnit.getInstituteId(), 
+					null, experienceId, true);
+		} else {
+			result = dataManager.searchStudentExperienceById(null, null, teachingUnitId, experienceId, true);
+		}
 		for(StudentExperience studentExperience : result) {
 			documentManager.setSignedUrl(studentExperience.getCertificate());
 		}
@@ -188,8 +204,15 @@ public class TeachingUnitController {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		List<Experience> result = dataManager.searchExperience(expType, true, 
-				teachingUnitId, schoolYear, null, dateFrom, dateTo, text, pageable);
+		List<Experience> result = new ArrayList<Experience>();
+		if(expType.equals(Const.EXP_TYPE_EXAM)) {
+			TeachingUnit teachingUnit = dataManager.getTeachingUnitById(teachingUnitId);
+			result = dataManager.searchExperience(expType, true, teachingUnit.getInstituteId(), 
+					null, schoolYear, null, dateFrom, dateTo, text, pageable);
+		} else {
+			result = dataManager.searchExperience(expType, true, null,
+					teachingUnitId, schoolYear, null, dateFrom, dateTo, text, pageable);
+		}
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getExperienceByTeachingUnit[%s]: %s", "tenant", result.size()));
 		}
@@ -287,11 +310,9 @@ public class TeachingUnitController {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
 		List<ExperienceExtended> result = new ArrayList<ExperienceExtended>();
-		List<Registration> registrations = dataManager.getRegistrationByTeachingUnit(teachingUnitId, schoolYear);
-		//TODO get list of studentId and filter StudentExperience by student ids
 		Map<String, ExperienceExtended> extendedExpMap = new HashMap<String, ExperienceExtended>();
 		List<StudentExperience> studentExperiences = dataManager.searchStudentExperience(null, expType, Boolean.TRUE, 
-				teachingUnitId, schoolYear, null, dateFrom, dateTo, text, pageable);
+				null, teachingUnitId, schoolYear, null, dateFrom, dateTo, text, pageable);
 		for(StudentExperience studentExperience : studentExperiences) {
 			documentManager.setSignedUrl(studentExperience.getCertificate());
 			ExperienceExtended experienceExtended = extendedExpMap.get(studentExperience.getExperienceId());
@@ -304,6 +325,48 @@ public class TeachingUnitController {
 		}
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getExperienceExtendedByTeachingUnit[%s]: %s", "tenant", result.size()));
+		}
+		return result;
+	}
+	
+	@RequestMapping(value = "/api/tu/{teachingUnitId}/year/{schoolYear}/student/{studentId}/extendedexp", 
+			method = RequestMethod.GET)
+	public @ResponseBody StudentExtended getExtendedExperiencesByTeachingUnit(
+			@PathVariable String teachingUnitId,
+			@PathVariable String schoolYear,
+			@PathVariable String studentId,
+			@RequestParam(required=false) Long dateFrom,
+			@RequestParam(required=false) Long dateTo,
+			@RequestParam(required=false) String text,
+			@ApiParam Pageable pageable,
+			HttpServletRequest request) throws Exception {
+		if (!Utils.validateAPIRequest(request, apiToken)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+		}
+		TeachingUnit teachingUnit = dataManager.getTeachingUnitById(teachingUnitId);
+		List<StudentExperience> studentExperienceList = dataManager.searchStudentExperience(studentId, null, 
+				Boolean.TRUE, teachingUnit.getInstituteId(), null, schoolYear, null, dateFrom, dateTo, text, pageable);
+		for(StudentExperience studentExperience : studentExperienceList) {
+			documentManager.setSignedUrl(studentExperience.getCertificate());
+		}
+		StudentExtended result = convertStudentExperience(studentExperienceList);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("getExtendedExperiencesByTeachingUnit[%s]: %s", "tenant", studentId));
+		}
+		return result;		
+	}	
+	
+	private StudentExtended convertStudentExperience(List<StudentExperience> studentExperienceList) {
+		StudentExtended result = new StudentExtended();
+		for(StudentExperience studentExperience : studentExperienceList) {
+			String expType = studentExperience.getExperience().getType();
+			List<StudentExperience> experienceList = result.getExperienceMap().get(expType);
+			if(experienceList == null) {
+				experienceList = new ArrayList<StudentExperience>();
+				result.getExperienceMap().put(expType, experienceList);
+			}
+			studentExperience.setStudent(null);
+			experienceList.add(studentExperience);
 		}
 		return result;
 	}
