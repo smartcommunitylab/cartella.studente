@@ -8,6 +8,7 @@ import java.io.Reader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -134,6 +135,13 @@ public class Utils {
 			}
 		}
 		return result;
+	}
+	
+	public static <T> Collection<T> getNullableClause(T param) {
+		Collection<T> coll = new ArrayList<T>();
+		coll.add(param);
+		coll.add(null);
+		return coll;
 	}
 	
 }

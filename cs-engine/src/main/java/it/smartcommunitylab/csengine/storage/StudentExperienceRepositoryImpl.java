@@ -4,6 +4,7 @@ import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.model.StudentExperience;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -22,15 +23,19 @@ public class StudentExperienceRepositoryImpl implements StudentExperienceReposit
 	public List<StudentExperience> searchExperienceById(String studentId, String instituteId,
 			String teachingUnitId, String experienceId, Boolean institutional) {
 		Criteria criteria = new Criteria("experienceId").is(experienceId);
-		criteria = criteria.and("experience.attributes." + Const.ATTR_INSTITUTIONAL).is(institutional);
+		if(institutional != null) {
+			criteria = criteria.and("experience.attributes." + Const.ATTR_INSTITUTIONAL).is(institutional);
+		}
 		if(Utils.isNotEmpty(studentId)) {
 			criteria = criteria.and("studentId").is(studentId);
 		}
 		if(Utils.isNotEmpty(instituteId)) {
-			criteria = criteria.and("experience.attributes." + Const.ATTR_INSTITUTEID).is(instituteId);
+			Collection<Object> coll = Utils.getNullableClause(instituteId);
+			criteria = criteria.and("experience.attributes." + Const.ATTR_INSTITUTEID).in(coll);
 		}
 		if(Utils.isNotEmpty(teachingUnitId)) {
-			criteria = criteria.and("experience.attributes." + Const.ATTR_TUID).is(teachingUnitId);
+			Collection<Object> coll = Utils.getNullableClause(teachingUnitId);
+			criteria = criteria.and("experience.attributes." + Const.ATTR_TUID).in(coll);
 		}
 		Query query = new Query(criteria);
 		List<StudentExperience> result = mongoTemplate.find(query, StudentExperience.class);
@@ -52,13 +57,16 @@ public class StudentExperienceRepositoryImpl implements StudentExperienceReposit
 			criteria = criteria.and("experience.attributes." + Const.ATTR_INSTITUTIONAL).is(institutional);
 		}
 		if(Utils.isNotEmpty(instituteId)) {
-			criteria = criteria.and("experience.attributes." + Const.ATTR_INSTITUTEID).is(instituteId);
+			Collection<Object> coll = Utils.getNullableClause(instituteId);
+			criteria = criteria.and("experience.attributes." + Const.ATTR_INSTITUTEID).in(coll);
 		}
 		if(Utils.isNotEmpty(teachingUnitId)) {
-			criteria = criteria.and("experience.attributes." + Const.ATTR_TUID).is(teachingUnitId);
+			Collection<Object> coll = Utils.getNullableClause(teachingUnitId);
+			criteria = criteria.and("experience.attributes." + Const.ATTR_TUID).in(coll);
 		}
 		if(Utils.isNotEmpty(schoolYear)) {
-			criteria = criteria.and("experience.attributes." + Const.ATTR_SCHOOLYEAR).is(schoolYear);
+			Collection<Object> coll = Utils.getNullableClause(schoolYear);
+			criteria = criteria.and("experience.attributes." + Const.ATTR_SCHOOLYEAR).in(coll);
 		}
 		if(Utils.isNotEmpty(certifierId)) {
 			criteria = criteria.and("experience.attributes." + Const.ATTR_CERTIFIERID).is(certifierId);
