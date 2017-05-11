@@ -169,7 +169,7 @@ public class RepositoryManager {
 		} else {
 			throw new EntityNotFoundException("entity not found");
 		}
-		return null;
+		return experienceDb;
 	}
 	
 	public Experience addIsExperience(List<String> studentIds, Experience experience) {
