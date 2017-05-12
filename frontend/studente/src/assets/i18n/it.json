@@ -7,5 +7,24 @@
   "home_activity_label":"Attivita`",
   "home_events_label":"Eventi",
   "home_cv_label":"Curriculum Vitae",
-  "home_certifications_label":"Certificazioni"
+  "home_certifications_label":"Certificazioni",
+  "stage_order_label":"Ordina",
+  "stage_filter_placeholder":"Cerca per nome",
+  "stage_add_new_button":"Aggiungi nuovo stage",
+  "addStage_title_label":"Titolo:",
+  "addStage_period_label":"Periodo:",
+  "addStage_company_label":"Azienda:",
+  "addStage_address_label":"Indirizzo azienda:",
+  "addStage_tutor_label":"Tutor aziendale:",
+  "addStage_description_label":"Descrizione:",
+  "addStage_certificate_label":"Certificato:",
+  "addStage_description_label":"Descrizione:",
+  "addStage_title_placeholder":"Aggiungi il titolo dello stage",
+  "addStage_date_from_placeholder":"Seleziona la data di inizio dello stage",
+  "addStage_date_to_placeholder":"Seleziona la data di fine dello stage",
+  "addStage_company_placeholder":"Seleziona l'azienda dello stage",
+  "addStage_address_placeholder":"Seleziona l'indirizzo dello stage",
+  "addStage_tutor_placeholder":"Seleziona il tutor dello stage",
+  "addStage_description_placeholder":"Aggiungi una descrizione dello stage"
+
 }

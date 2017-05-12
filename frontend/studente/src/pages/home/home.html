@@ -11,7 +11,7 @@
    <div>{{ 'home_training_label' | translate }}</div>
     <ion-list>
       <ion-card class="home-registration" *ngFor="let registration of registrations" (click)="openRegistration(registration)">
-        <div>{{registration.institute.name}}
+        <div>{{registration.teachingUnit.name}}
           </div>
       </ion-card>
             <ion-card class="home-exams" *ngFor="let exam of exams" (click)="openExam(exam)">
