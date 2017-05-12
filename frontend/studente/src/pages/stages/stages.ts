@@ -10,13 +10,21 @@ import { AddStagePage } from '../addStage/addStage';
 })
 export class StagesPage  {
   stages:ExperienceContainer[]=[];
-  order="a";
+  order=true;
+icon="ios-arrow-down";
   showDetails:boolean=false;
   constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService,public loading: LoadingController){
   }
 
   toggleDetails():void {
     this.showDetails=!this.showDetails;
+    if (this.showDetails)
+      {
+        this.icon="ios-arrow-up"
+      }
+    else {
+        this.icon="ios-arrow-down"
+      }
   }
   addNewStage(): void {
     this.navCtrl.push(AddStagePage);

@@ -17,8 +17,11 @@ export class AddStagePage implements OnInit {
   constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService){
   }
   ngOnInit():void {
-      this.experienceContaniner=JSON.parse(this.params.get('stage'));
-      this.stage = this.experienceContaniner.attributes as Stage;
+      let stage = this.params.get('stage');
+      if (stage!=null){
+        this.experienceContaniner=JSON.parse(this.params.get('stage'));
+        this.stage = this.experienceContaniner.attributes as Stage;
+      }
   }
   addStage(): void {
         //TO DO certification
