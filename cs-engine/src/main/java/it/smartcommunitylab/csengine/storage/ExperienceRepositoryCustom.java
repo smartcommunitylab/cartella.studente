@@ -9,8 +9,8 @@ import org.springframework.data.domain.Pageable;
 
 public interface ExperienceRepositoryCustom {
 	
-	List<Experience> searchExperience(String expType, Boolean institutional,
-			String instituteId, String schoolYear, String certifierId, Long dateFrom, Long dateTo,
+	List<Experience> searchExperience(String expType, Boolean institutional, String instituteId,
+			String teachingUnitId, String schoolYear, String certifierId, Long dateFrom, Long dateTo,
 			String text, Pageable pageable);
 	
 }

@@ -18,9 +18,9 @@ public class RegistrationRepositoryImpl implements RegistrationRepositoryCustom 
 	private MongoTemplate mongoTemplate;
 
 	@Override
-	public List<Registration> searchRegistration(String studentId, String instituteId,
+	public List<Registration> searchRegistration(String studentId, String teachingUnitId,
 			String schoolYear, Long dateFrom, Long dateTo, Pageable pageable) {
-		Criteria criteria = new Criteria("instituteId").is(instituteId).and("schoolYear").is(schoolYear);
+		Criteria criteria = new Criteria("teachingUnitId").is(teachingUnitId).and("schoolYear").is(schoolYear);
 		if(Utils.isNotEmpty(studentId)) {
 			criteria = criteria.and("studentId").is(studentId);
 		}
@@ -30,7 +30,10 @@ public class RegistrationRepositoryImpl implements RegistrationRepositoryCustom 
 		if(dateTo != null) {
 			criteria = criteria.and("dateFrom").lte(new Date(dateTo));
 		}
-		Query query = new Query(criteria).with(pageable);
+		Query query = new Query(criteria);
+		if(pageable != null) {
+			query = query.with(pageable);
+		}
 		List<Registration> result = mongoTemplate.find(query, Registration.class);
 		return result;
 	}

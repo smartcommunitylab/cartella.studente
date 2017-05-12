@@ -14,6 +14,7 @@ import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentExperience;
+import it.smartcommunitylab.csengine.model.TeachingUnit;
 
 import java.util.Date;
 import java.util.List;
@@ -36,6 +37,9 @@ public class RepositoryManager {
 	
 	@Autowired
 	private InstituteRepository instituteRepository;
+	
+	@Autowired
+	private TeachingUnitRepository teachingUnitRepository;  
 	
 	@Autowired
 	private ExperienceRepository experienceRepository;
@@ -101,31 +105,31 @@ public class RepositoryManager {
 		return result;
 	}
 
-	public List<Student> searchStudentByInstitute(String instituteId, String schoolYear, Pageable pageable) {
-		List<Student> result = studentRepository.findByInstitute(instituteId, schoolYear, pageable);
+	public List<Student> searchStudentByInstitute(String teachingUnitId, String schoolYear, Pageable pageable) {
+		List<Student> result = studentRepository.findByInstitute(teachingUnitId, schoolYear, pageable);
 		return result;
 	}
 
 	public List<StudentExperience> searchStudentExperience(String studentId, String expType, Boolean institutional, 
-			String instituteId,	String schoolYear, String certifierId, Long dateFrom, Long dateTo, 
+			String instituteId, String teachingUnitId, String schoolYear, String certifierId, Long dateFrom, Long dateTo, 
 			String text, Pageable pageable) {
 		List<StudentExperience> result = studentExperienceRepository.searchExperience(studentId, expType, institutional, 
-				instituteId,	schoolYear, certifierId, dateFrom, dateTo, text, pageable);
+				instituteId, teachingUnitId,	schoolYear, certifierId, dateFrom, dateTo, text, pageable);
 		return result;
 	}
 	
 	public List<StudentExperience> searchStudentExperienceById(String studentId, String instituteId,
-			String experienceId) {
-		List<StudentExperience> result = studentExperienceRepository.searchExperienceById(studentId, instituteId, 
-				experienceId);
+			String teachingUnitId, String experienceId, Boolean institutional) {
+		List<StudentExperience> result = studentExperienceRepository.searchExperienceById(studentId, instituteId,
+				teachingUnitId, experienceId, institutional);
 		return result;
 	}
 	
-	public List<Experience> searchExperience(String expType, Boolean institutional, 
-			String instituteId,	String schoolYear, String certifierId, Long dateFrom, Long dateTo, 
+	public List<Experience> searchExperience(String expType, Boolean institutional, String instituteId, 
+			String teachingUnitId,	String schoolYear, String certifierId, Long dateFrom, Long dateTo, 
 			String text, Pageable pageable) {
 		List<Experience> result = experienceRepository.searchExperience(expType, institutional, 
-				instituteId, schoolYear, certifierId, dateFrom, dateTo, text, pageable);
+				instituteId, teachingUnitId, schoolYear, certifierId, dateFrom, dateTo, text, pageable);
 		return result;
 	}
 
@@ -161,11 +165,11 @@ public class RepositoryManager {
 			}
 			experienceDb.setAttributes(experience.getAttributes());
 			experienceRepository.save(experienceDb);
-			updateExperienceAttributes(experienceId, experience.getAttributes(), null);
+			updateExperienceAttributes(experienceId, experience.getAttributes());
 		} else {
 			throw new EntityNotFoundException("entity not found");
 		}
-		return null;
+		return experienceDb;
 	}
 	
 	public Experience addIsExperience(List<String> studentIds, Experience experience) {
@@ -302,9 +306,8 @@ public class RepositoryManager {
 		return certificate;
 	}
 
-	public Experience certifyMyExperience(Certificate certificate, String certifierId) 
+	public Experience certifyMyExperience(String experienceId, String studentId, String certifierId) 
 			throws StorageException, EntityNotFoundException {
-		String experienceId = certificate.getExperienceId();
 		Experience experienceDb = experienceRepository.findOne(experienceId);
 		if(experienceDb != null) {
 			if(Utils.isCertified(experienceDb)) {
@@ -314,16 +317,23 @@ public class RepositoryManager {
 			if(Utils.isEmpty(refCertifierId) || refCertifierId.equals(certifierId)) {
 				throw new StorageException("ceritfier not allowed");
 			}
+			StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
+			if(studentExperience == null) {
+				throw new EntityNotFoundException("entity not found");
+			}
+			if(studentExperience.getCertificate() == null) {
+				throw new StorageException("certificate not present");
+			}
 			experienceDb.getAttributes().put(Const.ATTR_CERTIFIED, Boolean.TRUE);
 			experienceRepository.save(experienceDb);
-			updateExperienceAttributes(experienceId, experienceDb.getAttributes(), certificate);
+			updateExperienceAttributes(experienceId, experienceDb.getAttributes());
 		} else {
 			throw new EntityNotFoundException("entity not found");
 		}
 		return experienceDb;
 	}
 
-	public List<CertificationRequest> getCertificationRequest(String certifierId, Pageable pageable) {
+	public List<CertificationRequest> getCertificationRequestByCertifier(String certifierId, Pageable pageable) {
 		Page<CertificationRequest> page = certificationRequestRepository.findByCertifierId(certifierId, pageable);
 		List<CertificationRequest> requestList = page.getContent();
 		for(CertificationRequest request : requestList) {
@@ -338,6 +348,21 @@ public class RepositoryManager {
 		return requestList;
 	}
 
+	public List<CertificationRequest> getCertificationRequestByStudent(String studentId, Pageable pageable) {
+		Page<CertificationRequest> page = certificationRequestRepository.findByStudentId(studentId, pageable);
+		List<CertificationRequest> requestList = page.getContent();
+		for(CertificationRequest request : requestList) {
+			StudentExperience attendance = studentExperienceRepository.findByStudentAndExperience(
+					request.getStudentId(), request.getExperienceId());
+			if(attendance == null) {
+				continue;
+			}
+			request.setExperience(attendance.getExperience());
+			request.setStudent(attendance.getStudent());
+		}
+		return requestList;
+	}
+	
 	public CertificationRequest addCertificationRequest(CertificationRequest certificationRequest) 
 			throws StorageException {
 		certificationRequest.setId(Utils.getUUID());
@@ -367,9 +392,9 @@ public class RepositoryManager {
 		return result;
 	}
 
-	public List<Student> searchStudentByExperience(String experienceId, String instituteId,
+	public List<Student> searchStudentByExperience(String experienceId, String teachingUnitId,
 			String schoolYear, Pageable pageable) {
-		List<Student> result = studentRepository.findByExperience(experienceId, instituteId, schoolYear, pageable);
+		List<Student> result = studentRepository.findByExperience(experienceId, teachingUnitId, schoolYear, pageable);
 		return result;
 	}
 
@@ -382,7 +407,7 @@ public class RepositoryManager {
 			}
 			experienceDb.getAttributes().put(Const.ATTR_CERTIFIED, Boolean.TRUE);
 			experienceRepository.save(experienceDb);
-			updateExperienceAttributes(experienceId, experienceDb.getAttributes(), null);
+			updateExperienceAttributes(experienceId, experienceDb.getAttributes());
 			for(Certificate certificate : certificates) {
 				String studentId = certificate.getStudentId();
 				StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(
@@ -400,18 +425,15 @@ public class RepositoryManager {
 		}
 	}
 
-	private void updateExperienceAttributes(String experienceId, Map<String, Object> attributes, Certificate certificate) {
+	private void updateExperienceAttributes(String experienceId, Map<String, Object> attributes) {
 		Query query = new Query(Criteria.where("experienceId").is(experienceId));
 		Update update = new Update().set("experience.attributes", attributes);
-		if(certificate!= null) {
-			update.set("certificate", certificate);
-		}
 		mongoTemplate.upsert(query, update, StudentExperience.class);
 	}
 	
-	public List<Registration> searchRegistration(String studentId, String instituteId,
+	public List<Registration> searchRegistration(String studentId, String teachingUnitId,
 			String schoolYear, Long dateFrom, Long dateTo, Pageable pageable) {
-		List<Registration> result = registrationRepository.searchRegistration(studentId, instituteId, schoolYear, 
+		List<Registration> result = registrationRepository.searchRegistration(studentId, teachingUnitId, schoolYear, 
 				dateFrom, dateTo, pageable);
 		return result;
 	}
@@ -440,9 +462,9 @@ public class RepositoryManager {
 		registration.setLastUpdate(now);
 		registration.setId(Utils.getUUID());
 		String studentId = registration.getStudentId();
-		String instituteId = registration.getInstituteId();
+		String teachingUnitId = registration.getTeachingUnitId();
 		Student student = studentRepository.findOne(studentId);
-		Institute institute = instituteRepository.findOne(instituteId);
+		Institute institute = instituteRepository.findOne(teachingUnitId);
 		if((student == null) || (institute == null)) {
 			throw new StorageException("student or institute not found");
 		}
@@ -452,11 +474,16 @@ public class RepositoryManager {
 		return registrationDb;
 	}
 
-	public List<Course> getCourseByInstitute(String instituteId, String schoolYear) {
-		List<Course> result = courseRepository.findByInstitute(instituteId, schoolYear);
+	public List<Course> getCourseByInstitute(String teachingUnitId, String schoolYear) {
+		List<Course> result = courseRepository.findByInstitute(teachingUnitId, schoolYear);
 		return result;
 	}
 
+	public List<Course> getCourseByTeachingUnit(String teachingUnitId, String schoolYear) {
+		List<Course> result = courseRepository.findByTeachingUnit(teachingUnitId, schoolYear);
+		return result;
+	}
+	
 	public Consent addConsent(Consent consent) throws StorageException {
 		Consent consentDb = null;
 		if(Utils.isNotEmpty(consent.getSubject())) {
@@ -611,6 +638,31 @@ public class RepositoryManager {
 		studentExperienceRepository.save(studentExperience);
 		return studentExperience.getCertificate();
 	}
-	
+
+	public List<TeachingUnit> getTeachingUnit() {
+		return teachingUnitRepository.findAll();
+	}
+
+	public List<Registration> getRegistrationByTeachingUnit(String teachingUnitId, String schoolYear) {
+		List<Registration> result = registrationRepository.searchRegistration(null, teachingUnitId, schoolYear, 
+				null, null, null);
+		return result;
+	}
+
+	public TeachingUnit getTeachingUnitById(String teachingUnitId) throws EntityNotFoundException {
+		TeachingUnit result = teachingUnitRepository.findOne(teachingUnitId);
+		if(result == null) {
+			throw new EntityNotFoundException("entity not found");
+		}
+		return result;
+	}
+
+	public Experience getExperienceById(String experienceId) throws EntityNotFoundException {
+		Experience result = experienceRepository.findOne(experienceId);
+		if(result == null) {
+			throw new EntityNotFoundException("entity not found");
+		}
+		return result;
+	}
 
 }

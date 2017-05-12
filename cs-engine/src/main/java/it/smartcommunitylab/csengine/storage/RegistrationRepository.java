@@ -15,6 +15,9 @@ public interface RegistrationRepository extends MongoRepository<Registration, St
 	@Query(value="{instituteId:?0, schoolYear:?1}")
 	Page<Registration> findByInstitute(String instituteId, String schoolYear, Pageable pageable);
 	
+	@Query(value="{teachingUnitId:?0, schoolYear:?1}")
+	Page<Registration> findByTeachingUnit(String teachingUnitId, String schoolYear, Pageable pageable);
+	
 	@Query(value="{studentId:?0}")
 	List<Registration> findByStudent(String studentId);
 	

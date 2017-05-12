@@ -1,24 +1,24 @@
 package it.smartcommunitylab.csengine.ui;
 
+import it.smartcommunitylab.csengine.model.Registration;
+import it.smartcommunitylab.csengine.model.TeachingUnit;
+
 import java.util.List;
 
-import it.smartcommunitylab.csengine.model.Institute;
-import it.smartcommunitylab.csengine.model.Registration;
-
 public class StudentRegistration {
-	private Institute institute;
+	private TeachingUnit teachingUnit;
 	private List<Registration> registrations;
 	
-	public Institute getInstitute() {
-		return institute;
-	}
-	public void setInstitute(Institute institute) {
-		this.institute = institute;
-	}
 	public List<Registration> getRegistrations() {
 		return registrations;
 	}
 	public void setRegistrations(List<Registration> registrations) {
 		this.registrations = registrations;
+	}
+	public TeachingUnit getTeachingUnit() {
+		return teachingUnit;
+	}
+	public void setTeachingUnit(TeachingUnit teachingUnit) {
+		this.teachingUnit = teachingUnit;
 	}
 }

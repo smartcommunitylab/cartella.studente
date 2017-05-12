@@ -19,14 +19,19 @@ public class ExperienceRepositoryImpl implements ExperienceRepositoryCustom {
 	private MongoTemplate mongoTemplate;
 
 	@Override
-	public List<Experience> searchExperience(String expType, Boolean institutional,
-			String instituteId, String schoolYear, String certifierId, Long dateFrom, Long dateTo,
+	public List<Experience> searchExperience(String expType, Boolean institutional, String instituteId, 
+			String teachingUnitId, String schoolYear, String certifierId, Long dateFrom, Long dateTo,
 			String text, Pageable pageable) {
 		Criteria criteria = new Criteria("type").is(expType)
 				.and("attributes." + Const.ATTR_INSTITUTIONAL).is(institutional);
-		if(Utils.isNotEmpty(instituteId) && Utils.isNotEmpty(schoolYear)) {
-			criteria = criteria.and("attributes." + Const.ATTR_INSTITUTEID).is(instituteId)
-					.and("attributes." + Const.ATTR_SCHOOLYEAR).is(schoolYear);
+		if(Utils.isNotEmpty(instituteId)) {
+			criteria = criteria.and("experience.attributes." + Const.ATTR_INSTITUTEID).is(instituteId);
+		}
+		if(Utils.isNotEmpty(teachingUnitId)) {
+			criteria = criteria.and("experience.attributes." + Const.ATTR_TUID).is(teachingUnitId);
+		}
+		if(Utils.isNotEmpty(schoolYear)) {
+			criteria = criteria.and("experience.attributes." + Const.ATTR_SCHOOLYEAR).is(schoolYear);
 		}
 		if(Utils.isNotEmpty(certifierId)) {
 			criteria = criteria.and("attributes." + Const.ATTR_CERTIFIERID).is(certifierId);
