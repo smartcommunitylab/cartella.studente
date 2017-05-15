@@ -1,4 +1,6 @@
-export interface Exam {
+
+export class Experience {
+id:string;
 institutional:boolean;
 dateFrom:Date;
 dateTo:Date;
@@ -9,4 +11,6 @@ categorization?:Map<string,string>;
 instituteId?:string;
 schoolYear?:string;
 registrationId?:string;
+        constructor() {
+        }
 }

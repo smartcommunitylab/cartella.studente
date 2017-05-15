@@ -1,5 +1,5 @@
 import { Injectable }    from '@angular/core';
-import {Experience } from '../classes/Experience.interface';
+import {Experience } from '../classes/Experience.class';
 //import { Headers, Http } from '@angular/http';
 //import 'rxjs/add/operator/toPromise';
 

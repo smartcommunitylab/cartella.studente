@@ -7,6 +7,7 @@ import { APP_INITIALIZER } from '@angular/core';
 import {HttpModule,Http} from "@angular/http";
 //import {TranslateService, TranslatePipe, TranslateLoader, TranslateStaticLoader} from 'ng2-translate/ng2-translate';
 import {TranslateModule,TranslateStaticLoader,TranslateLoader} from 'ng2-translate';
+import { Ng2OrderModule } from 'ng2-order-pipe';
 
 import { ConfigService }       from '../services/config.service';
 import { MyApp } from './app.component';
@@ -18,11 +19,13 @@ import { CertificationsPage } from '../pages/certifications/certifications';
 import { CurriculumPage } from '../pages/curriculum/curriculum';
 import { EventsPage } from '../pages/events/events';
 import { StagesPage } from '../pages/stages/stages';
+import { AddStagePage } from '../pages/addStage/addStage';
 import { AppBar } from '../pages/components/app-bar.component';
 import {LoginService} from '../services/login.service';
 import {WebAPIConnectorService} from '../services/webAPIConnector.service';
 import {TrainingService} from '../services/training.service';
 import {UserService} from '../services/user.service';
+import {ExperienceFilterPipe} from '../pipes/experience-filter.pipe.ts';
 
 export const deepLinkConfig: DeepLinkConfig = {
       links: [
@@ -32,7 +35,8 @@ export const deepLinkConfig: DeepLinkConfig = {
     { component: CertificationsPage, name: 'Certifications', segment: 'certifications' },
     { component: CurriculumPage, name: 'Curriculum', segment: 'curriculum' },
     { component: EventsPage, name: 'Events', segment: 'events' },
-    { component: StagesPage, name: 'Stage', segment: 'stage' }
+    { component: StagesPage, name: 'Stage', segment: 'stage' },
+    { component: AddStagePage, name: 'AddStage', segment: 'addStage' }
   ]
     }
 function initConfig(config: ConfigService){
@@ -49,11 +53,14 @@ function initConfig(config: ConfigService){
     CurriculumPage,
     EventsPage,
     StagesPage,
-    AppBar
+    AddStagePage,
+    AppBar,
+    ExperienceFilterPipe
   ],
   imports: [
     BrowserModule,
     HttpModule,
+    Ng2OrderModule,
     IonicModule.forRoot(MyApp,{},deepLinkConfig),
     TranslateModule.forRoot({
             provide: TranslateLoader,
@@ -71,7 +78,8 @@ function initConfig(config: ConfigService){
     ActivitiesPage,
     CurriculumPage,
     EventsPage,
-    StagesPage
+    StagesPage,
+    AddStagePage
   ],
   providers: [
     StatusBar,

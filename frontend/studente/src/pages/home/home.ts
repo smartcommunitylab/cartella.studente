@@ -1,8 +1,8 @@
 import { Component,OnInit } from '@angular/core';
-import { NavController } from 'ionic-angular';
-import {Registration } from '../../classes/Registration.interface'
-import {Exam } from '../../classes/Exam.interface'
-import {Experience } from '../../classes/Experience.interface'
+import { NavController, LoadingController } from 'ionic-angular';
+import {Registration } from '../../classes/Registration.class'
+import {Exam } from '../../classes/Exam.class'
+import {Experience } from '../../classes/Experience.class'
 import {InstitutePage } from '../institute/institute'
 import {StagesPage } from '../stages/stages'
 import {ActivitiesPage } from '../activities/activities'
@@ -19,7 +19,7 @@ export class HomePage implements OnInit{
   registrations:Registration[]=[];
   exams:Exam[]=[];
   experiences:Experience[]=[];
-  constructor(public navCtrl: NavController, private userService: UserService ) {
+  constructor(public navCtrl: NavController, private userService: UserService,public loading: LoadingController ) {
 
   }
 openRegistration(registration: Registration):void {
@@ -43,9 +43,15 @@ openRegistration(registration: Registration):void {
 
  ngOnInit(): void {
    //load left column
-    this.userService.getUserRegistrations().then(registrations =>{
-      this.registrations=registrations
-    });
+  let loader = this.loading.create({
+    content: 'Getting latest entries...',
+  });
+    loader.present().then(() => {
+      this.userService.getUserRegistrations().then(registrations =>{
+        this.registrations=registrations
+        loader.dismiss();
+      });
+    })
     this.userService.getUserExams().then(exams =>{
       this.exams=exams
     });
