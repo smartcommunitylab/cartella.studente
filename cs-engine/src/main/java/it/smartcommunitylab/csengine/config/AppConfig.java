@@ -136,7 +136,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
 		registry.addMapping("/**")
-		.allowedMethods("PUT", "DELETE", "GET", "POST");
+		.allowedMethods("PUT", "DELETE", "GET", "POST", "PATCH");
 	}
 	
 	@SuppressWarnings("deprecation")
@@ -150,9 +150,9 @@ public class AppConfig extends WebMvcConfigurerAdapter {
      		.paths(PathSelectors.regex("/api/.*"))
      		.build()
         .apiInfo(apiInfo)
-        .produces(getContentTypes())
-        .securitySchemes(getSecuritySchemes())
-        .securityContexts(securityContexts());
+        .produces(getContentTypes());
+//        .securitySchemes(getSecuritySchemes())
+//        .securityContexts(securityContexts());
   }
 	
 	private Set<String> getContentTypes() {
@@ -161,6 +161,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
     return result;
   }
 	
+	@SuppressWarnings("unused")
 	private List<SecurityScheme> getSecuritySchemes() {
 		List<SecurityScheme> result = new ArrayList<SecurityScheme>();
 		ApiKey apiKey = new ApiKey("X-ACCESS-TOKEN", "X-ACCESS-TOKEN", "header");
@@ -168,6 +169,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 		return result;
 	}
 	
+	@SuppressWarnings("unused")
 	private List<SecurityContext> securityContexts() {
 		List<SecurityContext> result = new ArrayList<SecurityContext>();
 		SecurityContext sc = SecurityContext.builder()
