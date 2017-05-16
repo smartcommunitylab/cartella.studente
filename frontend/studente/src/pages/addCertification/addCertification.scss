@@ -1,0 +1,10 @@
+.stage-filter{
+  width: 100%;
+  display: inline-flex;
+  input {
+    min-width: 50%;
+  }
+  .filter-search-icon{
+    font-size: 40px;
+  }
+}

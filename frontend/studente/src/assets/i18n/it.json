@@ -35,6 +35,11 @@
   "title_certification": "Certificazioni",
   "title_activities": "Attivita`",
   "stage_delete_button":"Cancella",
-  "stage_update_button":"Modifica"
+  "stage_update_button":"Modifica",
+  "alert_delete_stage_title":"Cancella esperienza",
+  "alert_delete_stage_message":"Sei sicuro di voler cancellare l'esperienza scuola-lavoro?",
+  "alert_confirm":"Conferma",
+  "alert_cancel":"Cancella",
+  "loading":"Loading..."
 
 }

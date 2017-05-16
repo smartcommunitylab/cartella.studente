@@ -1,0 +1,50 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      {{'title_add_event'|translate}}
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+ <div>add event</div>
+  <ion-grid>
+  <ion-row>
+ <ion-col><button ion-button (click)="addEvent()">salva</button></ion-col><ion-col><button (click)="discard()">annulla</button></ion-col>
+    </ion-row>
+     <ion-row>
+    <ion-col><ion-label>{{'addStage_title_label'|translate}}</ion-label></ion-col><ion-col> <ion-item><ion-input type="text" placeholder="{{'addEvent_title_placeholder'|translate}}" [(ngModel)]="event.title"></ion-input>
+    </ion-item></ion-col>
+    </ion-row>
+     <ion-row>
+
+    <ion-col><ion-label>{{'addStage_period_label'|translate}}</ion-label></ion-col><ion-col> <ion-item><ion-datetime displayFormat="DD/MM/YYYY"  [(ngModel)]="dateFrom" placeholder="{{'addEvent_date_from_placeholder'|translate}}" ></ion-datetime>
+    </ion-item></ion-col>
+    </ion-row>
+         <ion-row>
+    <ion-col><ion-label>{{'addStage_period_label'|translate}}</ion-label></ion-col><ion-col> <ion-item><ion-datetime displayFormat="DD/MM/YYYY"  [(ngModel)]="dateTo" placeholder="{{'addEvent_date_to_placeholder'|translate}}" ></ion-datetime>
+    </ion-item></ion-col>
+    </ion-row>
+      <ion-row>
+
+    <ion-col><ion-label>{{'addStage_company_label'|translate}}</ion-label></ion-col><ion-col> <ion-item><ion-input type="text" placeholder="{{'addEvent_company_placeholder'|translate}}" [(ngModel)]="event.company"></ion-input>
+    </ion-item></ion-col>
+    </ion-row>
+      <ion-row>
+
+    <ion-col><ion-label>{{'addStage_address_label'|translate}}</ion-label></ion-col><ion-col> <ion-item><ion-input type="text" placeholder="{{'addEvent_address_placeholder'|translate}}" [(ngModel)]="event.location"></ion-input>
+    </ion-item></ion-col>
+    </ion-row>
+      <ion-row>
+
+    <ion-col><ion-label>{{'addStage_tutor_label'|translate}}</ion-label></ion-col><ion-col> <ion-item><ion-input type="text" placeholder="{{'addStage_tutor_placeholder'|translate}}" [(ngModel)]="event.contact"></ion-input>
+    </ion-item></ion-col>
+    </ion-row>
+      <ion-row>
+
+    <ion-col><ion-label>{{'addStage_description_label'|translate}}</ion-label></ion-col><ion-col> <ion-item><ion-input type="text" placeholder="{{'addStage_description_placeholder'|translate}}" [(ngModel)]="event.description"></ion-input>
+    </ion-item></ion-col>
+    </ion-row>
+  </ion-grid>
+
+</ion-content>

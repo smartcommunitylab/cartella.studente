@@ -1,6 +1,6 @@
 import {Experience }from './Experience.class'
 
-export class Certification {
+export class Certification extends Experience {
 title	:string;
 description	:string;
 type	:string;

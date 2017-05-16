@@ -8,6 +8,8 @@ experienceId:string;
 id:string;
 student:Student;
 studentId:string;
-        constructor() {
+constructor() {
+  this.attributes = new Experience();
+  this.student = new Student();
         }
 }

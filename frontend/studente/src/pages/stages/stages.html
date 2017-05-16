@@ -26,9 +26,9 @@
       <div class="expandable-list">
         <div class="stage-title">{{stage.attributes.title}}</div>
         <div class="stage-certificate">certificato si/no</div>
-        <button class="stage-expansion" clear  ion-button icon-only (click)="toggleDetails(stage)"> <ion-icon  class="stage-expansion-icon" [name]="icon" ></ion-icon></button>
+        <button class="stage-expansion" clear  ion-button icon-only (click)="toggleDetails(stage)"> <ion-icon class="stage-expansion-icon" item-right [name]="isDetailsShown(stage) ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
       </div>
-      <div padding *ngIf="showDetails">
+      <div padding *ngIf="isDetailsShown(stage)">
         {{stage.attributes.title}}
         <div >
           <button class="button-add-stage" ion-button clear (click)="deleteStage(stage)">{{'stage_delete_button'|translate}}</button>
