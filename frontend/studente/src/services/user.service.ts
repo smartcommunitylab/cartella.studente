@@ -14,9 +14,9 @@ export class UserService  {
   private exams: Exam[]=[];
   private registrations: Registration[]=[];
   private stages:ExperienceContainer[]=[];
-  private activities:Activity[]=[];
-  private events:Event[]=[];
-  private certifications:Certification[]=[];
+  private activities:ExperienceContainer[]=[];
+  private events:ExperienceContainer[]=[];
+  private certifications:ExperienceContainer[]=[];
   constructor(private webAPIConnector: WebAPIConnectorService) {
 };
   getUserExams():Promise<Exam[]> {
@@ -94,22 +94,14 @@ export class UserService  {
      })
   })
   }
-  getUserActivities():Promise<Activity[]> {
-     return new Promise<Activity[]>((resolve, reject) => {
-      this.webAPIConnector.getExperiences('84f01dc1-694d-40eb-9296-01ca5014ef5d',ExperienceTypes.EXP_TYPE_ACTIVITY).then(activities=>{
-       this.activities=activities;
-        resolve(this.activities)
-
-  }).catch((error: any):any => {
-       reject()
-
-     })
-  })
-  }
-    getUserEvents():Promise<Event[]> {
-     return new Promise<Event[]>((resolve, reject) => {
-      this.webAPIConnector.getExperiences('84f01dc1-694d-40eb-9296-01ca5014ef5d',ExperienceTypes.EXP_TYPE_EVENT).then(events=>{
-       this.events=events;
+getUserEvents():Promise<ExperienceContainer[]> {
+     return new Promise<ExperienceContainer[]>((resolve, reject) => {
+      this.webAPIConnector.getExperiences('84f01dc1-694d-40eb-9296-01ca5014ef5d',ExperienceTypes.EXP_TYPE_EVENT).then(experiences=>{
+        //take only stages
+        this.events=[];
+        for (var i=0; i<experiences.length;i++){
+          this.events.push(experiences[i].experience);
+        }
         resolve(this.events)
 
   }).catch((error: any):any => {
@@ -118,12 +110,136 @@ export class UserService  {
      })
   })
   }
-      getUserCertifications():Promise<Certification[]> {
-     return new Promise<Certification[]>((resolve, reject) => {
-      this.webAPIConnector.getExperiences('84f01dc1-694d-40eb-9296-01ca5014ef5d',ExperienceTypes.EXP_TYPE_CERT).then(certifications=>{
-       this.certifications=certifications;
+  addEvent(event:ExperienceContainer): Promise<ExperienceContainer> {
+         return new Promise<ExperienceContainer>((resolve, reject) => {
+      this.webAPIConnector.addExperience(event.attributes,'84f01dc1-694d-40eb-9296-01ca5014ef5d',ExperienceTypes.EXP_TYPE_EVENT).then(event=>{
+
+        resolve(event)
+
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })
+  }
+     updateEvent(event:ExperienceContainer): Promise<ExperienceContainer> {
+         return new Promise<ExperienceContainer>((resolve, reject) => {
+      this.webAPIConnector.updateExperience(event,'84f01dc1-694d-40eb-9296-01ca5014ef5d').then(event=>{
+
+        resolve(event)
+
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })
+  }
+    deleteEvent(event:Event): Promise<Event> {
+         return new Promise<Event>((resolve, reject) => {
+      this.webAPIConnector.deleteExperience(event.id,'84f01dc1-694d-40eb-9296-01ca5014ef5d').then(event=>{
+        resolve(event)
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })
+  }
+  getUserActivities():Promise<ExperienceContainer[]> {
+     return new Promise<ExperienceContainer[]>((resolve, reject) => {
+      this.webAPIConnector.getExperiences('84f01dc1-694d-40eb-9296-01ca5014ef5d',ExperienceTypes.EXP_TYPE_ACTIVITY).then(experiences=>{
+        //take only stages
+        this.activities=[];
+        for (var i=0; i<experiences.length;i++){
+          this.activities.push(experiences[i].experience);
+        }
+        resolve(this.activities)
+
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })
+  }
+  addActivity(activity:ExperienceContainer): Promise<ExperienceContainer> {
+         return new Promise<ExperienceContainer>((resolve, reject) => {
+      this.webAPIConnector.addExperience(activity.attributes,'84f01dc1-694d-40eb-9296-01ca5014ef5d',ExperienceTypes.EXP_TYPE_ACTIVITY).then(activity=>{
+
+        resolve(activity)
+
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })
+  }
+     updateActivity(activity:ExperienceContainer): Promise<ExperienceContainer> {
+         return new Promise<ExperienceContainer>((resolve, reject) => {
+      this.webAPIConnector.updateExperience(activity,'84f01dc1-694d-40eb-9296-01ca5014ef5d').then(activity=>{
+
+        resolve(activity)
+
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })
+  }
+    deleteActivity(activity:Activity): Promise<Activity> {
+         return new Promise<Stage>((resolve, reject) => {
+      this.webAPIConnector.deleteExperience(activity.id,'84f01dc1-694d-40eb-9296-01ca5014ef5d').then(stage=>{
+
+        resolve(stage)
+
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })
+  }
+      getUserCertifications():Promise<ExperienceContainer[]> {
+     return new Promise<ExperienceContainer[]>((resolve, reject) => {
+      this.webAPIConnector.getExperiences('84f01dc1-694d-40eb-9296-01ca5014ef5d',ExperienceTypes.EXP_TYPE_CERT).then(experiences=>{
+        this.certifications=[];
+        for (var i=0; i<experiences.length;i++){
+          this.certifications.push(experiences[i].experience);
+        }
         resolve(this.certifications)
 
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })
+  }
+
+    addCertification(certification:ExperienceContainer): Promise<ExperienceContainer> {
+         return new Promise<ExperienceContainer>((resolve, reject) => {
+      this.webAPIConnector.addExperience(certification.attributes,'84f01dc1-694d-40eb-9296-01ca5014ef5d',ExperienceTypes.EXP_TYPE_CERT).then(certification=>{
+
+        resolve(certification)
+
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })
+  }
+     updateCertification(certification:ExperienceContainer): Promise<ExperienceContainer> {
+         return new Promise<ExperienceContainer>((resolve, reject) => {
+      this.webAPIConnector.updateExperience(certification,'84f01dc1-694d-40eb-9296-01ca5014ef5d').then(certification=>{
+
+        resolve(certification)
+
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })
+  }
+    deleteCertification(certification:Certification): Promise<Certification> {
+         return new Promise<Certification>((resolve, reject) => {
+      this.webAPIConnector.deleteExperience(certification.id,'84f01dc1-694d-40eb-9296-01ca5014ef5d').then(certification=>{
+        resolve(certification)
   }).catch((error: any):any => {
        reject()
 

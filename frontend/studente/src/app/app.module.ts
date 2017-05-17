@@ -5,10 +5,8 @@ import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
 import { APP_INITIALIZER } from '@angular/core';
 import {HttpModule,Http} from "@angular/http";
-//import {TranslateService, TranslatePipe, TranslateLoader, TranslateStaticLoader} from 'ng2-translate/ng2-translate';
-import {TranslateModule,TranslateStaticLoader,TranslateLoader} from 'ng2-translate';
+import {TranslateModule,TranslateStaticLoader,TranslateLoader,TranslateService} from 'ng2-translate';
 import { Ng2OrderModule } from 'ng2-order-pipe';
-
 import { ConfigService }       from '../services/config.service';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
@@ -19,8 +17,16 @@ import { CertificationsPage } from '../pages/certifications/certifications';
 import { CurriculumPage } from '../pages/curriculum/curriculum';
 import { EventsPage } from '../pages/events/events';
 import { StagesPage } from '../pages/stages/stages';
+import { ProfilePage } from '../pages/profile/profile';
+import { NotificationsPage } from '../pages/notifications/notifications';
 import { AddStagePage } from '../pages/addStage/addStage';
-import { AppBar } from '../pages/components/app-bar.component';
+import { AddActivityPage } from '../pages/addActivity/addActivity';
+import { AddCertificationPage } from '../pages/addCertification/addCertification';
+import { AddEventPage } from '../pages/addEvent/addEvent';
+import { AppBar } from '../pages/components/app-bar/app-bar.component';
+import { ButtonHome } from '../pages/components/button-home/button-home.component';
+import { ButtonNotifications } from '../pages/components/button-notifications/button-notifications.component';
+import { ButtonProfile } from '../pages/components/button-profile/button-profile.component';
 import {LoginService} from '../services/login.service';
 import {WebAPIConnectorService} from '../services/webAPIConnector.service';
 import {TrainingService} from '../services/training.service';
@@ -36,7 +42,12 @@ export const deepLinkConfig: DeepLinkConfig = {
     { component: CurriculumPage, name: 'Curriculum', segment: 'curriculum' },
     { component: EventsPage, name: 'Events', segment: 'events' },
     { component: StagesPage, name: 'Stage', segment: 'stage' },
-    { component: AddStagePage, name: 'AddStage', segment: 'addStage' }
+    { component: ProfilePage, name: 'Profile', segment: 'profile' },
+    { component: NotificationsPage, name: 'Notifications', segment: 'notifications' },
+    { component: AddStagePage, name: 'AddStage', segment: 'addStage' },
+    { component: AddEventPage, name: 'AddEvent', segment: 'addEvent' },
+    { component: AddActivityPage, name: 'AddActivity', segment: 'addActivity' },
+    { component: AddCertificationPage, name: 'AddCertification', segment: 'addCertification' }
   ]
     }
 function initConfig(config: ConfigService){
@@ -52,9 +63,17 @@ function initConfig(config: ConfigService){
     ActivitiesPage,
     CurriculumPage,
     EventsPage,
+    ProfilePage,
+    NotificationsPage,
     StagesPage,
     AddStagePage,
+    AddEventPage,
+    AddActivityPage,
+    AddCertificationPage,
     AppBar,
+    ButtonHome,
+    ButtonProfile,
+    ButtonNotifications,
     ExperienceFilterPipe
   ],
   imports: [
@@ -79,7 +98,12 @@ function initConfig(config: ConfigService){
     CurriculumPage,
     EventsPage,
     StagesPage,
-    AddStagePage
+    AddStagePage,
+    AddActivityPage,
+    AddEventPage,
+    AddCertificationPage,
+    NotificationsPage,
+    ProfilePage
   ],
   providers: [
     StatusBar,
@@ -89,7 +113,7 @@ function initConfig(config: ConfigService){
     ConfigService,
     UserService,
     { provide: APP_INITIALIZER, useFactory: initConfig, deps: [ConfigService], multi: true },
-
+TranslateService,
     WebAPIConnectorService,
     TrainingService
   ]
