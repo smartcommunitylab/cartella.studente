@@ -17,6 +17,7 @@ import { CertificationsPage } from '../pages/certifications/certifications';
 import { CurriculumPage } from '../pages/curriculum/curriculum';
 import { EventsPage } from '../pages/events/events';
 import { StagesPage } from '../pages/stages/stages';
+import { ExamPage } from '../pages/exam/exam';
 import { ProfilePage } from '../pages/profile/profile';
 import { NotificationsPage } from '../pages/notifications/notifications';
 import { AddStagePage } from '../pages/addStage/addStage';
@@ -42,6 +43,7 @@ export const deepLinkConfig: DeepLinkConfig = {
     { component: CurriculumPage, name: 'Curriculum', segment: 'curriculum' },
     { component: EventsPage, name: 'Events', segment: 'events' },
     { component: StagesPage, name: 'Stage', segment: 'stage' },
+    { component: ExamPage, name: 'Exam', segment: 'exam' },
     { component: ProfilePage, name: 'Profile', segment: 'profile' },
     { component: NotificationsPage, name: 'Notifications', segment: 'notifications' },
     { component: AddStagePage, name: 'AddStage', segment: 'addStage' },
@@ -66,6 +68,7 @@ function initConfig(config: ConfigService){
     ProfilePage,
     NotificationsPage,
     StagesPage,
+    ExamPage,
     AddStagePage,
     AddEventPage,
     AddActivityPage,
@@ -98,6 +101,7 @@ function initConfig(config: ConfigService){
     CurriculumPage,
     EventsPage,
     StagesPage,
+    ExamPage,
     AddStagePage,
     AddActivityPage,
     AddEventPage,

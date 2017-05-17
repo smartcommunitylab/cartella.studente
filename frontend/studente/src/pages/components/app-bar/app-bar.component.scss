@@ -4,8 +4,23 @@
     bottom: 0px;
     width: 100%;
   background-color: gray;
+  .app-expansion-icon{
+    color: white;
+  }
+  .button-toggle{
+    color: white;
+    text-align: center;
+  }
   .app-bar-button{
     background-color: white;
     color: black;
   }
+
 }
+  .bar-expanded{
+   transition: all 0.5s ease-in-out;
+  }
+  .bar-compressed {
+    bottom:-50px!important;
+    transition: all 0.5s ease-in-out;
+  }

@@ -1,16 +1,18 @@
-<div id="app-bar">
+<div id="app-bar" [ngClass]="{'bar-expanded': expanded , 'bar-compressed':!expanded}" >
+  <div class="button-toggle" >      {{'bar-link-label'|translate}}
+<button  clear  ion-button icon-only (click)="toggleBar()"> <ion-icon class="app-expansion-icon" item-right [name]="expanded ?  'ios-arrow-down':'ios-arrow-up' "></ion-icon></button></div>
  <ion-grid>
     <ion-row>
       <ion-col col-1>
-          <div><button class="app-bar-button" [block]="true" ion-button navPush="Home">APP 1</button>
+          <div><button class="app-bar-button" [block]="true" ion-button >APP 1</button>
         </div>
       </ion-col>
             <ion-col col-1>
-          <div><button class="app-bar-button" [block]="true" ion-button navPush="Home">APP 2</button>
+          <div><button class="app-bar-button" [block]="true" ion-button >APP 2</button>
         </div>
       </ion-col>
             <ion-col col-1>
-          <div><button class="app-bar-button" [block]="true" ion-button navPush="Home">APP 3</button>
+          <div><button class="app-bar-button" [block]="true" ion-button>APP 3</button>
         </div>
       </ion-col>
     </ion-row>

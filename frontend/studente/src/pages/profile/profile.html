@@ -3,9 +3,65 @@
     <ion-title>
       {{'title_profile'|translate}}
     </ion-title>
+     <ion-buttons end>
+      <button-home></button-home><button-notifications></button-notifications>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
- profilo
+ <ion-grid>
+  <ion-row>
+    <ion-col>
+      <ion-img class="profile-img" src="http://s3.amazonaws.com/37assets/svn/765-default-avatar.png"></ion-img>
+    </ion-col>
+  </ion-row>
+   <ion-row>
+    <ion-col>
+      {{'profile_anagrafica_label'|translate}}
+    </ion-col>
+     <ion-col>
+      {{'profile_contacts_label'|translate}}
+    </ion-col>
+  </ion-row>
+   <ion-row>
+    <ion-col>
+      {{'profile_name_label'|translate}}{{student.name}}
+    </ion-col>
+     <ion-col>
+       {{'profile_tel_label'|translate}}<span *ngIf="!editMode">{{student.phone}}</span><ion-input class="profile-input" *ngIf="editMode" type="text" placeholder="{{'profile_tel_input_placeholder'|translate}}" [(ngModel)]="student.phone"></ion-input>
+    </ion-col>
+  </ion-row>
+   <ion-row>
+    <ion-col>
+      {{'profile_surname_label'|translate}}{{student.surname}}
+    </ion-col>
+     <ion-col>
+       {{'profile_cel_label'|translate}}<span *ngIf="!editMode">{{student.mobilePhone}}</span><ion-input class="profile-input" *ngIf="editMode"  type="text" placeholder="{{'profile_cel_input_placeholder'|translate}}" [(ngModel)]="student.mobilePhone"></ion-input>
+    </ion-col>
+  </ion-row>
+   <ion-row>
+    <ion-col>
+      {{'profile_cf_label'|translate}}{{student.cf}}
+    </ion-col>
+     <ion-col>
+       {{'profile_mail_label'|translate}} <span *ngIf="!editMode">{{student.email}}</span><ion-input class="profile-input" *ngIf="editMode"  type="text" placeholder="{{'profile_mail_input_placeholder'|translate}}" [(ngModel)]="student.email"></ion-input>
+    </ion-col>
+  </ion-row>
+    <ion-row>
+    <ion-col>
+      {{'profile_birthday_label'|translate}}{{student.birthdate}}
+    </ion-col>
+     <ion-col>
+      Lista di immagini social
+    </ion-col>
+  </ion-row>
+     <ion-row>
+    <ion-col>
+      <button *ngIf="!editMode" ion-button (click)=openEditMode()>{{'profile_update_button'|translate}}</button>
+            <button ion-button *ngIf="editMode" (click)=closeEditMode()>{{'profile_cancel_button'|translate}}</button>
+            <button ion-button  *ngIf="editMode" (click)=saveData()>{{'profile_confirm_button'|translate}}</button>
+    </ion-col>
+  </ion-row>
+</ion-grid>
 </ion-content>

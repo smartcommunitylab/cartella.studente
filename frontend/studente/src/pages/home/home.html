@@ -1,8 +1,11 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      Home Page
+      {{'title_home'|translate}}
     </ion-title>
+      <ion-buttons end>
+      <button-notifications></button-notifications><button-profile></button-profile>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
@@ -14,10 +17,17 @@
         <div>{{registration.teachingUnit.name}}
           </div>
       </ion-card>
+       <ion-card class="home-registration" (click)="openExam()">
+        <div>
+          {{ 'home_exams_label' | translate }}
+        </div>
+      </ion-card>
+<!--
             <ion-card class="home-exams" *ngFor="let exam of exams" (click)="openExam(exam)">
         <div>{{exam.experience.attributes.titoloStudio}}
           </div>
       </ion-card>
+-->
     </ion-list>
   </div>
   <div class="experiences-list">

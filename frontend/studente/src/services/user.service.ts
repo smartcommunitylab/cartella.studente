@@ -5,13 +5,15 @@ import {Registration} from '../classes/Registration.class';
 import {Stage} from '../classes/Stage.class';
 import {Activity} from '../classes/Activity.class';
 import {Event} from '../classes/Event.class';
+import {Student} from '../classes/Student.class';
 import {Certification} from '../classes/Certification.class';
 import { ExperienceTypes } from '../assets/conf/expTypes'
 import  {ExperienceContainer} from '../classes/ExperienceContainer.class'
 
 @Injectable()
 export class UserService  {
-  private exams: Exam[]=[];
+  private exams: ExperienceContainer[]=[];
+  private student: Student=new Student();
   private registrations: Registration[]=[];
   private stages:ExperienceContainer[]=[];
   private activities:ExperienceContainer[]=[];
@@ -19,11 +21,14 @@ export class UserService  {
   private certifications:ExperienceContainer[]=[];
   constructor(private webAPIConnector: WebAPIConnectorService) {
 };
-  getUserExams():Promise<Exam[]> {
-    return new Promise<Exam[]>((resolve, reject) => {
-      this.webAPIConnector.getExams('84f01dc1-694d-40eb-9296-01ca5014ef5d').then(exams=>{
-       this.exams=exams;
-      resolve(this.exams);
+  getUserExams():Promise<ExperienceContainer[]> {
+    return new Promise<ExperienceContainer[]>((resolve, reject) => {
+      this.webAPIConnector.getExams('84f01dc1-694d-40eb-9296-01ca5014ef5d').then(experiences=>{
+       this.exams=[];
+       for (var i=0; i<experiences.length;i++){
+          this.exams.push(experiences[i].experience);
+        }
+        resolve(this.exams)
 
   }).catch((error: any):any => {
        reject()
@@ -253,8 +258,28 @@ getUserEvents():Promise<ExperienceContainer[]> {
   getUserExperiences() {
 
   }
-  getUserData() {
+  getUserInfo() :Promise<any> {
+     return new Promise<any>((resolve, reject) => {
+      this.webAPIConnector.getUserInfo('84f01dc1-694d-40eb-9296-01ca5014ef5d').then(student=>{
+        this.student=student;
 
+        resolve(this.student)
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })
   }
+    saveUserInfo(student:Student) :Promise<any> {
+     return new Promise<any>((resolve, reject) => {
+      this.webAPIConnector.updateUserInfo(student, '84f01dc1-694d-40eb-9296-01ca5014ef5d').then(student=>{
+        this.student=student;
 
+        resolve(this.student)
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })
+  }
 }
