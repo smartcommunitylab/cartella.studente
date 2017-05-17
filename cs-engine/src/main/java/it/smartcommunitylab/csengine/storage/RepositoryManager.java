@@ -559,6 +559,7 @@ public class RepositoryManager {
 		studentDb.setAddress(student.getAddress());
 		studentDb.setEmail(student.getEmail());
 		studentDb.setMobilePhone(student.getMobilePhone());
+		studentDb.setPhone(student.getPhone());
 		studentDb.setSocialMap(student.getSocialMap());
 		Date now = new Date();
 		studentDb.setLastUpdate(now);
