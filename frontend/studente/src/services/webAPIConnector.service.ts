@@ -4,7 +4,9 @@ import {ConfigService} from './config.service'
 import {Exam} from '../classes/Exam.class'
 import {Registration} from '../classes/Registration.class'
 import {Experience} from '../classes/Experience.class'
+import {Student} from '../classes/Student.class'
 import {ExperienceContainer} from '../classes/ExperienceContainer.class'
+import { ExperienceTypes } from '../assets/conf/expTypes'
 
 @Injectable()
 export class WebAPIConnectorService  {
@@ -25,9 +27,9 @@ export class WebAPIConnectorService  {
   //get all the institutional exams, they are part of the cv of the students
     getExams(studentId:string):Promise<Exam[]> {
             let headers = new Headers({ 'Accept': 'application/json' });
-      headers.append('x-access-token', ' ');
+      headers.append('x-access-token', ' token');
       let options = new RequestOptions({ headers: headers });
-            let url:string=this.getApiUrl()+'student/'+studentId+'/experience/Esame?institutional=true';
+            let url:string=this.getApiUrl()+'student/'+studentId+'/experience/'+ExperienceTypes.EXP_TYPE_EXAM+'?institutional=true';
 
             return this.http.get(url,options)
                .toPromise()
@@ -35,7 +37,7 @@ export class WebAPIConnectorService  {
     }
     getRegistrations(studentId:string):Promise<any[]> {
       let headers = new Headers({ 'Accept': 'application/json' });
-      headers.append('x-access-token', ' ');
+      headers.append('x-access-token', ' token');
       let options = new RequestOptions({ headers: headers });
             let url:string=this.getApiUrl()+'student/'+studentId+'/registration';
 
@@ -45,7 +47,7 @@ export class WebAPIConnectorService  {
     }
     getExperiences(studentId:string, typeExp:string):Promise<any[]> {
             let headers = new Headers({ 'Accept': 'application/json' });
-      headers.append('x-access-token', ' ');
+      headers.append('x-access-token', ' token');
       let options = new RequestOptions({ headers: headers });
             let url:string=this.getApiUrl()+'student/'+studentId+'/experience/'+typeExp;
 
@@ -59,7 +61,7 @@ export class WebAPIConnectorService  {
         "type": typeExp
       }
             let headers = new Headers({ 'Accept': 'application/json' });
-      headers.append('x-access-token', ' ');
+      headers.append('x-access-token', ' token');
       let options = new RequestOptions({ headers: headers });
             let url:string=this.getApiUrl()+'student/'+studentId+'/my/experience';
 
@@ -75,7 +77,7 @@ export class WebAPIConnectorService  {
       let body=experience
       let expId:string=experience.id;
       let headers = new Headers({ 'Accept': 'application/json' });
-      headers.append('x-access-token', ' ');
+      headers.append('x-access-token', ' token');
       let options = new RequestOptions({ headers: headers });
             let url:string=this.getApiUrl()+'student/'+studentId+'/my/experience/'+expId;
 
@@ -89,7 +91,7 @@ export class WebAPIConnectorService  {
     }
   deleteExperience(expId: string, studentId:string):Promise<any> {
        let headers = new Headers({ 'Accept': 'application/json' });
-      headers.append('x-access-token', ' ');
+      headers.append('x-access-token', ' token');
       let options = new RequestOptions({ headers: headers });
             let url:string=this.getApiUrl()+'student/'+studentId+'/my/experience/'+expId;
 
@@ -101,18 +103,32 @@ export class WebAPIConnectorService  {
 
             })
     }
-
-
-      getCertifications(studentId:string, typeExp:string):Promise<any[]> {
-            let headers = new Headers({ 'Accept': 'application/json' });
-      headers.append('x-access-token', ' ');
+  getUserInfo (studentId:string):Promise<any> {
+      let headers = new Headers({ 'Accept': 'application/json' });
+      headers.append('x-access-token', ' token');
       let options = new RequestOptions({ headers: headers });
-            let url:string=this.getApiUrl()+'student/'+studentId+'/experience/'+typeExp+'?institutional=true';
+            let url:string=this.getApiUrl()+'student/'+studentId;
 
             return this.http.get(url,options)
                .toPromise()
                .then(response => response.json())
+  }
+      updateUserInfo(student: Student, studentId:string):Promise<any> {
+      let body=student
+      let headers = new Headers({ 'Accept': 'application/json' });
+      headers.append('x-access-token', ' token');
+      let options = new RequestOptions({ headers: headers });
+            let url:string=this.getApiUrl()+'student/'+studentId;
+
+            return this.http.put(url,body, options)
+               .toPromise()
+               .then(response => response.json()).catch(error=>
+                                                       {
+                  console.error('An error occurred', error); // for demo purposes only
+
+            })
     }
+
     private handleError(error: any): Promise<any> {
     console.error('An error occurred', error);
     return Promise.reject(error.message || error);
