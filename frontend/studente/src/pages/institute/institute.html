@@ -1,11 +1,38 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      Institute
+      {{'title_institute'|translate}}
     </ion-title>
+        <ion-buttons end>
+      <button-home></button-home><button-notifications></button-notifications><button-profile></button-profile>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
- <div>{{institute.teachingUnit.name}}</div>
+  <div class="row-add-stage">
+<!--
+    <button class="button-add-stage" ion-button clear (click)="addNewExam()">{{'exam_add_new_button'|translate}}</button>-->
+  </div>
+  <ion-list>
+    <ion-card  *ngFor="let registration of registrations| experiencefilter:filter:'title'| orderBy:'exam.attributes.title':order">
+      <div class="expandable-list">
+        <div class="stage-title">{{registration.course}}</div>
+        <button class="stage-expansion" clear  ion-button icon-only (click)="toggleDetails(registration)"> <ion-icon class="stage-expansion-icon" item-right [name]="isDetailsShown(registration) ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
+      </div>
+      <div padding *ngIf="isDetailsShown(registration)">
+        <div class="stage-title">{{registration.course}}</div>
+        <div class="stage-title">{{registration.schoolYear}}</div>
+        <div class="stage-title">{{registration.classroom}}</div>
+        <div class="stage-title">{{teachingUnit.name}}</div>
+<!--
+        <div >
+          <button class="button-add-stage" ion-button clear (click)="deleteStage(exam)">{{'exam_delete_button'|translate}}</button>
+          <button class="button-add-stage" ion-button clear (click)="updateStage(exam)">{{'exam_update_button'|translate}}</button>
+        </div>
+-->
+      </div>
+
+    </ion-card>
+  </ion-list>
 </ion-content>
