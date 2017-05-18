@@ -1,49 +1,78 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      {{'title_add_event'|translate}}
+      {{'title_add_certificate'|translate}}
     </ion-title>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
- <div>add event</div>
   <ion-grid>
-  <ion-row>
- <ion-col><button ion-button (click)="addCertification()">salva</button></ion-col><ion-col><button (click)="discard()">annulla</button></ion-col>
-    </ion-row>
+
      <ion-row>
-    <ion-col><ion-label>{{'addStage_title_label'|translate}}</ion-label></ion-col><ion-col> <ion-item><ion-input type="text" placeholder="{{'addEvent_title_placeholder'|translate}}" [(ngModel)]="certification.title"></ion-input>
+    <ion-col><ion-label>{{'addCertificate_title_label'|translate}}</ion-label></ion-col><ion-col> <ion-item><ion-input type="text" placeholder="{{'addCertificate_title_placeholder'|translate}}" [(ngModel)]="certification.title"></ion-input>
     </ion-item></ion-col>
     </ion-row>
      <ion-row>
 
-    <ion-col><ion-label>{{'addStage_period_label'|translate}}</ion-label></ion-col><ion-col> <ion-item><ion-datetime displayFormat="DD/MM/YYYY"  [(ngModel)]="dateFrom" placeholder="{{'addEvent_date_from_placeholder'|translate}}" ></ion-datetime>
+    <ion-col><ion-label>{{'addCertificate_dateFrom_label'|translate}}</ion-label></ion-col><ion-col> <ion-item><ion-datetime displayFormat="DD/MM/YYYY"  [(ngModel)]="dateFrom" placeholder="{{'addCertificate_date_from_placeholder'|translate}}" ></ion-datetime>
     </ion-item></ion-col>
     </ion-row>
          <ion-row>
-    <ion-col><ion-label>{{'addStage_period_label'|translate}}</ion-label></ion-col><ion-col> <ion-item><ion-datetime displayFormat="DD/MM/YYYY"  [(ngModel)]="dateTo" placeholder="{{'addEvent_date_to_placeholder'|translate}}" ></ion-datetime>
+    <ion-col><ion-label>{{'addCertificate_dateTo_label'|translate}}</ion-label></ion-col><ion-col> <ion-item><ion-datetime displayFormat="DD/MM/YYYY"  [(ngModel)]="dateTo" placeholder="{{'addCertificate_date_to_placeholder'|translate}}" ></ion-datetime>
     </ion-item></ion-col>
     </ion-row>
       <ion-row>
 
-    <ion-col><ion-label>{{'addStage_company_label'|translate}}</ion-label></ion-col><ion-col> <ion-item><ion-input type="text" placeholder="{{'addEvent_company_placeholder'|translate}}" [(ngModel)]="certification.company"></ion-input>
+    <ion-col><ion-label>{{'addCertificate_address_label'|translate}}</ion-label></ion-col><ion-col> <ion-item><ion-input type="text" placeholder="{{'addCertificate_address_placeholder'|translate}}" [(ngModel)]="certification.location"></ion-input>
     </ion-item></ion-col>
     </ion-row>
       <ion-row>
 
-    <ion-col><ion-label>{{'addStage_address_label'|translate}}</ion-label></ion-col><ion-col> <ion-item><ion-input type="text" placeholder="{{'addEvent_address_placeholder'|translate}}" [(ngModel)]="certification.location"></ion-input>
+    <ion-col><ion-label>{{'addCertificate_tutor_label'|translate}}</ion-label></ion-col><ion-col> <ion-item><ion-input type="text" placeholder="{{'addCertificate_tutor_placeholder'|translate}}" [(ngModel)]="certification.contact"></ion-input>
     </ion-item></ion-col>
     </ion-row>
       <ion-row>
 
-    <ion-col><ion-label>{{'addStage_tutor_label'|translate}}</ion-label></ion-col><ion-col> <ion-item><ion-input type="text" placeholder="{{'addStage_tutor_placeholder'|translate}}" [(ngModel)]="certification.contact"></ion-input>
+    <ion-col><ion-label>{{'addCertificate_description_label'|translate}}</ion-label></ion-col><ion-col> <ion-item><ion-input type="text" placeholder="{{'addCertificate_description_placeholder'|translate}}" [(ngModel)]="certification.description"></ion-input>
     </ion-item></ion-col>
     </ion-row>
-      <ion-row>
+    <ion-row>
 
-    <ion-col><ion-label>{{'addStage_description_label'|translate}}</ion-label></ion-col><ion-col> <ion-item><ion-input type="text" placeholder="{{'addStage_description_placeholder'|translate}}" [(ngModel)]="certification.description"></ion-input>
+    <ion-col><ion-label>{{'addStage_certificate_label'|translate}}</ion-label></ion-col><ion-col> <ion-item>    <input type="file" ng2FileSelect [uploader]="uploader" />
+
     </ion-item></ion-col>
+    </ion-row>
+     <tr *ngFor="let item of uploader.queue">
+                                    <td><strong>{{ item.file.name }}</strong></td>
+                                    <td nowrap>{{ item.file.size/1024/1024 | number:'.2' }} MB</td>
+                                    <td>
+                                        <div class="progress" style="margin-bottom: 0;">
+                                            <div class="progress-bar" role="progressbar" [ngStyle]="{ 'width': item.progress + '%' }"></div>
+                                        </div>
+                                    </td>
+                                    <td class="text-center">
+                                        <span *ngIf="item.isSuccess"><i class="glyphicon glyphicon-ok"></i></span>
+                                        <span *ngIf="item.isCancel"><i class="glyphicon glyphicon-ban-circle"></i></span>
+                                        <span *ngIf="item.isError"><i class="glyphicon glyphicon-remove"></i></span>
+                                    </td>
+                                    <td nowrap>
+                                        <button type="button" class="btn btn-success btn-xs"
+                                                (click)="uploadCertificate(item)" [disabled]="item.isReady || item.isUploading || item.isSuccess">
+                                            <span class="glyphicon glyphicon-upload"></span> Upload
+                                        </button>
+                                        <button type="button" class="btn btn-warning btn-xs"
+                                                (click)="item.cancel()" [disabled]="!item.isUploading">
+                                            <span class="glyphicon glyphicon-ban-circle"></span> Cancel
+                                        </button>
+                                        <button type="button" class="btn btn-danger btn-xs"
+                                                (click)="item.remove()">
+                                            <span class="glyphicon glyphicon-trash"></span> Remove
+                                        </button>
+                                    </td>
+                                </tr>
+      <ion-row>
+ <ion-col><button ion-button block (click)="addCertification()">salva</button></ion-col><ion-col><button ion-button block  (click)="discard()">annulla</button></ion-col>
     </ion-row>
   </ion-grid>
 

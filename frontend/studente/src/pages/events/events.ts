@@ -32,7 +32,7 @@ isDetailsShown(event) {
   }
 
 updateEvent(event): void {
-    this.navCtrl.push(AddEventPage, {stage:JSON.stringify(event)});
+    this.navCtrl.push(AddEventPage, {event:JSON.stringify(event)});
   }
 
   deleteEvent(event): void {

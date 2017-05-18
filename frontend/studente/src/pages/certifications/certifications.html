@@ -17,7 +17,7 @@
     <input type="text" [(ngModel)]="filter" placeholder="{{'stage_filter_placeholder'|translate}}">
     <ion-icon class="filter-search-icon" name="md-search"></ion-icon>
     <ion-item>
-      <ion-label>{{'certification_order_label'|translate}}</ion-label>
+      <ion-label>{{'order_label'|translate}}</ion-label>
       <ion-select [(ngModel)]="order">
         <ion-option value=true>A-Z</ion-option>
         <ion-option value=false>Z-A</ion-option>
@@ -28,17 +28,23 @@
     <ion-card  *ngFor="let certification of certifications| experiencefilter:filter:'title'| orderBy:'certification.attributes.title':order">
       <div class="expandable-list">
         <div class="stage-title">{{certification.attributes.title}}</div>
-        <div class="stage-certificate">certificato si/no</div>
+         <div class="stage-certificate"><span *ngIf="certification.certificate">{{'certificate_label'|translate}}</span><span *ngIf="!certification.certificate">{{'not_certificate_label'|translate}}</span></div>
         <button class="stage-expansion" clear  ion-button icon-only (click)="toggleDetails(certification)"> <ion-icon class="stage-expansion-icon" item-right [name]="isDetailsShown(certification) ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
       </div>
       <div padding *ngIf="isDetailsShown(certification)">
-        {{certification.attributes.title}}
-        <div >
-          <button class="button-add-stage" ion-button clear (click)="deleteCertification(certification)">{{'certification_delete_button'|translate}}</button>
-          <button class="button-add-stage" ion-button clear (click)="updateCertification(certification)">{{'certification_update_button'|translate}}</button>
+          <div class="stage-title"> <span class="registration-institute-label">{{'certificate_title_label'|translate}}</span> {{certification.attributes.title}}</div>
+         <div class="stage-title"> <span class="registration-institute-label">{{'certificate_dateFrom_label'|translate}}</span>{{certification.attributes.dateFrom |date}}</div>
+         <div class="stage-title"> <span class="registration-institute-label">{{'certificate_dateTo_label'|translate}}</span>{{certification.attributes.dateTo |date}}</div>
+         <div class="stage-title"> <span class="registration-institute-label">{{'certificate_location_label'|translate}}</span>{{certification.attributes.location}}</div>
+         <div class="stage-title"> <span class="registration-institute-label">{{'certificate_description_label'|translate}}</span>{{certification.attributes.description}}</div>
+        <div>
+<!--         <div class="stage-title"> <span class="registration-institute-label">{{'certificate_certificate_label'|translate}}</span><a href="{{certification.certificate.documentUri}}" download="certificate">Download</a></div>-->
+        <div>
+          <button class="button-add-stage" ion-button clear (click)="deleteCertification(certification)">{{'delete_button'|translate}}</button>
+          <button class="button-add-stage" ion-button clear (click)="updateCertification(certification)">{{'update_button'|translate}}</button>
         </div>
       </div>
-
+      </div>
     </ion-card>
   </ion-list>
 </ion-content>

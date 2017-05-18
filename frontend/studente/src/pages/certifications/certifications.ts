@@ -32,7 +32,7 @@ isDetailsShown(certification) {
   }
 
 updateCertification(certification): void {
-    this.navCtrl.push(AddCertificationPage, {stage:JSON.stringify(certification)});
+    this.navCtrl.push(AddCertificationPage, {certification:JSON.stringify(certification)});
   }
 
   deleteCertification(certification): void {

@@ -17,7 +17,7 @@
     <input type="text" [(ngModel)]="filter" placeholder="{{'stage_filter_placeholder'|translate}}">
     <ion-icon class="filter-search-icon" name="md-search"></ion-icon>
     <ion-item>
-      <ion-label>{{'activity_order_label'|translate}}</ion-label>
+      <ion-label>{{'order_label'|translate}}</ion-label>
       <ion-select [(ngModel)]="order">
         <ion-option value=true>A-Z</ion-option>
         <ion-option value=false>Z-A</ion-option>
@@ -28,13 +28,18 @@
     <ion-card  *ngFor="let activity of activities| experiencefilter:filter:'title'| orderBy:'activity.attributes.title':order">
       <div class="expandable-list">
         <div class="stage-title">{{activity.attributes.title}}</div>
+        <div class="stage-certificate"><span *ngIf="activity.certificate">{{'certificate_label'|translate}}</span><span *ngIf="!activity.certificate">{{'not_certificate_label'|translate}}</span></div>
         <button class="stage-expansion" clear  ion-button icon-only (click)="toggleDetails(activity)"> <ion-icon class="stage-expansion-icon" item-right [name]="isDetailsShown(activity) ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
       </div>
       <div padding *ngIf="isDetailsShown(activity)">
-        {{activity.attributes.title}}
+          <div class="stage-title"> <span class="registration-institute-label">{{'activity_title_label'|translate}}</span> {{activity.attributes.title}}</div>
+         <div class="stage-title"> <span class="registration-institute-label">{{'activity_dateFrom_label'|translate}}</span>{{activity.attributes.dateFrom |date}}</div>
+         <div class="stage-title"> <span class="registration-institute-label">{{'activity_dateTo_label'|translate}}</span>{{activity.attributes.dateTo |date}}</div>
+         <div class="stage-title"> <span class="registration-institute-label">{{'activity_location_label'|translate}}</span>{{activity.attributes.location}}</div>
+         <div class="stage-title"> <span class="registration-institute-label">{{'activity_description_label'|translate}}</span>{{activity.attributes.description}}</div>
         <div >
-          <button class="button-add-stage" ion-button clear (click)="deleteActivity(activity)">{{'stage_delete_button'|translate}}</button>
-          <button class="button-add-stage" ion-button clear (click)="updateActivity(activity)">{{'stage_update_button'|translate}}</button>
+          <button class="button-add-stage" ion-button clear (click)="deleteActivity(activity)">{{'delete_button'|translate}}</button>
+          <button class="button-add-stage" ion-button clear (click)="updateActivity(activity)">{{'update_button'|translate}}</button>
         </div>
       </div>
 

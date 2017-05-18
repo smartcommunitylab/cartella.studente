@@ -9,7 +9,7 @@
   <ion-grid>
     <ion-row>
       <ion-col col-4 *ngFor="let type of types">
-          <div><button [block]="true" ion-button (click)="login(type)">{{type.title}}</button>
+          <div><button class="login-button" [block]="true" ion-button (click)="login(type)">{{type.title}}</button>
         </div>
         <div>{{type.text}}</div>
       </ion-col>

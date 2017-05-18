@@ -7,6 +7,8 @@ import { APP_INITIALIZER } from '@angular/core';
 import {HttpModule,Http} from "@angular/http";
 import {TranslateModule,TranslateStaticLoader,TranslateLoader,TranslateService} from 'ng2-translate';
 import { Ng2OrderModule } from 'ng2-order-pipe';
+import { FileSelectDirective, FileDropDirective } from 'ng2-file-upload';
+
 import { ConfigService }       from '../services/config.service';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
@@ -77,7 +79,8 @@ function initConfig(config: ConfigService){
     ButtonHome,
     ButtonProfile,
     ButtonNotifications,
-    ExperienceFilterPipe
+    ExperienceFilterPipe,
+    FileSelectDirective
   ],
   imports: [
     BrowserModule,

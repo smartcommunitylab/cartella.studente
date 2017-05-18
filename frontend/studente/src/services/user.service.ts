@@ -9,7 +9,6 @@ import {Student} from '../classes/Student.class';
 import {Certification} from '../classes/Certification.class';
 import { ExperienceTypes } from '../assets/conf/expTypes'
 import  {ExperienceContainer} from '../classes/ExperienceContainer.class'
-
 @Injectable()
 export class UserService  {
   private exams: ExperienceContainer[]=[];
@@ -204,6 +203,7 @@ getUserEvents():Promise<ExperienceContainer[]> {
       getUserCertifications():Promise<ExperienceContainer[]> {
      return new Promise<ExperienceContainer[]>((resolve, reject) => {
       this.webAPIConnector.getExperiences('84f01dc1-694d-40eb-9296-01ca5014ef5d',ExperienceTypes.EXP_TYPE_CERT).then(experiences=>{
+        this.certifications=experiences;
         this.certifications=[];
         for (var i=0; i<experiences.length;i++){
           this.certifications.push(experiences[i].experience);
@@ -276,6 +276,17 @@ getUserEvents():Promise<ExperienceContainer[]> {
         this.student=student;
 
         resolve(this.student)
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })
+  }
+  createCertificate(experience):Promise<any> {
+     return new Promise<any>((resolve, reject) => {
+      this.webAPIConnector.createCertificate(experience, '84f01dc1-694d-40eb-9296-01ca5014ef5d').then(response=>{
+
+        resolve(response.experienceId)
   }).catch((error: any):any => {
        reject()
 

@@ -13,7 +13,8 @@ import { ExperienceTypes } from '../../assets/conf/expTypes'
 export class AddStagePage implements OnInit {
   experienceContaniner:ExperienceContainer = new ExperienceContainer();
   stage:Stage= new Stage();
-
+  dateFrom=new Date().toISOString();
+  dateTo=new Date().toISOString();
   constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService){
   }
   ngOnInit():void {
@@ -21,6 +22,8 @@ export class AddStagePage implements OnInit {
       if (stage!=null){
         this.experienceContaniner=JSON.parse(this.params.get('stage'));
         this.stage = this.experienceContaniner.attributes as Stage;
+        this.dateFrom=new Date(this.experienceContaniner.attributes.dateFrom).toISOString();
+        this.dateTo=new Date(this.experienceContaniner.attributes.dateTo).toISOString();
       }
   }
   addStage(): void {
@@ -34,8 +37,9 @@ export class AddStagePage implements OnInit {
     //stage.categorization={};
     this.stage.type=ExperienceTypes.EXP_TYPE_STAGE;
     this.stage.duration=10
-    this.stage.location="location stage"
     this.stage.geocode=[0,0]
+    this.stage.dateFrom=new Date(this.dateFrom).getTime();
+    this.stage.dateTo=new Date(this.dateTo).getTime();
     this.experienceContaniner.attributes=this.stage;
 
     if (this.experienceContaniner.id!=null)

@@ -2,8 +2,8 @@
 export class Experience {
   id:string;
   institutional:boolean;
-  dateFrom:Date;
-  dateTo:Date;
+  dateFrom:number;
+  dateTo:number;
   educational:boolean;
   certifierId?:string;
   certified:boolean;
@@ -11,6 +11,6 @@ export class Experience {
   instituteId?:string;
   schoolYear?:string;
   registrationId?:string;
-        constructor() {
-        }
+  constructor() {
+      }
 }

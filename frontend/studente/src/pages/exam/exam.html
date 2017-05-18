@@ -11,10 +11,8 @@
 
 <ion-content padding>
   <div class="row-add-stage">
-<!--
-    <button class="button-add-stage" ion-button clear (click)="addNewExam()">{{'exam_add_new_button'|translate}}</button>-->
   </div>
-
+<!--
   <div class="stage-filter">
     <input type="text" [(ngModel)]="filter" placeholder="{{'stage_filter_placeholder'|translate}}">
     <ion-icon class="filter-search-icon" name="md-search"></ion-icon>
@@ -26,23 +24,22 @@
       </ion-select>
     </ion-item>
   </div>
+-->
   <ion-list>
     <ion-card  *ngFor="let exam of exams| experiencefilter:filter:'title'| orderBy:'exam.attributes.title':order">
       <div class="expandable-list">
         <div class="stage-title">{{exam.attributes.titoloStudio}}</div>
-        <div class="stage-certificate">certificato si/no</div>
-        <button class="stage-expansion" clear  ion-button icon-only (click)="toggleDetails(exam)"> <ion-icon class="stage-expansion-icon" item-right [name]="isDetailsShown(exam) ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
+        <div class="stage-certificate"><span *ngIf="exam.certificate">{{'certificate_label'|translate}}</span><span *ngIf="!exam.certificate">{{'not_certificate_label'|translate}}</span></div>
+<!--        <button class="stage-expansion" clear  ion-button icon-only (click)="toggleDetails(exam)"> <ion-icon class="stage-expansion-icon" item-right [name]="isDetailsShown(exam) ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>-->
       </div>
-      <div padding *ngIf="isDetailsShown(exam)">
-        {{exam.attributes.titoloStudio}}
-<!--
-        <div >
-          <button class="button-add-stage" ion-button clear (click)="deleteStage(exam)">{{'exam_delete_button'|translate}}</button>
-          <button class="button-add-stage" ion-button clear (click)="updateStage(exam)">{{'exam_update_button'|translate}}</button>
-        </div>
--->
+<!--      <div padding *ngIf="isDetailsShown(exam)">-->
+      <div padding>
+        <div class="stage-title"> <span class="registration-institute-label">{{'exam_title_label'|translate}}</span>{{exam.attributes.titoloStudio}}</div>
+        <div class="stage-title"> <span class="registration-institute-label">{{'exam_address_label'|translate}}</span>{{exam.attributes.indirizzoEsame}}</div>
+        <div class="stage-title"> <span class="registration-institute-label">{{'exam_result_label'|translate}}</span>{{exam.attributes.esito}}</div>
+        <div class="stage-title"> <span class="registration-institute-label">{{'exam_year_label'|translate}}</span>{{exam.attributes.schoolYear}}</div>
+        <button  *ngIf="exam.certificate">download</button>
       </div>
-
     </ion-card>
   </ion-list>
 </ion-content>

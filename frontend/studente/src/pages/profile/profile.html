@@ -29,7 +29,7 @@
       {{'profile_name_label'|translate}}{{student.name}}
     </ion-col>
      <ion-col>
-       {{'profile_tel_label'|translate}}<span *ngIf="!editMode">{{student.phone}}</span><ion-input class="profile-input" *ngIf="editMode" type="text" placeholder="{{'profile_tel_input_placeholder'|translate}}" [(ngModel)]="student.phone"></ion-input>
+       {{'profile_tel_label'|translate}}<span *ngIf="!editMode">{{student.phone}}</span><ion-item *ngIf="editMode" class="profile-input" ><ion-input type="text" placeholder="{{'profile_tel_input_placeholder'|translate}}" [(ngModel)]="student.phone"></ion-input></ion-item>
     </ion-col>
   </ion-row>
    <ion-row>
@@ -37,7 +37,7 @@
       {{'profile_surname_label'|translate}}{{student.surname}}
     </ion-col>
      <ion-col>
-       {{'profile_cel_label'|translate}}<span *ngIf="!editMode">{{student.mobilePhone}}</span><ion-input class="profile-input" *ngIf="editMode"  type="text" placeholder="{{'profile_cel_input_placeholder'|translate}}" [(ngModel)]="student.mobilePhone"></ion-input>
+       {{'profile_cel_label'|translate}}<span *ngIf="!editMode">{{student.mobilePhone}}</span><ion-item *ngIf="editMode" class="profile-input" ><ion-input   type="text" placeholder="{{'profile_cel_input_placeholder'|translate}}" [(ngModel)]="student.mobilePhone"></ion-input></ion-item>
     </ion-col>
   </ion-row>
    <ion-row>
@@ -45,7 +45,7 @@
       {{'profile_cf_label'|translate}}{{student.cf}}
     </ion-col>
      <ion-col>
-       {{'profile_mail_label'|translate}} <span *ngIf="!editMode">{{student.email}}</span><ion-input class="profile-input" *ngIf="editMode"  type="text" placeholder="{{'profile_mail_input_placeholder'|translate}}" [(ngModel)]="student.email"></ion-input>
+       {{'profile_mail_label'|translate}} <span *ngIf="!editMode">{{student.email}}</span><ion-item *ngIf="editMode" class="profile-input"><ion-input   type="text" placeholder="{{'profile_mail_input_placeholder'|translate}}" [(ngModel)]="student.email"></ion-input></ion-item>
     </ion-col>
   </ion-row>
     <ion-row>
@@ -58,9 +58,9 @@
   </ion-row>
      <ion-row>
     <ion-col>
-      <button *ngIf="!editMode" ion-button (click)=openEditMode()>{{'profile_update_button'|translate}}</button>
-            <button ion-button *ngIf="editMode" (click)=closeEditMode()>{{'profile_cancel_button'|translate}}</button>
-            <button ion-button  *ngIf="editMode" (click)=saveData()>{{'profile_confirm_button'|translate}}</button>
+      <button class="profile-button" *ngIf="!editMode" ion-button (click)=openEditMode()>{{'profile_update_button'|translate}}</button>
+            <button class="profile-button" ion-button *ngIf="editMode" (click)=closeEditMode()>{{'profile_cancel_button'|translate}}</button>
+            <button  class="profile-button" ion-button  *ngIf="editMode" (click)=saveData()>{{'profile_confirm_button'|translate}}</button>
     </ion-col>
   </ion-row>
 </ion-grid>
