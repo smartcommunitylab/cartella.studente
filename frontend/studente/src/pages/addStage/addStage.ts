@@ -2,6 +2,8 @@ import { Component,OnInit } from '@angular/core';
 import { NavController,NavParams } from 'ionic-angular';
 import {UserService } from '../../services/user.service'
 import { Stage } from '../../classes/Stage.class'
+import { StudentExperience } from '../../classes/StudentExperience.class'
+
 import { ExperienceContainer } from '../../classes/ExperienceContainer.class'
 import { ExperienceTypes } from '../../assets/conf/expTypes'
 @Component({
@@ -11,6 +13,7 @@ import { ExperienceTypes } from '../../assets/conf/expTypes'
 
 
 export class AddStagePage implements OnInit {
+    studentExperience:StudentExperience = new StudentExperience();
   experienceContaniner:ExperienceContainer = new ExperienceContainer();
   stage:Stage= new Stage();
   dateFrom=new Date().toISOString();
@@ -41,10 +44,11 @@ export class AddStagePage implements OnInit {
     this.stage.dateFrom=new Date(this.dateFrom).getTime();
     this.stage.dateTo=new Date(this.dateTo).getTime();
     this.experienceContaniner.attributes=this.stage;
+    this.studentExperience.experience=this.experienceContaniner;
 
     if (this.experienceContaniner.id!=null)
       {
-       this.userService.updateStage(this.experienceContaniner).then(stage=>
+       this.userService.updateStage(this.studentExperience).then(stage=>
        {
         console.log("done");
         this.navCtrl.pop();
@@ -52,7 +56,7 @@ export class AddStagePage implements OnInit {
        );
       }
     else {
-      this.userService.addStage(this.experienceContaniner).then(stage=>
+      this.userService.addStage(this.studentExperience).then(stage=>
        {
         console.log("done");
         this.navCtrl.pop();

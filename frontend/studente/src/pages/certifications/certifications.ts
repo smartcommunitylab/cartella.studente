@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, LoadingController, AlertController } from 'ionic-angular';
 import {UserService } from '../../services/user.service';
-import { ExperienceContainer } from '../../classes/ExperienceContainer.class';
+import { StudentExperience } from '../../classes/StudentExperience.class';
 import { AddCertificationPage } from '../addCertification/addCertification';
 import {TranslateService} from 'ng2-translate';
 @Component({
@@ -9,7 +9,7 @@ import {TranslateService} from 'ng2-translate';
   templateUrl: 'certifications.html'
 })
 export class CertificationsPage  {
-  certifications:ExperienceContainer[]=[];
+  certifications:StudentExperience[]=[];
   order=true;
 icon="ios-arrow-down";
   shownCertification=null;
@@ -57,7 +57,7 @@ updateCertification(certification): void {
        //remove stage from stage
       for (var i=0; i<this.certifications.length;i++)
         {
-          if (this.certifications[i].id==certification.id)
+          if (this.certifications[i].experience.id==certification.id)
             {
                  this.certifications.splice(i, 1);
             }

@@ -22,9 +22,9 @@ export class ExperienceFilterPipe implements PipeTransform {
    */
   applyFilter(experience: any, filter: any, field): boolean {
    // for (let field in filter) {
-      if (experience.attributes[field]) {
-        if (typeof experience.attributes[field] === 'string') {
-          if (experience.attributes[field].toLowerCase().indexOf(filter) === -1) {
+      if (experience.experience.attributes[field]) {
+        if (typeof experience.experience.attributes[field] === 'string') {
+          if (experience.experience.attributes[field].toLowerCase().indexOf(filter) === -1) {
             return false;
           }
         } else if (typeof experience.attributes[field] === 'number') {

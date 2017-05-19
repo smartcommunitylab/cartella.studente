@@ -2,6 +2,7 @@ import { Component,OnInit } from '@angular/core';
 import { NavController,NavParams } from 'ionic-angular';
 import {UserService } from '../../services/user.service'
 import { Activity } from '../../classes/Activity.class'
+import { StudentExperience } from '../../classes/StudentExperience.class'
 import { ExperienceContainer } from '../../classes/ExperienceContainer.class'
 import { ExperienceTypes } from '../../assets/conf/expTypes'
 @Component({
@@ -11,6 +12,7 @@ import { ExperienceTypes } from '../../assets/conf/expTypes'
 
 
 export class AddActivityPage implements OnInit {
+  studentExperience:StudentExperience = new StudentExperience();
   experienceContaniner:ExperienceContainer = new ExperienceContainer();
   activity:Activity= new Activity();
   dateFrom=new Date().toISOString();
@@ -39,10 +41,10 @@ export class AddActivityPage implements OnInit {
     this.activity.dateFrom=new Date(this.dateFrom).getTime();
     this.activity.dateTo=new Date(this.dateTo).getTime();
     this.experienceContaniner.attributes=this.activity;
-
+this.studentExperience.experience=this.experienceContaniner;
     if (this.experienceContaniner.id!=null)
       {
-       this.userService.updateActivity(this.experienceContaniner).then(activity=>
+       this.userService.updateActivity(this.studentExperience).then(activity=>
        {
         console.log("done");
         this.navCtrl.pop();
@@ -50,7 +52,7 @@ export class AddActivityPage implements OnInit {
        );
       }
     else {
-      this.userService.addActivity(this.experienceContaniner).then(activity=>
+      this.userService.addActivity(this.studentExperience).then(activity=>
        {
         console.log("done");
         this.navCtrl.pop();

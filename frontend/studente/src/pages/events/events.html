@@ -27,16 +27,16 @@
   <ion-list>
     <ion-card  *ngFor="let event of events| experiencefilter:filter:'title'| orderBy:'event.attributes.title':order">
       <div class="expandable-list">
-        <div class="stage-title">{{event.attributes.title}}</div>
+        <div class="stage-title">{{event.experience.attributes.title}}</div>
         <div class="stage-certificate"><span *ngIf="event.certificate">{{'certificate_label'|translate}}</span><span *ngIf="!event.certificate">{{'not_certificate_label'|translate}}</span></div>
         <button class="stage-expansion" clear  ion-button icon-only (click)="toggleDetails(event)"> <ion-icon class="stage-expansion-icon" item-right [name]="isDetailsShown(event) ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
       </div>
       <div padding *ngIf="isDetailsShown(event)">
-         <div class="stage-title"> <span class="registration-institute-label">{{'event_title_label'|translate}}</span> {{event.attributes.title}}</div>
-         <div class="stage-title"> <span class="registration-institute-label">{{'event_dateFrom_label'|translate}}</span>{{event.attributes.dateFrom |date}}</div>
-         <div class="stage-title"> <span class="registration-institute-label">{{'event_dateTo_label'|translate}}</span>{{event.attributes.dateTo |date}}</div>
-         <div class="stage-title"> <span class="registration-institute-label">{{'event_location_label'|translate}}</span>{{event.attributes.location}}</div>
-         <div class="stage-title"> <span class="registration-institute-label">{{'event_description_label'|translate}}</span>{{event.attributes.description}}</div>
+         <div class="stage-title"> <span class="registration-institute-label">{{'event_title_label'|translate}}</span> {{event.experience.attributes.title}}</div>
+         <div class="stage-title"> <span class="registration-institute-label">{{'event_dateFrom_label'|translate}}</span>{{event.experience.attributes.dateFrom |date}}</div>
+         <div class="stage-title"> <span class="registration-institute-label">{{'event_dateTo_label'|translate}}</span>{{event.experience.attributes.dateTo |date}}</div>
+         <div class="stage-title"> <span class="registration-institute-label">{{'event_location_label'|translate}}</span>{{event.experience.attributes.location}}</div>
+         <div class="stage-title"> <span class="registration-institute-label">{{'event_description_label'|translate}}</span>{{event.experience.attributes.description}}</div>
         <div >
           <button class="button-add-stage" ion-button clear (click)="deleteEvent(event)">{{'delete_button'|translate}}</button>
           <button class="button-add-stage" ion-button clear (click)="updateEvent(event)">{{'update_button'|translate}}</button>

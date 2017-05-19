@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, LoadingController, AlertController } from 'ionic-angular';
 import {UserService } from '../../services/user.service';
-import { ExperienceContainer } from '../../classes/ExperienceContainer.class';
+import { StudentExperience } from '../../classes/StudentExperience.class';
 import { AddEventPage } from '../addEvent/addEvent';
 import {TranslateService} from 'ng2-translate';
 @Component({
@@ -9,7 +9,7 @@ import {TranslateService} from 'ng2-translate';
   templateUrl: 'events.html'
 })
 export class EventsPage  {
-  events:ExperienceContainer[]=[];
+  events:StudentExperience[]=[];
   order=true;
 icon="ios-arrow-down";
   shownEvent=null;

@@ -2,6 +2,7 @@ import { Component,OnInit } from '@angular/core';
 import { NavController,NavParams } from 'ionic-angular';
 import {UserService } from '../../services/user.service'
 import { Event } from '../../classes/Event.class'
+import { StudentExperience } from '../../classes/StudentExperience.class'
 import { ExperienceContainer } from '../../classes/ExperienceContainer.class'
 import { ExperienceTypes } from '../../assets/conf/expTypes'
 @Component({
@@ -11,6 +12,7 @@ import { ExperienceTypes } from '../../assets/conf/expTypes'
 
 
 export class AddEventPage implements OnInit {
+  studentExperience:StudentExperience = new StudentExperience();
   experienceContaniner:ExperienceContainer = new ExperienceContainer();
   event:Event= new Event();
   dateFrom=new Date().toISOString();
@@ -40,10 +42,11 @@ export class AddEventPage implements OnInit {
       this.event.dateFrom=new Date(this.dateFrom).getTime();
     this.event.dateTo=new Date(this.dateTo).getTime();
     this.experienceContaniner.attributes=this.event;
+this.studentExperience.experience=this.experienceContaniner;
 
     if (this.experienceContaniner.id!=null)
       {
-       this.userService.updateStage(this.experienceContaniner).then(event=>
+       this.userService.updateStage(this.studentExperience).then(event=>
        {
         console.log("done");
         this.navCtrl.pop();
@@ -51,7 +54,7 @@ export class AddEventPage implements OnInit {
        );
       }
     else {
-      this.userService.addEvent(this.experienceContaniner).then(event=>
+      this.userService.addEvent(this.studentExperience).then(event=>
        {
         console.log("done");
         this.navCtrl.pop();
