@@ -1,20 +1,22 @@
 <ion-header>
   <ion-navbar>
+<!--
     <ion-title>
       Login Page
     </ion-title>
+-->
   </ion-navbar>
 </ion-header>
 <ion-content padding>
   <ion-grid>
         <ion-row>
       <ion-col >
-          <div text-center>Entra con:</div>
+          <div class="login-label">{{'app_name'|translate}}</div>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col col-4 *ngFor="let type of types">
-          <div><button class="login-button" [block]="true" ion-button (click)="login(type)">{{type.title}}</button>
+          <div><button class="login-button" [block]="true" ion-button (click)="login(type)" ngClass="{{type.style}}">{{type.title| uppercase}}</button>
         </div>
         <div>{{type.text}}</div>
       </ion-col>

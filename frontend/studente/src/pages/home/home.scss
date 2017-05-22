@@ -4,20 +4,22 @@ page-home {
   display:inline-block;
   width: 50%;
 
-    .home-registration {
-height: 50px;
+    .home-button {
+      font-weight: bold;
+       height: 50px;
     text-align: center;
     line-height: 50px;
       color: white;
-    background-color: gray;
+    &.home-registration {
+    background-color: $formation-color;
+
     }
-    .home-exams{
-height: 50px;
-    text-align: center;
-    line-height: 50px;
-      color: white;
-    background-color: gray;
+    &.home-exams{
+
+    background-color: $formation-color;
     }
+    }
+
 }
 .experiences-list {
   float:right;
@@ -28,17 +30,27 @@ height: 50px;
     text-align: center;
     line-height: 50px;
     color: white;
-    background-color: gray;
+          font-weight: bold;
+
+    background-color: $experience-color;
     }
   }
  .home-title-label {
       text-align: center;
-   background-color: gray;
-    color: white;
        height: 40px;
     line-height: 40px;
-    font-size: 25px;
+    font-size: 20px;
    margin: 5px;
+   font-weight: bold;
+    &.institutional-title {
+    color:  #00897b;
+    border-bottom: 2px solid  #00897b;
+      }
+      &.experience-title {
+        color: #039be5;
+        border-bottom: 2px solid  #039be5;
+
+      }
     }
   }
 

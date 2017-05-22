@@ -1,12 +1,43 @@
+.login-label {
+  text-align: center;
+  font-size: 40px;
+  color: $title-page-color;
+      padding: 100px 20px;
+}
 .login-button {
       width: 150px;
     height: 150px;
-    background-color:gray;
   display: block;
   margin-left: auto;
   margin-right: auto;
+  &.student-login{
+        background-color:$student-color;
+
+  }
+    &.school-login{
+        background-color:$school-color;
+
+  }
+  &.external-login{
+        background-color:  $sternal-color;
+
+  }
 }
 .login-button:hover {
+   &.student-login{
+        background-color:$student-color;
+     opacity: 0.7;
 
-    background-color:darkgray!important;
+  }
+    &.school-login{
+        background-color:$school-color;
+      opacity: 0.7;
+
+  }
+  &.external-login{
+        background-color:  $sternal-color;
+    opacity: 0.7;
+
+  }
+
 }

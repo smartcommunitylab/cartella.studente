@@ -14,3 +14,20 @@
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
+
+$formation-color: #00897b;
+$experience-color: #039be5;
+$button-color: #406584;
+$link-color: #406584;
+$title-page-color: #4d4d4d;
+$footer-color: #4d4d4d;
+$text-color: #000000;
+$title-bar-color: #e0e0e0;
+$student-color:#039be5;
+$school-color:#00897b;
+  $sternal-color:#406584;
+
+.navigation-button-bar {
+  color: $button-color;
+  font-size: 20px;
+}
