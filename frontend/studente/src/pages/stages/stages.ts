@@ -59,7 +59,7 @@ updateStage(stage): void {
        //remove stage from stage
       for (var i=0; i<this.stages.length;i++)
         {
-          if (this.stages[i].id==stage.id)
+          if (this.stages[i].experience.id==stage.id)
             {
                  this.stages.splice(i, 1);
             }

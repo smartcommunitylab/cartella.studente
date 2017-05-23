@@ -9,6 +9,7 @@ import {Student} from '../classes/Student.class';
 import {Certification} from '../classes/Certification.class';
 import { ExperienceTypes } from '../assets/conf/expTypes'
 import  {StudentExperience} from '../classes/StudentExperience.class'
+import  {ExperienceContainer} from '../classes/ExperienceContainer.class'
 @Injectable()
 export class UserService  {
   private exams: StudentExperience[]=[];
@@ -50,10 +51,11 @@ export class UserService  {
      return new Promise<StudentExperience[]>((resolve, reject) => {
       this.webAPIConnector.getExperiences('84f01dc1-694d-40eb-9296-01ca5014ef5d',ExperienceTypes.EXP_TYPE_STAGE).then(experiences=>{
         //take only stages
-        this.stages=[];
-        for (var i=0; i<experiences.length;i++){
-          this.stages.push(experiences[i].experience);
-        }
+         this.stages=experiences;
+//        this.stages=[];
+//        for (var i=0; i<experiences.length;i++){
+//          this.stages.push(experiences[i].experience);
+//        }
         resolve(this.stages)
 
   }).catch((error: any):any => {
@@ -62,8 +64,8 @@ export class UserService  {
      })
   })
   }
-  addStage(stage:StudentExperience): Promise<StudentExperience> {
-         return new Promise<StudentExperience>((resolve, reject) => {
+  addStage(stage:StudentExperience): Promise<ExperienceContainer> {
+         return new Promise<ExperienceContainer>((resolve, reject) => {
       this.webAPIConnector.addExperience(stage.experience.attributes,'84f01dc1-694d-40eb-9296-01ca5014ef5d',ExperienceTypes.EXP_TYPE_STAGE).then(stage=>{
 
         resolve(stage)
@@ -74,8 +76,8 @@ export class UserService  {
      })
   })
   }
-     updateStage(stage:StudentExperience): Promise<StudentExperience> {
-         return new Promise<StudentExperience>((resolve, reject) => {
+     updateStage(stage:StudentExperience): Promise<ExperienceContainer> {
+         return new Promise<ExperienceContainer>((resolve, reject) => {
       this.webAPIConnector.updateExperience(stage,'84f01dc1-694d-40eb-9296-01ca5014ef5d').then(stage=>{
 
         resolve(stage)
@@ -217,8 +219,8 @@ getUserEvents():Promise<StudentExperience[]> {
   })
   }
 
-    addCertification(certification:StudentExperience): Promise<StudentExperience> {
-         return new Promise<StudentExperience>((resolve, reject) => {
+    addCertification(certification:StudentExperience): Promise<ExperienceContainer> {
+         return new Promise<ExperienceContainer>((resolve, reject) => {
       this.webAPIConnector.addExperience(certification.experience.attributes,'84f01dc1-694d-40eb-9296-01ca5014ef5d',ExperienceTypes.EXP_TYPE_CERT).then(certification=>{
 
         resolve(certification)
@@ -229,8 +231,8 @@ getUserEvents():Promise<StudentExperience[]> {
      })
   })
   }
-     updateCertification(certification:StudentExperience): Promise<StudentExperience> {
-         return new Promise<StudentExperience>((resolve, reject) => {
+     updateCertification(certification:StudentExperience): Promise<ExperienceContainer> {
+         return new Promise<ExperienceContainer>((resolve, reject) => {
       this.webAPIConnector.updateExperience(certification,'84f01dc1-694d-40eb-9296-01ca5014ef5d').then(certification=>{
 
         resolve(certification)
@@ -285,6 +287,17 @@ getUserEvents():Promise<StudentExperience[]> {
   createCertificate(experience):Promise<any> {
      return new Promise<any>((resolve, reject) => {
       this.webAPIConnector.createCertificate(experience, '84f01dc1-694d-40eb-9296-01ca5014ef5d').then(response=>{
+
+        resolve(response.experienceId)
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })
+  }
+    deleteCertificate(experience):Promise<any> {
+     return new Promise<any>((resolve, reject) => {
+      this.webAPIConnector.deleteCertificate(experience, '84f01dc1-694d-40eb-9296-01ca5014ef5d').then(response=>{
 
         resolve(response.experienceId)
   }).catch((error: any):any => {

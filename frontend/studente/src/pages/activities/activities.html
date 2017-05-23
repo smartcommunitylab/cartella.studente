@@ -13,7 +13,7 @@
   <ion-grid>
   <ion-row>
     <ion-col col-8>
-    <div class="stage-filter">
+    <div class="search-filter">
     <input type="text" [(ngModel)]="filter" placeholder="{{'stage_filter_placeholder'|translate}}">
     <ion-icon class="filter-search-icon" name="md-search"></ion-icon>
     <ion-item>
@@ -45,7 +45,7 @@
          <div class="experience-title"> <span class="registration-institute-label">{{'activity_dateTo_label'|translate}}</span>{{activity.attributes.dateTo |date}}</div>
          <div class="experience-title"> <span class="registration-institute-label">{{'activity_location_label'|translate}}</span>{{activity.attributes.location}}</div>
          <div class="experience-title"> <span class="registration-institute-label">{{'activity_description_label'|translate}}</span>{{activity.attributes.description}}</div>
-        <div >
+        <div *ngIf="!activity.attributes.institutional">
           <button class="label-button" ion-button clear (click)="deleteActivity(activity)">{{'delete_button'|translate}}</button>
           <button class="label-button" ion-button clear (click)="updateActivity(activity)">{{'update_button'|translate}}</button>
         </div>

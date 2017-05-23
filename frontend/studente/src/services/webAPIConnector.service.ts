@@ -74,8 +74,8 @@ export class WebAPIConnectorService  {
             })
     }
     updateExperience(experience: StudentExperience, studentId:string):Promise<any> {
-      let body=experience
-      let expId:string=experience.id;
+      let body=experience.experience
+      let expId:string=experience.experienceId;
       let headers = new Headers({ 'Accept': 'application/json' });
       headers.append('x-access-token', ' ');
       let options = new RequestOptions({ headers: headers });
@@ -137,6 +137,22 @@ export class WebAPIConnectorService  {
             let url:string=this.getApiUrl()+'student/'+studentId+'/experience/'+expId+'/certificate';
 
             return this.http.post(url,body, options)
+               .toPromise()
+               .then(response => response.json()).catch(error=>
+                                                       {
+                  console.error('An error occurred', error); // for demo purposes only
+
+            })
+    }
+      deleteCertificate(experience: StudentExperience, studentId:string):Promise<any> {
+      let body={}
+      let expId:string=experience.experienceId;
+      let headers = new Headers({ 'Accept': 'application/json' });
+      headers.append('x-access-token', ' ');
+      let options = new RequestOptions({ headers: headers });
+            let url:string=this.getApiUrl()+'student/'+studentId+'/experience/'+expId+'/certificate/file';
+
+            return this.http.delete(url, options)
                .toPromise()
                .then(response => response.json()).catch(error=>
                                                        {

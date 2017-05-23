@@ -13,7 +13,7 @@
   <ion-grid>
   <ion-row>
     <ion-col col-8>
-  <div class="stage-filter">
+  <div class="search-filter">
     <input type="text" [(ngModel)]="filter" placeholder="{{'stage_filter_placeholder'|translate}}">
     <ion-icon class="filter-search-icon" name="md-search"></ion-icon>
     <ion-item>
@@ -36,7 +36,7 @@
     <ion-card  *ngFor="let certification of certifications| experiencefilter:filter:'title'| orderBy:'certification.experience.attributes.title':order">
       <div class="experience-expandable-list">
         <div class="experience-title">{{certification.experience.attributes.title}}</div>
-         <div class="experience-certificate"><span *ngIf="certification.certificate">{{'certificate_label'|translate}}</span><span *ngIf="!certification.certificate">{{'not_certificate_label'|translate}}</span></div>
+         <div class="experience-certificate"><span *ngIf="certification.certificate.documentPresent">{{'certificate_label'|translate}}</span><span *ngIf="!certification.certificate.documentPresent">{{'not_certificate_label'|translate}}</span></div>
         <button class="stage-expansion" clear  ion-button icon-only (click)="toggleDetails(certification)"> <ion-icon class="experience-expansion-icon" item-right [name]="isDetailsShown(certification) ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
       </div>
       <div padding *ngIf="isDetailsShown(certification)">
@@ -46,8 +46,8 @@
          <div class="experience-title"> <span class="registration-institute-label">{{'certificate_location_label'|translate}}</span>{{certification.experience.attributes.location}}</div>
          <div class="experience-title"> <span class="registration-institute-label">{{'certificate_description_label'|translate}}</span>{{certification.experience.attributes.description}}</div>
         <div>
-         <div class="experience-title" *ngIf="certification.certificate!=null"> <span class="registration-institute-label">{{'certificate_certificate_label'|translate}}</span><a href="{{certification.certificate.documentUri}}" download="certificate">Download</a></div>
-        <div>
+         <div class="experience-title" *ngIf="certification.certificate!=null && certification.certificate.documentPresent"> <span class="registration-institute-label">{{'certificate_certificate_label'|translate}}</span><a download="certificate.txt" class="button label-button" href="{{ certification.certificate.documentUri}}"><ion-icon name="md-download"></ion-icon></a></div>
+        <div *ngIf="!certification.experience.attributes.institutional">
           <button class="label-button" ion-button clear (click)="deleteCertification(certification)">{{'delete_button'|translate}}</button>
           <button class="label-button" ion-button clear (click)="updateCertification(certification)">{{'update_button'|translate}}</button>
         </div>
