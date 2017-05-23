@@ -44,11 +44,13 @@ updateActivity(activity): void {
     buttons: [
       {
         text: this.translate.instant('alert_cancel'),
+        cssClass: 'pop-up-button',
         role: 'cancel'
 
       },
       {
         text: this.translate.instant('alert_confirm'),
+        cssClass: 'pop-up-button',
         handler: () => {
               let loader = this.loading.create({
     content: this.translate.instant('loading'),

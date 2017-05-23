@@ -1,3 +1,21 @@
 .registration-institute-label{
   font-weight: bold;
 }
+.registration-expandable-list{
+  display: inline-flex;
+  width: 100%;
+  background-color: $formation-color;
+  color: white;
+  padding: 16px;
+}
+  .registration-title{
+    width: 100%!important;
+    margin: 6px;
+  }
+  .registration-certificate{
+    width: 50%!important;
+  }
+    .registration-expansion-icon{
+      color: white!important;
+
+  }

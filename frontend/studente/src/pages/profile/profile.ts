@@ -25,11 +25,13 @@ export class ProfilePage  {
     buttons: [
       {
         text: this.translate.instant('alert_cancel'),
-        role: 'cancel'
+        role: 'cancel',
+        cssClass: 'pop-up-button'
 
       },
       {
         text: this.translate.instant('alert_confirm'),
+        cssClass: 'pop-up-button',
         handler: () => {
           //return do read mode
           this.editMode=false;

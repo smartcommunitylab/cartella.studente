@@ -7,31 +7,24 @@
   }
 
 }
-.stage-filter{
-  width: 100%;
-  display: inline-flex;
-  input {
-    min-width: 50%;
-  }
-  .filter-search-icon{
-    font-size: 40px;
-  }
+.exam-institute-label{
+  font-weight: bold;
 }
-.expandable-list{
+.exam-expandable-list{
   display: inline-flex;
   width: 100%;
-  background-color: gray;
+  background-color: $formation-color;
   color: white;
   padding: 16px;
-  .stage-title{
-    width: 100%!important;
-  }
-  .stage-certificate{
-    width: 50%!important;
-  }
-    .stage-expansion-icon{
-      color: white!important;
-
-  }
 
 }
+  .exam-title{
+    width: 100%!important;
+    margin: 6px;
+  }
+  .exam-certificate{
+    width: 50%!important;
+  }
+    .registration-expansion-icon{
+      color: white!important;
+  }

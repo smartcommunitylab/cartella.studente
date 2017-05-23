@@ -5,8 +5,7 @@ import {Exam} from '../classes/Exam.class'
 import {Registration} from '../classes/Registration.class'
 import {Experience} from '../classes/Experience.class'
 import {Student} from '../classes/Student.class'
-import {ExperienceContainer} from '../classes/ExperienceContainer.class'
-import {ExperienceSuperContainer} from '../classes/ExperienceSuperContainer.class'
+import {StudentExperience} from '../classes/StudentExperience.class'
 import { ExperienceTypes } from '../assets/conf/expTypes'
 
 @Injectable()
@@ -74,7 +73,7 @@ export class WebAPIConnectorService  {
 
             })
     }
-    updateExperience(experience: ExperienceContainer, studentId:string):Promise<any> {
+    updateExperience(experience: StudentExperience, studentId:string):Promise<any> {
       let body=experience
       let expId:string=experience.id;
       let headers = new Headers({ 'Accept': 'application/json' });
@@ -129,7 +128,7 @@ export class WebAPIConnectorService  {
 
             })
     }
-    createCertificate(experience: ExperienceContainer, studentId:string):Promise<any> {
+    createCertificate(experience: StudentExperience, studentId:string):Promise<any> {
       let body={}
       let expId:string=experience.id;
       let headers = new Headers({ 'Accept': 'application/json' });

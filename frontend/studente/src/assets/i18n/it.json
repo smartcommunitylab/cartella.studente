@@ -37,7 +37,7 @@
   "title_curriculum": "Curriculum Vitae",
   "title_certifications": "Certificazioni",
   "title_activities": "Attivita`",
-  "title_profile":"Profilo studente",
+  "title_profile":"La mia scheda",
   "delete_button":"Cancella",
   "update_button":"Modifica",
   "alert_delete_stage_title":"Cancella esperienza",
@@ -148,7 +148,11 @@
   "certificate_description_label":"Descrizione: ",
   "certificate_certificate_label":"Certificato",
   "save_button_label":"Salva",
-  "cancel_button_label":"Annulla"
+  "cancel_button_label":"Annulla",
+  "events_empty_list_label":"Non sono presenti eventi",
+  "stages_empty_list_label":"Non sono presenti alternanza scuola-lavoro",
+  "activities_empty_list_label":"Non sono presenti attivita`",
+  "certifications_empty_list_label":"Non sono presenti certificati"
 
 
 }
