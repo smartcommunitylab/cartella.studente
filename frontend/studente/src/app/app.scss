@@ -14,3 +14,79 @@
 // To declare rules for a specific mode, create a child rule
 // for the .md, .ios, or .wp mode classes. The mode class is
 // automatically applied to the <body> element in the app.
+
+$formation-color: #00897b;
+$experience-color: #039be5;
+$button-color: #406584;
+$link-color: #406584;
+$title-page-color: #4d4d4d;
+$footer-color: #4d4d4d;
+$text-color: #000000;
+$title-bar-color: #e0e0e0;
+$student-color:#039be5;
+$school-color:#00897b;
+  $sternal-color:#406584;
+
+.navigation-button-bar {
+  color: $button-color;
+  font-size: 20px;
+}
+
+.action-button{
+   background-color: $button-color;
+  font-size: 20px;
+}
+.action-button:hover{
+  background-color: $button-color!important;
+   opacity: 0.7;
+}
+.action-button:active{
+  background-color: $button-color!important;
+   opacity: 0.7;
+}
+.label-button{
+   color: $button-color;
+  font-size: 20px;
+}
+.label-button:hover{
+  color: $button-color!important;
+   opacity: 0.7;
+}
+.pop-up-button{
+  color: $button-color!important;
+}
+.search-filter{
+  width: 100%;
+  display: inline-flex;
+  input {
+    min-width: 50%;
+  }
+  .filter-search-icon{
+    font-size: 40px;
+    margin: 6px;
+  }
+}
+.experience-expandable-list{
+  display: inline-flex;
+  width: 100%;
+  background-color: $experience-color;
+  color: white;
+  padding: 16px;
+}
+  .experience-title{
+    width: 100%!important;
+    margin: 6px;
+  }
+  .experience-certificate{
+    width: 50%!important;
+  }
+    .experience-expansion-icon{
+      color: white!important;
+
+  }
+.eperience-empty-list-label{
+  margin: 20px;
+  font-size: 25px;
+  text-align: center;
+  padding: 20px;
+}

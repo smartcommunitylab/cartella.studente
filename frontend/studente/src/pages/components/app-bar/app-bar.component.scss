@@ -3,9 +3,26 @@
   left: 0px;
     bottom: 0px;
     width: 100%;
-  background-color: gray;
+  background-color: $link-color;
+  .app-expansion-icon{
+    color: white;
+  }
+  .button-toggle{
+    color: white;
+    text-align: center;
+  }
   .app-bar-button{
     background-color: white;
     color: black;
+    height: 100px;
+    width: 100px;
   }
+
 }
+  .bar-expanded{
+   transition: all 0.5s ease-in-out;
+  }
+  .bar-compressed {
+    bottom:-120px!important;
+    transition: all 0.5s ease-in-out;
+  }

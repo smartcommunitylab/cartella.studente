@@ -2,6 +2,7 @@ import { Component,OnInit } from '@angular/core';
 import { NavController,NavParams } from 'ionic-angular';
 import {UserService } from '../../services/user.service'
 import { Event } from '../../classes/Event.class'
+import { StudentExperience } from '../../classes/StudentExperience.class'
 import { ExperienceContainer } from '../../classes/ExperienceContainer.class'
 import { ExperienceTypes } from '../../assets/conf/expTypes'
 @Component({
@@ -11,9 +12,11 @@ import { ExperienceTypes } from '../../assets/conf/expTypes'
 
 
 export class AddEventPage implements OnInit {
+  studentExperience:StudentExperience = new StudentExperience();
   experienceContaniner:ExperienceContainer = new ExperienceContainer();
   event:Event= new Event();
-
+  dateFrom=new Date().toISOString();
+  dateTo=new Date().toISOString();
   constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService){
   }
   ngOnInit():void {
@@ -21,6 +24,8 @@ export class AddEventPage implements OnInit {
       if (event!=null){
         this.experienceContaniner=JSON.parse(this.params.get('event'));
         this.event = this.experienceContaniner.attributes as Event;
+        this.dateFrom=new Date(this.experienceContaniner.attributes.dateFrom).toISOString();
+        this.dateTo=new Date(this.experienceContaniner.attributes.dateTo).toISOString();
       }
   }
   addEvent(): void {
@@ -33,13 +38,15 @@ export class AddEventPage implements OnInit {
 
     //stage.categorization={};
     this.event.type=ExperienceTypes.EXP_TYPE_STAGE;
-    this.event.location="location event"
     this.event.geocode=[0,0]
+      this.event.dateFrom=new Date(this.dateFrom).getTime();
+    this.event.dateTo=new Date(this.dateTo).getTime();
     this.experienceContaniner.attributes=this.event;
+this.studentExperience.experience=this.experienceContaniner;
 
     if (this.experienceContaniner.id!=null)
       {
-       this.userService.updateStage(this.experienceContaniner).then(event=>
+       this.userService.updateStage(this.studentExperience).then(event=>
        {
         console.log("done");
         this.navCtrl.pop();
@@ -47,7 +54,7 @@ export class AddEventPage implements OnInit {
        );
       }
     else {
-      this.userService.addEvent(this.experienceContaniner).then(event=>
+      this.userService.addEvent(this.studentExperience).then(event=>
        {
         console.log("done");
         this.navCtrl.pop();

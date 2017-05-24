@@ -1,11 +1,29 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-      Institute
+      {{'title_institute'|translate}}
     </ion-title>
+        <ion-buttons end>
+      <button-home></button-home><button-notifications></button-notifications><button-profile></button-profile>
+    </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
- <div>{{institute.teachingUnit.name}}</div>
+  <div class="row-add-stage">
+  </div>
+  <ion-list>
+    <ion-card  *ngFor="let registration of registrations| experiencefilter:filter:'title'| orderBy:'exam.attributes.title':order">
+      <div class="registration-expandable-list">
+        <div class="registration-title">{{registration.course}}</div>
+        <button class="stage-expansion" clear  ion-button icon-only (click)="toggleDetails(registration)"> <ion-icon class="registration-expansion-icon" item-right [name]="isDetailsShown(registration) ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
+      </div>
+      <div padding *ngIf="isDetailsShown(registration)">
+        <div class="registration-title"> <span class="registration-institute-label">{{'registration_course_label'|translate}}</span>{{registration.course}}</div>
+        <div class="registration-title"> <span class="registration-institute-label">{{'registration_year_label'|translate}}</span>{{registration.schoolYear}}</div>
+        <div class="registration-title"><span class="registration-institute-label"> {{'registration_class_label'|translate}}</span>{{registration.classroom}}</div>
+        <div class="registration-title"><span class="registration-institute-label"> {{'registration_teachingUnit_label'|translate}}</span>{{teachingUnit.name}}</div>
+      </div>
+    </ion-card>
+  </ion-list>
 </ion-content>

@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, LoadingController, AlertController } from 'ionic-angular';
 import {UserService } from '../../services/user.service';
-import { ExperienceContainer } from '../../classes/ExperienceContainer.class';
+import { StudentExperience } from '../../classes/StudentExperience.class';
 import { AddEventPage } from '../addEvent/addEvent';
 import {TranslateService} from 'ng2-translate';
 @Component({
@@ -9,7 +9,7 @@ import {TranslateService} from 'ng2-translate';
   templateUrl: 'events.html'
 })
 export class EventsPage  {
-  events:ExperienceContainer[]=[];
+  events:StudentExperience[]=[];
   order=true;
 icon="ios-arrow-down";
   shownEvent=null;
@@ -32,7 +32,7 @@ isDetailsShown(event) {
   }
 
 updateEvent(event): void {
-    this.navCtrl.push(AddEventPage, {stage:JSON.stringify(event)});
+    this.navCtrl.push(AddEventPage, {event:JSON.stringify(event)});
   }
 
   deleteEvent(event): void {
@@ -44,11 +44,13 @@ updateEvent(event): void {
     buttons: [
       {
         text: this.translate.instant('alert_cancel'),
+        cssClass: 'pop-up-button',
         role: 'cancel'
 
       },
       {
         text: this.translate.instant('alert_confirm'),
+        cssClass: 'pop-up-button',
         handler: () => {
               let loader = this.loading.create({
     content: this.translate.instant('loading'),

@@ -1,0 +1,28 @@
+.profile-page{
+  .profile-title-label{
+    color: $button-color;
+    font-size: 20px;
+  }
+  .profile-label {
+
+  }
+  .profile-field {
+   font-weight: bold;
+  }
+.profile-img {
+  width: 80px;
+  height: 80px;
+}
+.profile-input {
+  display: inline-flex;
+  width: 60%;
+}
+  .social-buttons{
+    display: inline-flex;
+  .social-button{
+    color: $button-color;
+    font-size: 20px;
+    margin: 4px;
+  }
+  }
+}

@@ -1,15 +1,15 @@
 import {Experience} from './Experience.class'
 import {Student} from './Student.class'
+import {Certificate} from './Certificate.class'
 export class ExperienceContainer {
 
-certificate?:string;
 attributes:Experience;
-experienceId:string;
+creationDate:string;
+extId:string;
 id:string;
-student:Student;
-studentId:string;
+lastUpdate:string;
+origin:string;
+type:string;
 constructor() {
-  this.attributes = new Experience();
-  this.student = new Student();
-        }
+}
 }

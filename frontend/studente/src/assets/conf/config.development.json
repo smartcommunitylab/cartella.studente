@@ -1,5 +1,8 @@
 {
- "apiUrl": "https://dev.smartcommunitylab.it/cs-engine/api/",
- "debugging": true,
+  "apiUrl": "https://dev.smartcommunitylab.it/cs-engine/api/",
+  "aacUrl": "https://am-dev.smartcommunitylab.it/aac",
+  "aacClientId": "fec507c3-f83c-4304-a93e-50020165c360",
+  "redirectUrl": "http://localhost:8100",
+  "debugging": true,
   "token":"yeKESrRhwLfP791r"
 }

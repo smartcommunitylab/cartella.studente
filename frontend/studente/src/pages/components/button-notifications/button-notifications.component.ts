@@ -10,6 +10,6 @@ export class ButtonNotifications {
    constructor(public navCtrl: NavController) {}
 
  goNotifications(){
-      this.navCtrl.push(NotificationsPage);
+      this.navCtrl.push(NotificationsPage,{},  {animate: false, direction: 'forward'});
     }
   }

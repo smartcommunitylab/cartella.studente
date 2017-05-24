@@ -5,6 +5,8 @@ import { Component } from '@angular/core';
   templateUrl: 'app-bar.component.html'
 })
 export class AppBar {
-
-
+  expanded:boolean=false;
+  toggleBar():void {
+    this.expanded=!this.expanded;
   }
+}

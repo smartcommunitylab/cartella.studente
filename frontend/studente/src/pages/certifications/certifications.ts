@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, LoadingController, AlertController } from 'ionic-angular';
 import {UserService } from '../../services/user.service';
-import { ExperienceContainer } from '../../classes/ExperienceContainer.class';
+import { StudentExperience } from '../../classes/StudentExperience.class';
 import { AddCertificationPage } from '../addCertification/addCertification';
 import {TranslateService} from 'ng2-translate';
 @Component({
@@ -9,7 +9,7 @@ import {TranslateService} from 'ng2-translate';
   templateUrl: 'certifications.html'
 })
 export class CertificationsPage  {
-  certifications:ExperienceContainer[]=[];
+  certifications:StudentExperience[]=[];
   order=true;
 icon="ios-arrow-down";
   shownCertification=null;
@@ -32,7 +32,7 @@ isDetailsShown(certification) {
   }
 
 updateCertification(certification): void {
-    this.navCtrl.push(AddCertificationPage, {stage:JSON.stringify(certification)});
+    this.navCtrl.push(AddCertificationPage, {certification:JSON.stringify(certification)});
   }
 
   deleteCertification(certification): void {
@@ -44,11 +44,13 @@ updateCertification(certification): void {
     buttons: [
       {
         text: this.translate.instant('alert_cancel'),
+        cssClass: 'pop-up-button',
         role: 'cancel'
 
       },
       {
         text: this.translate.instant('alert_confirm'),
+        cssClass: 'pop-up-button',
         handler: () => {
               let loader = this.loading.create({
     content: this.translate.instant('loading'),
@@ -57,7 +59,7 @@ updateCertification(certification): void {
        //remove stage from stage
       for (var i=0; i<this.certifications.length;i++)
         {
-          if (this.certifications[i].id==certification.id)
+          if (this.certifications[i].experience.id==certification.id)
             {
                  this.certifications.splice(i, 1);
             }

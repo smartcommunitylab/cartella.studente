@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, LoadingController, AlertController } from 'ionic-angular';
 import {UserService } from '../../services/user.service';
-import { ExperienceContainer } from '../../classes/ExperienceContainer.class';
+import { StudentExperience } from '../../classes/StudentExperience.class';
 import { AddStagePage } from '../addStage/addStage';
 import {TranslateService} from 'ng2-translate';
 @Component({
@@ -9,7 +9,7 @@ import {TranslateService} from 'ng2-translate';
   templateUrl: 'stages.html'
 })
 export class StagesPage  {
-  stages:ExperienceContainer[]=[];
+  stages:StudentExperience[]=[];
   order=true;
 icon="ios-arrow-down";
   shownStage=null;
@@ -44,11 +44,13 @@ updateStage(stage): void {
     buttons: [
       {
         text: this.translate.instant('alert_cancel'),
+        cssClass: 'pop-up-button',
         role: 'cancel'
 
       },
       {
         text: this.translate.instant('alert_confirm'),
+        cssClass: 'pop-up-button',
         handler: () => {
               let loader = this.loading.create({
     content: this.translate.instant('loading'),
@@ -57,7 +59,7 @@ updateStage(stage): void {
        //remove stage from stage
       for (var i=0; i<this.stages.length;i++)
         {
-          if (this.stages[i].id==stage.id)
+          if (this.stages[i].experience.id==stage.id)
             {
                  this.stages.splice(i, 1);
             }
