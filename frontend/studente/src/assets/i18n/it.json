@@ -156,7 +156,10 @@
   "events_empty_list_label":"Non sono presenti eventi",
   "stages_empty_list_label":"Non sono presenti alternanza scuola-lavoro",
   "activities_empty_list_label":"Non sono presenti attivita`",
-  "certifications_empty_list_label":"Non sono presenti certificati"
-
+  "certifications_empty_list_label":"Non sono presenti certificati",
+  "consent_title": "Richiesta autorizzazione",
+  "consent_text": "Lorem ipsum ....",
+  "consent_accept": "Autorizzo",
+  "consent_reject": "Non autorizzo"  
 
 }

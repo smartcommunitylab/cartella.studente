@@ -1,0 +1,14 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>{{'consent_title'|translate}}</ion-title>
+  </ion-navbar>
+</ion-header>
+<ion-content padding>
+  <div [innerHTML]="bodyText"></div>
+  <ion-grid>
+    <ion-row>
+      <ion-col text-right><button ion-button icon-left (click)="accept()"><ion-icon name="checkmark"></ion-icon>{{'consent_accept'|translate}}</button></ion-col>
+      <ion-col><button ion-button icon-left (click)="reject()"><ion-icon name="close"></ion-icon>{{'consent_reject'|translate}}</button></ion-col>
+    </ion-row>  
+  </ion-grid>  
+</ion-content>
