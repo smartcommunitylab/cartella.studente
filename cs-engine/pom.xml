@@ -110,6 +110,12 @@
 			<version>2.0.0</version>
 		</dependency>
 
+		<dependency>
+			<groupId>eu.trentorise.smartcampus</groupId>
+			<artifactId>profileservice.client</artifactId>
+			<version>2.1</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -137,5 +143,12 @@
 		</plugins>
 		<finalName>cs-engine</finalName>
 	</build>
+
+	<repositories>
+		<repository>
+			<id>SmartCommunity-releases</id>
+			<url>http://repository.smartcommunitylab.it/content/repositories/releases</url>
+		</repository>
+	</repositories>
 
 </project>

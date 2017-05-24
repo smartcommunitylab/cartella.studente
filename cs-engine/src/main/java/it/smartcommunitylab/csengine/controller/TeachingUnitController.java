@@ -147,7 +147,7 @@ public class TeachingUnitController {
 		}
 		TeachingUnit teachingUnit = dataManager.getTeachingUnitById(teachingUnitId);
 		List<StudentExperience> result = dataManager.searchStudentExperience(null, expType, true, 
-				teachingUnit.getInstituteId(), teachingUnitId, schoolYear, null, dateFrom, dateTo, 
+				teachingUnit.getInstituteId(), teachingUnitId, schoolYear, null, null, dateFrom, dateTo, 
 				text, pageable);
 		for(StudentExperience studentExperience : result) {
 			documentManager.setSignedUrl(studentExperience.getCertificate());
@@ -296,7 +296,7 @@ public class TeachingUnitController {
 		Map<String, ExperienceExtended> extendedExpMap = new HashMap<String, ExperienceExtended>();
 		TeachingUnit teachingUnit = dataManager.getTeachingUnitById(teachingUnitId);
 		List<StudentExperience> studentExperiences = dataManager.searchStudentExperience(null, expType, Boolean.TRUE, 
-				teachingUnit.getInstituteId(), teachingUnitId, schoolYear, null, dateFrom, dateTo, text, pageable);
+				teachingUnit.getInstituteId(), teachingUnitId, schoolYear, null, null, dateFrom, dateTo, text, pageable);
 		for(StudentExperience studentExperience : studentExperiences) {
 			documentManager.setSignedUrl(studentExperience.getCertificate());
 			ExperienceExtended experienceExtended = extendedExpMap.get(studentExperience.getExperienceId());
@@ -329,8 +329,8 @@ public class TeachingUnitController {
 		}
 		TeachingUnit teachingUnit = dataManager.getTeachingUnitById(teachingUnitId);
 		List<StudentExperience> studentExperienceList = dataManager.searchStudentExperience(studentId, null, 
-				Boolean.TRUE, teachingUnit.getInstituteId(), teachingUnitId, schoolYear, null, dateFrom, dateTo, 
-				text, pageable);
+				Boolean.TRUE, teachingUnit.getInstituteId(), teachingUnitId, schoolYear, null, null, 
+				dateFrom, dateTo, text, pageable);
 		for(StudentExperience studentExperience : studentExperienceList) {
 			documentManager.setSignedUrl(studentExperience.getCertificate());
 		}
@@ -339,8 +339,8 @@ public class TeachingUnitController {
 			logger.info(String.format("getExtendedExperiencesByTeachingUnit[%s]: %s", "tenant", studentId));
 		}
 		return result;		
-	}	
-	
+	}
+		
 	private StudentExtended convertStudentExperience(List<StudentExperience> studentExperienceList) {
 		StudentExtended result = new StudentExtended();
 		for(StudentExperience studentExperience : studentExperienceList) {

@@ -44,8 +44,9 @@ public class StudentExperienceRepositoryImpl implements StudentExperienceReposit
 
 	@Override
 	public List<StudentExperience> searchExperience(String studentId, String expType,
-			Boolean institutional, String instituteId, String teachingUnitId, String schoolYear, String certifierId,
-			Long dateFrom, Long dateTo, String text, Pageable pageable) {
+			Boolean institutional, String instituteId, String teachingUnitId, String schoolYear, 
+			String registrationId, String certifierId, Long dateFrom, Long dateTo, 
+			String text, Pageable pageable) {
 		Criteria criteria = new Criteria();
 		if(Utils.isNotEmpty(studentId)) {
 			criteria = criteria.and("studentId").is(studentId);
@@ -67,6 +68,9 @@ public class StudentExperienceRepositoryImpl implements StudentExperienceReposit
 		if(Utils.isNotEmpty(schoolYear)) {
 			Collection<Object> coll = Utils.getNullableClause(schoolYear);
 			criteria = criteria.and("experience.attributes." + Const.ATTR_SCHOOLYEAR).in(coll);
+		}
+		if(Utils.isNotEmpty(registrationId)) {
+			criteria = criteria.and("experience.attributes." + Const.ATTR_REGISTRATIONID).in(registrationId);
 		}
 		if(Utils.isNotEmpty(certifierId)) {
 			criteria = criteria.and("experience.attributes." + Const.ATTR_CERTIFIERID).is(certifierId);
