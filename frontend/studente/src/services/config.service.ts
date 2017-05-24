@@ -35,7 +35,7 @@ export class ConfigService {
      */
     public load() {
         return new Promise((resolve, reject) => {
-            this.http.get('../assets/conf/env.json').map( res =>
+            this.http.get('assets/conf/env.json').map( res =>
               res.json() ).catch((error: any):any => {
                 console.log('Configuration file env.json could not be read');
                 resolve(true);
@@ -46,11 +46,11 @@ export class ConfigService {
 
                 switch (envResponse.env) {
                     case 'production': {
-                        request = this.http.get('../assets/conf/config.' + envResponse.env + '.json');
+                        request = this.http.get('assets/conf/config.' + envResponse.env + '.json');
                     } break;
 
                     case 'development': {
-                        request = this.http.get('../assets/conf/config.' + envResponse.env + '.json');
+                        request = this.http.get('assets/conf/config.' + envResponse.env + '.json');
                     } break;
 
                     case 'default': {
