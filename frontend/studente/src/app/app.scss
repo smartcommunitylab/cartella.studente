@@ -46,7 +46,7 @@ $school-color:#00897b;
 }
 .label-button{
    color: $button-color;
-  font-size: 20px;
+  font-size: 16px;
 }
 .label-button:hover{
   color: $button-color!important;
@@ -71,7 +71,10 @@ $school-color:#00897b;
   width: 100%;
   background-color: $experience-color;
   color: white;
-  padding: 16px;
+  padding: 10px;
+}
+.experience-action-buttons{
+  float: right;
 }
   .experience-title{
     width: 100%!important;
@@ -79,6 +82,7 @@ $school-color:#00897b;
   }
   .experience-certificate{
     width: 50%!important;
+    margin: 6px;
   }
     .experience-expansion-icon{
       color: white!important;

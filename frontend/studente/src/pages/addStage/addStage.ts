@@ -9,6 +9,9 @@ import { ExperienceContainer } from '../../classes/ExperienceContainer.class'
 import { ExperienceTypes } from '../../assets/conf/expTypes'
 import {ConfigService} from '../../services/config.service'
 import { FileUploader } from 'ng2-file-upload';
+import { TranslateService } from 'ng2-translate';
+import { UtilsService } from '../../services/utils.services'
+
 
 
 @Component({
@@ -25,8 +28,8 @@ export class AddStagePage implements OnInit {
    certificate:Certificate=new Certificate();
   dateFrom=new Date().toISOString();
   dateTo=new Date().toISOString();
-uploader:FileUploader = new FileUploader({url:'https://dev.smartcommunitylab.it/cs-engine/api/student/84f01dc1-694d-40eb-9296-01ca5014ef5d/experience/57eba2de-4ffc-4db3-9dbf-e2676903d123/certificate/file',authToken:' ',disableMultipart:false});
-  constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService, private config: ConfigService){
+uploader:FileUploader = new FileUploader({url:'https://dev.smartcommunitylab.it/cs-engine/api/student/84f01dc1-694d-40eb-9296-01ca5014ef5d/experience/57eba2de-4ffc-4db3-9dbf-e2676903d123/certificate/file',authToken:'',disableMultipart:false});
+  constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService, private config: ConfigService, private utilsService: UtilsService,private translate: TranslateService){
   }
   ngOnInit():void {
       let stage = this.params.get('stage');
@@ -70,6 +73,7 @@ removeActualCertificate(): void {
          this.uploadCertificate(this.uploader.queue[0]).then(()=>this.navCtrl.pop())
          } else {
           this.navCtrl.pop();
+          this.utilsService.toast(this.translate.instant('toast_add_stage'), 3000, 'middle');
         }
         }
        );
@@ -82,6 +86,7 @@ removeActualCertificate(): void {
          this.uploadCertificate(this.uploader.queue[0]).then(()=>this.navCtrl.pop())
         } else {
           this.navCtrl.pop();
+          this.utilsService.toast(this.translate.instant('toast_add_stage'), 3000, 'middle');
         }
         }
        );
@@ -92,7 +97,7 @@ removeActualCertificate(): void {
     this.userService.createCertificate(this.experienceContaniner).then(experienceId =>
      {
       var newUrl=this.config.getConfig('apiUrl')+'/student/84f01dc1-694d-40eb-9296-01ca5014ef5d/experience/'+experienceId+'/certificate/file';
-      this.uploader.setOptions({ url: newUrl,authToken:' ',disableMultipart:false});
+      this.uploader.setOptions({ url: newUrl,authToken:'',disableMultipart:false});
       item.upload();
       resolve();
     })

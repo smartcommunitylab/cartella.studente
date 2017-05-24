@@ -32,20 +32,22 @@
     </ion-col>
    </ion-row>
   </ion-grid>
-  <ion-list>
+  <ion-list *ngIf="(stages && stages.length>0)" >
     <ion-card  *ngFor="let stage of stages| experiencefilter:filter:'title'| orderBy:'stage.experience.attributes.title':order">
       <div class="experience-expandable-list">
         <div class="experience-title">{{stage.experience.attributes.title}}</div>
- <div class="experience-certificate"><span *ngIf="stage.certificate && stage.certificate.documentPresent">{{'certificate_label'|translate}}</span><span *ngIf="!(stage.certificate && stage.certificate.documentPresent)">{{'not_certificate_label'|translate}}</span></div>        <button class="stage-expansion" clear  ion-button icon-only (click)="toggleDetails(stage)"> <ion-icon class="experience-expansion-icon" item-right [name]="isDetailsShown(stage) ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
+ <div class="experience-certificate"><span *ngIf="stage.certificate && stage.certificate.documentPresent">{{'certificate_label'|translate}}</span><span *ngIf="!(stage.certificate && stage.certificate.documentPresent)">{{'not_certificate_label'|translate}}</span></div> 
+      <!--<button class="stage-expansion" clear  ion-button icon-only (click)="toggleDetails(stage)"> <ion-icon class="experience-expansion-icon" item-right [name]="isDetailsShown(stage) ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>-->
       </div>
-      <div padding *ngIf="isDetailsShown(stage)">
-        <div class="experience-title"> <span class="registration-institute-label">{{'stage_title_label'|translate}}</span> {{stage.experience.attributes.title}}</div>
+      <!--<div padding *ngIf="isDetailsShown(stage)">-->
+        <div padding >
+         <div class="experience-title"> <span class="registration-institute-label">{{'stage_title_label'|translate}}</span> {{stage.experience.attributes.title}}</div>
          <div class="experience-title"> <span class="registration-institute-label">{{'stage_dateFrom_label'|translate}}</span>{{stage.experience.attributes.dateFrom |date}}</div>
          <div class="experience-title"> <span class="registration-institute-label">{{'stage_dateTo_label'|translate}}</span>{{stage.experience.attributes.dateTo |date}}</div>
          <div class="experience-title"> <span class="registration-institute-label">{{'stage_location_label'|translate}}</span>{{stage.experience.attributes.location}}</div>
          <div class="experience-title"> <span class="registration-institute-label">{{'stage_description_label'|translate}}</span>{{stage.experience.attributes.description}}</div>
         <div class="experience-title" *ngIf="stage.certificate!=null && stage.certificate.documentPresent"> <span class="registration-institute-label">{{'certificate_certificate_label'|translate}}</span><a download="certificate.txt" class="button label-button" href="{{ stage.certificate.documentUri}}"><ion-icon name="md-download"></ion-icon></a></div>
-        <div *ngIf="!stage.experience.attributes.institutional" >
+        <div class="experience-action-buttons" *ngIf="!stage.experience.attributes.institutional" >
           <button class="label-button" ion-button clear (click)="deleteStage(stage)">{{'delete_button'|translate}}</button>
           <button class="label-button" ion-button clear (click)="updateStage(stage)">{{'update_button'|translate}}</button>
         </div>
@@ -53,7 +55,7 @@
 
     </ion-card>
   </ion-list>
-        <ion-card class="eperience-empty-list-label" *ngIf="(stages.length==0)">
+      <ion-card class="eperience-empty-list-label" *ngIf="(stage && stages.length==0)">
       {{'stages_empty_list_label'|translate}}
   </ion-card>
 </ion-content>

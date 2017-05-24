@@ -16,9 +16,10 @@
     <ion-card  *ngFor="let registration of registrations| experiencefilter:filter:'title'| orderBy:'exam.attributes.title':order">
       <div class="registration-expandable-list">
         <div class="registration-title">{{registration.course}}</div>
-        <button class="stage-expansion" clear  ion-button icon-only (click)="toggleDetails(registration)"> <ion-icon class="registration-expansion-icon" item-right [name]="isDetailsShown(registration) ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
+        <!--<button class="stage-expansion" clear  ion-button icon-only (click)="toggleDetails(registration)"> <ion-icon class="registration-expansion-icon" item-right [name]="isDetailsShown(registration) ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>-->
       </div>
-      <div padding *ngIf="isDetailsShown(registration)">
+      <!--<div padding *ngIf="isDetailsShown(registration)">-->
+        <div padding >
         <div class="registration-title"> <span class="registration-institute-label">{{'registration_course_label'|translate}}</span>{{registration.course}}</div>
         <div class="registration-title"> <span class="registration-institute-label">{{'registration_year_label'|translate}}</span>{{registration.schoolYear}}</div>
         <div class="registration-title"><span class="registration-institute-label"> {{'registration_class_label'|translate}}</span>{{registration.classroom}}</div>

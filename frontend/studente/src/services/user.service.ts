@@ -88,9 +88,9 @@ export class UserService  {
      })
   })
   }
-    deleteStage(stage:Stage): Promise<Stage> {
+    deleteStage(stage:StudentExperience): Promise<Stage> {
          return new Promise<Stage>((resolve, reject) => {
-      this.webAPIConnector.deleteExperience(stage.id,'84f01dc1-694d-40eb-9296-01ca5014ef5d').then(stage=>{
+      this.webAPIConnector.deleteExperience(stage.experienceId,'84f01dc1-694d-40eb-9296-01ca5014ef5d').then(stage=>{
 
         resolve(stage)
 
@@ -140,9 +140,9 @@ getUserEvents():Promise<StudentExperience[]> {
      })
   })
   }
-    deleteEvent(event:Event): Promise<Event> {
+    deleteEvent(event:StudentExperience): Promise<Event> {
          return new Promise<Event>((resolve, reject) => {
-      this.webAPIConnector.deleteExperience(event.id,'84f01dc1-694d-40eb-9296-01ca5014ef5d').then(event=>{
+      this.webAPIConnector.deleteExperience(event.experienceId,'84f01dc1-694d-40eb-9296-01ca5014ef5d').then(event=>{
         resolve(event)
   }).catch((error: any):any => {
        reject()
@@ -191,9 +191,9 @@ getUserEvents():Promise<StudentExperience[]> {
      })
   })
   }
-    deleteActivity(activity:Activity): Promise<Activity> {
+    deleteActivity(activity:StudentExperience): Promise<Activity> {
          return new Promise<Stage>((resolve, reject) => {
-      this.webAPIConnector.deleteExperience(activity.id,'84f01dc1-694d-40eb-9296-01ca5014ef5d').then(stage=>{
+      this.webAPIConnector.deleteExperience(activity.experienceId,'84f01dc1-694d-40eb-9296-01ca5014ef5d').then(stage=>{
 
         resolve(stage)
 

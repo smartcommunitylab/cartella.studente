@@ -35,6 +35,7 @@ import { LoginService } from '../services/login.service';
 import { WebAPIConnectorService, requestOptionsProvider } from '../services/webAPIConnector.service';
 import { TrainingService } from '../services/training.service';
 import { UserService } from '../services/user.service';
+import { UtilsService} from '../services/utils.services'
 import { ExperienceFilterPipe } from '../pipes/experience-filter.pipe.ts';
 
 export const deepLinkConfig: DeepLinkConfig = {
@@ -123,6 +124,7 @@ function initConfig(config: ConfigService) {
     LoginService,
     ConfigService,
     UserService,
+    UtilsService,
     { provide: APP_INITIALIZER, useFactory: initConfig, deps: [ConfigService], multi: true },
     TranslateService,
     WebAPIConnectorService,
