@@ -51,6 +51,9 @@
   "profile_cel_label":"Cellulare:",
   "profile_cf_label":"Cod. Fisc:",
   "profile_mail_label":"Email: ",
-  "profile_birthday_label":"Data di nascita: "
-
+  "profile_birthday_label":"Data di nascita: ",
+  "consent_title": "Authorization Request",
+  "consent_text": "Lorem ipsum ....",
+  "consent_accept": "Accept",
+  "consent_reject": "Reject"  
 }

@@ -1,7 +1,7 @@
 import { Component,OnInit } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import {LoginService} from '../../services/login.service';
-import {HomePage } from '../home/home'
+import {HomePage } from '../home/home';
 @Component({
   selector: 'page-login',
   templateUrl: 'login.html'
@@ -9,7 +9,7 @@ import {HomePage } from '../home/home'
 export class LoginPage implements OnInit {
 
   types: any = [];
-  constructor(public navCtrl: NavController,private loginService: LoginService) {
+  constructor(public navCtrl: NavController, private loginService: LoginService) {
 
   }
   getTypes(): void {
@@ -22,8 +22,10 @@ export class LoginPage implements OnInit {
   }
 
   //login as a specific type of user
-  login(): void {
-    //set the new root=homepage
+  login(loginType: string): void {
     this.navCtrl.setRoot(HomePage);
+    // TODO: uncomment
+    //this.loginService.login(loginType);
   }
+
 }
