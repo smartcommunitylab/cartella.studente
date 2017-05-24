@@ -33,19 +33,20 @@
     </ion-row>
     </ion-grid>
   <ion-list *ngIf="(activities.length>0)">
-    <ion-card  *ngFor="let activity of activities| experiencefilter:filter:'title'| orderBy:'activity.attributes.title':order">
+    <ion-card  *ngFor="let activity of activities| experiencefilter:filter:'title'| orderBy:'activity.experience.attributes.title':order">
       <div class="experience-expandable-list">
-        <div class="experience-title">{{activity.attributes.title}}</div>
-        <div class="experience-certificate"><span *ngIf="activity.certificate">{{'certificate_label'|translate}}</span><span *ngIf="!activity.certificate">{{'not_certificate_label'|translate}}</span></div>
+        <div class="experience-title">{{activity.experience.attributes.title}}</div>
+        <div class="experience-certificate"><span *ngIf="activity.certificate && activity.certificate.documentPresent">{{'certificate_label'|translate}}</span><span *ngIf="!(activity.certificate && activity.certificate.documentPresent)">{{'not_certificate_label'|translate}}</span></div>
         <button class="stage-expansion" clear  ion-button icon-only (click)="toggleDetails(activity)"> <ion-icon class="experience-expansion-icon" item-right [name]="isDetailsShown(activity) ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
       </div>
       <div padding *ngIf="isDetailsShown(activity)">
-          <div class="experience-title"> <span class="registration-institute-label">{{'activity_title_label'|translate}}</span> {{activity.attributes.title}}</div>
-         <div class="experience-title"> <span class="registration-institute-label">{{'activity_dateFrom_label'|translate}}</span>{{activity.attributes.dateFrom |date}}</div>
-         <div class="experience-title"> <span class="registration-institute-label">{{'activity_dateTo_label'|translate}}</span>{{activity.attributes.dateTo |date}}</div>
-         <div class="experience-title"> <span class="registration-institute-label">{{'activity_location_label'|translate}}</span>{{activity.attributes.location}}</div>
-         <div class="experience-title"> <span class="registration-institute-label">{{'activity_description_label'|translate}}</span>{{activity.attributes.description}}</div>
-        <div *ngIf="!activity.attributes.institutional">
+          <div class="experience-title"> <span class="registration-institute-label">{{'activity_title_label'|translate}}</span> {{activity.experience.attributes.title}}</div>
+         <div class="experience-title"> <span class="registration-institute-label">{{'activity_dateFrom_label'|translate}}</span>{{activity.experience.attributes.dateFrom |date}}</div>
+         <div class="experience-title"> <span class="registration-institute-label">{{'activity_dateTo_label'|translate}}</span>{{activity.experience.attributes.dateTo |date}}</div>
+         <div class="experience-title"> <span class="registration-institute-label">{{'activity_location_label'|translate}}</span>{{activity.experience.attributes.location}}</div>
+         <div class="experience-title"> <span class="registration-institute-label">{{'activity_description_label'|translate}}</span>{{activity.experience.attributes.description}}</div>
+        <div class="experience-title" *ngIf="activity.certificate!=null && activity.certificate.documentPresent"> <span class="registration-institute-label">{{'certificate_certificate_label'|translate}}</span><a download="certificate.txt" class="button label-button" href="{{ activity.certificate.documentUri}}"><ion-icon name="md-download"></ion-icon></a></div>
+        <div *ngIf="!activity.experience.attributes.institutional">
           <button class="label-button" ion-button clear (click)="deleteActivity(activity)">{{'delete_button'|translate}}</button>
           <button class="label-button" ion-button clear (click)="updateActivity(activity)">{{'update_button'|translate}}</button>
         </div>

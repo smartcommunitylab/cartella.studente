@@ -59,7 +59,7 @@ updateActivity(activity): void {
        //remove stage from stage
       for (var i=0; i<this.activities.length;i++)
         {
-          if (this.activities[i].id==activity.id)
+          if (this.activities[i].experience.id==activity.id)
             {
                  this.activities.splice(i, 1);
             }

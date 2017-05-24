@@ -154,10 +154,11 @@ getUserEvents():Promise<StudentExperience[]> {
      return new Promise<StudentExperience[]>((resolve, reject) => {
       this.webAPIConnector.getExperiences('84f01dc1-694d-40eb-9296-01ca5014ef5d',ExperienceTypes.EXP_TYPE_ACTIVITY).then(experiences=>{
         //take only stages
-        this.activities=[];
-        for (var i=0; i<experiences.length;i++){
-          this.activities.push(experiences[i].experience);
-        }
+         this.activities=experiences;
+//        this.activities=[];
+//        for (var i=0; i<experiences.length;i++){
+//          this.activities.push(experiences[i].experience);
+//        }
         resolve(this.activities)
 
   }).catch((error: any):any => {
@@ -166,8 +167,8 @@ getUserEvents():Promise<StudentExperience[]> {
      })
   })
   }
-  addActivity(activity:StudentExperience): Promise<StudentExperience> {
-         return new Promise<StudentExperience>((resolve, reject) => {
+  addActivity(activity:StudentExperience): Promise<ExperienceContainer> {
+         return new Promise<ExperienceContainer>((resolve, reject) => {
       this.webAPIConnector.addExperience(activity.experience.attributes,'84f01dc1-694d-40eb-9296-01ca5014ef5d',ExperienceTypes.EXP_TYPE_ACTIVITY).then(activity=>{
 
         resolve(activity)
@@ -178,8 +179,8 @@ getUserEvents():Promise<StudentExperience[]> {
      })
   })
   }
-     updateActivity(activity:StudentExperience): Promise<StudentExperience> {
-         return new Promise<StudentExperience>((resolve, reject) => {
+     updateActivity(activity:StudentExperience): Promise<ExperienceContainer> {
+         return new Promise<ExperienceContainer>((resolve, reject) => {
       this.webAPIConnector.updateExperience(activity,'84f01dc1-694d-40eb-9296-01ca5014ef5d').then(activity=>{
 
         resolve(activity)

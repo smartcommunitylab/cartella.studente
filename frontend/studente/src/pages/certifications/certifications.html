@@ -32,11 +32,11 @@
     </ion-col>
     </ion-row>
   </ion-grid>
-  <ion-list>
+  <ion-list *ngIf="(certifications.length>0)">
     <ion-card  *ngFor="let certification of certifications| experiencefilter:filter:'title'| orderBy:'certification.experience.attributes.title':order">
       <div class="experience-expandable-list">
         <div class="experience-title">{{certification.experience.attributes.title}}</div>
-         <div class="experience-certificate"><span *ngIf="certification.certificate.documentPresent">{{'certificate_label'|translate}}</span><span *ngIf="!certification.certificate.documentPresent">{{'not_certificate_label'|translate}}</span></div>
+         <div class="experience-certificate"><span *ngIf="certification.certificate && certification.certificate.documentPresent">{{'certificate_label'|translate}}</span><span *ngIf="!(certification.certificate && certification.certificate.documentPresent)">{{'not_certificate_label'|translate}}</span></div>
         <button class="stage-expansion" clear  ion-button icon-only (click)="toggleDetails(certification)"> <ion-icon class="experience-expansion-icon" item-right [name]="isDetailsShown(certification) ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
       </div>
       <div padding *ngIf="isDetailsShown(certification)">
