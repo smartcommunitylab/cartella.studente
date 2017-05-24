@@ -153,6 +153,7 @@ public class StudentController {
 			@RequestParam(required=false) String instituteId,
 			@RequestParam(required=false) String teachingUnitId,
 			@RequestParam(required=false) String schoolYear,
+			@RequestParam(required=false) String registrationId,
 			@RequestParam(required=false) String certifierId,
 			@RequestParam(required=false) Long dateFrom,
 			@RequestParam(required=false) Long dateTo,
@@ -163,7 +164,7 @@ public class StudentController {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
 		List<StudentExperience> result = dataManager.searchStudentExperience(studentId, expType, institutional, 
-				instituteId, teachingUnitId, schoolYear, certifierId, dateFrom, dateTo, text, pageable);
+				instituteId, teachingUnitId, schoolYear, registrationId, certifierId, dateFrom, dateTo, text, pageable);
 		for(StudentExperience studentExperience : result) {
 			documentManager.setSignedUrl(studentExperience.getCertificate());
 		}
@@ -258,6 +259,26 @@ public class StudentController {
 		}
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getStudentRegistration[%s]: %s - %s", "tenant", studentId, result.size()));
+		}
+		return result;
+	}
+	
+	@RequestMapping(value = "/api/student/{studentId}/registration/{registrationId}", 
+			method = RequestMethod.GET)
+	public @ResponseBody List<StudentExperience> getSubjectsByRegistration(
+			@PathVariable String studentId,
+			@PathVariable String registrationId,
+			HttpServletRequest request) throws Exception {
+		if (!Utils.validateAPIRequest(request, apiToken)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+		}
+		Registration registration = dataManager.getRegistrationById(registrationId);
+		List<StudentExperience> result = dataManager.searchStudentExperience(studentId, Const.EXP_TYPE_SUBJECT, 
+				Boolean.TRUE, registration.getInstituteId(), registration.getTeachingUnitId(), registration.getSchoolYear(),
+				registrationId, null, null, null, null, null);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("getSubjectsByRegistration[%s]: %s - %s - %s", "tenant", studentId, 
+					registrationId, result.size()));
 		}
 		return result;
 	}

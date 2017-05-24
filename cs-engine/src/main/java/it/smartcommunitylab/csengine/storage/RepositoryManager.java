@@ -11,6 +11,7 @@ import it.smartcommunitylab.csengine.model.Consent;
 import it.smartcommunitylab.csengine.model.Course;
 import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.Institute;
+import it.smartcommunitylab.csengine.model.PersonInCharge;
 import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentExperience;
@@ -63,6 +64,9 @@ public class RepositoryManager {
 	private ConsentRepository consentRepository;
 	
 	@Autowired
+	private PersonInChargeRepository personInChargeRepository;
+	
+	@Autowired
 	private CVRepository cvRepository;
 	
 	private MongoTemplate mongoTemplate;
@@ -111,10 +115,10 @@ public class RepositoryManager {
 	}
 
 	public List<StudentExperience> searchStudentExperience(String studentId, String expType, Boolean institutional, 
-			String instituteId, String teachingUnitId, String schoolYear, String certifierId, Long dateFrom, Long dateTo, 
-			String text, Pageable pageable) {
+			String instituteId, String teachingUnitId, String schoolYear, String registrationId, 
+			String certifierId, Long dateFrom, Long dateTo, String text, Pageable pageable) {
 		List<StudentExperience> result = studentExperienceRepository.searchExperience(studentId, expType, institutional, 
-				instituteId, teachingUnitId,	schoolYear, certifierId, dateFrom, dateTo, text, pageable);
+				instituteId, teachingUnitId,	schoolYear, registrationId, certifierId, dateFrom, dateTo, text, pageable);
 		return result;
 	}
 	
@@ -657,12 +661,30 @@ public class RepositoryManager {
 		}
 		return result;
 	}
+	
+	public Registration getRegistrationById(String registrationId) throws EntityNotFoundException {
+		Registration result = registrationRepository.findOne(registrationId);
+		if(result == null) {
+			throw new EntityNotFoundException("entity not found");
+		}
+		return result;
+	}
 
 	public Experience getExperienceById(String experienceId) throws EntityNotFoundException {
 		Experience result = experienceRepository.findOne(experienceId);
 		if(result == null) {
 			throw new EntityNotFoundException("entity not found");
 		}
+		return result;
+	}
+
+	public Student getStudentByCF(String cf) {
+		Student result = studentRepository.findByCF(cf);
+		return result;
+	}
+
+	public PersonInCharge getPersonInChargeByCF(String cf) {
+		PersonInCharge result = personInChargeRepository.findByCF(cf);
 		return result;
 	}
 
