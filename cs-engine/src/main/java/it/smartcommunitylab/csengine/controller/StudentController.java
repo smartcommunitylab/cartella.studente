@@ -263,7 +263,7 @@ public class StudentController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/api/student/{studentId}/registration/{registrationId}", 
+	@RequestMapping(value = "/api/student/{studentId}/registration/{registrationId}/subject", 
 			method = RequestMethod.GET)
 	public @ResponseBody List<StudentExperience> getSubjectsByRegistration(
 			@PathVariable String studentId,
