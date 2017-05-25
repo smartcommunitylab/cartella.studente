@@ -32,12 +32,14 @@
   "title_add_stage": "Nuovo Stage",
   "title_add_activity": "Nuova Attivita`",
   "title_login": "",
+  "login_subtitle":"Accedi come",
   "title_institute": "Dettagli istituto",
   "title_events": "Eventi",
   "title_curriculum": "Curriculum Vitae",
   "title_certifications": "Certificazioni",
   "title_activities": "Attivita`",
   "title_profile":"La mia scheda",
+  "title_notifiche":"Notifiche",
   "delete_button":"Cancella",
   "update_button":"Modifica",
   "alert_delete_stage_title":"Cancella esperienza",
@@ -157,9 +159,15 @@
   "stages_empty_list_label":"Non sono presenti alternanza scuola-lavoro",
   "activities_empty_list_label":"Non sono presenti attivita`",
   "certifications_empty_list_label":"Non sono presenti certificati",
+  "notifications_empty_list_label":"Non sono presenti notifiche",
   "consent_title": "Richiesta autorizzazione",
   "consent_text": "Lorem ipsum ....",
   "consent_accept": "Autorizzo",
-  "consent_reject": "Non autorizzo"  
-
+  "consent_reject": "Non autorizzo",
+  "toast_delete_stage":"Lo stage e` stato cancellato",
+"toast_delete_activity":"L'attivita` e` stata cancellata",
+"toast_delete_certification":"La certificazione e` stata cancellata",
+  "toast_add_stage":"Lo stage e` stato aggiunto correttamente",
+"toast_add_activity":"L'attivita` e` stata aggiunta correttamente",
+"toast_add_certification":"La certificazione e` stata aggiunta correttamente"
 }

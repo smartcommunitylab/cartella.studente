@@ -1,88 +1,90 @@
 import { Component } from '@angular/core';
 import { NavController, NavParams, LoadingController, AlertController } from 'ionic-angular';
-import {UserService } from '../../services/user.service';
+import { UserService } from '../../services/user.service';
 import { StudentExperience } from '../../classes/StudentExperience.class';
 import { AddCertificationPage } from '../addCertification/addCertification';
-import {TranslateService} from 'ng2-translate';
+import { TranslateService } from 'ng2-translate';
+import { UtilsService } from '../../services/utils.services'
+
 @Component({
   selector: 'page-certifications',
   templateUrl: 'certifications.html'
 })
-export class CertificationsPage  {
-  certifications:StudentExperience[]=[];
-  order=true;
-icon="ios-arrow-down";
-  shownCertification=null;
-  constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService,public loading: LoadingController,private alertCtrl: AlertController, private translate: TranslateService){
+export class CertificationsPage {
+  certifications: StudentExperience[] = null;
+  order = true;
+  icon = "ios-arrow-down";
+  shownCertification = null;
+  constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService, public loading: LoadingController, private alertCtrl: AlertController, private translate: TranslateService, private utilsService: UtilsService) {
   }
 
-toggleDetails(certification) {
+  toggleDetails(certification) {
     if (this.isDetailsShown(certification)) {
-        this.shownCertification = null;
+      this.shownCertification = null;
     } else {
-        this.shownCertification = certification;
+      this.shownCertification = certification;
     }
-};
-isDetailsShown(certification) {
+  };
+  isDetailsShown(certification) {
     return this.shownCertification === certification;
-};
+  };
 
   addNewCertification(): void {
     this.navCtrl.push(AddCertificationPage);
   }
 
-updateCertification(certification): void {
-    this.navCtrl.push(AddCertificationPage, {certification:JSON.stringify(certification)});
+  updateCertification(certification): void {
+    this.navCtrl.push(AddCertificationPage, { certification: JSON.stringify(certification) });
   }
 
   deleteCertification(certification): void {
-   //ask confirmation
+    //ask confirmation
 
-      let alert = this.alertCtrl.create({
-    title: this.translate.instant('alert_delete_certification_title'),
-    message:  this.translate.instant('alert_delete_certification_message'),
-    buttons: [
-      {
-        text: this.translate.instant('alert_cancel'),
-        cssClass: 'pop-up-button',
-        role: 'cancel'
-
-      },
-      {
-        text: this.translate.instant('alert_confirm'),
-        cssClass: 'pop-up-button',
-        handler: () => {
-              let loader = this.loading.create({
-    content: this.translate.instant('loading'),
-  });
-              this.userService.deleteCertification(certification).then(certification =>{
-       //remove stage from stage
-      for (var i=0; i<this.certifications.length;i++)
+    let alert = this.alertCtrl.create({
+      title: this.translate.instant('alert_delete_certification_title'),
+      message: this.translate.instant('alert_delete_certification_message'),
+      buttons: [
         {
-          if (this.certifications[i].experience.id==certification.id)
-            {
-                 this.certifications.splice(i, 1);
-            }
+          text: this.translate.instant('alert_cancel'),
+          cssClass: 'pop-up-button',
+          role: 'cancel'
+
+        },
+        {
+          text: this.translate.instant('alert_confirm'),
+          cssClass: 'pop-up-button',
+          handler: () => {
+            let loader = this.loading.create({
+              content: this.translate.instant('loading'),
+            });
+            this.userService.deleteCertification(certification).then(certification => {
+              //remove stage from stage
+              for (var i = 0; i < this.certifications.length; i++) {
+                if (this.certifications[i].experience.id == certification.id) {
+                  this.certifications.splice(i, 1);
+                }
+              }
+              loader.dismiss();
+              this.utilsService.toast(this.translate.instant('toast_delete_certification'), 3000, 'middle');
+
+            })
           }
-        loader.dismiss();
-        })
         }
-      }
-    ]
-  });
-  alert.present();
+      ]
+    });
+    alert.present();
 
   }
-//loaded when it is showed
-ionViewWillEnter () {
+  //loaded when it is showed
+  ionViewWillEnter() {
     let loader = this.loading.create({
-    content: this.translate.instant('loading'),
-  });
-  loader.present().then(() => {
-        this.userService.getUserCertifications().then(certifications =>{
-        this.certifications=certifications
-          loader.dismiss();
-  })
-  })
-}
+      content: this.translate.instant('loading'),
+    });
+    loader.present().then(() => {
+      this.userService.getUserCertifications().then(certifications => {
+        this.certifications = certifications
+        loader.dismiss();
+      })
+    })
+  }
 }

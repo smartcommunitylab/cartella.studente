@@ -32,14 +32,15 @@
     </ion-col>
     </ion-row>
   </ion-grid>
-  <ion-list *ngIf="(certifications.length>0)">
+  <ion-list *ngIf="(certifications && certifications.length>0)">
     <ion-card  *ngFor="let certification of certifications| experiencefilter:filter:'title'| orderBy:'certification.experience.attributes.title':order">
       <div class="experience-expandable-list">
         <div class="experience-title">{{certification.experience.attributes.title}}</div>
          <div class="experience-certificate"><span *ngIf="certification.certificate && certification.certificate.documentPresent">{{'certificate_label'|translate}}</span><span *ngIf="!(certification.certificate && certification.certificate.documentPresent)">{{'not_certificate_label'|translate}}</span></div>
-        <button class="stage-expansion" clear  ion-button icon-only (click)="toggleDetails(certification)"> <ion-icon class="experience-expansion-icon" item-right [name]="isDetailsShown(certification) ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
+      <!--<button class="stage-expansion" clear  ion-button icon-only (click)="toggleDetails(certification)"> <ion-icon class="experience-expansion-icon" item-right [name]="isDetailsShown(certification) ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>-->
       </div>
-      <div padding *ngIf="isDetailsShown(certification)">
+      <!--<div padding *ngIf="isDetailsShown(certification)">-->
+         <div padding>
           <div class="experience-title"> <span class="registration-institute-label">{{'certificate_title_label'|translate}}</span> {{certification.experience.attributes.title}}</div>
          <div class="experience-title"> <span class="registration-institute-label">{{'certificate_dateFrom_label'|translate}}</span>{{certification.experience.attributes.dateFrom |date}}</div>
          <div class="experience-title"> <span class="registration-institute-label">{{'certificate_dateTo_label'|translate}}</span>{{certification.experience.attributes.dateTo |date}}</div>
@@ -47,7 +48,7 @@
          <div class="experience-title"> <span class="registration-institute-label">{{'certificate_description_label'|translate}}</span>{{certification.experience.attributes.description}}</div>
         <div>
          <div class="experience-title" *ngIf="certification.certificate!=null && certification.certificate.documentPresent"> <span class="registration-institute-label">{{'certificate_certificate_label'|translate}}</span><a download="certificate.txt" class="button label-button" href="{{ certification.certificate.documentUri}}"><ion-icon name="md-download"></ion-icon></a></div>
-        <div *ngIf="!certification.experience.attributes.institutional">
+        <div class="experience-action-buttons" *ngIf="!certification.experience.attributes.institutional">
           <button class="label-button" ion-button clear (click)="deleteCertification(certification)">{{'delete_button'|translate}}</button>
           <button class="label-button" ion-button clear (click)="updateCertification(certification)">{{'update_button'|translate}}</button>
         </div>
@@ -55,7 +56,7 @@
       </div>
     </ion-card>
   </ion-list>
-        <ion-card class="eperience-empty-list-label" *ngIf="(certifications.length==0)">
+        <ion-card class="eperience-empty-list-label" *ngIf="(certifications && certifications.length==0)">
       {{'certifications_empty_list_label'|translate}}
   </ion-card>
 </ion-content>

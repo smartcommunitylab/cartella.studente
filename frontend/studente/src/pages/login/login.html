@@ -1,12 +1,12 @@
-<ion-header>
-  <ion-navbar>
+<!--<ion-header>
+  <ion-navbar>-->
 <!--
     <ion-title>
       Login Page
     </ion-title>
 -->
-  </ion-navbar>
-</ion-header>
+  <!--</ion-navbar>
+</ion-header>-->
 <ion-content padding>
   <ion-grid>
         <ion-row>
@@ -14,13 +14,17 @@
           <div class="login-label">{{'app_name'|translate}}</div>
       </ion-col>
     </ion-row>
+            <ion-row>
+      <ion-col >
+          <div class="login-subtitle-label">{{'login_subtitle'|translate}}</div>
+      </ion-col>
+    </ion-row>
     <ion-row>
-      <ion-col col-4 *ngFor="let type of types">
+      <ion-col class="login-tile" col-4 *ngFor="let type of types">
           <div><button class="login-button" [block]="true" ion-button (click)="login(type)" ngClass="{{type.style}}">{{type.title| uppercase}}</button>
         </div>
         <div>{{type.text}}</div>
       </ion-col>
     </ion-row>
   </ion-grid>
-  <app-bar></app-bar>
 </ion-content>

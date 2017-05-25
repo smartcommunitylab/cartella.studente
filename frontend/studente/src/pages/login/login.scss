@@ -4,12 +4,22 @@
   color: $title-page-color;
       padding: 100px 20px;
 }
+.login-tile{
+  padding: 20px;
+  text-align: justify;
+}
+.login-subtitle-label {
+  text-align: center;
+  font-size: 22px;
+
+}
 .login-button {
       width: 150px;
     height: 150px;
   display: block;
   margin-left: auto;
   margin-right: auto;
+  margin-bottom: 20px;
   &.student-login{
         background-color:$student-color;
 
