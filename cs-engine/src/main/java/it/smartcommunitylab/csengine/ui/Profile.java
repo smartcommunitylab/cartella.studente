@@ -8,6 +8,7 @@ public class Profile {
 	private String studentId;
 	private String personInChargeId;
 	private List<String> studentIds = new ArrayList<String>();
+	private Boolean authorized = Boolean.FALSE;
 	
 	public String getSubject() {
 		return subject;
@@ -32,6 +33,12 @@ public class Profile {
 	}
 	public void setStudentIds(List<String> studentIds) {
 		this.studentIds = studentIds;
+	}
+	public Boolean getAuthorized() {
+		return authorized;
+	}
+	public void setAuthorized(Boolean authorized) {
+		this.authorized = authorized;
 	}
 	
 }
