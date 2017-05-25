@@ -490,24 +490,25 @@ public class RepositoryManager {
 	
 	public Consent addConsent(Consent consent) throws StorageException {
 		Consent consentDb = null;
-		if(Utils.isNotEmpty(consent.getSubject())) {
-			consentDb = consentRepository.findBySubject(consent.getSubject());
-			if(consentDb != null) {
-				throw new StorageException("consent already exists for this subject");
-			}
-		}
 		if(Utils.isNotEmpty(consent.getStudentId())) {
 			consentDb = consentRepository.findByStudent(consent.getStudentId());
-			if(consentDb != null) {
-				throw new StorageException("consent already exists for this studentId");
-			}
 		}
-		Date now = new Date();
-		consent.setCreationDate(now);
-		consent.setLastUpdate(now);
-		consent.setId(Utils.getUUID());
-		consent.setAuthorized(Boolean.TRUE);
-		consentDb = consentRepository.save(consent);
+		if((consentDb == null) && Utils.isNotEmpty(consent.getSubject())) {
+			consentDb = consentRepository.findBySubject(consent.getSubject());
+		}
+		if(consentDb == null) {
+			Date now = new Date();
+			consent.setCreationDate(now);
+			consent.setLastUpdate(now);
+			consent.setId(Utils.getUUID());
+			consent.setAuthorized(Boolean.TRUE);
+			consentDb = consentRepository.save(consent);
+		} else {
+			Date now = new Date();
+			consentDb.setAuthorized(Boolean.TRUE);
+			consentDb.setLastUpdate(now);
+			consentRepository.save(consentDb);
+		}
 		return consentDb;
 	}
 
