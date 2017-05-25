@@ -2,6 +2,7 @@ package it.smartcommunitylab.csengine.storage;
 
 import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.Utils;
+import it.smartcommunitylab.csengine.cv.CVRegistration;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
 import it.smartcommunitylab.csengine.model.CV;
@@ -17,6 +18,7 @@ import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentExperience;
 import it.smartcommunitylab.csengine.model.TeachingUnit;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -72,9 +74,12 @@ public class RepositoryManager {
 	private MongoTemplate mongoTemplate;
 	private String defaultLang;
 	
+	private SimpleDateFormat sdf;
+	
 	public RepositoryManager(MongoTemplate template, String defaultLang) {
 		this.mongoTemplate = template;
 		this.defaultLang = defaultLang;
+		this.sdf = new SimpleDateFormat("dd/MM/YYYY");
 	}
 	
 	public String getDefaultLang() {
@@ -581,10 +586,22 @@ public class RepositoryManager {
 		if(student != null) {
 			cv.setStudent(student);
 		}
-		for(String studentExperienceId : cv.getStudentExperienceIds()) {
-			StudentExperience studentExperience = studentExperienceRepository.findOne(studentExperienceId);
-			if(studentExperience!= null) {
-				cv.getExperiences().add(studentExperience);
+		List<Registration> registrations = registrationRepository.findByStudent(studentId);
+		for(Registration registration : registrations) {
+			CVRegistration cvregistration = new CVRegistration();
+			cvregistration.setCourse(registration.getCourse());
+			cvregistration.setDateFrom(sdf.format(registration.getDateFrom()));
+			cvregistration.setDateTo(sdf.format(registration.getDateTo()));
+			cvregistration.setInstituteName(registration.getInstitute().getName());
+			cvregistration.setTeachingUnit(registration.getTeachingUnit().getName());
+			cv.getRegistrations().add(cvregistration);
+		}
+		for(List<String> studentExperienceIds : cv.getStudentExperienceIdMap().values()) {
+			for(String studentExperienceId : studentExperienceIds) {
+				StudentExperience studentExperience = studentExperienceRepository.findOne(studentExperienceId);
+				if(studentExperience != null) {
+					cv.getExperienceMap().put(studentExperience.getId(), studentExperience);
+				}
 			}
 		}
 		return cv;
@@ -605,7 +622,7 @@ public class RepositoryManager {
 		if(cvDb == null) {
 			throw new EntityNotFoundException("entity not found");
 		}
-		cvDb.setStudentExperienceIds(cv.getStudentExperienceIds());
+		cvDb.setStudentExperienceIdMap(cv.getStudentExperienceIdMap());
 		cvDb.setDrivingLicence(cv.getDrivingLicence());
 		cvDb.setManagementSkills(cv.getManagementSkills());
 		cvDb.setLastUpdate(now);
