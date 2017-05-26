@@ -41,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.ModelAndView;
 
 @Controller
 public class StudentController {
@@ -82,6 +83,35 @@ public class StudentController {
 			logger.info(String.format("updateStudentContact[%s]: %s", "tenant", result.getId()));
 		}
 		return result;
+	}
+	
+	@RequestMapping(value = "/api/student/{studentId}/photo/file", 
+			method = RequestMethod.POST)
+	public @ResponseBody void uploadPhotoProfile(
+			@PathVariable String studentId,
+			@RequestParam("file") MultipartFile file,
+			HttpServletRequest request) throws Exception {
+		if (!Utils.validateAPIRequest(request, apiToken)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+		}
+		documentManager.addFileToProfile(studentId, file);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("uploadPhotoProfile[%s]: %s", "tenant", studentId));
+		}
+	}
+	
+	@RequestMapping(value = "/api/student/{studentId}/photo", method = RequestMethod.GET)
+	public ModelAndView getPhotoProfile(
+			@PathVariable String studentId,
+			HttpServletRequest request) throws Exception {
+		if (!Utils.validateAPIRequest(request, apiToken)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+		}
+		String url = documentManager.getPhotoSignedUrl(studentId);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("getPhotoProfile[%s]: %s", "tenant", studentId));
+		}
+		return new ModelAndView("redirect:" + url);
 	}
 	
 	@RequestMapping(value = "/api/student/tu/{teachingUnitId}/year/{schoolYear}", method = RequestMethod.GET)

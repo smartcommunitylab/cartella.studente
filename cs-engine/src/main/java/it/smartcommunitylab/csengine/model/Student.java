@@ -15,6 +15,7 @@ public class Student extends BaseObject {
 	private String nationality;
 	private String sex;
 	private Map<String, String> socialMap = new HashMap<String, String>();
+	private String contentType;
 	
 	public String getName() {
 		return name;
@@ -81,6 +82,12 @@ public class Student extends BaseObject {
 	}
 	public void setSocialMap(Map<String, String> socialMap) {
 		this.socialMap = socialMap;
+	}
+	public String getContentType() {
+		return contentType;
+	}
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
 	}
 	
 }

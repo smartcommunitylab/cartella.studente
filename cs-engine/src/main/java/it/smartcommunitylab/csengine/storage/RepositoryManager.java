@@ -707,4 +707,17 @@ public class RepositoryManager {
 		return result;
 	}
 
+	public Student updateStudentContentType(String studentId, String contentType) 
+			throws EntityNotFoundException {
+		Student studentDb = studentRepository.findOne(studentId);
+		if(studentDb == null) {
+			throw new EntityNotFoundException("entity not found");
+		}
+		studentDb.setContentType(contentType);
+		Date now = new Date();
+		studentDb.setLastUpdate(now);
+		studentRepository.save(studentDb);
+		return studentDb;
+	}
+
 }
