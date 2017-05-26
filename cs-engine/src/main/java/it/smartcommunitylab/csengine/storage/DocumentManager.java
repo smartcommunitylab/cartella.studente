@@ -24,6 +24,7 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.ResponseHeaderOverrides;
 
 public class DocumentManager {
 	private static final transient Logger logger = LoggerFactory.getLogger(DocumentManager.class);
@@ -46,17 +47,18 @@ public class DocumentManager {
 		this.s3 = new AmazonS3Client(new ProfileCredentialsProvider());
 	}
 
-	public Certificate addFileToCertificate(String experienceId, String studentId, MultipartFile file) 
-			throws Exception {
+	public Certificate addFileToCertificate(String experienceId, String studentId, 
+			String filename, MultipartFile file) throws Exception {
 		Certificate certificate = dataManager.getCertificate(experienceId, studentId);
 		if(certificate == null) {
 			throw new StorageException("certificate not present");
 		}
 		String contentType = file.getContentType();
 		s3.putObject(new PutObjectRequest(bucketName, certificate.getStorageId(), createTmpFile(file)));
-		URL signedUrl = generateSignedUrl(bucketName, certificate.getStorageId());
+		URL signedUrl = generateSignedUrl(bucketName, certificate);
 		String documentUri = signedUrl.toString();
-		Certificate result = dataManager.updateCertificateUri(experienceId, studentId, documentUri, contentType);
+		Certificate result = dataManager.updateCertificateUri(experienceId, studentId, documentUri, 
+				contentType, filename);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("addFileToCertificate: %s - %s - %s", experienceId, studentId, result.getStorageId()));
 		}
@@ -77,7 +79,7 @@ public class DocumentManager {
 	public void setSignedUrl(Certificate certificate) {
 		if(certificate != null) {
 			if(certificate.getDocumentPresent()) {
-				URL signedUrl = generateSignedUrl(bucketName, certificate.getStorageId());
+				URL signedUrl = generateSignedUrl(bucketName, certificate);
 				certificate.setDocumentUri(signedUrl.toString());
 			} else {
 				certificate.setDocumentUri(null);
@@ -85,15 +87,22 @@ public class DocumentManager {
 		}
 	}
 	
-	private URL generateSignedUrl(String bucketName, String key) {
+	private URL generateSignedUrl(String bucketName, Certificate certificate) {
 		Date expiration = new java.util.Date();
 		long milliSeconds = expiration.getTime();
 		milliSeconds += 1000 * 60 * docUrlExpiration; 
 		expiration.setTime(milliSeconds);
+		
+		ResponseHeaderOverrides override = new ResponseHeaderOverrides();
+		override.setContentType(certificate.getContentType());
+		override.setContentDisposition("attachment; filename=" + certificate.getFilename());
+		
 		GeneratePresignedUrlRequest generatePresignedUrlRequest = 
-		    new GeneratePresignedUrlRequest(bucketName, key);
+		    new GeneratePresignedUrlRequest(bucketName, certificate.getStorageId());
 		generatePresignedUrlRequest.setMethod(HttpMethod.GET); 
 		generatePresignedUrlRequest.setExpiration(expiration);
+		generatePresignedUrlRequest.setResponseHeaders(override);
+		
 		URL url = s3.generatePresignedUrl(generatePresignedUrlRequest);
 		return url;
 	}

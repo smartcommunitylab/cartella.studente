@@ -630,8 +630,8 @@ public class RepositoryManager {
 		return cvDb;
 	}
 
-	public Certificate updateCertificateUri(String experienceId, String studentId, String documentUri, String contentType) 
-			throws EntityNotFoundException, StorageException {
+	public Certificate updateCertificateUri(String experienceId, String studentId, String documentUri, 
+			String contentType, String filename) throws EntityNotFoundException, StorageException {
 		StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
 		if(studentExperience == null) {
 			throw new EntityNotFoundException("entity not found");
@@ -641,6 +641,7 @@ public class RepositoryManager {
 		}
 		studentExperience.getCertificate().setDocumentUri(documentUri);
 		studentExperience.getCertificate().setContentType(contentType);
+		studentExperience.getCertificate().setFilename(filename);
 		studentExperience.getCertificate().setDocumentPresent(Boolean.TRUE);
 		studentExperienceRepository.save(studentExperience);
 		return studentExperience.getCertificate();

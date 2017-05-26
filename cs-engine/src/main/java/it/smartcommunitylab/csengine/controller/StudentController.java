@@ -387,11 +387,12 @@ public class StudentController {
 			@PathVariable String experienceId,
 			@PathVariable String studentId,
 			@RequestParam("file") MultipartFile file,
+			@RequestParam("filename") String filename,
 			HttpServletRequest request) throws Exception {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		Certificate result = documentManager.addFileToCertificate(experienceId, studentId, file);
+		Certificate result = documentManager.addFileToCertificate(experienceId, studentId, filename, file);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("uploadFile[%s]: %s", "tenant", result.getStorageId()));
 		}

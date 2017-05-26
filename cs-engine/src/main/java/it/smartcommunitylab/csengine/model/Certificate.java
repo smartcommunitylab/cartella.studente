@@ -11,6 +11,7 @@ public class Certificate {
 	private Boolean documentPresent = Boolean.FALSE;
 	private String documentUri;
 	private String contentType;
+	private String filename;
 	
 	public String getExperienceId() {
 		return experienceId;
@@ -53,6 +54,12 @@ public class Certificate {
 	}
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
+	}
+	public String getFilename() {
+		return filename;
+	}
+	public void setFilename(String filename) {
+		this.filename = filename;
 	}
 	
 }
