@@ -23,9 +23,9 @@ export class LoginPage implements OnInit {
 
   //login as a specific type of user
   login(loginType: string): void {
-    this.navCtrl.setRoot(HomePage);
+    //this.navCtrl.setRoot(HomePage);
     // TODO: uncomment
-    //this.loginService.login(loginType);
+    this.loginService.login(loginType);
   }
 
 }

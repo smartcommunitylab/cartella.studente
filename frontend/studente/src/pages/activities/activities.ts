@@ -37,42 +37,12 @@ export class ActivitiesPage {
     this.navCtrl.push(AddActivityPage, { activity: JSON.stringify(activity) });
   }
 
-  deleteActivity(activity): void {
-    //ask confirmation
-
-    let alert = this.alertCtrl.create({
-      title: this.translate.instant('alert_delete_activity_title'),
-      message: this.translate.instant('alert_delete_activity_message'),
-      buttons: [
-        {
-          text: this.translate.instant('alert_cancel'),
-          cssClass: 'pop-up-button',
-          role: 'cancel'
-
-        },
-        {
-          text: this.translate.instant('alert_confirm'),
-          cssClass: 'pop-up-button',
-          handler: () => {
-            let loader = this.loading.create({
-              content: this.translate.instant('loading'),
-            });
-            this.userService.deleteActivity(activity).then(activity => {
-              //remove stage from stage
-              for (var i = 0; i < this.activities.length; i++) {
-                if (this.activities[i].experience.id == activity.id) {
-                  this.activities.splice(i, 1);
-                }
-              }
-              loader.dismiss();
-              this.utilsService.toast(this.translate.instant('toast_delete_activity'), 3000, 'middle');
-            })
-          }
-        }
-      ]
-    });
-    alert.present();
-
+  onDeleted(stageId: string) {
+    for (var i = 0; i < this.activities.length; i++) {
+      if (this.activities[i].experience.id == stageId) {
+        this.activities.splice(i, 1);
+      }
+    }
   }
   //loaded when it is showed
   ionViewWillEnter() {

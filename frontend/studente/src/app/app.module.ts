@@ -19,7 +19,7 @@ import { CertificationsPage } from '../pages/certifications/certifications';
 import { CurriculumPage } from '../pages/curriculum/curriculum';
 import { EventsPage } from '../pages/events/events';
 import { StagesPage } from '../pages/stages/stages';
-import { ExamPage } from '../pages/exam/exam';
+import { ExamPage } from '../pages/exam/exams';
 import { ProfilePage } from '../pages/profile/profile';
 import { NotificationsPage } from '../pages/notifications/notifications';
 import { AddStagePage } from '../pages/addStage/addStage';
@@ -37,7 +37,13 @@ import { TrainingService } from '../services/training.service';
 import { UserService } from '../services/user.service';
 import { UtilsService} from '../services/utils.services'
 import { ExperienceFilterPipe } from '../pipes/experience-filter.pipe.ts';
-
+import { NgInit } from '../directives/ngInit';
+import { StagePanel } from '../pages/stages/stagePanel'
+import { ExamPanel } from '../pages/exam/examPanel'
+import { ActivityPanel } from '../pages/activities/activityPanel'
+import { CertificationPanel } from '../pages/certifications/certificationPanel'
+import { RegistrationPanel } from '../pages/institute/registrationPanel'
+import { Subjects } from '../pages/institute/subjects'
 export const deepLinkConfig: DeepLinkConfig = {
   links: [
     { component: LoginPage, name: 'Login', segment: 'login' },
@@ -84,7 +90,14 @@ function initConfig(config: ConfigService) {
     ButtonProfile,
     ButtonNotifications,
     ExperienceFilterPipe,
-    FileSelectDirective
+    NgInit,
+    FileSelectDirective,
+    StagePanel,
+    ExamPanel,
+    CertificationPanel,
+    ActivityPanel,
+    Subjects,
+    RegistrationPanel
   ],
   imports: [
     BrowserModule,

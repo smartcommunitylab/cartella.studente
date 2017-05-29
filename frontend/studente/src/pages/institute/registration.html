@@ -1,0 +1,11 @@
+<div class="registration-expandable-list" (click)="toggle()">
+        <div class="registration-title">{{registration.course}}</div>
+        <button class="stage-expansion" clear  ion-button icon-only > <ion-icon class="registration-expansion-icon" item-right [name]="opened ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
+      </div>
+      <div padding *ngIf="opened">
+        <div class="registration-title"> <span class="registration-institute-label">{{'registration_course_label'|translate}}</span>{{registration.course}}</div>
+        <div class="registration-title"> <span class="registration-institute-label">{{'registration_year_label'|translate}}</span>{{registration.schoolYear}}</div>
+        <div class="registration-title"><span class="registration-institute-label"> {{'registration_class_label'|translate}}</span>{{registration.classroom}}</div>
+        <div class="registration-title"><span class="registration-institute-label"> {{'registration_teachingUnit_label'|translate}}</span>{{teachingUnit.name}}</div>
+        <subjects [registration]="registration"></subjects>
+</div>

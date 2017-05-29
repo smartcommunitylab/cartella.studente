@@ -17,64 +17,18 @@ export class StagesPage {
   constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService, public loading: LoadingController, private alertCtrl: AlertController, private translate: TranslateService, private utilsService: UtilsService) {
   }
 
-  toggleDetails(stage) {
-    if (this.isDetailsShown(stage)) {
-      this.shownStage = null;
-    } else {
-      this.shownStage = stage;
-    }
-  };
-  isDetailsShown(stage) {
-    return this.shownStage === stage;
-  };
-
   addNewStage(): void {
     this.navCtrl.push(AddStagePage);
   }
 
-  updateStage(stage): void {
-    this.navCtrl.push(AddStagePage, { stage: JSON.stringify(stage) });
+  onDeleted(stageId: string) {
+    for (var i = 0; i < this.stages.length; i++) {
+      if (this.stages[i].experience.id == stageId) {
+        this.stages.splice(i, 1);
+      }
+    }
   }
 
-  deleteStage(stage): void {
-    //ask confirmation
-
-    let alert = this.alertCtrl.create({
-      title: this.translate.instant('alert_delete_stage_title'),
-      message: this.translate.instant('alert_delete_stage_message'),
-      buttons: [
-        {
-          text: this.translate.instant('alert_cancel'),
-          cssClass: 'pop-up-button',
-          role: 'cancel'
-
-        },
-        {
-          text: this.translate.instant('alert_confirm'),
-          cssClass: 'pop-up-button',
-          handler: () => {
-            let loader = this.loading.create({
-              content: this.translate.instant('loading'),
-            });
-            this.userService.deleteStage(stage).then(stage => {
-              //remove stage from stage
-              for (var i = 0; i < this.stages.length; i++) {
-                if (this.stages[i].experience.id == stage.id) {
-                  this.stages.splice(i, 1);
-                }
-              }
-              loader.dismiss();
-             this.utilsService.toast( this.translate.instant('toast_delete_stage'),3000,'middle');
-
-            })
-          }
-        }
-      ]
-    });
-    alert.present();
-
-  }
-  //loaded when it is showed
   ionViewWillEnter() {
     let loader = this.loading.create({
       content: this.translate.instant('loading'),

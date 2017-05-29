@@ -18,7 +18,6 @@
   "addStage_tutor_label": "Tutor aziendale:",
   "addStage_description_label": "Descrizione:",
   "addStage_certificate_label": "Certificato:",
-  "addStage_description_label": "Descrizione:",
   "addStage_title_placeholder": "Aggiungi il titolo dello stage",
   "addStage_date_from_placeholder": "Seleziona la data di inizio dello stage",
   "addStage_date_to_placeholder": "Seleziona la data di fine dello stage",
@@ -169,5 +168,10 @@
 "toast_delete_certification":"La certificazione e` stata cancellata",
   "toast_add_stage":"Lo stage e` stato aggiunto correttamente",
 "toast_add_activity":"L'attivita` e` stata aggiunta correttamente",
-"toast_add_certification":"La certificazione e` stata aggiunta correttamente"
+"toast_add_certification":"La certificazione e` stata aggiunta correttamente",
+"subjects_registrations_label": "Materie: ",
+"subjects_registrations_title_label":"Titolo: ",
+"subjects_registrations_teacher_label":"Insegnante: ",
+"subjects_no_registrations_label":"Non sono presenti materie registrate",
+"profile_remove_picture_label":"Rimuovi immagine"
 }

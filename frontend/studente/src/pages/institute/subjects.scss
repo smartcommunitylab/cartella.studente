@@ -1,0 +1,16 @@
+.subject-title {
+    width: 100% !important;
+    margin: 6px;
+    font-weight: bold;
+    font-size: 14px;
+}
+.single-subject{
+    margin: 6px;
+    display: inline-flex;
+    .single-subject-title{
+        margin: 6px;
+    }
+    .single-subject-teacher{
+        margin: 6px;
+    }
+}
