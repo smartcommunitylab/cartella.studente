@@ -2,6 +2,7 @@ package it.smartcommunitylab.csengine.storage;
 
 import it.smartcommunitylab.csengine.exception.StorageException;
 import it.smartcommunitylab.csengine.model.Certificate;
+import it.smartcommunitylab.csengine.model.Student;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,10 +25,13 @@ import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.DeleteObjectRequest;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.amazonaws.services.s3.model.PutObjectRequest;
+import com.amazonaws.services.s3.model.ResponseHeaderOverrides;
 
 public class DocumentManager {
 	private static final transient Logger logger = LoggerFactory.getLogger(DocumentManager.class);
 
+	private final String photoProfilePrefix = "student-";  
+	
 	private AmazonS3 s3;
 	
 	@Autowired
@@ -46,17 +50,19 @@ public class DocumentManager {
 		this.s3 = new AmazonS3Client(new ProfileCredentialsProvider());
 	}
 
-	public Certificate addFileToCertificate(String experienceId, String studentId, MultipartFile file) 
-			throws Exception {
+	public Certificate addFileToCertificate(String experienceId, String studentId, 
+			String filename, MultipartFile file) throws Exception {
 		Certificate certificate = dataManager.getCertificate(experienceId, studentId);
 		if(certificate == null) {
 			throw new StorageException("certificate not present");
 		}
 		String contentType = file.getContentType();
 		s3.putObject(new PutObjectRequest(bucketName, certificate.getStorageId(), createTmpFile(file)));
-		URL signedUrl = generateSignedUrl(bucketName, certificate.getStorageId());
+		URL signedUrl = generateSignedUrl(bucketName, certificate.getStorageId(),
+				certificate.getContentType(), certificate.getFilename());
 		String documentUri = signedUrl.toString();
-		Certificate result = dataManager.updateCertificateUri(experienceId, studentId, documentUri, contentType);
+		Certificate result = dataManager.updateCertificateUri(experienceId, studentId, documentUri, 
+				contentType, filename);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("addFileToCertificate: %s - %s - %s", experienceId, studentId, result.getStorageId()));
 		}
@@ -74,10 +80,31 @@ public class DocumentManager {
 		return result;
 	}
 	
+	public void addFileToProfile(String studentId, MultipartFile file) throws Exception {
+		Student student = dataManager.getStudent(studentId);
+		if(student == null) {
+			throw new StorageException("certificate not present");
+		}
+		String contentType = file.getContentType();
+		s3.putObject(new PutObjectRequest(bucketName, photoProfilePrefix + studentId, createTmpFile(file)));
+		dataManager.updateStudentContentType(studentId, contentType);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("addFileToProfile: %s", studentId));
+		}
+	}
+	
+	public String getPhotoSignedUrl(String studentId) throws Exception {
+		Student student = dataManager.getStudent(studentId);
+		URL signedUrl = generateSignedUrl(bucketName, photoProfilePrefix + studentId,
+				student.getContentType(), studentId);
+		return signedUrl.toString();
+	}
+	
 	public void setSignedUrl(Certificate certificate) {
 		if(certificate != null) {
 			if(certificate.getDocumentPresent()) {
-				URL signedUrl = generateSignedUrl(bucketName, certificate.getStorageId());
+				URL signedUrl = generateSignedUrl(bucketName, certificate.getStorageId(), 
+						certificate.getContentType(), certificate.getFilename());
 				certificate.setDocumentUri(signedUrl.toString());
 			} else {
 				certificate.setDocumentUri(null);
@@ -85,15 +112,23 @@ public class DocumentManager {
 		}
 	}
 	
-	private URL generateSignedUrl(String bucketName, String key) {
+	private URL generateSignedUrl(String bucketName, String key, 
+			String contentType, String filename) {
 		Date expiration = new java.util.Date();
 		long milliSeconds = expiration.getTime();
 		milliSeconds += 1000 * 60 * docUrlExpiration; 
 		expiration.setTime(milliSeconds);
+		
+		ResponseHeaderOverrides override = new ResponseHeaderOverrides();
+		override.setContentType(contentType);
+		override.setContentDisposition("attachment; filename=" + filename);
+		
 		GeneratePresignedUrlRequest generatePresignedUrlRequest = 
 		    new GeneratePresignedUrlRequest(bucketName, key);
 		generatePresignedUrlRequest.setMethod(HttpMethod.GET); 
 		generatePresignedUrlRequest.setExpiration(expiration);
+		generatePresignedUrlRequest.setResponseHeaders(override);
+		
 		URL url = s3.generatePresignedUrl(generatePresignedUrlRequest);
 		return url;
 	}

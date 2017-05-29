@@ -49,7 +49,7 @@ public class StudentController {
 	@Autowired
 	@Value("${apiToken}")	
 	private String apiToken;
-	
+		
 	@Autowired
 	private RepositoryManager dataManager;
 	
@@ -63,6 +63,7 @@ public class StudentController {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
 		Student result = dataManager.getStudent(studentId);
+		result.setImageUrl(documentManager.getPhotoSignedUrl(studentId));
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getStudentById[%s]: %s", "tenant", result.getId()));
 		}
@@ -82,6 +83,37 @@ public class StudentController {
 			logger.info(String.format("updateStudentContact[%s]: %s", "tenant", result.getId()));
 		}
 		return result;
+	}
+	
+	@RequestMapping(value = "/api/student/{studentId}/photo/file", 
+			method = RequestMethod.POST)
+	public @ResponseBody String uploadPhotoProfile(
+			@PathVariable String studentId,
+			@RequestParam("file") MultipartFile file,
+			HttpServletRequest request) throws Exception {
+		if (!Utils.validateAPIRequest(request, apiToken)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+		}
+		documentManager.addFileToProfile(studentId, file);
+		String url = documentManager.getPhotoSignedUrl(studentId);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("uploadPhotoProfile[%s]: %s", "tenant", studentId));
+		}
+		return url;
+	}
+	
+	@RequestMapping(value = "/api/student/{studentId}/photo", method = RequestMethod.GET)
+	public @ResponseBody String getPhotoProfile(
+			@PathVariable String studentId,
+			HttpServletRequest request) throws Exception {
+		if (!Utils.validateAPIRequest(request, apiToken)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+		}
+		String url = documentManager.getPhotoSignedUrl(studentId);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("getPhotoProfile[%s]: %s", "tenant", studentId));
+		}
+		return url;
 	}
 	
 	@RequestMapping(value = "/api/student/tu/{teachingUnitId}/year/{schoolYear}", method = RequestMethod.GET)
@@ -263,7 +295,7 @@ public class StudentController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/api/student/{studentId}/registration/{registrationId}", 
+	@RequestMapping(value = "/api/student/{studentId}/registration/{registrationId}/subject", 
 			method = RequestMethod.GET)
 	public @ResponseBody List<StudentExperience> getSubjectsByRegistration(
 			@PathVariable String studentId,
@@ -387,11 +419,12 @@ public class StudentController {
 			@PathVariable String experienceId,
 			@PathVariable String studentId,
 			@RequestParam("file") MultipartFile file,
+			@RequestParam("filename") String filename,
 			HttpServletRequest request) throws Exception {
 		if (!Utils.validateAPIRequest(request, apiToken)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		Certificate result = documentManager.addFileToCertificate(experienceId, studentId, file);
+		Certificate result = documentManager.addFileToCertificate(experienceId, studentId, filename, file);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("uploadFile[%s]: %s", "tenant", result.getStorageId()));
 		}

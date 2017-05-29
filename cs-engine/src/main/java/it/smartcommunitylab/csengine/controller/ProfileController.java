@@ -4,8 +4,10 @@ import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
 import it.smartcommunitylab.csengine.exception.UnauthorizedException;
+import it.smartcommunitylab.csengine.model.Consent;
 import it.smartcommunitylab.csengine.model.PersonInCharge;
 import it.smartcommunitylab.csengine.model.Student;
+import it.smartcommunitylab.csengine.storage.DocumentManager;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
 import it.smartcommunitylab.csengine.ui.Profile;
 
@@ -53,6 +55,9 @@ public class ProfileController {
 	@Autowired
 	private RepositoryManager dataManager;
 	
+	@Autowired
+	private DocumentManager documentManager;
+	
 	private BasicProfileService profileConnector;
 	
 	@PostConstruct
@@ -79,6 +84,10 @@ public class ProfileController {
 		}
 		if((student == null) && (personInCharge == null)) {
 			throw new UnauthorizedException("Unauthorized Exception: user not present");
+		}
+		Consent consent = dataManager.getConsentByStudent(student.getId());
+		if(consent != null) {
+			result.setAuthorized(consent.getAuthorized());
 		}
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getProfileByToken[%s]: %s", "tenant", cf));

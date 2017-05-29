@@ -1,15 +1,21 @@
 package it.smartcommunitylab.csengine.model;
 
+import it.smartcommunitylab.csengine.cv.CVRegistration;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.data.annotation.Transient;
 
 public class CV extends BaseObject {
 	private String studentId;
-	private List<String> studentExperienceIds = new ArrayList<String>();
+	private Map<String, List<String>> studentExperienceIdMap = new HashMap<String, List<String>>();
 	@Transient
-	private List<StudentExperience> experiences = new ArrayList<StudentExperience>();
+	private List<CVRegistration> registrations = new ArrayList<CVRegistration>();
+	@Transient
+	private Map<String, StudentExperience> experienceMap = new HashMap<String, StudentExperience>();
 	@Transient
 	private Student student;
 	private String drivingLicence;
@@ -20,12 +26,6 @@ public class CV extends BaseObject {
 	}
 	public void setStudent(Student student) {
 		this.student = student;
-	}
-	public List<StudentExperience> getExperiences() {
-		return experiences;
-	}
-	public void setExperiences(List<StudentExperience> experiences) {
-		this.experiences = experiences;
 	}
 	public String getDrivingLicence() {
 		return drivingLicence;
@@ -39,16 +39,28 @@ public class CV extends BaseObject {
 	public void setManagementSkills(String managementSkills) {
 		this.managementSkills = managementSkills;
 	}
-	public List<String> getStudentExperienceIds() {
-		return studentExperienceIds;
-	}
-	public void setStudentExperienceIds(List<String> studentExperienceIds) {
-		this.studentExperienceIds = studentExperienceIds;
-	}
 	public String getStudentId() {
 		return studentId;
 	}
 	public void setStudentId(String studentId) {
 		this.studentId = studentId;
+	}
+	public Map<String, List<String>> getStudentExperienceIdMap() {
+		return studentExperienceIdMap;
+	}
+	public void setStudentExperienceIdMap(Map<String, List<String>> studentExperienceIdMap) {
+		this.studentExperienceIdMap = studentExperienceIdMap;
+	}
+	public List<CVRegistration> getRegistrations() {
+		return registrations;
+	}
+	public void setRegistrations(List<CVRegistration> registrations) {
+		this.registrations = registrations;
+	}
+	public Map<String, StudentExperience> getExperienceMap() {
+		return experienceMap;
+	}
+	public void setExperienceMap(Map<String, StudentExperience> experienceMap) {
+		this.experienceMap = experienceMap;
 	}
 }

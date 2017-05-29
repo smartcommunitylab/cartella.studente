@@ -2,6 +2,7 @@ package it.smartcommunitylab.csengine.storage;
 
 import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.Utils;
+import it.smartcommunitylab.csengine.cv.CVRegistration;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
 import it.smartcommunitylab.csengine.model.CV;
@@ -17,6 +18,7 @@ import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentExperience;
 import it.smartcommunitylab.csengine.model.TeachingUnit;
 
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -72,9 +74,12 @@ public class RepositoryManager {
 	private MongoTemplate mongoTemplate;
 	private String defaultLang;
 	
+	private SimpleDateFormat sdf;
+	
 	public RepositoryManager(MongoTemplate template, String defaultLang) {
 		this.mongoTemplate = template;
 		this.defaultLang = defaultLang;
+		this.sdf = new SimpleDateFormat("dd/MM/YYYY");
 	}
 	
 	public String getDefaultLang() {
@@ -490,24 +495,25 @@ public class RepositoryManager {
 	
 	public Consent addConsent(Consent consent) throws StorageException {
 		Consent consentDb = null;
-		if(Utils.isNotEmpty(consent.getSubject())) {
-			consentDb = consentRepository.findBySubject(consent.getSubject());
-			if(consentDb != null) {
-				throw new StorageException("consent already exists for this subject");
-			}
-		}
 		if(Utils.isNotEmpty(consent.getStudentId())) {
 			consentDb = consentRepository.findByStudent(consent.getStudentId());
-			if(consentDb != null) {
-				throw new StorageException("consent already exists for this studentId");
-			}
 		}
-		Date now = new Date();
-		consent.setCreationDate(now);
-		consent.setLastUpdate(now);
-		consent.setId(Utils.getUUID());
-		consent.setAuthorized(Boolean.TRUE);
-		consentDb = consentRepository.save(consent);
+		if((consentDb == null) && Utils.isNotEmpty(consent.getSubject())) {
+			consentDb = consentRepository.findBySubject(consent.getSubject());
+		}
+		if(consentDb == null) {
+			Date now = new Date();
+			consent.setCreationDate(now);
+			consent.setLastUpdate(now);
+			consent.setId(Utils.getUUID());
+			consent.setAuthorized(Boolean.TRUE);
+			consentDb = consentRepository.save(consent);
+		} else {
+			Date now = new Date();
+			consentDb.setAuthorized(Boolean.TRUE);
+			consentDb.setLastUpdate(now);
+			consentRepository.save(consentDb);
+		}
 		return consentDb;
 	}
 
@@ -580,10 +586,22 @@ public class RepositoryManager {
 		if(student != null) {
 			cv.setStudent(student);
 		}
-		for(String studentExperienceId : cv.getStudentExperienceIds()) {
-			StudentExperience studentExperience = studentExperienceRepository.findOne(studentExperienceId);
-			if(studentExperience!= null) {
-				cv.getExperiences().add(studentExperience);
+		List<Registration> registrations = registrationRepository.findByStudent(studentId);
+		for(Registration registration : registrations) {
+			CVRegistration cvregistration = new CVRegistration();
+			cvregistration.setCourse(registration.getCourse());
+			cvregistration.setDateFrom(sdf.format(registration.getDateFrom()));
+			cvregistration.setDateTo(sdf.format(registration.getDateTo()));
+			cvregistration.setInstituteName(registration.getInstitute().getName());
+			cvregistration.setTeachingUnit(registration.getTeachingUnit().getName());
+			cv.getRegistrations().add(cvregistration);
+		}
+		for(List<String> studentExperienceIds : cv.getStudentExperienceIdMap().values()) {
+			for(String studentExperienceId : studentExperienceIds) {
+				StudentExperience studentExperience = studentExperienceRepository.findOne(studentExperienceId);
+				if(studentExperience != null) {
+					cv.getExperienceMap().put(studentExperience.getId(), studentExperience);
+				}
 			}
 		}
 		return cv;
@@ -604,7 +622,7 @@ public class RepositoryManager {
 		if(cvDb == null) {
 			throw new EntityNotFoundException("entity not found");
 		}
-		cvDb.setStudentExperienceIds(cv.getStudentExperienceIds());
+		cvDb.setStudentExperienceIdMap(cv.getStudentExperienceIdMap());
 		cvDb.setDrivingLicence(cv.getDrivingLicence());
 		cvDb.setManagementSkills(cv.getManagementSkills());
 		cvDb.setLastUpdate(now);
@@ -612,8 +630,8 @@ public class RepositoryManager {
 		return cvDb;
 	}
 
-	public Certificate updateCertificateUri(String experienceId, String studentId, String documentUri, String contentType) 
-			throws EntityNotFoundException, StorageException {
+	public Certificate updateCertificateUri(String experienceId, String studentId, String documentUri, 
+			String contentType, String filename) throws EntityNotFoundException, StorageException {
 		StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
 		if(studentExperience == null) {
 			throw new EntityNotFoundException("entity not found");
@@ -623,6 +641,7 @@ public class RepositoryManager {
 		}
 		studentExperience.getCertificate().setDocumentUri(documentUri);
 		studentExperience.getCertificate().setContentType(contentType);
+		studentExperience.getCertificate().setFilename(filename);
 		studentExperience.getCertificate().setDocumentPresent(Boolean.TRUE);
 		studentExperienceRepository.save(studentExperience);
 		return studentExperience.getCertificate();
@@ -686,6 +705,19 @@ public class RepositoryManager {
 	public PersonInCharge getPersonInChargeByCF(String cf) {
 		PersonInCharge result = personInChargeRepository.findByCF(cf);
 		return result;
+	}
+
+	public Student updateStudentContentType(String studentId, String contentType) 
+			throws EntityNotFoundException {
+		Student studentDb = studentRepository.findOne(studentId);
+		if(studentDb == null) {
+			throw new EntityNotFoundException("entity not found");
+		}
+		studentDb.setContentType(contentType);
+		Date now = new Date();
+		studentDb.setLastUpdate(now);
+		studentRepository.save(studentDb);
+		return studentDb;
 	}
 
 }
