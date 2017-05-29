@@ -64,6 +64,10 @@ public class Utils {
 		return Utils.fullMapper.treeToValue(in, cls);
 	}
 	
+	public static <T> T toObject(String json, Class<T> cls) throws JsonParseException, JsonMappingException, IOException {
+		return Utils.fullMapper.readValue(json, cls);
+	}
+	
 	public static boolean isNotEmpty(String value) {
 		boolean result = false;
 		if ((value != null) && (!value.isEmpty())) {

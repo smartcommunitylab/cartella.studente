@@ -1,6 +1,4 @@
-package it.smartcommunitylab.csengine.utils;
-
-import it.smartcommunitylab.csengine.common.Utils;
+package it.smartcommunitylab.csengine.common;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -94,7 +92,7 @@ public class HTTPUtils {
 		writer.close();
 		out.close();		
 		
-		if (conn.getResponseCode() != 200) {
+		if (conn.getResponseCode() >= 300) {
 			throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
 		}
 
