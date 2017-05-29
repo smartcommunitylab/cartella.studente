@@ -3,6 +3,8 @@ package it.smartcommunitylab.csengine.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.springframework.data.annotation.Transient;
+
 public class Student extends BaseObject {
 	private String name;
 	private String surname;
@@ -16,6 +18,8 @@ public class Student extends BaseObject {
 	private String sex;
 	private Map<String, String> socialMap = new HashMap<String, String>();
 	private String contentType;
+	@Transient
+	private String imageUrl;
 	
 	public String getName() {
 		return name;
@@ -88,6 +92,12 @@ public class Student extends BaseObject {
 	}
 	public void setContentType(String contentType) {
 		this.contentType = contentType;
+	}
+	public String getImageUrl() {
+		return imageUrl;
+	}
+	public void setImageUrl(String imageUrl) {
+		this.imageUrl = imageUrl;
 	}
 	
 }

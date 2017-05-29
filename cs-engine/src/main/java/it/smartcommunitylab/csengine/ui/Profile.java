@@ -9,7 +9,6 @@ public class Profile {
 	private String personInChargeId;
 	private List<String> studentIds = new ArrayList<String>();
 	private Boolean authorized = Boolean.FALSE;
-	private String imageUrl;
 	
 	public String getSubject() {
 		return subject;
@@ -41,11 +40,4 @@ public class Profile {
 	public void setAuthorized(Boolean authorized) {
 		this.authorized = authorized;
 	}
-	public String getImageUrl() {
-		return imageUrl;
-	}
-	public void setImageUrl(String imageUrl) {
-		this.imageUrl = imageUrl;
-	}
-	
 }

@@ -63,6 +63,7 @@ public class StudentController {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
 		Student result = dataManager.getStudent(studentId);
+		result.setImageUrl(documentManager.getPhotoSignedUrl(studentId));
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getStudentById[%s]: %s", "tenant", result.getId()));
 		}

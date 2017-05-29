@@ -89,7 +89,6 @@ public class ProfileController {
 		if(consent != null) {
 			result.setAuthorized(consent.getAuthorized());
 		}
-		result.setImageUrl(documentManager.getPhotoSignedUrl(student.getId()));
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getProfileByToken[%s]: %s", "tenant", cf));
 		}
