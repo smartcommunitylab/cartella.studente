@@ -98,3 +98,8 @@ $school-color:#00897b;
   text-align: center;
   margin: 40px 0px;
 }
+.autocompletion-list {
+    position: absolute;
+    z-index: 99;
+    width: 100%;
+}

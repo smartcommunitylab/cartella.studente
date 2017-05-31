@@ -12,6 +12,7 @@ import { FileSelectDirective, FileDropDirective } from 'ng2-file-upload';
 import { ConfigService } from '../services/config.service';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
+import { MapModal } from '../pages/map/mapmodal';
 import { LoginPage } from '../pages/login/login';
 import { InstitutePage } from '../pages/institute/institute';
 import { ActivitiesPage } from '../pages/activities/activities';
@@ -44,6 +45,8 @@ import { ActivityPanel } from '../pages/activities/activityPanel'
 import { CertificationPanel } from '../pages/certifications/certificationPanel'
 import { RegistrationPanel } from '../pages/institute/registrationPanel'
 import { Subjects } from '../pages/institute/subjects'
+import {GeoService} from '../services/geo.service'
+
 export const deepLinkConfig: DeepLinkConfig = {
   links: [
     { component: LoginPage, name: 'Login', segment: 'login' },
@@ -71,6 +74,7 @@ function initConfig(config: ConfigService) {
     MyApp,
     LoginPage,
     HomePage,
+    MapModal,
     InstitutePage,
     CertificationsPage,
     ActivitiesPage,
@@ -115,6 +119,8 @@ function initConfig(config: ConfigService) {
     MyApp,
     LoginPage,
     HomePage,
+        MapModal,
+
     InstitutePage,
     CertificationsPage,
     ActivitiesPage,
@@ -136,6 +142,7 @@ function initConfig(config: ConfigService) {
     { provide: ErrorHandler, useClass: IonicErrorHandler },
     LoginService,
     ConfigService,
+    GeoService,
     UserService,
     UtilsService,
     { provide: APP_INITIALIZER, useFactory: initConfig, deps: [ConfigService], multi: true },

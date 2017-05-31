@@ -1,6 +1,9 @@
 {
   "apiUrl": "https://api-dev.smartcommunitylab.it/t/sco.cartella/cartella/1.0/api/",
   "aacUrl": "https://am-dev.smartcommunitylab.it/aac",
+  "geocoderUrl":"https://os.smartcommunitylab.it/core.geocoder/",
+  "mapPositionAutocomplete":[46.069672,11.121270],
+  "distanceAutocomplete":25,
   "aacClientId": "fec507c3-f83c-4304-a93e-50020165c360",
   "redirectUrl": "http://localhost:8100",
   "debugging": true,

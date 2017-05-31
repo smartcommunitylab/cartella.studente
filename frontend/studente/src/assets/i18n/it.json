@@ -128,7 +128,7 @@
   "addEvent_address_placeholder": "Seleziona l'indirizzo",
   "addEvent_tutor_placeholder": "Seleziona il tutor ",
   "addEvent_description_placeholder": "Aggiungi una descrizione ",
-    "title_add_certificate":"Aggiungi nuovo evento",
+    "title_add_certificate":"Aggiungi nuovo certificato",
   "addCertificate_title_label": "Titolo certificato:",
   "addCertificate_dateFrom_label": "Dal:",
   "addCertificate_dateTo_label": "Dal:",
@@ -170,8 +170,10 @@
 "toast_add_activity":"L'attivita` e` stata aggiunta correttamente",
 "toast_add_certification":"La certificazione e` stata aggiunta correttamente",
 "subjects_registrations_label": "Materie: ",
-"subjects_registrations_title_label":"Titolo: ",
-"subjects_registrations_teacher_label":"Insegnante: ",
+"subjects_registrations_title_label":"Titolo",
+"subjects_registrations_teacher_label":"Insegnante",
 "subjects_no_registrations_label":"Non sono presenti materie registrate",
-"profile_remove_picture_label":"Rimuovi immagine"
+"profile_remove_picture_label":"Rimuovi immagine",
+"alert_map_location_title":"Indirizzo selezionato",
+"alert_map_location_message":"L'indirizzo e` {{value}}"
 }
