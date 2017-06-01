@@ -16,21 +16,13 @@
       <ion-col>
         <img class="profile-img" [src]="student.imageUrl"/>
 
-      <!--<ion-img class="profile-img" src="http://s3.amazonaws.com/37assets/svn/765-default-avatar.png"></ion-img>-->
     </ion-col>
-      <!--<ion-col *ngIf="!editMode">
-        <ion-img class="profile-img" [src]="student.imageUrl"></ion-img>
-      </ion-col>
-      <ion-col *ngIf="editMode">
-        <ion-img class="profile-img" src="{{student.imageUrl}}"></ion-img>
-      </ion-col>
-    </ion-row>-->
     </ion-row>
     <ion-row *ngIf="editMode">
       <ion-col>
-        <ion-item>
+        <div>
           <input id="uploadInputFile" type="file" accept="image/*" ng2FileSelect [uploader]="uploader" />
-        </ion-item>
+        </div>
       </ion-col>
 
       <ion-col>

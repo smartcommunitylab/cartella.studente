@@ -11,6 +11,9 @@ import { ConfigService } from '../../services/config.service'
 import { FileUploader } from 'ng2-file-upload';
 import { MapModal } from '../map/mapmodal'
 import { GeoService } from '../../services/geo.service'
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { UtilsService } from '../../services/utils.services'
+import { TranslateService } from 'ng2-translate';
 
 @Component({
   selector: 'page-add-certification',
@@ -26,6 +29,8 @@ export class AddCertificationPage implements OnInit {
   dateFrom = new Date().toISOString();
   dateTo = new Date().toISOString();
   items = [];
+  certificationForm: FormGroup;
+  submitAttempt = false;
   uploader: FileUploader = new FileUploader({});
   showList = false;
 
@@ -35,7 +40,18 @@ export class AddCertificationPage implements OnInit {
     private config: ConfigService,
     private webAPIConnector: WebAPIConnectorService,
     public modalCtrl: ModalController,
-    public GeoService: GeoService) {
+    public GeoService: GeoService,
+    public formBuilder: FormBuilder,
+    public utilsService: UtilsService,
+    public translate:TranslateService) {
+    this.certificationForm = formBuilder.group({
+      title: ['', Validators.compose([Validators.required])],
+      // dateFrom: ['', Validators.compose([Validators.required])],
+      // dateTo: ['', Validators.compose([Validators.required])],
+      location: ['', Validators.compose([Validators.required])],
+      // contact: ['', Validators.compose([Validators.required])],
+      description: ['', Validators.compose([Validators.required])]
+    });
   }
 
   selectPlace(item) {
@@ -85,8 +101,10 @@ export class AddCertificationPage implements OnInit {
   chooseAddress(): void {
     let myModal = this.modalCtrl.create(MapModal);
     myModal.onDidDismiss(address => {
-      this.certification.location = address.location;
-      this.certification.geocode = [address.e.latlng.lng, address.e.latlng.lng]
+      if (address) {
+        this.certification.location = address.location;
+        this.certification.geocode = [address.e.latlng.lng, address.e.latlng.lng]
+      }
     });
     myModal.present();
   }
@@ -99,35 +117,39 @@ export class AddCertificationPage implements OnInit {
       this.certificate = null)
   }
   addCertification(): void {
-
-    this.certification.type = ExperienceTypes.EXP_TYPE_CERT;
-    // this.certification.geocode=[0,0]
-    this.certification.dateFrom = new Date(this.dateFrom).getTime();
-    this.certification.dateTo = new Date(this.dateTo).getTime();
-    this.experienceContaniner.attributes = this.certification;
-    this.studentExperience.experience = this.experienceContaniner;
-    if (this.experienceContaniner.id != null) {
-      this.userService.updateCertification(this.studentExperience).then(certification => {
-        this.experienceContaniner = certification;
-        if (this.uploader.queue.length > 0) {
-          this.uploadCertificate(this.uploader.queue[0]).then(() => this.navCtrl.pop())
-        } else {
-          this.navCtrl.pop();
+    this.submitAttempt = true;
+    if (this.certificationForm.valid) {
+      this.certification.type = ExperienceTypes.EXP_TYPE_CERT;
+      this.certification.dateFrom = new Date(this.dateFrom).getTime();
+      this.certification.dateTo = new Date(this.dateTo).getTime();
+      this.experienceContaniner.attributes = this.certification;
+      this.studentExperience.experience = this.experienceContaniner;
+      if (this.experienceContaniner.id != null) {
+        this.userService.updateCertification(this.studentExperience).then(certification => {
+          this.experienceContaniner = certification;
+          if (this.uploader.queue.length > 0) {
+            this.uploadCertificate(this.uploader.queue[0]).then(() => this.navCtrl.pop())
+          } else {
+            this.navCtrl.pop();
+          }
         }
+        );
       }
-      );
-    }
-    else {
-      this.userService.addCertification(this.studentExperience).then(certification => {
-        this.experienceContaniner = certification;
-        if (this.uploader.queue.length > 0) {
-          this.uploadCertificate(this.uploader.queue[0]).then(() => this.navCtrl.pop())
-        } else {
-          this.navCtrl.pop();
+      else {
+        this.userService.addCertification(this.studentExperience).then(certification => {
+          this.experienceContaniner = certification;
+          if (this.uploader.queue.length > 0) {
+            this.uploadCertificate(this.uploader.queue[0]).then(() => this.navCtrl.pop())
+          } else {
+            this.navCtrl.pop();
+          }
         }
+        );
       }
-      );
     }
+    //  else {
+    // this.utilsService.toast( this.translate.instant('toast_error_fields_missing'),3000,'middle');
+    // }
   }
   uploadCertificate(item): Promise<void> {
     return new Promise<void>((resolve, reject) => {

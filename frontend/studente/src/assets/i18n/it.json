@@ -50,7 +50,7 @@
   "alert_confirm":"Conferma",
   "alert_cancel":"Cancella",
   "loading":"Loading...",
-  "bar-link-label":"Link utili",
+  "bar-link-label":"Servizi",
   "profile_anagrafica_label":"ANAGRAFICA",
   "profile_contacts_label":"CONTATTI",
   "profile_name_label":"Nome: ",
@@ -175,5 +175,9 @@
 "subjects_no_registrations_label":"Non sono presenti materie registrate",
 "profile_remove_picture_label":"Rimuovi immagine",
 "alert_map_location_title":"Indirizzo selezionato",
-"alert_map_location_message":"L'indirizzo e` {{value}}"
+"alert_map_location_message":"L'indirizzo e` {{value}}",
+"field_missing_label":"Campo obbligatorio",
+"addCertificate_title_missing_label":"Titolo del Certificato mancante",
+"addCertificate_description_missing_label":"Descrizione del certificato mancante",
+"toast_error_fields_missing":"Campi obbligatori non inseriti"
 }

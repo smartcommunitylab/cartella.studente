@@ -103,3 +103,17 @@ $school-color:#00897b;
     z-index: 99;
     width: 100%;
 }
+        .invalid {
+            border-bottom: 1px solid #ea6153!important;
+        }
+        .error-label {
+          color: red;
+          font-size: 12px;
+        }
+        .form-input{
+          padding-left: 16px;
+        }
+        .border-input {
+
+    border-bottom: 1px solid #dedede;
+        }
