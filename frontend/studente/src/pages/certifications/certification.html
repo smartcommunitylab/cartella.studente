@@ -1,6 +1,6 @@
  <div class="experience-expandable-list" (click)="toggle()">
         <div class="experience-title">{{certification.experience.attributes.title}}</div>
-         <div class="experience-certificate"><span *ngIf="certification.certificate && certification.certificate.documentPresent">{{'certificate_label'|translate}}</span><span *ngIf="!(certification.certificate && certification.certificate.documentPresent)">{{'not_certificate_label'|translate}}</span></div>
+         <div class="experience-certificate"><span *ngIf="certification.experience.attributes.institutional">{{'institutional_label'|translate}}</span><span *ngIf="!certification.experience.attributes.institutional">{{'not_institutional_label'|translate}}</span></div>
       <button class="stage-expansion" clear  ion-button icon-only> <ion-icon class="experience-expansion-icon" item-right [name]="opened ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
       </div>
       <div padding  *ngIf="opened">

@@ -34,7 +34,7 @@
     </ion-grid>
   <ion-list *ngIf="(activities && activities.length>0)">
     <ion-card  *ngFor="let activity of activities| experiencefilter:filter:'title'| orderBy:'activity.experience.attributes.title':order">
-<activity-panel [activity]="activity" (onDeleted)="onDeleted($event)"></activity-panel>
+<activity-panel [activity]="activity" [index]="activities.indexOf(activity)" (onDeleted)="onDeleted($event)"></activity-panel>
 
 
     </ion-card>

@@ -1,30 +1,36 @@
-import {Component, Output, EventEmitter,Input} from '@angular/core';
+import { Component, Output, EventEmitter, Input, OnInit } from '@angular/core';
 import { NavController, NavParams, LoadingController, AlertController } from 'ionic-angular';
 import { TranslateService } from 'ng2-translate';
 import { UtilsService } from '../../services/utils.services'
 
-import {StudentExperience} from '../../classes/StudentExperience.class'
-import {AddStagePage} from '../addStage/addStage'
-import {UserService} from '../../services/user.service'
+import { StudentExperience } from '../../classes/StudentExperience.class'
+import { AddStagePage } from '../addStage/addStage'
+import { UserService } from '../../services/user.service'
 @Component({
   selector: 'stage-panel',
   templateUrl: './stage.html'
 
 })
 
-export class StagePanel {
-    @Input() stage: StudentExperience;
-    @Output() onDeleted = new EventEmitter<string>();
-      constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService, public loading: LoadingController, private alertCtrl: AlertController, private translate: TranslateService, private utilsService: UtilsService) {
+export class StagePanel implements OnInit {
+  @Input() stage: StudentExperience;
+  @Input() index: number;
+  @Output() onDeleted = new EventEmitter<string>();
+  constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService, public loading: LoadingController, private alertCtrl: AlertController, private translate: TranslateService, private utilsService: UtilsService) {
   }
-    opened: Boolean = false;
-    toggle () {
-      this.opened = !this.opened;
+  opened: Boolean = false;
+  ngOnInit(): void {
+    if (this.index == 0) {
+      this.toggle();
     }
-    getStage(): StudentExperience {
-      return this.stage;
-    }
-     updateStage(): void {
+  }
+  toggle() {
+    this.opened = !this.opened;
+  }
+  getStage(): StudentExperience {
+    return this.stage;
+  }
+  updateStage(): void {
     this.navCtrl.push(AddStagePage, { stage: JSON.stringify(this.stage) });
   }
 
@@ -52,7 +58,7 @@ export class StagePanel {
               // remove stage from stage
               this.onDeleted.emit(stage.id);
               loader.dismiss();
-             this.utilsService.toast( this.translate.instant('toast_delete_stage'),3000,'middle');
+              this.utilsService.toast(this.translate.instant('toast_delete_stage'), 3000, 'middle');
 
             })
           }
@@ -62,5 +68,5 @@ export class StagePanel {
     alert.present();
 
   }
-  }
+}
 

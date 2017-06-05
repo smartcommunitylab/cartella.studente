@@ -1,4 +1,4 @@
-import {Component, Output, EventEmitter,Input} from '@angular/core';
+import {Component, Output, EventEmitter,Input, OnInit} from '@angular/core';
 import { NavController, NavParams, LoadingController, AlertController } from 'ionic-angular';
 import { TranslateService } from 'ng2-translate';
 import { UtilsService } from '../../services/utils.services'
@@ -12,12 +12,18 @@ import {UserService} from '../../services/user.service'
 
 })
 
-export class CertificationPanel {
+export class CertificationPanel implements OnInit {
     @Input() certification: StudentExperience;
+    @Input() index: number;
     @Output() onDeleted = new EventEmitter<string>();
       constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService, public loading: LoadingController, private alertCtrl: AlertController, private translate: TranslateService, private utilsService: UtilsService) {
   }
     opened: Boolean = false;
+      ngOnInit(): void {
+    if (this.index == 0) {
+      this.toggle();
+    }
+  }
     toggle () {
       this.opened = !this.opened;
     }
