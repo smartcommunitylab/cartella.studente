@@ -27,7 +27,7 @@
         // Try to exchange the param values for an access token.
         if (params['access_token']) {
           sessionStorage.access_token = params['access_token'];
-          window.location = '/';
+          window.location.hash = '';
         }
       }
     } 
