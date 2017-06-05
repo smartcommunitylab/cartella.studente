@@ -10,6 +10,8 @@ import {ConfigService} from '../../services/config.service'
 import { FileUploader } from 'ng2-file-upload';
 import { TranslateService } from 'ng2-translate';
 import { UtilsService } from '../../services/utils.services'
+import {WebAPIConnectorService} from '../../services/webAPIConnector.service'
+
 @Component({
   selector: 'page-add-activity',
   templateUrl: 'addActivity.html'
@@ -26,7 +28,7 @@ export class AddActivityPage implements OnInit {
 uploader:FileUploader = new FileUploader({});
 
 
-  constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService, private config: ConfigService, private utilsService: UtilsService,private translate: TranslateService){
+  constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService, private config: ConfigService, private utilsService: UtilsService,private translate: TranslateService, private webAPIConnectorService:WebAPIConnectorService){
   }
   ngOnInit():void {
       let activity = this.params.get('activity');
@@ -95,9 +97,7 @@ this.studentExperience.experience=this.experienceContaniner;
     return new Promise<void>((resolve, reject) => {
     this.userService.createCertificate(this.experienceContaniner).then(experienceId =>
      {
-      var newUrl=this.config.getConfig('apiUrl')+'/student/84f01dc1-694d-40eb-9296-01ca5014ef5d/experience/'+experienceId+'/certificate/file';
-      this.uploader.setOptions({ url: newUrl,authToken:'yeKESrRhwLfP791r',disableMultipart:false});
-      item.upload();
+      this.webAPIConnectorService.uploadCertificate(this.uploader,this.userService.getUserId(),experienceId,item);
       resolve();
     })
 })

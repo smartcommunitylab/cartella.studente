@@ -7,10 +7,11 @@ import {InstitutePage } from '../institute/institute'
 import {StagesPage } from '../stages/stages'
 import {ActivitiesPage } from '../activities/activities'
 import {EventsPage } from '../events/events'
-import {ExamPage } from '../exam/exam'
+import {ExamPage } from '../exam/exams'
 import {CurriculumPage } from '../curriculum/curriculum'
 import {CertificationsPage } from '../certifications/certifications'
 import {UserService} from '../../services/user.service'
+
 @Component({
   selector: 'page-home',
   templateUrl: 'home.html'
@@ -18,7 +19,6 @@ import {UserService} from '../../services/user.service'
 export class HomePage implements OnInit{
 
   registrations:Registration[]=[];
-//  exams:Exam[]=[];
   experiences:Experience[]=[];
   constructor(public navCtrl: NavController, private userService: UserService,public loading: LoadingController ) {
 
@@ -46,7 +46,6 @@ openRegistration(registration: Registration):void {
 }
 
  ngOnInit(): void {
-   //load left column
   let loader = this.loading.create({
     content: 'Getting latest entries...',
   });
@@ -56,8 +55,6 @@ openRegistration(registration: Registration):void {
         loader.dismiss();
       });
     })
-//    this.userService.getUserExams().then(exams =>{
-//      this.exams=exams
-//    });
   }
+
 }

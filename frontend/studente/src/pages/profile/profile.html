@@ -3,80 +3,107 @@
     <ion-title>
       {{'title_profile'|translate|uppercase}}
     </ion-title>
-     <ion-buttons end>
-      <button-home></button-home><button-notifications></button-notifications>
+    <ion-buttons end>
+      <button-home></button-home>
+      <button-notifications></button-notifications>
     </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding class="profile-page">
- <ion-grid>
-  <ion-row>
-    <ion-col>
-      <ion-img class="profile-img" src="http://s3.amazonaws.com/37assets/svn/765-default-avatar.png"></ion-img>
-    </ion-col>
-  </ion-row>
-   <ion-row>
-    <ion-col>
-      <div class="profile-title-label">
-      {{'profile_anagrafica_label'|translate|uppercase}}
-        </div>
-    </ion-col>
-     <ion-col>
-       <div class="profile-title-label">
-      {{'profile_contacts_label'|translate|uppercase}}
-       </div>
-    </ion-col>
-  </ion-row>
-   <ion-row>
-    <ion-col>
-      <span> {{'profile_name_label'|translate}}</span><span  class="profile-field" >{{student.name}}</span>
-    </ion-col>
-     <ion-col>
-
-       <span>{{'profile_tel_label'|translate}}</span><span  class="profile-field" *ngIf="!editMode">{{student.phone}}</span><ion-item *ngIf="editMode" class="profile-input" ><ion-input type="text" placeholder="{{'profile_tel_input_placeholder'|translate}}" [(ngModel)]="student.phone"></ion-input></ion-item>
-    </ion-col>
-  </ion-row>
-   <ion-row>
-    <ion-col>
-      <span>{{'profile_surname_label'|translate}}</span><span  class="profile-field" >{{student.surname}}</span>
-    </ion-col>
-     <ion-col>
-       {{'profile_cel_label'|translate}}<span *ngIf="!editMode" class="profile-field" >{{student.mobilePhone}}</span><ion-item *ngIf="editMode" class="profile-input" ><ion-input   type="text" placeholder="{{'profile_cel_input_placeholder'|translate}}" [(ngModel)]="student.mobilePhone"></ion-input></ion-item>
-    </ion-col>
-  </ion-row>
-   <ion-row>
-    <ion-col>
-      <span>{{'profile_cf_label'|translate}}</span><span  class="profile-field" >{{student.cf}}</span>
-    </ion-col>
-     <ion-col>
-       {{'profile_mail_label'|translate}} <span *ngIf="!editMode" class="profile-field" >{{student.email}}</span><ion-item *ngIf="editMode" class="profile-input"><ion-input   type="text" placeholder="{{'profile_mail_input_placeholder'|translate}}" [(ngModel)]="student.email"></ion-input></ion-item>
-    </ion-col>
-  </ion-row>
+  <ion-grid>
     <ion-row>
-    <ion-col>
-      <span>{{'profile_birthday_label'|translate}}</span><span  class="profile-field" >{{student.birthdate}}</span>
+      <ion-col>
+        <img class="profile-img" [src]="student.imageUrl"/>
+
     </ion-col>
-     <ion-col>
-       <div class="social-buttons">
-       <div class="social-button">
-       <ion-icon name="logo-facebook">
-         </ion-icon></div>
-       <div class="social-button">
-       <ion-icon name="logo-linkedin"></ion-icon>
-       </div>
-       <div class="social-button">
-         <ion-icon name="logo-twitter"></ion-icon>
-       </div>
-         </div>
-    </ion-col>
-  </ion-row>
-     <ion-row>
-    <ion-col>
-      <button class="action-button " *ngIf="!editMode" ion-button (click)=openEditMode()>{{'profile_update_button'|translate}}</button>
-            <button class="action-button " ion-button *ngIf="editMode" (click)=closeEditMode()>{{'profile_cancel_button'|translate}}</button>
-            <button  class="action-button " ion-button  *ngIf="editMode" (click)=saveData()>{{'profile_confirm_button'|translate}}</button>
-    </ion-col>
-  </ion-row>
-</ion-grid>
+    </ion-row>
+    <ion-row *ngIf="editMode">
+      <ion-col>
+        <div>
+          <input id="uploadInputFile" type="file" accept="image/*" ng2FileSelect [uploader]="uploader" />
+        </div>
+      </ion-col>
+
+      <ion-col>
+        <button class="button-add-stage label-button" ion-button clear (click)="removeCertification()">{{'profile_remove_picture_label'|translate}}</button>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <div class="profile-title-label">
+          {{'profile_anagrafica_label'|translate|uppercase}}
+        </div>
+      </ion-col>
+      <ion-col>
+        <div class="profile-title-label">
+          {{'profile_contacts_label'|translate|uppercase}}
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <span> {{'profile_name_label'|translate}}</span>
+        <span class="profile-field">{{student.name}}</span>
+      </ion-col>
+      <ion-col>
+
+        <span>{{'profile_tel_label'|translate}}</span><span class="profile-field" *ngIf="!editMode">{{student.phone}}</span>
+        <ion-item
+          *ngIf="editMode" class="profile-input">
+          <ion-input type="text" placeholder="{{'profile_tel_input_placeholder'|translate}}" [(ngModel)]="student.phone"></ion-input>
+          </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <span>{{'profile_surname_label'|translate}}</span><span class="profile-field">{{student.surname}}</span>
+      </ion-col>
+      <ion-col>
+        {{'profile_cel_label'|translate}}<span *ngIf="!editMode" class="profile-field">{{student.mobilePhone}}</span>
+        <ion-item
+          *ngIf="editMode" class="profile-input">
+          <ion-input type="text" placeholder="{{'profile_cel_input_placeholder'|translate}}" [(ngModel)]="student.mobilePhone"></ion-input>
+          </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <span>{{'profile_cf_label'|translate}}</span><span class="profile-field">{{student.cf}}</span>
+      </ion-col>
+      <ion-col>
+        {{'profile_mail_label'|translate}} <span *ngIf="!editMode" class="profile-field">{{student.email}}</span>
+        <ion-item
+          *ngIf="editMode" class="profile-input">
+          <ion-input type="text" placeholder="{{'profile_mail_input_placeholder'|translate}}" [(ngModel)]="student.email"></ion-input>
+          </ion-item>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <span>{{'profile_birthday_label'|translate}}</span><span class="profile-field">{{student.birthdate}}</span>
+      </ion-col>
+      <ion-col>
+        <div class="social-buttons">
+          <div class="social-button">
+            <ion-icon name="logo-facebook">
+            </ion-icon>
+          </div>
+          <div class="social-button">
+            <ion-icon name="logo-linkedin"></ion-icon>
+          </div>
+          <div class="social-button">
+            <ion-icon name="logo-twitter"></ion-icon>
+          </div>
+        </div>
+      </ion-col>
+    </ion-row>
+    <ion-row>
+      <ion-col>
+        <button class="action-button " *ngIf="!editMode" ion-button (click)=openEditMode()>{{'profile_update_button'|translate}}</button>
+        <button class="action-button " ion-button *ngIf="editMode" (click)=closeEditMode()>{{'profile_cancel_button'|translate}}</button>
+        <button class="action-button " ion-button *ngIf="editMode" (click)=saveData()>{{'profile_confirm_button'|translate}}</button>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
 </ion-content>

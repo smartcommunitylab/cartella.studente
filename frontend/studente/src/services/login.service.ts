@@ -1,6 +1,8 @@
 import { Injectable }    from '@angular/core';
 import {Http,RequestOptions,Headers} from '@angular/http'
 import {ConfigService} from './config.service'
+import {WebAPIConnectorService} from './webAPIConnector.service'
+import {UserService} from './user.service'
 import 'rxjs/add/operator/toPromise';
 
 declare var window: any;
@@ -14,7 +16,7 @@ export enum LOGIN_STATUS {
 @Injectable()
 export class LoginService  {
   
-  constructor(private http: Http, private config: ConfigService) {
+  constructor(private http: Http, private config: ConfigService, private connectorService: WebAPIConnectorService,private userService: UserService) {
   }
   
   // TODO translation
@@ -60,8 +62,21 @@ export class LoginService  {
       // if the service return empty profile, resolve NEW
       // if the service return non-empty profile, resolve EXISTING
       // in case of error resolve NOTSIGNEDIN
-
-      resolve(LOGIN_STATUS.EXISTING);
+      this.connectorService.getProfile().then(profile =>{
+        //check the case
+        this.userService.setUserId(profile.studentId);
+        this.userService.setConsentSubject(profile.subject);
+        if (profile.authorized){
+           resolve(LOGIN_STATUS.EXISTING);
+        }else {
+           resolve(LOGIN_STATUS.NEW);
+        }
+      },
+      err => {
+        // TODO handle error
+        resolve(LOGIN_STATUS.NOTSIGNEDIN);
+      }); 
+      
     });
   }
 
@@ -70,7 +85,18 @@ export class LoginService  {
    */
   consent(): Promise<boolean> {
     // TODO make a call to the consent service
-    return Promise.resolve(true);
+      return new Promise((resolve, reject) => {
+       this.connectorService.consent(this.userService.getUserId(),this.userService.getConsentSubject()).then(result =>{
+         resolve(true);
+       }
+     ,
+     err => {
+       resolve(false);
+     }
+       )
+     }
+     )
+    //return Promise.resolve(true);
   }
   
   /**

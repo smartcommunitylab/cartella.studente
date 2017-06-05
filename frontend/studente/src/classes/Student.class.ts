@@ -4,6 +4,7 @@ export class Student {
   extId?:string;
   name:string;
   surname:string;
+  imageUrl:string;
   cf:string;
   birthdate:string;
   address:string;

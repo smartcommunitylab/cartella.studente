@@ -1,0 +1,20 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      {{'title_exam'|translate}}
+    </ion-title>
+        <ion-buttons end>
+      <button-home></button-home><button-notifications></button-notifications><button-profile></button-profile>
+    </ion-buttons>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <div class="row-add-stage">
+  </div>
+  <ion-list>
+    <ion-card *ngFor="let exam of exams| experiencefilter:filter:'title'| orderBy:'exam.attributes.title':order">
+      <exam-panel [exam]="exam"></exam-panel>
+    </ion-card>
+  </ion-list>
+</ion-content>

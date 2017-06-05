@@ -12,6 +12,7 @@ import { FileSelectDirective, FileDropDirective } from 'ng2-file-upload';
 import { ConfigService } from '../services/config.service';
 import { MyApp } from './app.component';
 import { HomePage } from '../pages/home/home';
+import { MapModal } from '../pages/map/mapmodal';
 import { LoginPage } from '../pages/login/login';
 import { InstitutePage } from '../pages/institute/institute';
 import { ActivitiesPage } from '../pages/activities/activities';
@@ -19,7 +20,7 @@ import { CertificationsPage } from '../pages/certifications/certifications';
 import { CurriculumPage } from '../pages/curriculum/curriculum';
 import { EventsPage } from '../pages/events/events';
 import { StagesPage } from '../pages/stages/stages';
-import { ExamPage } from '../pages/exam/exam';
+import { ExamPage } from '../pages/exam/exams';
 import { ProfilePage } from '../pages/profile/profile';
 import { NotificationsPage } from '../pages/notifications/notifications';
 import { AddStagePage } from '../pages/addStage/addStage';
@@ -37,6 +38,14 @@ import { TrainingService } from '../services/training.service';
 import { UserService } from '../services/user.service';
 import { UtilsService} from '../services/utils.services'
 import { ExperienceFilterPipe } from '../pipes/experience-filter.pipe.ts';
+import { NgInit } from '../directives/ngInit';
+import { StagePanel } from '../pages/stages/stagePanel'
+import { ExamPanel } from '../pages/exam/examPanel'
+import { ActivityPanel } from '../pages/activities/activityPanel'
+import { CertificationPanel } from '../pages/certifications/certificationPanel'
+import { RegistrationPanel } from '../pages/institute/registrationPanel'
+import { Subjects } from '../pages/institute/subjects'
+import {GeoService} from '../services/geo.service'
 
 export const deepLinkConfig: DeepLinkConfig = {
   links: [
@@ -65,6 +74,7 @@ function initConfig(config: ConfigService) {
     MyApp,
     LoginPage,
     HomePage,
+    MapModal,
     InstitutePage,
     CertificationsPage,
     ActivitiesPage,
@@ -84,7 +94,14 @@ function initConfig(config: ConfigService) {
     ButtonProfile,
     ButtonNotifications,
     ExperienceFilterPipe,
-    FileSelectDirective
+    NgInit,
+    FileSelectDirective,
+    StagePanel,
+    ExamPanel,
+    CertificationPanel,
+    ActivityPanel,
+    Subjects,
+    RegistrationPanel
   ],
   imports: [
     BrowserModule,
@@ -102,6 +119,8 @@ function initConfig(config: ConfigService) {
     MyApp,
     LoginPage,
     HomePage,
+        MapModal,
+
     InstitutePage,
     CertificationsPage,
     ActivitiesPage,
@@ -123,6 +142,7 @@ function initConfig(config: ConfigService) {
     { provide: ErrorHandler, useClass: IonicErrorHandler },
     LoginService,
     ConfigService,
+    GeoService,
     UserService,
     UtilsService,
     { provide: APP_INITIALIZER, useFactory: initConfig, deps: [ConfigService], multi: true },

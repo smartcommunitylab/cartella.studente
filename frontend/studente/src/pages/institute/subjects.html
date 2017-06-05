@@ -1,0 +1,36 @@
+<div>
+    <div class="list-spinner" *ngIf="subjects==null">
+        <ion-spinner></ion-spinner>
+    </div>
+    <div *ngIf="subjects && subjects.length>0">
+        <div class="subject-title">
+            {{'subjects_registrations_label'|translate}}
+        </div>
+        <ion-grid>
+            <ion-row>
+                <ion-col class="single-subject-header">
+                    {{'subjects_registrations_title_label'|translate}}
+
+                </ion-col>
+                <ion-col  class="single-subject-header">
+                    {{'subjects_registrations_teacher_label'|translate}}
+
+                </ion-col>
+            </ion-row>
+            <ion-row *ngFor="let subject of subjects">
+                <!--<div class="single-subject">-->
+                <ion-col class="single-subject-title">
+                    {{subject.experience.attributes.title}}
+                </ion-col>
+                <ion-col class="single-subject-teacher">
+                    {{subject.experience.attributes.teacher}}
+                </ion-col>
+                <!--</div>-->
+            </ion-row>
+        </ion-grid>
+    </div>
+    <div *ngIf="subjects && subjects.length==0">
+        {{'subjects_no_registrations_label'|translate}}
+    </div>
+
+</div>

@@ -1,17 +1,17 @@
-import { Component,OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { NavController, LoadingController } from 'ionic-angular';
 
-import {LoginService} from '../../services/login.service'
-import {TranslateService} from 'ng2-translate';
+import { LoginService } from '../../services/login.service'
+import { TranslateService } from 'ng2-translate';
 
-import {HomePage} from '../home/home';
-import {LoginPage} from '../login/login';
+import { HomePage } from '../home/home';
+import { LoginPage } from '../login/login';
 
 @Component({
   selector: 'page-consent',
   templateUrl: 'consent.html'
 })
-export class ConsentPage implements OnInit{
+export class ConsentPage implements OnInit {
 
   bodyText: string;
 
@@ -24,11 +24,16 @@ export class ConsentPage implements OnInit{
 
   accept(): void {
     this.login.consent().then(result => {
+      if (result){
       this.navCtrl.setRoot(HomePage);
+      } else {
+        this.reject();
+      }
     },
-    err => {
-      // TODO handle error
-    });
+      err => {
+        // TODO handle error
+        //maybe come back
+      });
   }
 
   reject(): void {

@@ -94,3 +94,26 @@ $school-color:#00897b;
   text-align: center;
   padding: 20px;
 }
+.list-spinner {
+  text-align: center;
+  margin: 40px 0px;
+}
+.autocompletion-list {
+    position: absolute;
+    z-index: 99;
+    width: 100%;
+}
+        .invalid {
+            border-bottom: 1px solid #ea6153!important;
+        }
+        .error-label {
+          color: red;
+          font-size: 12px;
+        }
+        .form-input{
+          padding-left: 16px;
+        }
+        .border-input {
+
+    border-bottom: 1px solid #dedede;
+        }

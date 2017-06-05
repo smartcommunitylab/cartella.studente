@@ -37,43 +37,13 @@ export class CertificationsPage {
     this.navCtrl.push(AddCertificationPage, { certification: JSON.stringify(certification) });
   }
 
-  deleteCertification(certification): void {
-    //ask confirmation
-
-    let alert = this.alertCtrl.create({
-      title: this.translate.instant('alert_delete_certification_title'),
-      message: this.translate.instant('alert_delete_certification_message'),
-      buttons: [
-        {
-          text: this.translate.instant('alert_cancel'),
-          cssClass: 'pop-up-button',
-          role: 'cancel'
-
-        },
-        {
-          text: this.translate.instant('alert_confirm'),
-          cssClass: 'pop-up-button',
-          handler: () => {
-            let loader = this.loading.create({
-              content: this.translate.instant('loading'),
-            });
-            this.userService.deleteCertification(certification).then(certification => {
-              //remove stage from stage
-              for (var i = 0; i < this.certifications.length; i++) {
-                if (this.certifications[i].experience.id == certification.id) {
-                  this.certifications.splice(i, 1);
-                }
-              }
-              loader.dismiss();
-              this.utilsService.toast(this.translate.instant('toast_delete_certification'), 3000, 'middle');
-
-            })
-          }
-        }
-      ]
-    });
-    alert.present();
-
+ 
+  onDeleted(stageId: string) {
+    for (var i = 0; i < this.certifications.length; i++) {
+      if (this.certifications[i].experience.id == stageId) {
+        this.certifications.splice(i, 1);
+      }
+    }
   }
   //loaded when it is showed
   ionViewWillEnter() {
