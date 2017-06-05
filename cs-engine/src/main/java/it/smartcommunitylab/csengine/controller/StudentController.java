@@ -79,6 +79,7 @@ public class StudentController {
 		}
 		student.setId(studentId);
 		Student result = dataManager.updateStudentContact(student);
+		result.setImageUrl(documentManager.getPhotoSignedUrl(studentId));
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("updateStudentContact[%s]: %s", "tenant", result.getId()));
 		}
