@@ -24,6 +24,12 @@
 	<dependencies>
 
 		<dependency>
+			<groupId>it.smartcommunitylab</groupId>
+			<artifactId>aac.client</artifactId>
+			<version>2.0</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
 		</dependency>
@@ -124,7 +130,6 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-
 			<plugin>
 				<inherited>false</inherited>
 				<groupId>com.mycila.maven-license-plugin</groupId>

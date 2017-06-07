@@ -68,6 +68,10 @@ public class Utils {
 		return Utils.fullMapper.readValue(json, cls);
 	}
 	
+	public static String toJson(Object object) throws JsonProcessingException {
+		return Utils.fullMapper.writeValueAsString(object);
+	}
+	
 	public static boolean isNotEmpty(String value) {
 		boolean result = false;
 		if ((value != null) && (!value.isEmpty())) {
