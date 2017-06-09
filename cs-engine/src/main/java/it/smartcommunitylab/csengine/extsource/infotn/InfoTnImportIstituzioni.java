@@ -33,7 +33,7 @@ public class InfoTnImportIstituzioni {
 		logger.info("start importIstituzioniFromEmpty");
 		int total = 0;
 		int stored = 0;
-		FileReader fileReader = new FileReader(sourceFolder + "ISTITUZIONI_TUTTE.json");
+		FileReader fileReader = new FileReader(sourceFolder + "NEW_FBK_Istituzioni senza materne.json");
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		JsonFactory jsonFactory = new JsonFactory();
@@ -53,6 +53,7 @@ public class InfoTnImportIstituzioni {
 					while (jp.nextToken() != JsonToken.END_ARRAY) {
 						total += 1;
 						Istituzione istituzione = jp.readValueAs(Istituzione.class);
+						logger.info("converting " + istituzione.getExtid());
 						Institute instituteDb = instituteRepository.findByExtId(istituzione.getOrigin(), 
 								istituzione.getExtid());
 						if(instituteDb != null) {

@@ -38,7 +38,7 @@ public class InfoTnImportUnita {
 		logger.info("start importUnitaFromEmpty");
 		int total = 0;
 		int stored = 0;
-		FileReader fileReader = new FileReader(sourceFolder + "UNITA_CORRETTE_TUTTE.json");
+		FileReader fileReader = new FileReader(sourceFolder + "NEW_FBK_Unità scolastiche senza materne.json");
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		JsonFactory jsonFactory = new JsonFactory();
@@ -58,6 +58,7 @@ public class InfoTnImportUnita {
 					while (jp.nextToken() != JsonToken.END_ARRAY) {
 						total += 1;
 						Unita unita = jp.readValueAs(Unita.class);
+						logger.info("converting " + unita.getExtid());
 						Institute instituteDb = instituteRepository.findByExtId(unita.getOrigin_institute(), 
 								unita.getExtid_institute());
 						if(instituteDb == null) {
