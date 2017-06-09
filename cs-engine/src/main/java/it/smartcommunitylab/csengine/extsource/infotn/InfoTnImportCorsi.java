@@ -50,7 +50,7 @@ public class InfoTnImportCorsi {
 		logger.info("start importCorsiFromEmpty");
 		int total = 0;
 		int stored = 0;
-		FileReader fileReader = new FileReader(sourceFolder + "CORSIDISTUDIO_TUTTIok.json");
+		FileReader fileReader = new FileReader(sourceFolder + "FBK_CORSISTUDIO_v.01.json");
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		JsonFactory jsonFactory = new JsonFactory();
@@ -96,8 +96,8 @@ public class InfoTnImportCorsi {
 							course.setInstituteId(instituteDb.getId());
 							course.setTeachingUnitId(teachingUnitDb.getId());
 							course.setTeachingUnit(teachingUnitDb.getName());
-							stored += 1;
 							courseRepository.save(course);
+							stored += 1;
 							logger.info(String.format("Save Course: %s - %s - %s", corso.getOrigin(), 
 									corso.getExtid(), course.getId()));
 						} catch (ParseException e) {

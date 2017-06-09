@@ -15,4 +15,6 @@ public interface StudentRepository extends MongoRepository<Student, String>, Stu
 	@Query(value="{cf:?0}}")
 	Student findByCF(String cf);
 	
+	@Query(value="{origin:?0, extId:?1}")
+	Student findByExtId(String origin, String extId);
 }

@@ -75,8 +75,8 @@ public class InfoTnImportUnita {
 						}
 						TeachingUnit teachingUnit = convertToTeachingUnit(unita);
 						teachingUnit.setInstituteId(instituteDb.getId());
-						stored += 1;
 						teachingUnitRepository.save(teachingUnit);
+						stored += 1;
 						logger.info(String.format("Save TeachingUnit: %s - %s - %s", unita.getOrigin(), 
 								unita.getExtid(), teachingUnit.getId()));
 					}

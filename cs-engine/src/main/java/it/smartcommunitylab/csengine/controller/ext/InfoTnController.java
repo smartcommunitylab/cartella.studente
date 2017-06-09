@@ -10,6 +10,7 @@ import it.smartcommunitylab.csengine.exception.StorageException;
 import it.smartcommunitylab.csengine.exception.UnauthorizedException;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportCorsi;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportIstituzioni;
+import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportStudenti;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportUnita;
 
 import org.slf4j.Logger;
@@ -36,6 +37,9 @@ public class InfoTnController {
 	@Autowired
 	InfoTnImportCorsi importCorsi;
 	
+	@Autowired
+	InfoTnImportStudenti importStudenti;
+	
 	@RequestMapping(value = "/extsource/infotn/istituzioni/empty", method = RequestMethod.GET)
 	public @ResponseBody String importIstituzioniFromEmpty() throws Exception {
 		return importIstituzioni.importIstituzioniFromEmpty();
@@ -49,6 +53,11 @@ public class InfoTnController {
 	@RequestMapping(value = "/extsource/infotn/corsi/empty", method = RequestMethod.GET)
 	public @ResponseBody String importCorsiFromEmpty() throws Exception {
 		return importCorsi.importCorsiFromEmpty();
+	}
+	
+	@RequestMapping(value = "/extsource/infotn/studenti/empty", method = RequestMethod.GET)
+	public @ResponseBody String importStudentiFromEmpty() throws Exception {
+		return importStudenti.importStudentiFromEmpty();
 	}
 	
 	@ExceptionHandler({EntityNotFoundException.class, StorageException.class})
