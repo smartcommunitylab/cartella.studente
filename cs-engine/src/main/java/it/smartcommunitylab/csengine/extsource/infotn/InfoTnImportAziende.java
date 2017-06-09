@@ -84,8 +84,11 @@ public class InfoTnImportAziende {
 		result.setOrigin(azienda.getOrigin());
 		result.setExtId(azienda.getExtid());
 		result.setId(Utils.getUUID());
-		result.setDescription(azienda.getDescription());
+		result.setCf(azienda.getPartita_iva());
+		result.setName(azienda.getDescription());
 		result.setAddress(azienda.getAddress());
+		result.setPhone(azienda.getPhone());
+		result.setEmail(azienda.getEmail());
 		return result;
 	}
 }

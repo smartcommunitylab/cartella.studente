@@ -59,18 +59,18 @@ public class InfoTnImportUnita {
 						total += 1;
 						Unita unita = jp.readValueAs(Unita.class);
 						logger.info("converting " + unita.getExtid());
-						Institute instituteDb = instituteRepository.findByExtId(unita.getOrigin_institute(), 
-								unita.getExtid_institute());
-						if(instituteDb == null) {
-							logger.warn(String.format("Institute not found: %s - %s", 
-									unita.getOrigin_institute(), unita.getExtid_institute()));
-							continue;
-						}
 						TeachingUnit teachingUnitDb = teachingUnitRepository.findByExtId(unita.getOrigin(), 
 								unita.getExtid());
 						if(teachingUnitDb != null) {
 							logger.warn(String.format("TU already exists: %s - %s", 
 									unita.getOrigin(), unita.getExtid()));
+							continue;
+						}
+						Institute instituteDb = instituteRepository.findByExtId(unita.getOrigin_institute(), 
+								unita.getExtid_institute());
+						if(instituteDb == null) {
+							logger.warn(String.format("Institute not found: %s - %s", 
+									unita.getOrigin_institute(), unita.getExtid_institute()));
 							continue;
 						}
 						TeachingUnit teachingUnit = convertToTeachingUnit(unita);

@@ -71,6 +71,12 @@ public class InfoTnImportCorsi {
 						total += 1;
 						Corso corso = jp.readValueAs(Corso.class);
 						logger.info("converting " + corso.getExtid());
+						Course courseDb = courseRepository.findByExtId(corso.getOrigin(), corso.getExtid());
+						if(courseDb != null) {
+							logger.warn(String.format("Course already exists: %s - %s", 
+									corso.getOrigin(), corso.getExtid()));
+							continue;
+						}
 						Institute instituteDb = instituteRepository.findByExtId(corso.getOrigin_institute(), 
 								corso.getExtid_institute());
 						if(instituteDb == null) {
@@ -83,12 +89,6 @@ public class InfoTnImportCorsi {
 						if(teachingUnitDb == null) {
 							logger.warn(String.format("TeachingUnit not found: %s - %s", 
 									corso.getOrigin_teachingunit(), corso.getExtid_teachingunit()));
-							continue;
-						}
-						Course courseDb = courseRepository.findByExtId(corso.getOrigin(), corso.getExtid());
-						if(courseDb != null) {
-							logger.warn(String.format("Course already exists: %s - %s", 
-									corso.getOrigin(), corso.getExtid()));
 							continue;
 						}
 						try {

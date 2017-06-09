@@ -1,8 +1,11 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
 import it.smartcommunitylab.csengine.common.Utils;
+import it.smartcommunitylab.csengine.model.Course;
+import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.model.Student;
+import it.smartcommunitylab.csengine.model.TeachingUnit;
 import it.smartcommunitylab.csengine.storage.CourseRepository;
 import it.smartcommunitylab.csengine.storage.InstituteRepository;
 import it.smartcommunitylab.csengine.storage.RegistrationRepository;
@@ -12,7 +15,6 @@ import it.smartcommunitylab.csengine.storage.TeachingUnitRepository;
 import java.io.FileReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.Locale;
 
 import org.slf4j.Logger;
@@ -52,11 +54,11 @@ public class InfoTnImportIscrizioneCorsi {
 	
 	SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ITALY);
 	
-	public String importStudentiFromEmpty() throws Exception {
-		logger.info("start importStudentiFromEmpty");
+	public String importIscrizioneCorsiFromEmpty() throws Exception {
+		logger.info("start importIscrizioneCorsiFromEmpty");
 		int total = 0;
 		int stored = 0;
-		FileReader fileReader = new FileReader(sourceFolder + "ANAGRAFE_STUD_TUTTI_triennio.json");
+		FileReader fileReader = new FileReader(sourceFolder + "ISCRIZIONICORSI_STUD_quintoanno.json");
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		JsonFactory jsonFactory = new JsonFactory();
@@ -75,21 +77,42 @@ public class InfoTnImportIscrizioneCorsi {
 				if (current == JsonToken.START_ARRAY) {
 					while (jp.nextToken() != JsonToken.END_ARRAY) {
 						total += 1;
-						Studente studente = jp.readValueAs(Studente.class);
-						logger.info("converting " + studente.getExtid());
-						Student studentDb = studentRepository.findByExtId(studente.getOrigin(), 
-								studente.getExtid());
-						if(studentDb != null) {
+						IscrizioneCorso iscrizione = jp.readValueAs(IscrizioneCorso.class);
+						logger.info("converting " + iscrizione.getExtid());
+						Registration registrationDb = registrationRepository.findByExtId(iscrizione.getOrigin(), 
+								iscrizione.getExtid());
+						if(registrationDb != null) {
 							logger.warn(String.format("Student already exists: %s - %s", 
-									studente.getOrigin(), studente.getExtid()));
+									iscrizione.getOrigin(), iscrizione.getExtid()));
 							continue;
 						}
-						//TODO
-						//Student student = convertToStudent(studente);
-						//studentRepository.save(student);
-						//stored += 1;
-						//logger.info(String.format("Save Student: %s - %s - %s", studente.getOrigin(), 
-						//		studente.getExtid(), student.getId()));
+						Student student = studentRepository.findByExtId(iscrizione.getOrigin_student(), 
+								iscrizione.getExtid_studente());
+						if(student == null) {
+							logger.warn(String.format("Student not found: %s", iscrizione.getExtid_studente()));
+							continue;
+						}
+						Course course = courseRepository.findByExtId(iscrizione.getOrigin_course(), 
+								iscrizione.getExtid_course());
+						if(course == null) {
+							logger.warn(String.format("Course not found: %s", iscrizione.getExtid_course()));
+							continue;
+						}
+						TeachingUnit teachingUnit = teachingUnitRepository.findOne(course.getTeachingUnitId());
+						Institute institute = instituteRepository.findOne(course.getInstituteId());
+						Registration registration = convertToRegistration(iscrizione);
+						registration.setInstituteId(institute.getId());
+						registration.setInstitute(institute);
+						registration.setTeachingUnitId(teachingUnit.getId());
+						registration.setTeachingUnit(teachingUnit);
+						registration.setCourseId(course.getId());
+						registration.setCourse(course.getCourse());
+						registration.setStudentId(student.getId());
+						registration.setStudent(student);
+						registrationRepository.save(registration);
+						stored += 1;
+						logger.info(String.format("Save Registration: %s - %s - %s", iscrizione.getOrigin(), 
+								iscrizione.getExtid(), registration.getId()));
 					}
 				} else {
           logger.warn("Error: records should be an array: skipping.");
