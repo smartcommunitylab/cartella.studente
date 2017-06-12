@@ -33,7 +33,7 @@ public class InfoTnImportIstituzioni {
 		logger.info("start importIstituzioniFromEmpty");
 		int total = 0;
 		int stored = 0;
-		FileReader fileReader = new FileReader(sourceFolder + "NEW_FBK_Istituzioni senza materne.json");
+		FileReader fileReader = new FileReader(sourceFolder + "FBK_Istituzioni v.01.json");
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		JsonFactory jsonFactory = new JsonFactory();

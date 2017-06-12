@@ -58,7 +58,7 @@ public class InfoTnImportIscrizioneCorsi {
 		logger.info("start importIscrizioneCorsiFromEmpty");
 		int total = 0;
 		int stored = 0;
-		FileReader fileReader = new FileReader(sourceFolder + "ISCRIZIONICORSI_STUD_quintoanno.json");
+		FileReader fileReader = new FileReader(sourceFolder + "FBK_ISCRIZIONICORSI_quintoanno v.01.json");
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		JsonFactory jsonFactory = new JsonFactory();

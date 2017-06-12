@@ -12,6 +12,7 @@ public class Const {
 	public static final String EXP_TYPE_SUBJECT  = "SUBJECT";
 	
 	public static final String ATTR_INSTITUTIONAL = "institutional";
+	public static final String ATTR_EDUCATIONAL = "educational";
 	public static final String ATTR_CERTIFIERID = "certifierId";
 	public static final String ATTR_CERTIFIED = "certified";
 	public static final String ATTR_TUID = "teachingUnitId";
@@ -23,4 +24,5 @@ public class Const {
 	public static final String ATTR_DESCRIPTION = "description";
 	public static final String ATTR_CATEGORIZATION = "categorization";
 	public static final String ATTR_REGISTRATIONID = "registrationId";
+	public static final String ATTR_QUALIFICATION = "qualification";
 }

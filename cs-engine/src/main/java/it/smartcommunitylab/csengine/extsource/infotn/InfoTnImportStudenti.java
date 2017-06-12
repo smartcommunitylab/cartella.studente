@@ -40,7 +40,7 @@ public class InfoTnImportStudenti {
 		logger.info("start importStudentiFromEmpty");
 		int total = 0;
 		int stored = 0;
-		FileReader fileReader = new FileReader(sourceFolder + "ANAGRAFE_STUD_TUTTI_triennio.json");
+		FileReader fileReader = new FileReader(sourceFolder + "FBK_ANAGRAFE_STUDENTI_triennio v.01.json");
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		JsonFactory jsonFactory = new JsonFactory();
