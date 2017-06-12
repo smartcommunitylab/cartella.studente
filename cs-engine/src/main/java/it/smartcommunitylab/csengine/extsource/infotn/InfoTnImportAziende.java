@@ -33,7 +33,7 @@ public class InfoTnImportAziende {
 		logger.info("start importAziendeFromEmpty");
 		int total = 0;
 		int stored = 0;
-		FileReader fileReader = new FileReader(sourceFolder + "FBK_COMPANY v.01.json");
+		FileReader fileReader = new FileReader(sourceFolder + "FBK_COMPANY v.02.json");
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		JsonFactory jsonFactory = new JsonFactory();

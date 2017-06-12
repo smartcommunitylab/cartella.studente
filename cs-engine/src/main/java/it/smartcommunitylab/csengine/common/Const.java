@@ -25,4 +25,6 @@ public class Const {
 	public static final String ATTR_CATEGORIZATION = "categorization";
 	public static final String ATTR_REGISTRATIONID = "registrationId";
 	public static final String ATTR_QUALIFICATION = "qualification";
+	public static final String ATTR_JUDGEMENT = "judgement";
+	public static final String ATTR_RESULT = "result";
 }
