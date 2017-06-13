@@ -13,6 +13,7 @@ import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportCorsi;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportEsami;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportIscrizioneCorsi;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportIscrizioneEsami;
+import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportIscrizioneStage;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportIstituzioni;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportStage;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportStudenti;
@@ -60,6 +61,9 @@ public class InfoTnController {
 	@Autowired
 	InfoTnImportStage importStage;
 	
+	@Autowired
+	InfoTnImportIscrizioneStage importIscrizioneStage;
+	
 	@RequestMapping(value = "/extsource/infotn/istituzioni/empty", method = RequestMethod.GET)
 	public @ResponseBody String importIstituzioniFromEmpty() throws Exception {
 		return importIstituzioni.importIstituzioniFromEmpty();
@@ -103,6 +107,11 @@ public class InfoTnController {
 	@RequestMapping(value = "/extsource/infotn/stage/empty", method = RequestMethod.GET)
 	public @ResponseBody String importStageFromEmpty() throws Exception {
 		return importStage.importStageFromEmpty();
+	}
+	
+	@RequestMapping(value = "/extsource/infotn/iscrizionestage/empty", method = RequestMethod.GET)
+	public @ResponseBody String importIscrizioneStageFromEmpty() throws Exception {
+		return importIscrizioneStage.importIscrizioneStageFromEmpty();
 	}
 	
 	@ExceptionHandler({EntityNotFoundException.class, StorageException.class})
