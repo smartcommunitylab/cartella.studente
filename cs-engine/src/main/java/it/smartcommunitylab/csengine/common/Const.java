@@ -27,4 +27,11 @@ public class Const {
 	public static final String ATTR_QUALIFICATION = "qualification";
 	public static final String ATTR_JUDGEMENT = "judgement";
 	public static final String ATTR_RESULT = "result";
+	public static final String ATTR_TYPE = "type";
+	public static final String ATTR_DURATION = "duration";
+	public static final String ATTR_LOCATION = "location";
+	public static final String ATTR_CONTACT = "contact";
+	public static final String ATTR_HONOUR = "honour";
+	public static final String ATTR_GRADE = "grade";
+	public static final String ATTR_EXTERNALCANDIDATE = "externalCandidate";
 }
