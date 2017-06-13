@@ -92,20 +92,8 @@ public class InfoTnImportIscrizioneEsami {
 									iscrizione.getOrigin_exam(), iscrizione.getExtid_exam()));
 							continue;
 						}
-						StudentExperience studentExperience = convertToExperience(iscrizione);
-						
-						studentExperience.setStudentId(student.getId());
-						studentExperience.setStudent(student);
-						studentExperience.setExperienceId(experience.getId());
-						studentExperience.setExperience(experience);
-						
-						Certificate certificate = new Certificate();
-						certificate.setStudentId(student.getId());
-						certificate.setExperienceId(experience.getId());
-						certificate.getAttributes().put(Const.ATTR_JUDGEMENT, iscrizione.getJudgement());
-						certificate.getAttributes().put(Const.ATTR_RESULT, iscrizione.getResult());
-						studentExperience.setCertificate(certificate);
-						
+						StudentExperience studentExperience = convertToExperience(iscrizione, 
+								experience, student);
 						studentExperienceRepository.save(studentExperience);
 						stored += 1;
 						logger.info(String.format("Save Experience: %s - %s - %s", iscrizione.getOrigin(), 
@@ -123,13 +111,56 @@ public class InfoTnImportIscrizioneEsami {
 		return stored + "/" + total;
 	}
 	
-	private StudentExperience convertToExperience(IscrizioneEsame iscrizione) throws ParseException {
+	private StudentExperience convertToExperience(IscrizioneEsame iscrizione, 
+			Experience experience, Student student) 
+			throws ParseException {
 		StudentExperience result = new StudentExperience();
 		result.setOrigin(iscrizione.getOrigin());
 		result.setExtId(iscrizione.getExtid());
 		result.setId(Utils.getUUID());
 		
-		//TODO voto esame
+		experience.getAttributes().put(Const.ATTR_HONOUR, getHonour(iscrizione));
+		experience.getAttributes().put(Const.ATTR_GRADE, getJudgement(iscrizione));
+		experience.getAttributes().put(Const.ATTR_RESULT, iscrizione.getResult());
+		experience.getAttributes().put(Const.ATTR_EXTERNALCANDIDATE, getExternalCandidate(iscrizione));
+		
+		result.setStudentId(student.getId());
+		result.setStudent(student);
+		result.setExperienceId(experience.getId());
+		result.setExperience(experience);
+		
+		Certificate certificate = new Certificate();
+		certificate.setStudentId(student.getId());
+		certificate.setExperienceId(experience.getId());
+		certificate.getAttributes().put(Const.ATTR_JUDGEMENT, getJudgement(iscrizione));
+		result.setCertificate(certificate);
+		
+		return result;
+	}
+	
+	private boolean getHonour(IscrizioneEsame iscrizione) {
+		boolean result = false;
+		if(Utils.isNotEmpty(iscrizione.getHonour())) {
+			result = iscrizione.getHonour().equals("1");
+		}
+		return result;
+	}
+	
+	private boolean getExternalCandidate(IscrizioneEsame iscrizione) {
+		boolean result = false;
+		if(Utils.isNotEmpty(iscrizione.getExternalcandidate())) {
+			result = iscrizione.getExternalcandidate().equals("1");
+		}
+		return result;
+	}
+	
+	private String getJudgement(IscrizioneEsame iscrizione) {
+		String result = null;
+		if(Utils.isNotEmpty(iscrizione.getGrade())) {
+			result = iscrizione.getGrade();
+		} else if(Utils.isNotEmpty(iscrizione.getJudgement())) {
+			result = iscrizione.getJudgement();
+		}
 		return result;
 	}
 	

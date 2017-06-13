@@ -13,6 +13,8 @@ public class IscrizioneEsame {
 	private String result;
 	private String externalcandidate;
 	private String judgement;
+	private String honour;
+	private String grade;
 	
 	public String getOrigin() {
 		return origin;
@@ -85,6 +87,18 @@ public class IscrizioneEsame {
 	}
 	public void setJudgement(String judgement) {
 		this.judgement = judgement;
+	}
+	public String getHonour() {
+		return honour;
+	}
+	public void setHonour(String honour) {
+		this.honour = honour;
+	}
+	public String getGrade() {
+		return grade;
+	}
+	public void setGrade(String grade) {
+		this.grade = grade;
 	}
 	
 	

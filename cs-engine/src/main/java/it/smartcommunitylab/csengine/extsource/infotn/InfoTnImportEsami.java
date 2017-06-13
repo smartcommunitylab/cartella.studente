@@ -80,7 +80,7 @@ public class InfoTnImportEsami {
 						}
 						experienceRepository.save(experience);
 						stored += 1;
-						logger.info(String.format("Save Experience: %s - %s - %s", esame.getOrigin(), 
+						logger.info(String.format("Save Esame: %s - %s - %s", esame.getOrigin(), 
 								esame.getExtid(), experience.getId()));						
 					}
 				} else {
@@ -107,6 +107,7 @@ public class InfoTnImportEsami {
 		result.getAttributes().put(Const.ATTR_INSTITUTIONAL, Boolean.TRUE);
 		result.getAttributes().put(Const.ATTR_SCHOOLYEAR, getSchoolYear(esame.getSchoolyear()));
 		result.getAttributes().put(Const.ATTR_QUALIFICATION, esame.getQualification());
+		result.getAttributes().put(Const.ATTR_TYPE, esame.getTipoesame());
 		return result;
 	}
 	
