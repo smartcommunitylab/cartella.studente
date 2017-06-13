@@ -74,7 +74,7 @@ public class InfoTnImportIscrizioneEsami {
 						StudentExperience experienceDb = studentExperienceRepository.findByExtId(iscrizione.getOrigin(), 
 								iscrizione.getExtid());
 						if(experienceDb != null) {
-							logger.warn(String.format("Experience already exists: %s - %s", 
+							logger.warn(String.format("StudentExperience already exists: %s - %s", 
 									iscrizione.getOrigin(), iscrizione.getExtid()));
 							continue;
 						}

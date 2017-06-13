@@ -49,7 +49,7 @@ public class InfoTnImportStage {
 		logger.info("start importStageFromEmpty");
 		int total = 0;
 		int stored = 0;
-		FileReader fileReader = new FileReader(sourceFolder + "FBK_Stage tutti v.01.json");
+		FileReader fileReader = new FileReader(sourceFolder + "FBK_STAGE triennio v.02.json");
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		JsonFactory jsonFactory = new JsonFactory();
@@ -77,17 +77,11 @@ public class InfoTnImportStage {
 									stage.getOrigin(), stage.getExtid()));
 							continue;
 						}
-						Experience experience = convertToExperience(stage);
 						Institute institute = instituteRepository.findByExtId(stage.getOrigin(), 
 								stage.getExtid_institute());
-						if(institute != null) {
-							experience.getAttributes().put(Const.ATTR_INSTITUTEID, institute.getId());
-						}
 						Certifier certifier = certifierRepository.findByExtId(stage.getOrigin_company(), 
 								stage.getExtid_company());
-						if(certifier != null) {
-							experience.getAttributes().put(Const.ATTR_CERTIFIERID, institute.getId());
-						}
+						Experience experience = convertToExperience(stage, institute, certifier);
 						experienceRepository.save(experience);
 						stored += 1;
 						logger.info(String.format("Save Stage: %s - %s - %s", stage.getOrigin(), 
@@ -105,7 +99,8 @@ public class InfoTnImportStage {
 		return stored + "/" + total;
 	}
 	
-	private Experience convertToExperience(Stage stage) throws ParseException {
+	private Experience convertToExperience(Stage stage, Institute institute, 
+			Certifier certifier) throws ParseException {
 		Experience result = new Experience();
 		result.setOrigin(stage.getOrigin());
 		result.setExtId(stage.getExtid());
@@ -118,14 +113,40 @@ public class InfoTnImportStage {
 		result.getAttributes().put(Const.ATTR_SCHOOLYEAR, getSchoolYear(stage.getSchoolyear()));
 		result.getAttributes().put(Const.ATTR_TYPE, "Stage");
 		result.getAttributes().put(Const.ATTR_DURATION, stage.getDuration());
-		result.getAttributes().put(Const.ATTR_LOCATION, stage.getLocation());
+		result.getAttributes().put(Const.ATTR_LOCATION, getLocation(stage, certifier));
 		result.getAttributes().put(Const.ATTR_CONTACT, stage.getTutor());
-		result.getAttributes().put(Const.ATTR_TITLE, stage.getTitle());
+		result.getAttributes().put(Const.ATTR_TITLE, getTitle(stage, certifier));
+		if(institute != null) {
+			result.getAttributes().put(Const.ATTR_INSTITUTEID, institute.getId());
+		}
+		if(certifier != null) {
+			result.getAttributes().put(Const.ATTR_CERTIFIERID, certifier.getId());
+		}
 		return result;
 	}
 	
 	private String getSchoolYear(String annoScolastico) {
 		return annoScolastico.replace("/", "-");
+	}
+	
+	private String getTitle(Stage stage, Certifier certifier) {
+		String result = null;
+		if(Utils.isNotEmpty(stage.getTitle())) {
+			result = stage.getTitle();
+		} else {
+			if(certifier != null) {
+				result = certifier.getName();
+			}
+		}
+		return result;
+	}
+	
+	private String getLocation(Stage stage, Certifier certifier) {
+		String result = stage.getLocation();
+		if(certifier != null) {
+			result = certifier.getName() + " - " + result;
+		}
+		return result;
 	}
 
 }
