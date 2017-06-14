@@ -34,7 +34,7 @@
   </ion-grid>
   <ion-list *ngIf="(certifications && certifications.length>0)">
     <ion-card  *ngFor="let certification of certifications| experiencefilter:filter:'title'| orderBy:'certification.experience.attributes.title':order">
-    <certification-panel [certification]="certification" (onDeleted)="onDeleted($event)"></certification-panel>
+    <certification-panel [certification]="certification" [index]="certifications.indexOf(certification)" (onDeleted)="onDeleted($event)"></certification-panel>
     </ion-card>
   </ion-list>
         <ion-card class="eperience-empty-list-label" *ngIf="(certifications && certifications.length==0)">

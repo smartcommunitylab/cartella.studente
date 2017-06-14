@@ -56,14 +56,10 @@ export class ProfilePage {
     });
     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
       console.log("ImageUpload:uploaded:", item, status);
-      // (response => {
       this.student.imageUrl = response;
-      // this.userService.saveUserInfo(this.student).then(student => {
-      //   this.student = student;
          loader.dismiss();
          this.editMode = false;
-      // });
-      // })
+
 
     };
 
@@ -80,13 +76,7 @@ export class ProfilePage {
       if (this.uploader.queue.length > 0) {
         this.userService.sendUserImage(this.uploader, this.uploader.queue[0]);
       }
-      // else {
-        // this.userService.saveUserInfo(this.student).then(student => {
-        //   this.student = student;
-        //   loader.dismiss();
-        //   this.editMode = false;
-        // });
-      // }
+      this.profilePicture = this.userService.getUserImage();
     })
 
   }

@@ -24,7 +24,7 @@
         <div class="registration-title"><span class="registration-institute-label"> {{'registration_class_label'|translate}}</span>{{registration.classroom}}</div>
         <div class="registration-title"><span class="registration-institute-label"> {{'registration_teachingUnit_label'|translate}}</span>{{teachingUnit.name}}</div>
       </div>-->
-       <registration-panel [registration]="registration" [teachingUnit]="teachingUnit"></registration-panel>
+       <registration-panel [registration]="registration"[index]="registrations.indexOf(registration)" [teachingUnit]="teachingUnit"></registration-panel>
     </ion-card>
   </ion-list>
 </ion-content>

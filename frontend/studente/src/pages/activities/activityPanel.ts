@@ -1,30 +1,37 @@
-import {Component, Output, EventEmitter,Input} from '@angular/core';
+import { Component, Output, EventEmitter, Input, OnInit } from '@angular/core';
 import { NavController, NavParams, LoadingController, AlertController } from 'ionic-angular';
 import { TranslateService } from 'ng2-translate';
 import { UtilsService } from '../../services/utils.services'
 
-import {StudentExperience} from '../../classes/StudentExperience.class'
-import {AddActivityPage} from '../addActivity/addActivity'
-import {UserService} from '../../services/user.service'
+import { StudentExperience } from '../../classes/StudentExperience.class'
+import { AddActivityPage } from '../addActivity/addActivity'
+import { UserService } from '../../services/user.service'
 @Component({
   selector: 'activity-panel',
   templateUrl: './activity.html'
 
 })
 
-export class ActivityPanel {
-    @Input() activity: StudentExperience;
-    @Output() onDeleted = new EventEmitter<string>();
-      constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService, public loading: LoadingController, private alertCtrl: AlertController, private translate: TranslateService, private utilsService: UtilsService) {
+export class ActivityPanel implements OnInit {
+  @Input() activity: StudentExperience;
+  @Input() index: number;
+
+  @Output() onDeleted = new EventEmitter<string>();
+  constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService, public loading: LoadingController, private alertCtrl: AlertController, private translate: TranslateService, private utilsService: UtilsService) {
   }
-    opened: Boolean = false;
-    toggle () {
-      this.opened = !this.opened;
+  opened: Boolean = false;
+  ngOnInit(): void {
+    if (this.index == 0) {
+      this.toggle();
     }
-    getActivity(): StudentExperience {
-      return this.activity;
-    }
-     updateActivity(): void {
+  }
+  toggle() {
+    this.opened = !this.opened;
+  }
+  getActivity(): StudentExperience {
+    return this.activity;
+  }
+  updateActivity(): void {
     this.navCtrl.push(AddActivityPage, { activity: JSON.stringify(this.activity) });
   }
 
@@ -52,7 +59,7 @@ export class ActivityPanel {
               // remove activity from activity
               this.onDeleted.emit(activity.id);
               loader.dismiss();
-             this.utilsService.toast( this.translate.instant('toast_delete_activity'),3000,'middle');
+              this.utilsService.toast(this.translate.instant('toast_delete_activity'), 3000, 'middle');
 
             })
           }
@@ -62,5 +69,5 @@ export class ActivityPanel {
     alert.present();
 
   }
-  }
+}
 

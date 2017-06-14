@@ -1,7 +1,7 @@
 <div class="exam-expandable-list" (click)="toggle()">
         <div class="exam-title">{{exam.experience.attributes.titoloStudio}}</div>
-        <div class="exam-certificate"><span *ngIf="exam.certificate">{{'certificate_label'|translate}}</span><span *ngIf="!exam.certificate">{{'not_certificate_label'|translate}}</span></div>
-        <button class="stage-expansion" clear  ion-button icon-only (click)="toggleDetails(exam)"> <ion-icon class="experience-expansion-icon" item-right  [name]="opened ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
+        <div class="exam-certificate"><span *ngIf="exam.experience.attributes.institutional">{{'institutional_label'|translate}}</span><span *ngIf="!exam.experience.attributes.institutional">{{'not_institutional_label'|translate}}</span></div>
+        <button class="stage-expansion" clear  ion-button icon-only> <ion-icon class="experience-expansion-icon" item-right  [name]="opened ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
       </div>
       <div padding *ngIf="opened">
         <div class="exam-title"> <span class="registration-institute-label">{{'exam_title_label'|translate}}</span>{{exam.experience.attributes.titoloStudio}}</div>
