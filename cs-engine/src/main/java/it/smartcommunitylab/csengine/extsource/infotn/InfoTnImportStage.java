@@ -110,6 +110,7 @@ public class InfoTnImportStage {
 		result.getAttributes().put(Const.ATTR_DATETO, sdf.parse(stage.getDateto()));
 		result.getAttributes().put(Const.ATTR_EDUCATIONAL, Boolean.TRUE);
 		result.getAttributes().put(Const.ATTR_INSTITUTIONAL, Boolean.TRUE);
+		result.getAttributes().put(Const.ATTR_CERTIFIED, Boolean.TRUE);
 		result.getAttributes().put(Const.ATTR_SCHOOLYEAR, getSchoolYear(stage.getSchoolyear()));
 		result.getAttributes().put(Const.ATTR_TYPE, "Stage");
 		result.getAttributes().put(Const.ATTR_DURATION, stage.getDuration());
