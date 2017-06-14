@@ -9,12 +9,14 @@ import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
 import it.smartcommunitylab.csengine.exception.UnauthorizedException;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportAziende;
+import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportCertificazioni;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportCorsi;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportEsami;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportIscrizioneCorsi;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportIscrizioneEsami;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportIscrizioneStage;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportIstituzioni;
+import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportMobilita;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportStage;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportStudenti;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportUnita;
@@ -64,6 +66,12 @@ public class InfoTnController {
 	@Autowired
 	InfoTnImportIscrizioneStage importIscrizioneStage;
 	
+	@Autowired
+	InfoTnImportCertificazioni importCertificazioni;
+	
+	@Autowired
+	InfoTnImportMobilita importMobilita;
+	
 	@RequestMapping(value = "/extsource/infotn/istituzioni/empty", method = RequestMethod.GET)
 	public @ResponseBody String importIstituzioniFromEmpty() throws Exception {
 		return importIstituzioni.importIstituzioniFromEmpty();
@@ -112,6 +120,16 @@ public class InfoTnController {
 	@RequestMapping(value = "/extsource/infotn/iscrizionestage/empty", method = RequestMethod.GET)
 	public @ResponseBody String importIscrizioneStageFromEmpty() throws Exception {
 		return importIscrizioneStage.importIscrizioneStageFromEmpty();
+	}
+	
+	@RequestMapping(value = "/extsource/infotn/certificazioni/empty", method = RequestMethod.GET)
+	public @ResponseBody String importCertificazioniFromEmpty() throws Exception {
+		return importCertificazioni.importCertificazioniFromEmpty();
+	}
+	
+	@RequestMapping(value = "/extsource/infotn/mobilita/empty", method = RequestMethod.GET)
+	public @ResponseBody String importMobilitaFromEmpty() throws Exception {
+		return importMobilita.importMobilitaFromEmpty();
 	}
 	
 	@ExceptionHandler({EntityNotFoundException.class, StorageException.class})
