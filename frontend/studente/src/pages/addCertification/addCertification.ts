@@ -14,6 +14,7 @@ import { GeoService } from '../../services/geo.service'
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UtilsService } from '../../services/utils.services'
 import { TranslateService } from 'ng2-translate';
+// import { checkingDates } from '../../validators/validators';
 
 @Component({
   selector: 'page-add-certification',
@@ -46,14 +47,27 @@ export class AddCertificationPage implements OnInit {
     public translate:TranslateService) {
     this.certificationForm = formBuilder.group({
       title: ['', Validators.compose([Validators.required])],
-      // dateFrom: ['', Validators.compose([Validators.required])],
-      // dateTo: ['', Validators.compose([Validators.required])],
+       dateFrom: ['', Validators.compose([Validators.required])],
+       dateTo: ['', Validators.compose([Validators.required])],
       location: ['', Validators.compose([Validators.required])],
       // contact: ['', Validators.compose([Validators.required])],
       description: ['', Validators.compose([Validators.required])]
-    });
+    }, {validator: this.checkingDates('dateFrom', 'dateTo')});
   }
 
+checkingDates(dateFromKey: string, dateToKey: string) {
+  return (group: FormGroup): {[key: string]: any} => {
+    let dateFrom = group.controls[dateFromKey];
+    let dateTo = group.controls[dateToKey];
+    var d1 = Date.parse(dateFrom.value);
+    var d2 = Date.parse(dateTo.value);
+      if (d1 > d2 || d1>Date.now() || d2>Date.now()) return {
+        dateError: true
+      };
+
+
+  }
+}
   selectPlace(item) {
     //set name and coordinates of the selected place
     this.certification.location = item.name;
@@ -118,6 +132,10 @@ export class AddCertificationPage implements OnInit {
   }
   addCertification(): void {
     this.submitAttempt = true;
+    console.log(!this.certificationForm.controls.location.valid );
+    console.log( this.certification.geocode);
+    console.log( (this.certificationForm.controls.location.dirty || this.submitAttempt));
+    console.log((!this.certificationForm.controls.location.valid  && (this.certificationForm.controls.location.dirty || this.submitAttempt)&& !this.certification.geocode));
     if (this.certificationForm.valid) {
       this.certification.type = ExperienceTypes.EXP_TYPE_CERT;
       this.certification.dateFrom = new Date(this.dateFrom).getTime();
