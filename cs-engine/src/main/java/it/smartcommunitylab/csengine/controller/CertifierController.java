@@ -8,6 +8,7 @@ import it.smartcommunitylab.csengine.exception.UnauthorizedException;
 import it.smartcommunitylab.csengine.model.Certificate;
 import it.smartcommunitylab.csengine.model.CertificationRequest;
 import it.smartcommunitylab.csengine.model.Experience;
+import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.storage.DocumentManager;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
 
@@ -47,6 +48,21 @@ public class CertifierController {
 	@Autowired
 	private DocumentManager documentManager;
 
+	@RequestMapping(value = "/api/certifier/{certifierId}/student", method = RequestMethod.GET)
+	public @ResponseBody List<Student> getStudentsByCertifier(
+			@PathVariable String certifierId,
+			@ApiParam Pageable pageable,
+			HttpServletRequest request) throws Exception {
+		if (!Utils.validateAPIRequest(request, apiToken)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+		}
+		List<Student> result = dataManager.searchStudentByCertifier(certifierId, pageable);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("getStudentsByCertifier[%s]: %s", "tenant", result.size()));
+		}
+		return result;
+	}
+	
 	@RequestMapping(value = "/api/certifier/{certifierId}/certification/", method = RequestMethod.GET)
 	public @ResponseBody List<CertificationRequest> getCertificationRequest(
 			@PathVariable String certifierId,

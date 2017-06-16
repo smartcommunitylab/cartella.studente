@@ -20,7 +20,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -48,19 +47,6 @@ public class InstituteController {
 		List<Institute> result = dataManager.getInstitute();
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getInstitutes[%s]: %s", "tenant", result.size()));
-		}
-		return result;
-	}
-	
-	@RequestMapping(value = "/api/institute", method = RequestMethod.POST)
-	public @ResponseBody Institute addInstitute(@RequestBody Institute institute,
-			HttpServletRequest request) throws Exception {
-		if (!Utils.validateAPIRequest(request, apiToken)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
-		}
-		Institute result = dataManager.addInstitute(institute);
-		if(logger.isInfoEnabled()) {
-			logger.info(String.format("addInstitute[%s]: %s", "tenant", result.getId()));
 		}
 		return result;
 	}

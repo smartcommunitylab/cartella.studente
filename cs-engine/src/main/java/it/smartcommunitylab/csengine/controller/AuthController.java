@@ -3,6 +3,7 @@ package it.smartcommunitylab.csengine.controller;
 import it.smartcommunitylab.aac.AACProfileService;
 import it.smartcommunitylab.aac.model.AccountProfile;
 import it.smartcommunitylab.csengine.common.Utils;
+import it.smartcommunitylab.csengine.security.AuthorizationManager;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -34,6 +35,9 @@ public class AuthController {
 	@Autowired
 	@Value("${profile.attribute}")
 	private String profileAttribute;
+	
+	@Autowired
+	AuthorizationManager authorizationManager;
 
 	private AACProfileService profileConnector;
 

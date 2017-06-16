@@ -1,0 +1,22 @@
+{
+	"subject": {
+		"id": "1",
+		"type": "user"
+	},
+	"entity": {
+		"id": "429",
+		"type": "user"
+	},
+	"action": "ALL",
+	"resource": {
+		"qnameRef": "institute",
+		"values": 
+		[
+			{
+				"qname": "institute",
+				"name": "teachingUnitId",
+				"value": "e28681fb-c081-4285-ae54-259458ccb9e3"
+			}
+		]
+	}
+}
