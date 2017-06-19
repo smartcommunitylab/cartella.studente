@@ -5,4 +5,5 @@ export class ExperienceTypes {
      static readonly  EXP_TYPE_CERT:string  = "CERTIFICATION";
      static  readonly EXP_TYPE_EXAM:string  = "EXAM";
      static  readonly  EXP_TYPE_SUBJECT:string  = "SUBJECT";
+     static  readonly  EXP_TYPE_MOBILITY:string  = "MOBILITY";
 }

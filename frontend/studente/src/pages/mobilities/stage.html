@@ -1,0 +1,17 @@
+<div class="experience-expandable-list" (click)="toggle()">
+        <div class="experience-title">{{stage.experience.attributes.title}}</div>
+ <div class="experience-certificate"><span *ngIf="stage.experience.attributes.institutional">{{'institutional_label'|translate}}</span><span *ngIf="!stage.experience.attributes.institutional">{{'not_institutional_label'|translate}}</span></div> 
+      <button class="stage-expansion" clear  ion-button icon-only > <ion-icon class="experience-expansion-icon" item-right [name]="opened ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
+      </div>
+      <div padding *ngIf="opened">
+         <div class="experience-title"> <span class="registration-institute-label">{{'stage_title_label'|translate}}</span> {{stage.experience.attributes.title}}</div>
+         <div class="experience-title"> <span class="registration-institute-label">{{'stage_dateFrom_label'|translate}}</span>{{stage.experience.attributes.dateFrom |date}}</div>
+         <div class="experience-title"> <span class="registration-institute-label">{{'stage_dateTo_label'|translate}}</span>{{stage.experience.attributes.dateTo |date}}</div>
+         <div class="experience-title"> <span class="registration-institute-label">{{'stage_location_label'|translate}}</span>{{stage.experience.attributes.location}}</div>
+         <div class="experience-title"> <span class="registration-institute-label">{{'stage_description_label'|translate}}</span>{{stage.experience.attributes.description}}</div>
+        <div class="experience-title" *ngIf="stage.certificate!=null && stage.certificate.documentPresent"> <span class="registration-institute-label">{{'certificate_certificate_label'|translate}}</span><a download="certificate.txt" class="button label-button" href="{{ stage.certificate.documentUri}}"><ion-icon name="md-download"></ion-icon></a></div>
+        <div class="experience-action-buttons" *ngIf="!stage.experience.attributes.institutional" >
+          <button class="label-button" ion-button clear (click)="deleteStage()">{{'delete_button'|translate}}</button>
+          <button class="label-button" ion-button clear (click)="updateStage()">{{'update_button'|translate}}</button>
+        </div>
+      </div>

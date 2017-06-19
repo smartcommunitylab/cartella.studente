@@ -1,0 +1,8 @@
+.row-add-stage {
+  height: $picker-md-toolbar-height	;
+  position: relative;
+  .button-add-stage{
+    position: absolute;
+    right: 5px;
+  }
+}

@@ -78,6 +78,8 @@
   "institutional_label": "Istituzionale",
   "not_institutional_label": "Non istituzionale",
   "exam_title_label": "Titolo di studio: ",
+  "exam_type_label": "Tipo: ",
+  "exam_grade_label": "Voto: ",
   "exam_address_label": "Indirizzo: ",
   "exam_result_label": "Esito: ",
   "exam_year_label": "Anno: ",
