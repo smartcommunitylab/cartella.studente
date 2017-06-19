@@ -53,9 +53,6 @@ public class TeachingUnitController extends AuthController {
 		
 	@RequestMapping(value = "/api/tu", method = RequestMethod.GET)
 	public @ResponseBody List<TeachingUnit> getTeachingUnits(HttpServletRequest request) throws Exception {
-		if (!Utils.validateAPIRequest(request, null)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
-		}
 		List<TeachingUnit> result = dataManager.getTeachingUnit();
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getTeachingUnits[%s]: %s", "tenant", result.size()));
@@ -68,9 +65,6 @@ public class TeachingUnitController extends AuthController {
 			@PathVariable String teachingUnitId,
 			@PathVariable String schoolYear,			
 			HttpServletRequest request) throws Exception {
-		if (!Utils.validateAPIRequest(request, null)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
-		}
 		List<Course> result = dataManager.getCourseByTeachingUnit(teachingUnitId, schoolYear);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getCourseByInstitute[%s]: %s - %s - %s", "tenant", 
@@ -79,27 +73,24 @@ public class TeachingUnitController extends AuthController {
 		return result;
 	}
 		
-	@RequestMapping(value = "/api/tu/course/{courseId}/classroom", method = RequestMethod.GET)
-	public @ResponseBody List<String> getClassroomByTeachingUnit(
-			@PathVariable String courseId,
-			HttpServletRequest request) throws Exception {
-		if (!Utils.validateAPIRequest(request, null)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
-		}
-		List<String> result = new ArrayList<String>(); 
-		List<Registration> registrations = dataManager.getRegistrationByCourse(courseId);
-		for(Registration registration : registrations) {
-			String classroom = registration.getClassroom();
-			if(!result.contains(classroom)) {
-				result.add(classroom);
-			}
-		}
-		if(logger.isInfoEnabled()) {
-			logger.info(String.format("getClassroomByTeachingUnit[%s]: %s - %s", "tenant", 
-					courseId, result.size()));
-		}
-		return result;
-	}
+//	@RequestMapping(value = "/api/tu/course/{courseId}/classroom", method = RequestMethod.GET)
+//	public @ResponseBody List<String> getClassroomByTeachingUnit(
+//			@PathVariable String courseId,
+//			HttpServletRequest request) throws Exception {
+//		List<String> result = new ArrayList<String>(); 
+//		List<Registration> registrations = dataManager.getRegistrationByCourse(courseId);
+//		for(Registration registration : registrations) {
+//			String classroom = registration.getClassroom();
+//			if(!result.contains(classroom)) {
+//				result.add(classroom);
+//			}
+//		}
+//		if(logger.isInfoEnabled()) {
+//			logger.info(String.format("getClassroomByTeachingUnit[%s]: %s - %s", "tenant", 
+//					courseId, result.size()));
+//		}
+//		return result;
+//	}
 	
 //	@RequestMapping(value = "/api/tu/course/{courseId}/student", method = RequestMethod.GET)
 //	public @ResponseBody List<Student> getStudentByClassroom(

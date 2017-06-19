@@ -517,8 +517,8 @@ public class RepositoryManager {
 		return consentDb;
 	}
 
-	public Consent removeAuthorization(String subject) throws EntityNotFoundException {
-		Consent consentDb = consentRepository.findBySubject(subject);
+	public Consent removeAuthorization(String studentId) throws EntityNotFoundException {
+		Consent consentDb = consentRepository.findByStudent(studentId);
 		if(consentDb == null) {
 			throw new EntityNotFoundException("entity not found");
 		}
@@ -529,8 +529,8 @@ public class RepositoryManager {
 		return consentDb;
 	}
 
-	public Consent addAuthorization(String subject) throws EntityNotFoundException {
-		Consent consentDb = consentRepository.findBySubject(subject);
+	public Consent addAuthorization(String studentId) throws EntityNotFoundException {
+		Consent consentDb = consentRepository.findByStudent(studentId);
 		if(consentDb == null) {
 			throw new EntityNotFoundException("entity not found");
 		}
