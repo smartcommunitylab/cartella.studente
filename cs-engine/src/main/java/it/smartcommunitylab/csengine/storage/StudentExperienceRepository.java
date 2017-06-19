@@ -23,4 +23,7 @@ public interface StudentExperienceRepository extends
 	@Query(value="{experienceId:{$in : ?0}}")
 	List<StudentExperience> findByExperienceIds(List<String> experienceIds);
 	
+	@Query(value="{origin:?0, extId:?1}")
+	StudentExperience findByExtId(String origin, String extId);
+	
 }

@@ -23,5 +23,8 @@ public interface RegistrationRepository extends MongoRepository<Registration, St
 	
 	@Query(value="{courseId:?0}")
 	List<Registration> findByCourse(String courseId);
+	
+	@Query(value="{origin:?0, extId:?1}")
+	Registration findByExtId(String origin, String extId);
 
 }
