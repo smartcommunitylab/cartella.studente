@@ -272,9 +272,9 @@ public class RepositoryManager {
 		if(studentExperience == null) {
 			throw new EntityNotFoundException("entity not found");
 		}
-		if(Utils.isCertified(studentExperience.getExperience())) {
-			throw new StorageException("modify is not allowed");
-		}
+//		if(Utils.isCertified(studentExperience.getExperience())) {
+//			throw new StorageException("modify is not allowed");
+//		}
 		if(studentExperience.getCertificate() == null) {
 			throw new StorageException("certificate fot found");
 		}
@@ -289,9 +289,9 @@ public class RepositoryManager {
 		if(studentExperience == null) {
 			throw new EntityNotFoundException("entity not found");
 		}
-		if(Utils.isCertified(studentExperience.getExperience())) {
-			throw new StorageException("modify is not allowed");
-		}
+//		if(Utils.isCertified(studentExperience.getExperience())) {
+//			throw new StorageException("modify is not allowed");
+//		}
 		Certificate oldCertificate = studentExperience.getCertificate();
 		studentExperience.setCertificate(null);
 		studentExperienceRepository.save(studentExperience);
@@ -305,9 +305,9 @@ public class RepositoryManager {
 		if(studentExperience == null) {
 			throw new EntityNotFoundException("entity not found");
 		}
-		if(Utils.isCertified(studentExperience.getExperience())) {
-			throw new StorageException("modify is not allowed");
-		}
+//		if(Utils.isCertified(studentExperience.getExperience())) {
+//			throw new StorageException("modify is not allowed");
+//		}
 		certificate.setStorageId(Utils.getUUID());
 		certificate.setDocumentPresent(Boolean.FALSE);
 		studentExperience.setCertificate(certificate);
