@@ -59,7 +59,7 @@ public class DocumentManager {
 		String contentType = file.getContentType();
 		s3.putObject(new PutObjectRequest(bucketName, certificate.getStorageId(), createTmpFile(file)));
 		URL signedUrl = generateSignedUrl(bucketName, certificate.getStorageId(),
-				certificate.getContentType(), certificate.getFilename());
+				contentType, filename);
 		String documentUri = signedUrl.toString();
 		Certificate result = dataManager.updateCertificateUri(experienceId, studentId, documentUri, 
 				contentType, filename);
