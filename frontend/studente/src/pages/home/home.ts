@@ -7,6 +7,7 @@ import {InstitutePage } from '../institute/institute'
 import {StagesPage } from '../stages/stages'
 import {ActivitiesPage } from '../activities/activities'
 import {EventsPage } from '../events/events'
+import {MobilitiesPage } from '../mobilities/mobilities'
 import {ExamPage } from '../exam/exams'
 import {CurriculumPage } from '../curriculum/curriculum'
 import {CertificationsPage } from '../certifications/certifications'
@@ -31,6 +32,9 @@ openRegistration(registration: Registration):void {
   }
   openStages():void {
   this.navCtrl.push(StagesPage)
+}
+  openMobilities():void {
+  this.navCtrl.push(MobilitiesPage)
 }
   openActivities():void {
   this.navCtrl.push(ActivitiesPage)

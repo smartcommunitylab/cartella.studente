@@ -13,8 +13,8 @@
   <div class="row-add-stage">
   </div>
   <ion-list>
-    <ion-card *ngFor="let exam of exams| experiencefilter:filter:'title'| orderBy:'exam.attributes.title':order ;">
-      <exam-panel [exam]="exam" [index]="exams.indexOf(exam)"></exam-panel>
+    <ion-card *ngFor="let exam of exams| experiencefilter:filter:'title'|  orderBy:'experience.attributes.dateFrom':false; let i = index">
+      <exam-panel [exam]="exam" [index]="i"></exam-panel>
     </ion-card>
   </ion-list>
 </ion-content>

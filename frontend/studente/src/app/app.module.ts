@@ -20,10 +20,12 @@ import { CertificationsPage } from '../pages/certifications/certifications';
 import { CurriculumPage } from '../pages/curriculum/curriculum';
 import { EventsPage } from '../pages/events/events';
 import { StagesPage } from '../pages/stages/stages';
+import { MobilitiesPage } from '../pages/mobilities/mobilities';
 import { ExamPage } from '../pages/exam/exams';
 import { ProfilePage } from '../pages/profile/profile';
 import { NotificationsPage } from '../pages/notifications/notifications';
 import { AddStagePage } from '../pages/addStage/addStage';
+import { AddMobilityPage } from '../pages/addMobility/addMobility';
 import { AddActivityPage } from '../pages/addActivity/addActivity';
 import { AddCertificationPage } from '../pages/addCertification/addCertification';
 import { AddEventPage } from '../pages/addEvent/addEvent';
@@ -38,8 +40,10 @@ import { TrainingService } from '../services/training.service';
 import { UserService } from '../services/user.service';
 import { UtilsService} from '../services/utils.services'
 import { ExperienceFilterPipe } from '../pipes/experience-filter.pipe.ts';
+import { OrderBy } from '../pipes/orderBy.pipe.ts';
 import { NgInit } from '../directives/ngInit';
 import { StagePanel } from '../pages/stages/stagePanel'
+import { MobilityPanel } from '../pages/mobilities/mobilityPanel'
 import { ExamPanel } from '../pages/exam/examPanel'
 import { ActivityPanel } from '../pages/activities/activityPanel'
 import { CertificationPanel } from '../pages/certifications/certificationPanel'
@@ -56,10 +60,12 @@ export const deepLinkConfig: DeepLinkConfig = {
     { component: CurriculumPage, name: 'Curriculum', segment: 'curriculum' },
     { component: EventsPage, name: 'Events', segment: 'events' },
     { component: StagesPage, name: 'Stage', segment: 'stage' },
+    { component: MobilitiesPage, name: 'Mobility', segment: 'mobility' },
     { component: ExamPage, name: 'Exam', segment: 'exam' },
     { component: ProfilePage, name: 'Profile', segment: 'profile' },
     { component: NotificationsPage, name: 'Notifications', segment: 'notifications' },
     { component: AddStagePage, name: 'AddStage', segment: 'addStage' },
+    { component: AddMobilityPage, name: 'AddMobility', segment: 'addMobility' },
     { component: AddEventPage, name: 'AddEvent', segment: 'addEvent' },
     { component: AddActivityPage, name: 'AddActivity', segment: 'addActivity' },
     { component: ConsentPage, name: 'Consent', segment: 'consent' },
@@ -83,8 +89,10 @@ function initConfig(config: ConfigService) {
     ProfilePage,
     NotificationsPage,
     StagesPage,
+    MobilitiesPage,
     ExamPage,
     AddStagePage,
+    AddMobilityPage,
     AddEventPage,
     AddActivityPage,
     AddCertificationPage,
@@ -94,9 +102,11 @@ function initConfig(config: ConfigService) {
     ButtonProfile,
     ButtonNotifications,
     ExperienceFilterPipe,
+    OrderBy,
     NgInit,
     FileSelectDirective,
     StagePanel,
+    MobilityPanel,
     ExamPanel,
     CertificationPanel,
     ActivityPanel,
@@ -127,8 +137,10 @@ function initConfig(config: ConfigService) {
     CurriculumPage,
     EventsPage,
     StagesPage,
+    MobilitiesPage,
     ExamPage,
     AddStagePage,
+    AddMobilityPage,
     AddActivityPage,
     AddEventPage,
     AddCertificationPage,

@@ -33,8 +33,8 @@
    </ion-row>
   </ion-grid>
   <ion-list *ngIf="(stages && stages.length>0)" >
-    <ion-card  *ngFor="let stage of stages| experiencefilter:filter:'title'| orderBy:'stage.experience.attributes.title':order">
-<stage-panel [stage]="stage" [index]="stages.indexOf(stage)" (onDeleted)="onDeleted($event)"></stage-panel>
+    <ion-card  *ngFor="let stage of stages| experiencefilter:filter:'title'|  orderBy:'experience.attributes.dateFrom':false; let i = index">
+<stage-panel [stage]="stage" [index]="i" (onDeleted)="onDeleted($event)"></stage-panel>
     </ion-card>
   </ion-list>
       <ion-card class="eperience-empty-list-label" *ngIf="(stage && stages.length==0)">

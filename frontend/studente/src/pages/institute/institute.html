@@ -13,7 +13,7 @@
   <div class="row-add-stage">
   </div>
   <ion-list>
-    <ion-card  *ngFor="let registration of registrations| experiencefilter:filter:'title'| orderBy:'exam.attributes.title':order">
+    <ion-card  *ngFor="let registration of registrations| experiencefilter:filter:'title'|  orderBy:'dateFrom':false">
       <!--<div class="registration-expandable-list">
         <div class="registration-title">{{registration.course}}</div>
         <button class="stage-expansion" clear  ion-button icon-only (click)="toggleDetails(registration)"> <ion-icon class="registration-expansion-icon" item-right [name]="isDetailsShown(registration) ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>

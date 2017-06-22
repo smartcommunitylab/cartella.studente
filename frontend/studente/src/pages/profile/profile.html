@@ -9,14 +9,12 @@
     </ion-buttons>
   </ion-navbar>
 </ion-header>
-
 <ion-content padding class="profile-page">
   <ion-grid>
     <ion-row>
       <ion-col>
-        <img class="profile-img" [src]="student.imageUrl"/>
-
-    </ion-col>
+        <img class="profile-img" *ngIf="student.imageUrl" [src]="student.imageUrl" />
+      </ion-col>
     </ion-row>
     <ion-row *ngIf="editMode">
       <ion-col>
@@ -44,44 +42,43 @@
     <ion-row>
       <ion-col>
         <span> {{'profile_name_label'|translate}}</span>
-        <span class="profile-field">{{student.name}}</span>
+        <span class="profile-field" *ngIf="student.name" >{{student.name}}</span>
       </ion-col>
       <ion-col>
-
-        <span>{{'profile_tel_label'|translate}}</span><span class="profile-field" *ngIf="!editMode">{{student.phone}}</span>
-        <ion-item
-          *ngIf="editMode" class="profile-input">
+        <span>{{'profile_tel_label'|translate}}</span><span class="profile-field" *ngIf="!editMode && student.phone">{{student.phone}}</span>
+        <ion-item *ngIf="editMode" class="profile-input">
           <ion-input type="text" placeholder="{{'profile_tel_input_placeholder'|translate}}" [(ngModel)]="student.phone"></ion-input>
-          </ion-item>
+        </ion-item>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <span>{{'profile_surname_label'|translate}}</span><span class="profile-field">{{student.surname}}</span>
+        <span>{{'profile_surname_label'|translate}}</span>
+        <span class="profile-field" *ngIf="student.surname">{{student.surname}}</span>
       </ion-col>
       <ion-col>
-        {{'profile_cel_label'|translate}}<span *ngIf="!editMode" class="profile-field">{{student.mobilePhone}}</span>
-        <ion-item
-          *ngIf="editMode" class="profile-input">
+        {{'profile_cel_label'|translate}}<span *ngIf="!editMode && student.mobilePhone" class="profile-field">{{student.mobilePhone}}</span>
+        <ion-item *ngIf="editMode" class="profile-input">
           <ion-input type="text" placeholder="{{'profile_cel_input_placeholder'|translate}}" [(ngModel)]="student.mobilePhone"></ion-input>
-          </ion-item>
+        </ion-item>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <span>{{'profile_cf_label'|translate}}</span><span class="profile-field">{{student.cf}}</span>
+        <span>{{'profile_cf_label'|translate}}</span>
+        <span class="profile-field" *ngIf="student.cf">{{student.cf}}</span>
       </ion-col>
       <ion-col>
-        {{'profile_mail_label'|translate}} <span *ngIf="!editMode" class="profile-field">{{student.email}}</span>
-        <ion-item
-          *ngIf="editMode" class="profile-input">
+        {{'profile_mail_label'|translate}} <span *ngIf="!editMode && student.email" class="profile-field">{{student.email}}</span>
+        <ion-item *ngIf="editMode" class="profile-input">
           <ion-input type="text" placeholder="{{'profile_mail_input_placeholder'|translate}}" [(ngModel)]="student.email"></ion-input>
-          </ion-item>
+        </ion-item>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col>
-        <span>{{'profile_birthday_label'|translate}}</span><span class="profile-field">{{student.birthdate}}</span>
+        <span>{{'profile_birthday_label'|translate}}</span>
+        <span class="profile-field" *ngIf="student.birthdate">{{student.birthdate}}</span>
       </ion-col>
       <ion-col>
         <div class="social-buttons">

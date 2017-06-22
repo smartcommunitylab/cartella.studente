@@ -4,6 +4,7 @@ import {Exam} from '../classes/Exam.class';
 import {Registration} from '../classes/Registration.class';
 import {Stage} from '../classes/Stage.class';
 import {Activity} from '../classes/Activity.class';
+import {Mobility} from '../classes/Mobility.class';
 import {Event} from '../classes/Event.class';
 import {Student} from '../classes/Student.class';
 import {Certification} from '../classes/Certification.class';
@@ -17,6 +18,7 @@ export class UserService  {
   private student: Student=new Student();
   private registrations: Registration[]=[];
   private stages:StudentExperience[]=[];
+  private mobilities:StudentExperience[]=[];
   private activities:StudentExperience[]=[];
   private events:StudentExperience[]=[];
   private certifications:StudentExperience[]=[];
@@ -114,6 +116,54 @@ setConsentSubject(newSubject:string) {
       this.webAPIConnector.deleteExperience(stage.experienceId,this.getUserId()).then(stage=>{
 
         resolve(stage)
+
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })
+}
+ getUserMobilities():Promise<StudentExperience[]> {
+     return new Promise<StudentExperience[]>((resolve, reject) => {
+      this.webAPIConnector.getExperiences(this.getUserId(),ExperienceTypes.EXP_TYPE_MOBILITY).then(experiences=>{
+         this.mobilities=experiences;
+        resolve(this.mobilities)
+
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })
+  }
+  addMobility(mobility:StudentExperience): Promise<ExperienceContainer> {
+         return new Promise<ExperienceContainer>((resolve, reject) => {
+      this.webAPIConnector.addExperience(mobility.experience.attributes,this.getUserId(),ExperienceTypes.EXP_TYPE_MOBILITY).then(mobility=>{
+
+        resolve(mobility)
+
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })
+  }
+     updateMobility(mobility:StudentExperience): Promise<ExperienceContainer> {
+         return new Promise<ExperienceContainer>((resolve, reject) => {
+      this.webAPIConnector.updateExperience(mobility,this.getUserId()).then(mobility=>{
+
+        resolve(mobility)
+
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })
+  }
+    deleteMobility(mobility:StudentExperience): Promise<Stage> {
+         return new Promise<Stage>((resolve, reject) => {
+      this.webAPIConnector.deleteExperience(mobility.experienceId,this.getUserId()).then(mobility=>{
+
+        resolve(mobility)
 
   }).catch((error: any):any => {
        reject()

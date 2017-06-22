@@ -1,0 +1,134 @@
+<ion-header>
+  <ion-navbar>
+    <ion-title>
+      {{'title_add_mobility'|translate}}
+    </ion-title>
+  </ion-navbar>
+</ion-header>
+
+<ion-content padding>
+  <form [formGroup]="mobilityForm">
+    <ion-grid>
+      <ion-row>
+        <ion-col col-3>
+          <ion-label>{{'addMobility_title_label'|translate}}</ion-label>
+        </ion-col>
+        <ion-col col-6>
+          <div class="form-input">
+            <ion-input class="border-input" type="text" formControlName="title" [class.invalid]="!mobilityForm.controls.title.valid && (mobilityForm.controls.title.dirty || submitAttempt)"
+             placeholder="{{'addMobility_title_placeholder'|translate}}" [(ngModel)]="mobility.title"></ion-input>
+             <div class="error-label" [style.visibility]="(!mobilityForm.controls.title.valid && (mobilityForm.controls.title.dirty || submitAttempt))?'visible':'hidden'">
+              <p>{{'field_missing_label'|translate}}</p>
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+
+        <ion-col col-3>
+          <ion-label>{{'addMobility_dateFrom_label'|translate}}</ion-label>
+        </ion-col>
+        <ion-col col-3>
+          <ion-item>
+            <ion-datetime displayFormat="DD/MM/YYYY" [ngModelOptions]="{standalone: true}" [(ngModel)]="dateFrom" placeholder="{{'addMobility_date_from_placeholder'|translate}}"></ion-datetime>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+        <ion-col col-3>
+          <ion-label>{{'addMobility_dateTo_label'|translate}}</ion-label>
+        </ion-col>
+        <ion-col col-3>
+          <ion-item>
+            <ion-datetime displayFormat="DD/MM/YYYY" [ngModelOptions]="{standalone: true}" [(ngModel)]="dateTo" placeholder="{{'addMobility_date_to_placeholder'|translate}}"></ion-datetime>
+          </ion-item>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+
+        <ion-col col-3>
+          <ion-label>{{'addMobility_location_label'|translate}}</ion-label>
+        </ion-col>
+        <ion-col col-6>
+          <div class="form-input">
+            <ion-textarea class="border-input" type="text" [class.invalid]="!mobilityForm.controls.location.valid && (mobilityForm.controls.location.dirty || submitAttempt)"
+              placeholder="{{'addMobility_location_placeholder'|translate}}" formControlName="location" placeholder="{{'addMobility_location_placeholder'|translate}}"
+              [(ngModel)]="mobility.location"></ion-textarea>
+            <div class="error-label" [style.visibility]="(!mobilityForm.controls.location.valid && (mobilityForm.controls.location.dirty || submitAttempt))?'visible':'hidden'">
+              <p>{{'field_missing_label'|translate}}</p>
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+            <ion-row>
+
+        <ion-col col-3>
+          <ion-label>{{'addMobility_language_label'|translate}}</ion-label>
+        </ion-col>
+        <ion-col col-6>
+          <div class="form-input">
+            <ion-textarea class="border-input" type="text" [class.invalid]="!mobilityForm.controls.lang.valid && (mobilityForm.controls.lang.dirty || submitAttempt)"
+              placeholder="{{'addMobility_language_placeholder'|translate}}" formControlName="lang" placeholder="{{'addMobility_lang_placeholder'|translate}}"
+              [(ngModel)]="mobility.lang"></ion-textarea>
+            <div class="error-label" [style.visibility]="(!mobilityForm.controls.lang.valid && (mobilityForm.controls.lang.dirty || submitAttempt))?'visible':'hidden'">
+              <p>{{'field_missing_label'|translate}}</p>
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+
+      <ion-row>
+
+        <ion-col col-3>
+          <ion-label>{{'addMobility_description_label'|translate}}</ion-label>
+        </ion-col>
+        <ion-col col-6>
+          <div class="form-input">
+            <ion-textarea class="border-input" type="text" [class.invalid]="!mobilityForm.controls.description.valid && (mobilityForm.controls.description.dirty || submitAttempt)"
+              placeholder="{{'addMobility_description_placeholder'|translate}}" formControlName="description" placeholder="{{'addMobility_description_placeholder'|translate}}"
+              [(ngModel)]="mobility.description"></ion-textarea>
+            <div class="error-label" [style.visibility]="(!mobilityForm.controls.description.valid && (mobilityForm.controls.description.dirty || submitAttempt))?'visible':'hidden'">
+              <p>{{'field_missing_label'|translate}}</p>
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+      <ion-row *ngIf="certificate && certificate.documentPresent">
+
+        <ion-col col-3>
+          <ion-label>{{'addCertificate_present_certificate_label'|translate}}</ion-label>
+        </ion-col>
+        <ion-col col-6>
+          <ion-item>
+            <a download="certificate.txt" class="button label-button" href="{{ certificate.documentUri}}">
+              <ion-icon name="md-download"></ion-icon>
+            </a>
+
+          </ion-item>
+        </ion-col>
+        <ion-col col-3>
+          <button class="button-add-mobility label-button" ion-button clear (click)="removeActualCertificate()">{{'addCertificate_remove_actual_certificate_label'|translate}}</button>
+        </ion-col>
+      </ion-row>
+      <ion-row>
+
+        <ion-col col-3>
+          <ion-label>{{'addCertificate_load_certificate_label'|translate}}</ion-label>
+        </ion-col>
+        <ion-col col-6>
+          <ion-item>
+            <input id="uploadInputFile" accept="application/pdf" type="file" ng2FileSelect [uploader]="uploader" />
+          </ion-item>
+        </ion-col>
+        <ion-col col-3>
+          <button class="button-add-mobility label-button" ion-button clear (click)="removeCertification()">{{'addCertificate_remove_certificate_label'|translate}}</button>
+        </ion-col>
+
+      </ion-row>
+      <ion-row>
+        <ion-col><button class="action-button " ion-button block (click)="addMobility()">{{'save_button_label'|translate}}</button></ion-col>
+        <ion-col><button class="action-button " ion-button block (click)="discard()">{{'cancel_button_label'|translate}}</button></ion-col>
+      </ion-row>
+    </ion-grid>
+  </form>
+</ion-content>
