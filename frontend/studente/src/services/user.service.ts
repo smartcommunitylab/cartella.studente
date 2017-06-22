@@ -371,19 +371,19 @@ getUserEvents():Promise<StudentExperience[]> {
     })
     }
 
-  getUserImage():string{
-    return this.config.getConfig('apiUrl')+ 'student/' + this.getUserId()+'/photo';
-  }
+  getUserImage():Promise<any> {
+     return new Promise<any>((resolve, reject) => {
+      this.webAPIConnector.getUserImage(this.getUserId()).then(response=>{
+
+        resolve(response)
+  }).catch((error: any):any => {
+       reject()
+
+     })
+    })
+    }
+
     sendUserImage(uploader,image){
-    //  return new Promise<any>((resolve, reject) => {
       this.webAPIConnector.sendUserImage(uploader, image, this.getUserId())
-    //   .then(response=>{
-    //     resolve(response.experienceId)
-    //   }).catch((error: any):any => {
-    //    reject()
-
-    //  })
-  // })
-
   }
 }

@@ -154,3 +154,8 @@ export class MobilityPanel implements OnInit {
   }
 }
 
+//  this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
+//       this.mobility.certificate = JSON.parse(response);
+//       this.certificateInstitutional = false;
+//       this.hideSpinner();
+//     };

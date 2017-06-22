@@ -13,7 +13,8 @@
   <ion-grid>
     <ion-row>
       <ion-col>
-        <img class="profile-img" *ngIf="student.imageUrl" [src]="student.imageUrl" />
+        <img class="profile-img" *ngIf="student.contentType" [src]="profilePicture" />
+        <img class="profile-img" *ngIf="!student.contentType" src="assets/images/profile-picture.png" />
       </ion-col>
     </ion-row>
     <ion-row *ngIf="editMode">
@@ -24,7 +25,7 @@
       </ion-col>
 
       <ion-col>
-        <button class="button-add-stage label-button" ion-button clear (click)="removeCertification()">{{'profile_remove_picture_label'|translate}}</button>
+        <button class="button-add-stage label-button" ion-button clear (click)="removePicture()">{{'profile_remove_picture_label'|translate}}</button>
       </ion-col>
     </ion-row>
     <ion-row>

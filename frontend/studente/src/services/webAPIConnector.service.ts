@@ -160,23 +160,23 @@ export class WebAPIConnectorService {
     };
     item.upload();
   }
-getUserImage(studentId:string): Promise<any> {
-   let url: string = this.getApiUrl() + 'student/' + studentId+'/photo';
+  getUserImage(studentId: string): Promise<any> {
+    let url: string = this.getApiUrl() + 'student/' + studentId + '/photo';
 
     return this.http.get(url)
       .toPromise()
-      .then(response => response.json()).catch(response => this.handleError);
-}
-sendUserImage(uploader: FileUploader,image, studentId:string){
-   var newUrl = this.config.getConfig('apiUrl') + 'student/' + studentId + '/photo/file';
+      .then(response => 
+      
+        response.text()
+      
+      ).catch(response => this.handleError);
+  }
+  sendUserImage(uploader: FileUploader, image, studentId: string) {
+    var newUrl = this.config.getConfig('apiUrl') + 'student/' + studentId + '/photo/file';
     uploader.setOptions({ url: newUrl, authToken: `Bearer ${sessionStorage.getItem('access_token')}`, disableMultipart: false });
     image.withCredentials = false;
-    // uploader.onBuildItemForm = (item, form) => {
-    //   form.append("filename", item.file.name);
-    // };
     image.upload();
-//    return Promise.resolve();
-}
+  }
   private handleError(error: any): Promise<any> {
     console.error('An error occurred', error);
     return Promise.reject(error);
