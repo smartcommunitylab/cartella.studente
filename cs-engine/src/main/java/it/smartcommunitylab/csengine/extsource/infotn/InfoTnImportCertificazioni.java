@@ -54,7 +54,7 @@ public class InfoTnImportCertificazioni {
 		logger.info("start importCertificazioniFromEmpty");
 		int total = 0;
 		int stored = 0;
-		FileReader fileReader = new FileReader(sourceFolder + "FBK_CERTIFICAZIONI LINGUE triennio v.02.json");
+		FileReader fileReader = new FileReader(sourceFolder + "FBK_Certificazioni V.03.json");
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		JsonFactory jsonFactory = new JsonFactory();
