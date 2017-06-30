@@ -1,6 +1,7 @@
 package it.smartcommunitylab.csengine.common;
 
-import it.smartcommunitylab.csengine.model.Experience;
+import it.smartcommunitylab.csengine.model.Document;
+import it.smartcommunitylab.csengine.model.StudentExperience;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -134,12 +135,26 @@ public class Utils {
 		return sdf.format(new Date(timestamp));
 	}
 	
-	public static boolean isCertified(Experience experience) {
+	public static boolean isCertified(StudentExperience studentExperience) {
 		boolean result = false;
-		if(experience!= null) {
-			Boolean certified = (Boolean) experience.getAttributes().get(Const.ATTR_CERTIFIED);
-			if(certified != null) {
-				result = certified.booleanValue();
+		if(studentExperience != null) {
+			if(studentExperience.getExperience() != null) {
+				Boolean certified = (Boolean) studentExperience.getExperience().
+						getAttributes().get(Const.ATTR_CERTIFIED);
+				if(certified != null) {
+					result = certified.booleanValue();
+				}
+			}
+		}
+		return result;
+	}
+	
+	public static Document findDocument(StudentExperience studentExperience, String storageId) {
+		Document result = null;
+		for(Document document : studentExperience.getDocuments()) {
+			if(document.getStorageId().equals(storageId)) {
+				result = document;
+				break;
 			}
 		}
 		return result;

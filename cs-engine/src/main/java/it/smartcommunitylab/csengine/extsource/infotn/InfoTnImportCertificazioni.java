@@ -2,7 +2,6 @@ package it.smartcommunitylab.csengine.extsource.infotn;
 
 import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.Utils;
-import it.smartcommunitylab.csengine.model.Certificate;
 import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentExperience;
@@ -132,6 +131,7 @@ public class InfoTnImportCertificazioni {
 		result.getAttributes().put(Const.ATTR_CERTIFIER, cert.getCertifier());
 		result.getAttributes().put(Const.ATTR_TITLE, getTitle(cert));
 		result.getAttributes().put(Const.ATTR_DESCRIPTION, cert.getDescription());
+		
 		return result;
 	}
 	
@@ -148,14 +148,10 @@ public class InfoTnImportCertificazioni {
 		
 		result.setStudentId(student.getId());
 		result.setStudent(student);
+		
+		experience.getAttributes().put(Const.ATTR_JUDGEMENT, getJudgement(cert));
 		result.setExperienceId(experience.getId());
 		result.setExperience(experience);
-		
-		Certificate certificate = new Certificate();
-		certificate.setStudentId(student.getId());
-		certificate.setExperienceId(experience.getId());
-		certificate.getAttributes().put(Const.ATTR_JUDGEMENT, getJudgement(cert));
-		result.setCertificate(certificate);
 		
 		return result;
 	}

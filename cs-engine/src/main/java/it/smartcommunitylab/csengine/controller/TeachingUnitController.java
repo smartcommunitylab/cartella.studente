@@ -7,7 +7,6 @@ import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
 import it.smartcommunitylab.csengine.exception.UnauthorizedException;
-import it.smartcommunitylab.csengine.model.Certificate;
 import it.smartcommunitylab.csengine.model.Course;
 import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.Registration;
@@ -152,9 +151,6 @@ public class TeachingUnitController extends AuthController {
 		List<StudentExperience> result = dataManager.searchStudentExperience(null, expType, true, 
 				teachingUnit.getInstituteId(), teachingUnitId, schoolYear, null, null, dateFrom, dateTo, 
 				text, pageable);
-		for(StudentExperience studentExperience : result) {
-			documentManager.setSignedUrl(studentExperience.getCertificate());
-		}
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getStudentExperienceByTeachingUnit[%s]: %s", "tenant", result.size()));
 		}
@@ -173,9 +169,6 @@ public class TeachingUnitController extends AuthController {
 		TeachingUnit teachingUnit = dataManager.getTeachingUnitById(teachingUnitId);
 		List<StudentExperience> result = dataManager.searchStudentExperienceById(null, 
 				teachingUnit.getInstituteId(), teachingUnitId, experienceId, true);
-		for(StudentExperience studentExperience : result) {
-			documentManager.setSignedUrl(studentExperience.getCertificate());
-		}
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getStudentExperienceById[%s]: %s", "tenant", result.size()));
 		}
@@ -270,12 +263,12 @@ public class TeachingUnitController extends AuthController {
 	public @ResponseBody void certifyIsExperience(
 			@PathVariable String teachingUnitId,
 			@PathVariable String experienceId,
-			@RequestBody List<Certificate> certificates,
+			@RequestBody List<String> students,
 			HttpServletRequest request) throws Exception {
 		if (!validateTUAuthorization(teachingUnitId, "ALL", request)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		dataManager.certifyIsExperience(experienceId, certificates);
+		dataManager.certifyIsExperience(experienceId, students);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("certifyIsExperience[%s]: %s - %s", "tenant", teachingUnitId, experienceId));
 		}
@@ -301,7 +294,6 @@ public class TeachingUnitController extends AuthController {
 		List<StudentExperience> studentExperiences = dataManager.searchStudentExperience(null, expType, Boolean.TRUE, 
 				teachingUnit.getInstituteId(), teachingUnitId, schoolYear, null, null, dateFrom, dateTo, text, pageable);
 		for(StudentExperience studentExperience : studentExperiences) {
-			documentManager.setSignedUrl(studentExperience.getCertificate());
 			ExperienceExtended experienceExtended = extendedExpMap.get(studentExperience.getExperienceId());
 			if(experienceExtended == null) {
 				experienceExtended = new ExperienceExtended(studentExperience.getExperience());
@@ -334,9 +326,6 @@ public class TeachingUnitController extends AuthController {
 		List<StudentExperience> studentExperienceList = dataManager.searchStudentExperience(studentId, null, 
 				Boolean.TRUE, teachingUnit.getInstituteId(), teachingUnitId, schoolYear, null, null, 
 				dateFrom, dateTo, text, pageable);
-		for(StudentExperience studentExperience : studentExperienceList) {
-			documentManager.setSignedUrl(studentExperience.getCertificate());
-		}
 		StudentExtended result = convertStudentExperience(studentExperienceList);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getExtendedExperiencesByTeachingUnit[%s]: %s", "tenant", studentId));

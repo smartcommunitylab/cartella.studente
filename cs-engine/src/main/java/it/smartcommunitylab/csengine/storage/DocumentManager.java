@@ -1,7 +1,7 @@
 package it.smartcommunitylab.csengine.storage;
 
 import it.smartcommunitylab.csengine.exception.StorageException;
-import it.smartcommunitylab.csengine.model.Certificate;
+import it.smartcommunitylab.csengine.model.Document;
 import it.smartcommunitylab.csengine.model.Student;
 
 import java.io.File;
@@ -50,18 +50,15 @@ public class DocumentManager {
 		this.s3 = new AmazonS3Client(new ProfileCredentialsProvider());
 	}
 
-	public Certificate addFileToCertificate(String experienceId, String studentId, 
-			String filename, MultipartFile file) throws Exception {
-		Certificate certificate = dataManager.getCertificate(experienceId, studentId);
-		if(certificate == null) {
+	public Document addFileToDocument(String experienceId, String studentId, 
+			String storageId, String filename, MultipartFile file) throws Exception {
+		Document document = dataManager.getDocument(experienceId, studentId, storageId);
+		if(document == null) {
 			throw new StorageException("certificate not present");
 		}
 		String contentType = file.getContentType();
-		s3.putObject(new PutObjectRequest(bucketName, certificate.getStorageId(), createTmpFile(file)));
-		URL signedUrl = generateSignedUrl(bucketName, certificate.getStorageId(),
-				contentType, filename);
-		String documentUri = signedUrl.toString();
-		Certificate result = dataManager.updateCertificateUri(experienceId, studentId, documentUri, 
+		s3.putObject(new PutObjectRequest(bucketName, document.getStorageId(), createTmpFile(file)));
+		Document result = dataManager.addFileToDocument(experienceId, studentId, storageId,
 				contentType, filename);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("addFileToCertificate: %s - %s - %s", experienceId, studentId, result.getStorageId()));
@@ -69,14 +66,14 @@ public class DocumentManager {
 		return result;
 	}
 
-	public Certificate removeFileFromCertificate(String experienceId, String studentId) 
-			throws Exception {
-		Certificate certificate = dataManager.getCertificate(experienceId, studentId);
-		if(certificate == null) {
-			throw new StorageException("certificate not present");
+	public Document removeFileFromDocument(String experienceId, String studentId,
+			String storageId) throws Exception {
+		Document document = dataManager.getDocument(experienceId, studentId, storageId);
+		if(document == null) {
+			throw new StorageException("document not present");
 		}
-		s3.deleteObject(new DeleteObjectRequest(bucketName, certificate.getStorageId()));
-		Certificate result = dataManager.removeCertificateUri(experienceId, studentId);
+		s3.deleteObject(new DeleteObjectRequest(bucketName, document.getStorageId()));
+		Document result = dataManager.removeFileToDocument(experienceId, studentId, storageId);
 		return result;
 	}
 	
@@ -100,17 +97,23 @@ public class DocumentManager {
 		return signedUrl.toString();
 	}
 	
-	public void setSignedUrl(Certificate certificate) {
-		if(certificate != null) {
-			if(certificate.getDocumentPresent()) {
-				URL signedUrl = generateSignedUrl(bucketName, certificate.getStorageId(), 
-						certificate.getContentType(), certificate.getFilename());
-				certificate.setDocumentUri(signedUrl.toString());
-			} else {
-				certificate.setDocumentUri(null);
-			}
-		}
+	public String getDocumentSignedUrl(Document document) {
+		URL signedUrl = generateSignedUrl(bucketName, document.getStorageId(),
+				document.getContentType(), document.getFilename());
+		return signedUrl.toString();
 	}
+	
+//	public void setSignedUrl(Document document) {
+//		if(document != null) {
+//			if(document.getDocumentPresent()) {
+//				URL signedUrl = generateSignedUrl(bucketName, document.getStorageId(), 
+//						document.getContentType(), document.getFilename());
+//				document.setDocumentUri(signedUrl.toString());
+//			} else {
+//				document.setDocumentUri(null);
+//			}
+//		}
+//	}
 	
 	private URL generateSignedUrl(String bucketName, String key, 
 			String contentType, String filename) {

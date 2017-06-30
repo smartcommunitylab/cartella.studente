@@ -93,7 +93,14 @@ public class AuthorizationManager {
 			}
 		}
 		return result;
-	}	
+	}
+	
+	public AuthorizationUserDTO getSubject(String subject) {
+		AuthorizationUserDTO userDTO = new AuthorizationUserDTO();
+		userDTO.setId(subject);
+		userDTO.setType(userType);
+		return userDTO;
+	}
 	
 	public AuthorizationDTO getAuthorization(String subject, String action, String resourceName, 
 			Map<String, String> attributes) {
@@ -127,7 +134,18 @@ public class AuthorizationManager {
 		if(isTokenExpired()) {
 			refreshAuthToken();	
 		}
-		result = aacAuthorizationService.validateAuthorization(tokenData.getAccess_token(), clientDomain, authorization);
+		result = aacAuthorizationService.validateAuthorization(tokenData.getAccess_token(), 
+				clientDomain, authorization);
+		return result;
+	}
+	
+	public AuthorizationDTO insertAuthorization(AuthorizationDTO authorization) 
+			throws UnauthorizedException, SecurityException, AACException {
+		if(isTokenExpired()) {
+			refreshAuthToken();	
+		}
+		AuthorizationDTO result = aacAuthorizationService.insertAuthorization(tokenData.getAccess_token(), 
+				clientDomain, authorization);
 		return result;
 	}
 	
@@ -139,15 +157,6 @@ public class AuthorizationManager {
 		aacAuthorizationService.loadSchema(tokenData.getAccess_token(), clientDomain, json);
 	}
 	
-	public String addAuthorization(AuthorizationDTO auth) 
-			throws UnauthorizedException, SecurityException, AACException {
-		if(isTokenExpired()) {
-			refreshAuthToken();
-		}
-		AuthorizationDTO result = aacAuthorizationService.insertAuthorization(tokenData.getAccess_token(), clientDomain, auth);
-		return result.getId();
-	}
-
 	public void deleteAuthorization(String authId) 
 			throws UnauthorizedException, SecurityException, AACException {
 		if(isTokenExpired()) {

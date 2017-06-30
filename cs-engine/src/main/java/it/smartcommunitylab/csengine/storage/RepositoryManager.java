@@ -6,15 +6,16 @@ import it.smartcommunitylab.csengine.cv.CVRegistration;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
 import it.smartcommunitylab.csengine.model.CV;
-import it.smartcommunitylab.csengine.model.Certificate;
 import it.smartcommunitylab.csengine.model.CertificationRequest;
 import it.smartcommunitylab.csengine.model.Consent;
 import it.smartcommunitylab.csengine.model.Course;
+import it.smartcommunitylab.csengine.model.Document;
 import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.PersonInCharge;
 import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.model.Student;
+import it.smartcommunitylab.csengine.model.StudentAuth;
 import it.smartcommunitylab.csengine.model.StudentExperience;
 import it.smartcommunitylab.csengine.model.TeachingUnit;
 
@@ -32,7 +33,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-import org.springframework.data.mongodb.core.query.Update;
 
 public class RepositoryManager {
 	@SuppressWarnings("unused")
@@ -70,6 +70,9 @@ public class RepositoryManager {
 	
 	@Autowired
 	private CVRepository cvRepository;
+	
+	@Autowired
+	private StudentAuthRepository studentAuthRepository;
 	
 	private MongoTemplate mongoTemplate;
 	private String defaultLang;
@@ -169,12 +172,14 @@ public class RepositoryManager {
 		String experienceId = experience.getId();
 		Experience experienceDb = experienceRepository.findOne(experienceId);
 		if(experienceDb != null) {
-			if(Utils.isCertified(experienceDb)) {
+			StudentExperience studentExperienceDb = studentExperienceRepository.
+					findByStudentAndExperience(studentId, experienceId);
+			if(Utils.isCertified(studentExperienceDb)) {
 				throw new StorageException("modify is not allowed");
 			}
 			experienceDb.setAttributes(experience.getAttributes());
 			experienceRepository.save(experienceDb);
-			updateExperienceAttributes(experienceId, experience.getAttributes());
+			updateExperienceAttributes(experienceId, studentId, experience.getAttributes());
 		} else {
 			throw new EntityNotFoundException("entity not found");
 		}
@@ -205,27 +210,40 @@ public class RepositoryManager {
 		String experienceId = experience.getId();
 		Experience experienceDb = experienceRepository.findOne(experienceId);
 		if(experienceDb != null) {
-			if(Utils.isCertified(experienceDb)) {
-				throw new StorageException("modify is not allowed");
-			}
 			experienceDb.setAttributes(experience.getAttributes());
 			experienceRepository.save(experienceDb);
 			if((studentIds != null) && (!studentIds.isEmpty())) {
-				//remove the existing relations
+				//get the existing relations
 				List<StudentExperience> list = studentExperienceRepository.findByStudentsAndExperience(studentIds, experienceId);
-				studentExperienceRepository.delete(list);
-				//create the new ones
-				for(String studentId : studentIds) {
-					StudentExperience studentExperience = new StudentExperience();
-					studentExperience.setId(Utils.getUUID());
-					studentExperience.setExperienceId(experienceId);
-					studentExperience.setExperience(experienceDb);
-					studentExperience.setStudentId(studentId);
-					Student studentDb = studentRepository.findOne(studentId);
-					if(studentDb != null) {
-						studentExperience.setStudent(studentDb);
+				for(StudentExperience studentExperience : list) {
+					String studentId = studentExperience.getStudentId();
+					if(studentIds.contains(studentId)) {
+						if(Utils.isCertified(studentExperience)) {
+							continue;
+						}
+						//update attributes
+						updateExperienceAttributes(experienceId, studentId, experience.getAttributes());
+					} else {
+						//remove old relation
+						studentExperienceRepository.delete(studentExperience);
 					}
-					studentExperienceRepository.save(studentExperience);
+				}
+				for(String studentId : studentIds) {
+					StudentExperience studentExperience = studentExperienceRepository.
+							findByStudentAndExperience(studentId, experienceId);
+					if(studentExperience == null) {
+						//add new relation
+						StudentExperience studentExperienceNew = new StudentExperience();
+						studentExperienceNew.setId(Utils.getUUID());
+						studentExperienceNew.setExperienceId(experienceId);
+						studentExperienceNew.setExperience(experienceDb);
+						studentExperienceNew.setStudentId(studentId);
+						Student studentDb = studentRepository.findOne(studentId);
+						if(studentDb != null) {
+							studentExperienceNew.setStudent(studentDb);
+						}
+						studentExperienceRepository.save(studentExperienceNew);
+					}
 				}
 			}
 		} else {
@@ -239,9 +257,6 @@ public class RepositoryManager {
 		Experience experienceDb = experienceRepository.findOne(experienceId);
 		if(experienceDb == null) {
 			throw new EntityNotFoundException("entity not found");
-		}
-		if(Utils.isCertified(experienceDb)) {
-			throw new StorageException("modify is not allowed");
 		}
 		experienceRepository.delete(experienceDb);
 		List<StudentExperience> list = studentExperienceRepository.findByExperienceId(experienceId);
@@ -257,89 +272,92 @@ public class RepositoryManager {
 		return result;
 	}
 
-	public Certificate getCertificate(String experienceId, String studentId) 
+	public List<Document> getDocuments(String experienceId, String studentId) 
 			throws EntityNotFoundException {
 		StudentExperience result = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
 		if(result == null) {
 			throw new EntityNotFoundException("entity not found");
 		}
-		return result.getCertificate();
+		return result.getDocuments();
+	}
+	
+	public Document getDocument(String experienceId, String studentId, String storageId) 
+			throws EntityNotFoundException {
+		StudentExperience studentExperience = studentExperienceRepository.
+				findByStudentAndExperience(studentId, experienceId);
+		if(studentExperience == null) {
+			throw new EntityNotFoundException("experience not found");
+		}
+		Document document = Utils.findDocument(studentExperience, storageId);
+		if(document == null) {
+			throw new EntityNotFoundException("document not found");
+		}
+		return document;
 	}
 
-	public Certificate updateCertificateAttributes(String experienceId, String studentId, 
+	public Document updateDocumentAttributes(String experienceId, String studentId, String storageId, 
 			Map<String, Object> attributes) throws EntityNotFoundException, StorageException {
 		StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
 		if(studentExperience == null) {
 			throw new EntityNotFoundException("entity not found");
 		}
-//		if(Utils.isCertified(studentExperience.getExperience())) {
-//			throw new StorageException("modify is not allowed");
-//		}
-		if(studentExperience.getCertificate() == null) {
-			throw new StorageException("certificate fot found");
+		Document document = Utils.findDocument(studentExperience, storageId);
+		if(document == null) {
+			throw new StorageException("document fot found");
 		}
-		studentExperience.getCertificate().setAttributes(attributes);
+		document.setAttributes(attributes);
 		studentExperienceRepository.save(studentExperience);
- 		return studentExperience.getCertificate();
+ 		return document;
 	}
 
-	public Certificate removeCertificate(String experienceId, String studentId) 
-			throws EntityNotFoundException, StorageException {
-		StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
-		if(studentExperience == null) {
-			throw new EntityNotFoundException("entity not found");
-		}
-//		if(Utils.isCertified(studentExperience.getExperience())) {
-//			throw new StorageException("modify is not allowed");
-//		}
-		Certificate oldCertificate = studentExperience.getCertificate();
-		studentExperience.setCertificate(null);
-		studentExperienceRepository.save(studentExperience);
-		return oldCertificate;
-	}
-
-	public Certificate addCertificate(Certificate certificate) 
+	public Document addDocument(Document document) 
 			throws EntityNotFoundException, StorageException {
 		StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(
-				certificate.getStudentId(), certificate.getExperienceId());
+				document.getStudentId(), document.getExperienceId());
 		if(studentExperience == null) {
 			throw new EntityNotFoundException("entity not found");
 		}
-//		if(Utils.isCertified(studentExperience.getExperience())) {
-//			throw new StorageException("modify is not allowed");
-//		}
-		certificate.setStorageId(Utils.getUUID());
-		certificate.setDocumentPresent(Boolean.FALSE);
-		studentExperience.setCertificate(certificate);
+		document.setStorageId(Utils.getUUID());
+		document.setDocumentPresent(Boolean.FALSE);
+		studentExperience.getDocuments().add(document);
 		studentExperienceRepository.save(studentExperience);
-		return certificate;
+		return document;
+	}
+	
+	public Document removeDocument(String experienceId, String studentId, String storageId) 
+			throws EntityNotFoundException, StorageException {
+		StudentExperience studentExperience = studentExperienceRepository.
+				findByStudentAndExperience(studentId, experienceId);
+		if(studentExperience == null) {
+			throw new EntityNotFoundException("entity not found");
+		}
+		Document document = Utils.findDocument(studentExperience, storageId);
+		if(document == null) {
+			throw new StorageException("document does not exist");
+		}
+		studentExperience.getDocuments().remove(document);
+		studentExperienceRepository.save(studentExperience);
+		return document;
 	}
 
-	public Experience certifyMyExperience(String experienceId, String studentId, String certifierId) 
+	public StudentExperience certifyMyExperience(String experienceId, String studentId, String certifierId) 
 			throws StorageException, EntityNotFoundException {
-		Experience experienceDb = experienceRepository.findOne(experienceId);
-		if(experienceDb != null) {
-			if(Utils.isCertified(experienceDb)) {
+		StudentExperience studentExperienceDb = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
+		if(studentExperienceDb != null) {
+			if(Utils.isCertified(studentExperienceDb)) {
 				throw new StorageException("modify is not allowed");
 			}
-			String refCertifierId = (String) experienceDb.getAttributes().get(Const.ATTR_CERTIFIERID);
+			String refCertifierId = (String) studentExperienceDb.getExperience()
+					.getAttributes().get(Const.ATTR_CERTIFIERID);
 			if(Utils.isEmpty(refCertifierId) || refCertifierId.equals(certifierId)) {
 				throw new StorageException("ceritfier not allowed");
 			}
-			StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
-			if(studentExperience == null) {
-				throw new EntityNotFoundException("entity not found");
-			}
-			if(studentExperience.getCertificate() == null) {
-				throw new StorageException("certificate not present");
-			}
-			experienceDb.getAttributes().put(Const.ATTR_CERTIFIED, Boolean.TRUE);
-			experienceRepository.save(experienceDb);
-			updateExperienceAttributes(experienceId, experienceDb.getAttributes());
+			studentExperienceDb.getExperience().getAttributes().put(Const.ATTR_CERTIFIED, Boolean.TRUE);
+			studentExperienceRepository.save(studentExperienceDb);
 		} else {
 			throw new EntityNotFoundException("entity not found");
 		}
-		return experienceDb;
+		return studentExperienceDb;
 	}
 
 	public List<CertificationRequest> getCertificationRequestByCertifier(String certifierId, Pageable pageable) {
@@ -407,37 +425,30 @@ public class RepositoryManager {
 		return result;
 	}
 
-	public void certifyIsExperience(String experienceId, List<Certificate> certificates) 
+	public void certifyIsExperience(String experienceId, List<String> students) 
 			throws StorageException, EntityNotFoundException {
-		Experience experienceDb = experienceRepository.findOne(experienceId);
-		if(experienceDb != null) {
-			if(Utils.isCertified(experienceDb)) {
-				throw new StorageException("modify is not allowed");
+		for(String studentId : students) {
+			StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(
+					studentId, experienceId);
+			if(studentExperience == null) {
+				continue;
 			}
-			experienceDb.getAttributes().put(Const.ATTR_CERTIFIED, Boolean.TRUE);
-			experienceRepository.save(experienceDb);
-			updateExperienceAttributes(experienceId, experienceDb.getAttributes());
-			for(Certificate certificate : certificates) {
-				String studentId = certificate.getStudentId();
-				StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(
-						studentId, experienceId);
-				if(studentExperience == null) {
-					continue;
-				}
-				certificate.setExperienceId(experienceId);
-				studentExperience.setCertificate(certificate);
-				studentExperience.setExperience(experienceDb);
-				studentExperienceRepository.save(studentExperience);
+			if(Utils.isCertified(studentExperience)) {
+				continue;
 			}
-		} else {
-			throw new EntityNotFoundException("entity not found");
+			studentExperience.getExperience().getAttributes().put(Const.ATTR_CERTIFIED, Boolean.TRUE);
+			studentExperienceRepository.save(studentExperience);
 		}
 	}
 
-	private void updateExperienceAttributes(String experienceId, Map<String, Object> attributes) {
-		Query query = new Query(Criteria.where("experienceId").is(experienceId));
-		Update update = new Update().set("experience.attributes", attributes);
-		mongoTemplate.upsert(query, update, StudentExperience.class);
+	private void updateExperienceAttributes(String experienceId, String studentId, 
+			Map<String, Object> attributes) {
+		StudentExperience studentExperience = studentExperienceRepository.
+				findByStudentAndExperience(studentId, experienceId);
+		if(studentExperience!= null) {
+			studentExperience.getExperience().getAttributes().putAll(attributes);
+			studentExperienceRepository.save(studentExperience);
+		}
 	}
 	
 	public List<Registration> searchRegistration(String studentId, String teachingUnitId,
@@ -630,38 +641,43 @@ public class RepositoryManager {
 		return cvDb;
 	}
 
-	public Certificate updateCertificateUri(String experienceId, String studentId, String documentUri, 
-			String contentType, String filename) throws EntityNotFoundException, StorageException {
-		StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
+	public Document addFileToDocument(String experienceId, String studentId, String storageId,
+			String contentType, String filename) 
+					throws EntityNotFoundException, StorageException {
+		StudentExperience studentExperience = studentExperienceRepository.
+				findByStudentAndExperience(studentId, experienceId);
 		if(studentExperience == null) {
 			throw new EntityNotFoundException("entity not found");
 		}
-		if(studentExperience.getCertificate() == null) {
-			throw new StorageException("certificate does not exist");
+		Document document = Utils.findDocument(studentExperience, storageId);
+		if(document == null) {
+			throw new StorageException("document does not exist");
 		}
-		studentExperience.getCertificate().setDocumentUri(documentUri);
-		studentExperience.getCertificate().setContentType(contentType);
-		studentExperience.getCertificate().setFilename(filename);
-		studentExperience.getCertificate().setDocumentPresent(Boolean.TRUE);
+		document.setContentType(contentType);
+		document.setFilename(filename);
+		document.setDocumentPresent(Boolean.TRUE);
 		studentExperienceRepository.save(studentExperience);
-		return studentExperience.getCertificate();
+		return document;
+	}
+	
+	public Document removeFileToDocument(String experienceId, String studentId, String storageId) 
+			throws EntityNotFoundException, StorageException {
+		StudentExperience studentExperience = studentExperienceRepository.
+				findByStudentAndExperience(studentId, experienceId);
+		if(studentExperience == null) {
+			throw new EntityNotFoundException("entity not found");
+		}
+		Document document = Utils.findDocument(studentExperience, storageId);
+		if(document == null) {
+			throw new StorageException("document does not exist");
+		}
+		document.setContentType(null);
+		document.setFilename(null);
+		document.setDocumentPresent(Boolean.FALSE);
+		studentExperienceRepository.save(studentExperience);
+		return document;
 	}
 
-	public Certificate removeCertificateUri(String experienceId, String studentId) 
-			throws EntityNotFoundException, StorageException {
-		StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
-		if(studentExperience == null) {
-			throw new EntityNotFoundException("entity not found");
-		}
-		if(studentExperience.getCertificate() == null) {
-			throw new StorageException("certificate does not exist");
-		}
-		studentExperience.getCertificate().setDocumentUri(null);
-		studentExperience.getCertificate().setContentType(null);
-		studentExperience.getCertificate().setDocumentPresent(Boolean.FALSE);
-		studentExperienceRepository.save(studentExperience);
-		return studentExperience.getCertificate();
-	}
 
 	public List<TeachingUnit> getTeachingUnit() {
 		return teachingUnitRepository.findAll();
@@ -718,6 +734,36 @@ public class RepositoryManager {
 		studentDb.setLastUpdate(now);
 		studentRepository.save(studentDb);
 		return studentDb;
+	}
+	
+	public StudentAuth getStudentAuthById(String authId) throws EntityNotFoundException {
+		StudentAuth studentAuthDB = studentAuthRepository.findOne(authId);
+		if(studentAuthDB == null) {
+			throw new EntityNotFoundException("entity not found");
+		}
+		return studentAuthDB;
+	}
+	
+	public List<StudentAuth> getStudentAuthByStudent(String studentId) {
+		return studentAuthRepository.findByStudent(studentId);
+	}
+	
+	public StudentAuth addStudentAuth(StudentAuth studentAuth) {
+		Date now = new Date();
+		studentAuth.setCreationDate(now);
+		studentAuth.setLastUpdate(now);
+		studentAuth.setId(Utils.getUUID());
+		StudentAuth studentAuthDb = studentAuthRepository.save(studentAuth);
+		return studentAuthDb;
+	}
+	
+	public StudentAuth removeStudentAuth(String authId) throws EntityNotFoundException {
+		StudentAuth studentAuthDB = studentAuthRepository.findOne(authId);
+		if(studentAuthDB == null) {
+			throw new EntityNotFoundException("entity not found");
+		}
+		studentAuthRepository.delete(studentAuthDB);
+		return studentAuthDB;
 	}
 
 }

@@ -38,10 +38,10 @@ public class TestController extends AuthController {
 	}
 	
 	@RequestMapping(value = "/test/auth", method = RequestMethod.POST)
-	public @ResponseBody String addAuthorization(
+	public @ResponseBody AuthorizationDTO addAuthorization(
 			@RequestBody AuthorizationDTO auth,
 			HttpServletRequest request) throws Exception {
-		return authorizationManager.addAuthorization(auth);
+		return authorizationManager.insertAuthorization(auth);
 	}
 	
 	@RequestMapping(value = "/test/auth/{authId}", method = RequestMethod.DELETE)
