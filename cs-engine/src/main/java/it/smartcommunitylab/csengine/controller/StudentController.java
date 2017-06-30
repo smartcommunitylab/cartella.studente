@@ -425,7 +425,7 @@ public class StudentController extends AuthController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/api/student/{studentId}/certification/", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/student/{studentId}/certification", method = RequestMethod.GET)
 	public @ResponseBody List<CertificationRequest> getCertificationRequest(
 			@PathVariable String studentId,
 			@ApiParam Pageable pageable,
@@ -440,7 +440,7 @@ public class StudentController extends AuthController {
 		return result;		
 	}
 	
-	@RequestMapping(value = "/api/student/{studentId}/certification/", method = RequestMethod.POST)
+	@RequestMapping(value = "/api/student/{studentId}/certification", method = RequestMethod.POST)
 	public @ResponseBody CertificationRequest addCertificationRequest(
 			@PathVariable String studentId,
 			@RequestBody CertificationRequest certificationRequest,
@@ -471,6 +471,7 @@ public class StudentController extends AuthController {
 		return result;		
 	}
 	
+	@RequestMapping(value = "/api/student/{studentId}/auth", method = RequestMethod.GET)
 	public @ResponseBody List<StudentAuth> getAuthorization(
 			@PathVariable String studentId,
 			HttpServletRequest request) throws Exception {
@@ -481,8 +482,7 @@ public class StudentController extends AuthController {
 		return result;
 	}
 	
-	
-	@RequestMapping(value = "/api/student/{studentId}/auth/", method = RequestMethod.POST)
+	@RequestMapping(value = "/api/student/{studentId}/auth", method = RequestMethod.POST)
 	public @ResponseBody StudentAuth addAuthorization(
 			@PathVariable String studentId,
 			@RequestBody AuthorizationDTO auth,
