@@ -505,7 +505,6 @@ public class StudentController extends AuthController {
 	public @ResponseBody StudentAuth deleteAuthorization(
 			@PathVariable String studentId,
 			@PathVariable String authId,
-			@RequestBody AuthorizationDTO auth,
 			HttpServletRequest request) throws Exception {
 		StudentAuth result = dataManager.getStudentAuthById(authId);
 		authorizationManager.deleteAuthorization(result.getAuth().getId());
