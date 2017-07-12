@@ -51,7 +51,9 @@ public class AuthController {
 		if(accountProfile != null) {
 			result = accountProfile.getAttribute(profileAccount, profileAttribute);
 		}
-		return result;
+		//return result;
+		//TODO TEST
+		return "ABCDEF12G34H567I";
 	}
 	
 	protected String getSubject(AccountProfile accountProfile) {
@@ -59,7 +61,9 @@ public class AuthController {
 		if(accountProfile != null) {
 			result = accountProfile.getUserId();
 		}
-		return result;
+		//return result;
+		//TODO TEST
+		return "429";
 	}
 	
 	protected AccountProfile getAccoutProfile(HttpServletRequest request) {
