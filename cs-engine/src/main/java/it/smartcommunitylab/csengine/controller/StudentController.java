@@ -9,8 +9,8 @@ import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
 import it.smartcommunitylab.csengine.exception.UnauthorizedException;
 import it.smartcommunitylab.csengine.model.CV;
-import it.smartcommunitylab.csengine.model.Document;
 import it.smartcommunitylab.csengine.model.CertificationRequest;
+import it.smartcommunitylab.csengine.model.Document;
 import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.model.Student;
@@ -116,24 +116,6 @@ public class StudentController extends AuthController {
 		String url = documentManager.getPhotoSignedUrl(studentId);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getPhotoProfile[%s]: %s", "tenant", studentId));
-		}
-		return url;
-	}
-
-	@RequestMapping(value = "/api/student/{studentId}/experience/{experienceId}/document/{storageId}/link", method = RequestMethod.GET)
-	public @ResponseBody String getDocumentLink(
-			@PathVariable String studentId,
-			@PathVariable String experienceId,
-			@PathVariable String storageId,
-			HttpServletRequest request) throws Exception {
-		if (!validateAuthorizationByResource(studentId, "Document", experienceId, "storageId", storageId, 
-				"ALL", request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
-		}
-		Document document = dataManager.getDocument(experienceId, studentId, storageId);
-		String url = documentManager.getDocumentSignedUrl(document);
-		if(logger.isInfoEnabled()) {
-			logger.info(String.format("getDocumentLink[%s]: %s", "tenant", studentId));
 		}
 		return url;
 	}
@@ -434,6 +416,24 @@ public class StudentController extends AuthController {
 			logger.info(String.format("deleteFileFromDocument[%s]: %s", "tenant", result.getStorageId()));
 		}
 		return result;
+	}
+	
+	@RequestMapping(value = "/api/student/{studentId}/experience/{experienceId}/document/{storageId}/link", method = RequestMethod.GET)
+	public @ResponseBody String getDocumentLink(
+			@PathVariable String studentId,
+			@PathVariable String experienceId,
+			@PathVariable String storageId,
+			HttpServletRequest request) throws Exception {
+		if (!validateAuthorizationByResource(studentId, "Document", experienceId, "storageId", storageId, 
+				"ALL", request)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+		}
+		Document document = dataManager.getDocument(experienceId, studentId, storageId);
+		String url = documentManager.getDocumentSignedUrl(document);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("getDocumentLink[%s]: %s", "tenant", studentId));
+		}
+		return url;
 	}
 	
 	@RequestMapping(value = "/api/student/{studentId}/certification", method = RequestMethod.GET)

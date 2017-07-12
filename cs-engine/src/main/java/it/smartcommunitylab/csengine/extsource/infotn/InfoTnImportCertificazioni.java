@@ -127,18 +127,15 @@ public class InfoTnImportCertificazioni {
 		result.getAttributes().put(Const.ATTR_EDUCATIONAL, Boolean.TRUE);
 		result.getAttributes().put(Const.ATTR_INSTITUTIONAL, Boolean.TRUE);
 		result.getAttributes().put(Const.ATTR_CERTIFIED, Boolean.TRUE);
-		result.getAttributes().put(Const.ATTR_TYPE, cert.getLanguage());
+		result.getAttributes().put(Const.ATTR_TYPE, Const.CERT_TYPE_LANG);
 		result.getAttributes().put(Const.ATTR_CERTIFIER, cert.getCertifier());
-		result.getAttributes().put(Const.ATTR_TITLE, getTitle(cert));
-		result.getAttributes().put(Const.ATTR_DESCRIPTION, cert.getDescription());
+		result.getAttributes().put(Const.ATTR_TITLE, cert.getDescription());
+		result.getAttributes().put(Const.ATTR_LANG, cert.getLanguage());
+		result.getAttributes().put(Const.ATTR_LEVEL, cert.getTitle());
 		
 		return result;
 	}
 	
-	private Object getTitle(Certificazione cert) {
-		return cert.getLanguage() + " " + cert.getTitle();
-	}
-
 	private StudentExperience convertToStudentExperience(Certificazione cert, 
 			Experience experience, Student student) throws ParseException {
 		StudentExperience result = new StudentExperience();
