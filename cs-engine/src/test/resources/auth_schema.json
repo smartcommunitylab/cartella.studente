@@ -22,10 +22,14 @@
 		{
 			"qname": "student-data-attr",
 			"params": [
-				"expId",
+				"experienceId",
 				"expType",
 				"schoolYear",
-				"institutional"
+				"institutional",
+				"storageId",
+				"certificationId",
+				"authId",
+				"registrationId"
 			],
 			"childrenQnames": []
 		},
