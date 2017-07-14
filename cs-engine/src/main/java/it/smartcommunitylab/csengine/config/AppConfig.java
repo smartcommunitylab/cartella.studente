@@ -17,6 +17,7 @@
 package it.smartcommunitylab.csengine.config;
 
 import it.smartcommunitylab.csengine.common.Const;
+import it.smartcommunitylab.csengine.cv.CVTransformer;
 import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.Registration;
@@ -132,6 +133,11 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 	@Bean
 	AuthorizationManager getAuthorizationManager() {
 		return new AuthorizationManager();
+	}
+	
+	@Bean
+	CVTransformer getCVTransformer() {
+		return new CVTransformer();
 	}
 	
 	@Override

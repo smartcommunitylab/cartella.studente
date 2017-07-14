@@ -5,6 +5,7 @@ import it.smartcommunitylab.aac.authorization.beans.AuthorizationDTO;
 import it.smartcommunitylab.aac.authorization.beans.AuthorizationUserDTO;
 import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.Utils;
+import it.smartcommunitylab.csengine.cv.CVTransformer;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
 import it.smartcommunitylab.csengine.exception.UnauthorizedException;
@@ -58,6 +59,9 @@ public class StudentController extends AuthController {
 	
 	@Autowired
 	private DocumentManager documentManager;
+	
+	@Autowired
+	private CVTransformer cvTransformer;
 
 	@RequestMapping(value = "/api/student/{studentId}", method = RequestMethod.GET)
 	public @ResponseBody Student getStudentById(@PathVariable String studentId,
@@ -319,6 +323,21 @@ public class StudentController extends AuthController {
 		CV result = dataManager.updateStudentCV(cv);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("updateStudentCV[%s]: %s - %s", "tenant", studentId, result.getId()));
+		}
+		return result;
+	}
+	
+	@RequestMapping(value = "/api/student/{studentId}/cv/export", method = RequestMethod.GET)
+	public @ResponseBody CV exportStudentCV(
+			@PathVariable String studentId,
+			HttpServletRequest request) throws Exception {
+		if (!validateAuthorizationByResource(studentId, "CV", null, null, null, "ALL", request)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+		}
+		CV result = dataManager.getStudentCV(studentId);
+		cvTransformer.getCvTemplate(result);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("exportStudentCV[%s]: %s - %s", "tenant", studentId, result.getId()));
 		}
 		return result;
 	}
