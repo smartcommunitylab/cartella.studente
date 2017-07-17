@@ -1,5 +1,9 @@
 package it.smartcommunitylab.csengine.controller;
 
+import fr.opensagres.xdocreport.document.IXDocReport;
+import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
+import fr.opensagres.xdocreport.template.IContext;
+import fr.opensagres.xdocreport.template.TemplateEngineKind;
 import io.swagger.annotations.ApiParam;
 import it.smartcommunitylab.aac.authorization.beans.AuthorizationDTO;
 import it.smartcommunitylab.aac.authorization.beans.AuthorizationUserDTO;
@@ -22,19 +26,31 @@ import it.smartcommunitylab.csengine.storage.DocumentManager;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
 import it.smartcommunitylab.csengine.ui.StudentRegistration;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -340,6 +356,51 @@ public class StudentController extends AuthController {
 			logger.info(String.format("exportStudentCV[%s]: %s - %s", "tenant", studentId, result.getId()));
 		}
 		return result;
+	}
+	
+	@RequestMapping(value = "/api/student/{studentId}/cv/export/odt", method = RequestMethod.GET)
+	public @ResponseBody HttpEntity<byte[]> exportStudentCVToODT(
+			@PathVariable String studentId,
+			HttpServletRequest request, 
+			HttpServletResponse response) throws Exception {
+		if (!validateAuthorizationByResource(studentId, "CV", null, null, null, "ALL", request)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+		}
+		CV result = dataManager.getStudentCV(studentId);
+		cvTransformer.getCvTemplate(result);
+		
+		// 1) Load ODT file and set Velocity template engine and cache it to the registry
+		InputStream isTemplate = ClassLoader.getSystemResourceAsStream("templates/ecv_template_it.odt");
+		IXDocReport report = XDocReportRegistry.getRegistry().loadReport(isTemplate, TemplateEngineKind.Velocity);
+
+		// 2) Create Java model context 
+		IContext context = report.createContext();
+		context.put("student", result.getStudent());
+		context.put("registrations", result.getCvRegistrationList());
+		context.put("stages", result.getCvStageList());
+		context.put("mobilities", result.getCvMobilityList());
+		context.put("certifications", result.getCvLangCertList());
+		context.put("attachments", result.getAttachments());
+
+		// 3) Generate report by merging Java model with the ODT
+		Path tempFile = Files.createTempFile("cs-cv", ".odt");
+		tempFile.toFile().deleteOnExit();
+		File outputFileODT = tempFile.toFile();
+		OutputStream osODT = new FileOutputStream(outputFileODT);
+		report.process(context, osODT);
+		osODT.flush();
+		osODT.close();
+		
+		FileInputStream fisODT = new FileInputStream(outputFileODT);
+		byte[] odt = IOUtils.toByteArray(fisODT);
+		HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+    headers.setContentLength(odt.length);
+    headers.add("Content-Disposition", "attachment;filename=cv.odt");
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("exportStudentCVToODT[%s]: %s - %s", "tenant", studentId, result.getId()));
+		}
+    return new HttpEntity<byte[]>(odt, headers);		
 	}
 	
 	@RequestMapping(value = "/api/student/{studentId}/experience/{experienceId}/document", method = RequestMethod.POST)
