@@ -24471,6 +24471,21 @@ ion-navbar.toolbar {
   font-size: 40px;
 }
 
+.job-filter {
+  width: 100%;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+}
+
+.job-filter input {
+  min-width: 50%;
+}
+
+.job-filter .filter-search-icon {
+  font-size: 40px;
+}
+
 .mobility-filter {
   width: 100%;
   display: -webkit-inline-flex;
@@ -24710,6 +24725,16 @@ page-home .home-title-label.experience-title {
   text-align: center;
   font-style: italic;
   font-size: 16px;
+}
+
+.row-add-job {
+  height: 44px;
+  position: relative;
+}
+
+.row-add-job .button-add-job {
+  position: absolute;
+  right: 5px;
 }
 
 .login-label {

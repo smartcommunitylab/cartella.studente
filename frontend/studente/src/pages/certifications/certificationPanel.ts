@@ -2,7 +2,8 @@ import { Component, Output, EventEmitter, Input, OnInit } from '@angular/core';
 import { NavController, NavParams, LoadingController, AlertController } from 'ionic-angular';
 import { TranslateService } from 'ng2-translate';
 import { UtilsService } from '../../services/utils.services'
-
+import {CertificationsTypes } from '../../assets/conf/certificationsTypes'
+import {Certification } from '../../classes/Certification.class'
 import { StudentExperience } from '../../classes/StudentExperience.class'
 import { AddCertificationPage } from '../addCertification/addCertification'
 import { UserService } from '../../services/user.service'
@@ -48,7 +49,11 @@ export class CertificationPanel implements OnInit {
   getCertification(): StudentExperience {
     return this.certification;
   }
-
+isLanguageCertificate(): boolean {
+  var certification =  this.certification.experience.attributes as Certification;
+  return (certification.type== CertificationsTypes.CERT_TYPE_LANG);
+  
+}
   updateCertification(): void {
     this.navCtrl.push(AddCertificationPage, { certification: JSON.stringify(this.certification) });
   }

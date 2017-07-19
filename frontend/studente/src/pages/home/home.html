@@ -1,54 +1,59 @@
 <ion-header>
   <ion-navbar>
     <ion-title>
-<!--      {{'title_home'|translate}}-->
+      <!--      {{'title_home'|translate}}-->
     </ion-title>
-      <ion-buttons end>
-      <button-notifications></button-notifications><button-profile></button-profile>
+    <ion-buttons end>
+      <button-notifications></button-notifications>
+      <button-profile></button-profile>
     </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
   <div class="training-list">
-   <div class="home-title-label institutional-title">{{ 'home_training_label' | translate |uppercase}}</div>
+    <div class="home-title-label institutional-title">{{ 'home_training_label' | translate |uppercase}}</div>
     <ion-list>
       <ion-card class="home-button home-registration" *ngFor="let registration of registrations" (click)="openRegistration(registration)">
         <div>{{registration.teachingUnit.name|uppercase}}
-          </div>
+        </div>
       </ion-card>
-       <ion-card class="home-button home-exams" (click)="openExam()">
+      <ion-card class="home-button home-exams" (click)="openExam()">
         <div>
           {{ 'home_exams_label' | translate |uppercase}}
+        </div>
+      </ion-card>
+      <ion-card class="home-button home-exams" (click)="openStages()">
+        <div>
+          {{ 'home_stage_label' | translate |uppercase}}
         </div>
       </ion-card>
     </ion-list>
   </div>
   <div class="experiences-list">
-   <div class="home-title-label experience-title">{{ 'home_experiences_label' | translate |uppercase}}</div>
+    <div class="home-title-label experience-title">{{ 'home_experiences_label' | translate |uppercase}}</div>
     <ion-list>
-      <ion-card class="home-experience" (click)="openStages()">
+      <ion-card class="home-experience" (click)="openJobs()">
         <div>
-          {{ 'home_stage_label' | translate |uppercase}}
+          {{ 'home_job_label' | translate |uppercase}}
         </div>
       </ion-card>
-            <ion-card class="home-experience" (click)="openActivities()">
+      <ion-card class="home-experience" (click)="openActivities()">
         <div>
           {{ 'home_activity_label' | translate |uppercase}}
         </div>
       </ion-card>
-                  <ion-card class="home-experience" (click)="openMobilities()">
+      <ion-card class="home-experience" (click)="openMobilities()">
         <div>
           {{ 'home_mobility_label' | translate |uppercase}}
         </div>
       </ion-card>
-            <ion-card class="home-experience" (click)="openCertifications()">
+      <ion-card class="home-experience" (click)="openCertifications()">
         <div>
           {{ 'home_certifications_label' | translate|uppercase }}
         </div>
       </ion-card>
-  </ion-list>
-    </div>
+    </ion-list>
+  </div>
   <app-bar></app-bar>
 </ion-content>
-

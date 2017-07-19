@@ -8,4 +8,6 @@ duration	:number;
 location	:string;
 geocode:number[];
 contact	:string;
+lang:string;
+level:string;
 }

@@ -27,7 +27,7 @@ import { WebAPIConnectorService } from '../../services/webAPIConnector.service'
 export class AddMobilityPage implements OnInit {
   studentExperience: StudentExperience = new StudentExperience();
   experienceContaniner: ExperienceContainer = new ExperienceContainer();
-  certification: Certification = new Certification();
+  //certification: Certification = new Certification();
   mobility: Mobility = new Mobility();
   certificate: Certificate = new Certificate();
   dateFrom = new Date().toISOString();
@@ -105,9 +105,8 @@ export class AddMobilityPage implements OnInit {
     if (mobility != null) {
       this.studentExperience = JSON.parse(this.params.get('mobility'));
       this.experienceContaniner = this.studentExperience.experience;
-      this.certification = this.experienceContaniner.attributes as Certification;
+      // this.certification = this.experienceContaniner.attributes as Certification;
       this.certificate = this.studentExperience.certificate as Certificate;
-
       this.mobility = this.experienceContaniner.attributes as Mobility;
       this.dateFrom = new Date(this.experienceContaniner.attributes.dateFrom).toISOString();
       this.dateTo = new Date(this.experienceContaniner.attributes.dateTo).toISOString();

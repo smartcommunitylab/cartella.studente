@@ -37,7 +37,7 @@
 <stage-panel [stage]="stage" [index]="i" (onDeleted)="onDeleted($event)"></stage-panel>
     </ion-card>
   </ion-list>
-      <ion-card class="eperience-empty-list-label" *ngIf="(stage && stages.length==0)">
+      <ion-card class="eperience-empty-list-label" *ngIf="(stages && stages.length==0)">
       {{'stages_empty_list_label'|translate}}
   </ion-card>
 </ion-content>

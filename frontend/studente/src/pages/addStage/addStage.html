@@ -44,6 +44,16 @@
           </ion-item>
         </ion-col>
       </ion-row>
+            <ion-row>
+        <ion-col col-3>
+          <ion-label>{{'addStage_duration_label'|translate}}</ion-label>
+        </ion-col>
+        <ion-col col-3>
+                   <div class="form-input">
+            <ion-input class="border-input" type="text" [ngModelOptions]="{standalone: true}"  placeholder="{{'addStage_duration_placeholder'|translate}}" [(ngModel)]="stage.duration"></ion-input>
+          </div>
+        </ion-col>
+      </ion-row>
       <ion-row>
 
         <ion-col col-3>

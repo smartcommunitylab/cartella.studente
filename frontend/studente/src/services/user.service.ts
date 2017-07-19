@@ -61,7 +61,6 @@ setConsentSubject(newSubject:string) {
 
   }).catch((error: any):any => {
        reject()
-
      })
   })
 }
@@ -112,6 +111,54 @@ setConsentSubject(newSubject:string) {
   })
   }
     deleteStage(stage:StudentExperience): Promise<Stage> {
+         return new Promise<Stage>((resolve, reject) => {
+      this.webAPIConnector.deleteExperience(stage.experienceId,this.getUserId()).then(stage=>{
+
+        resolve(stage)
+
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })
+}
+ getUserJobs():Promise<StudentExperience[]> {
+     return new Promise<StudentExperience[]>((resolve, reject) => {
+      this.webAPIConnector.getExperiences(this.getUserId(),ExperienceTypes.EXP_TYPE_JOB).then(experiences=>{
+         this.stages=experiences;
+        resolve(this.stages)
+
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })
+  }
+  addJob(stage:StudentExperience): Promise<ExperienceContainer> {
+         return new Promise<ExperienceContainer>((resolve, reject) => {
+      this.webAPIConnector.addExperience(stage.experience.attributes,this.getUserId(),ExperienceTypes.EXP_TYPE_JOB).then(stage=>{
+
+        resolve(stage)
+
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })
+  }
+     updateJob(stage:StudentExperience): Promise<ExperienceContainer> {
+         return new Promise<ExperienceContainer>((resolve, reject) => {
+      this.webAPIConnector.updateExperience(stage,this.getUserId()).then(stage=>{
+
+        resolve(stage)
+
+  }).catch((error: any):any => {
+       reject()
+
+     })
+  })
+  }
+    deleteJob(stage:StudentExperience): Promise<Stage> {
          return new Promise<Stage>((resolve, reject) => {
       this.webAPIConnector.deleteExperience(stage.experienceId,this.getUserId()).then(stage=>{
 

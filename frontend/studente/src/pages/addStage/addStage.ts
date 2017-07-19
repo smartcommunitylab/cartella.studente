@@ -27,7 +27,7 @@ import { WebAPIConnectorService } from '../../services/webAPIConnector.service'
 export class AddStagePage implements OnInit {
   studentExperience: StudentExperience = new StudentExperience();
   experienceContaniner: ExperienceContainer = new ExperienceContainer();
-  certification: Certification = new Certification();
+  //certification: Certification = new Certification();
   stage: Stage = new Stage();
   certificate: Certificate = new Certificate();
   dateFrom = new Date().toISOString();
@@ -104,7 +104,7 @@ export class AddStagePage implements OnInit {
     if (stage != null) {
       this.studentExperience = JSON.parse(this.params.get('stage'));
       this.experienceContaniner = this.studentExperience.experience;
-      this.certification = this.experienceContaniner.attributes as Certification;
+      //this.certification = this.experienceContaniner.attributes as Certification;
       this.certificate = this.studentExperience.certificate as Certificate;
 
       this.stage = this.experienceContaniner.attributes as Stage;
@@ -127,8 +127,8 @@ export class AddStagePage implements OnInit {
     this.submitAttempt = true;
     if (this.stageForm.valid) {
       this.stage.type = ExperienceTypes.EXP_TYPE_STAGE;
-      this.stage.duration = 10
-      this.stage.geocode = [0, 0]
+      // this.stage.duration = 10
+      // this.stage.geocode = [0, 0]
       this.stage.dateFrom = new Date(this.dateFrom).getTime();
       this.stage.dateTo = new Date(this.dateTo).getTime();
       this.experienceContaniner.attributes = this.stage;

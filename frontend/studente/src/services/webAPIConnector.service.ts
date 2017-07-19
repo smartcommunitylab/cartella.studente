@@ -45,9 +45,14 @@ export class WebAPIConnectorService {
     let url: string = this.getApiUrl() + 'profile';
 
     return this.http.get(url)
+      .timeout(5000)
       .toPromise()
-      .then(response => response.json())
-      .catch(this.handleError);
+      .then(response => {
+        return response.json()
+      }
+      ).catch(response => {
+        return this.handleError
+      });
   }
   consent(studentId: string, subject: string): Promise<any> {
     let url: string = this.getApiUrl() + 'consent';
@@ -72,8 +77,14 @@ export class WebAPIConnectorService {
     let url: string = this.getApiUrl() + 'student/' + studentId + '/registration';
 
     return this.http.get(url, options)
+      .timeout(5000)
       .toPromise()
-      .then(response => response.json()).catch(response => this.handleError);
+      .then(response => {
+        return response.json()
+      }
+      ).catch(response => {
+        return this.handleError
+      });
   }
   getSubjectsByRegistration(studentId: string, registrationId: string): Promise<any[]> {
     let options = new DefaultRequestOptions();
@@ -165,10 +176,10 @@ export class WebAPIConnectorService {
 
     return this.http.get(url)
       .toPromise()
-      .then(response => 
-      
+      .then(response =>
+
         response.text()
-      
+
       ).catch(response => this.handleError);
   }
   sendUserImage(uploader: FileUploader, image, studentId: string) {

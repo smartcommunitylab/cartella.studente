@@ -1,0 +1,8 @@
+.row-add-job {
+  height: $picker-md-toolbar-height	;
+  position: relative;
+  .button-add-job{
+    position: absolute;
+    right: 5px;
+  }
+}
