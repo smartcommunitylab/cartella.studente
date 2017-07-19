@@ -1,15 +1,17 @@
 package it.smartcommunitylab.csengine.model;
 
+import it.smartcommunitylab.csengine.common.Utils;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
-public class Certificate {
+public class Document {
 	private String storageId;
 	private String studentId;
 	private String experienceId;
 	private Map<String, Object> attributes = new HashMap<String, Object>();
 	private Boolean documentPresent = Boolean.FALSE;
-	private String documentUri;
 	private String contentType;
 	private String filename;
 	
@@ -24,12 +26,6 @@ public class Certificate {
 	}
 	public void setAttributes(Map<String, Object> attributes) {
 		this.attributes = attributes;
-	}
-	public String getDocumentUri() {
-		return documentUri;
-	}
-	public void setDocumentUri(String documentUri) {
-		this.documentUri = documentUri;
 	}
 	public String getStudentId() {
 		return studentId;
@@ -61,5 +57,25 @@ public class Certificate {
 	public void setFilename(String filename) {
 		this.filename = filename;
 	}
+	
+	@Override
+	public boolean equals(Object o) {
+		boolean result = false; 
+		if(o instanceof Document) {
+			Document object = (Document) o;
+			if(Utils.isNotEmpty(object.getStorageId())) {
+				if(object.getStorageId().equals(storageId)) {
+					result = true;
+				}
+			}
+		}
+		return result;
+	}
+	
+	@Override
+  public int hashCode() {
+      return Objects.hash(storageId);
+  }
+
 	
 }

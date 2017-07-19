@@ -2,7 +2,6 @@ package it.smartcommunitylab.csengine.extsource.infotn;
 
 import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.Utils;
-import it.smartcommunitylab.csengine.model.Certificate;
 import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentExperience;
@@ -54,7 +53,7 @@ public class InfoTnImportCertificazioni {
 		logger.info("start importCertificazioniFromEmpty");
 		int total = 0;
 		int stored = 0;
-		FileReader fileReader = new FileReader(sourceFolder + "FBK_CERTIFICAZIONI LINGUE triennio v.02.json");
+		FileReader fileReader = new FileReader(sourceFolder + "FBK_Certificazioni V.03.json");
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		JsonFactory jsonFactory = new JsonFactory();
@@ -128,17 +127,15 @@ public class InfoTnImportCertificazioni {
 		result.getAttributes().put(Const.ATTR_EDUCATIONAL, Boolean.TRUE);
 		result.getAttributes().put(Const.ATTR_INSTITUTIONAL, Boolean.TRUE);
 		result.getAttributes().put(Const.ATTR_CERTIFIED, Boolean.TRUE);
-		result.getAttributes().put(Const.ATTR_TYPE, cert.getLanguage());
+		result.getAttributes().put(Const.ATTR_TYPE, Const.CERT_TYPE_LANG);
 		result.getAttributes().put(Const.ATTR_CERTIFIER, cert.getCertifier());
-		result.getAttributes().put(Const.ATTR_TITLE, getTitle(cert));
-		result.getAttributes().put(Const.ATTR_DESCRIPTION, cert.getDescription());
+		result.getAttributes().put(Const.ATTR_TITLE, cert.getDescription());
+		result.getAttributes().put(Const.ATTR_LANG, cert.getLanguage());
+		result.getAttributes().put(Const.ATTR_LEVEL, cert.getTitle());
+		
 		return result;
 	}
 	
-	private Object getTitle(Certificazione cert) {
-		return cert.getLanguage() + " " + cert.getTitle();
-	}
-
 	private StudentExperience convertToStudentExperience(Certificazione cert, 
 			Experience experience, Student student) throws ParseException {
 		StudentExperience result = new StudentExperience();
@@ -148,14 +145,10 @@ public class InfoTnImportCertificazioni {
 		
 		result.setStudentId(student.getId());
 		result.setStudent(student);
+		
+		experience.getAttributes().put(Const.ATTR_JUDGEMENT, getJudgement(cert));
 		result.setExperienceId(experience.getId());
 		result.setExperience(experience);
-		
-		Certificate certificate = new Certificate();
-		certificate.setStudentId(student.getId());
-		certificate.setExperienceId(experience.getId());
-		certificate.getAttributes().put(Const.ATTR_JUDGEMENT, getJudgement(cert));
-		result.setCertificate(certificate);
 		
 		return result;
 	}

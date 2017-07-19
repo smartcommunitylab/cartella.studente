@@ -24,6 +24,12 @@
 	<dependencies>
 
 		<dependency>
+			<groupId>it.smartcommunitylab</groupId>
+			<artifactId>aac.client</artifactId>
+			<version>2.0</version>
+		</dependency>
+
+		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-mongodb</artifactId>
 		</dependency>
@@ -82,6 +88,11 @@
 			<version>2.6</version>
 		</dependency>
 		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+			<version>2.4</version>
+		</dependency>
+		<dependency>
 			<groupId>commons-httpclient</groupId>
 			<artifactId>commons-httpclient</artifactId>
 			<version>3.1</version>
@@ -110,12 +121,6 @@
 			<version>2.0.0</version>
 		</dependency>
 
-		<dependency>
-			<groupId>eu.trentorise.smartcampus</groupId>
-			<artifactId>profileservice.client</artifactId>
-			<version>2.1</version>
-		</dependency>
-
 	</dependencies>
 
 	<build>
@@ -124,7 +129,15 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-
+			
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<skipTests>true</skipTests>
+				</configuration>
+			</plugin>
+			
 			<plugin>
 				<inherited>false</inherited>
 				<groupId>com.mycila.maven-license-plugin</groupId>

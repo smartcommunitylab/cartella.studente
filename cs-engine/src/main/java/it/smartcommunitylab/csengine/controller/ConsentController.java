@@ -1,5 +1,6 @@
 package it.smartcommunitylab.csengine.controller;
 
+import it.smartcommunitylab.aac.authorization.beans.AuthorizationDTO;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
@@ -7,6 +8,7 @@ import it.smartcommunitylab.csengine.exception.UnauthorizedException;
 import it.smartcommunitylab.csengine.model.Consent;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
-public class ConsentController {
+public class ConsentController extends AuthController {
 	private static final transient Logger logger = LoggerFactory.getLogger(ConsentController.class);
 	
 	@Autowired
@@ -36,10 +38,12 @@ public class ConsentController {
 	@Autowired
 	private RepositoryManager dataManager;
 	
-	@RequestMapping(value = "/api/consent", method = RequestMethod.POST)
-	public @ResponseBody Consent addConsent(@RequestBody Consent consent,
+	@RequestMapping(value = "/api/consent/student/{studentId}", method = RequestMethod.POST)
+	public @ResponseBody Consent addConsent(
+			@PathVariable String studentId,
+			@RequestBody Consent consent,
 			HttpServletRequest request) throws Exception {
-		if (!Utils.validateAPIRequest(request, apiToken)) {
+		if (!validateStudentAuthorization(studentId, "ALL", request)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
 		Consent result = dataManager.addConsent(consent);
@@ -49,49 +53,39 @@ public class ConsentController {
 		return result;		
 	}
 	
-	@RequestMapping(value = "/api/consent/subject/{subject}/remove", method = RequestMethod.PUT)
-	public @ResponseBody Consent removeAuthorization(@PathVariable String subject,
+	@RequestMapping(value = "/api/consent/student/{studentId}/remove", method = RequestMethod.PUT)
+	public @ResponseBody Consent removeAuthorization(
+			@PathVariable String studentId,
 			HttpServletRequest request) throws Exception {
-		if (!Utils.validateAPIRequest(request, apiToken)) {
+		if (!validateStudentAuthorization(studentId, "ALL", request)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		Consent result = dataManager.removeAuthorization(subject);
+		Consent result = dataManager.removeAuthorization(studentId);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("removeAuthorization[%s]: %s", "tenant", result.getId()));
 		}
 		return result;		
 	}
 	
-	@RequestMapping(value = "/api/consent/subject/{subject}/add", method = RequestMethod.PUT)
-	public @ResponseBody Consent addAuthorization(@PathVariable String subject,
+	@RequestMapping(value = "/api/consent/student/{studentId}/add", method = RequestMethod.PUT)
+	public @ResponseBody Consent addAuthorization(
+			@PathVariable String studentId,
 			HttpServletRequest request) throws Exception {
-		if (!Utils.validateAPIRequest(request, apiToken)) {
+		if (!validateStudentAuthorization(studentId, "ALL", request)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		Consent result = dataManager.addAuthorization(subject);
+		Consent result = dataManager.addAuthorization(studentId);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("removeAuthorization[%s]: %s", "tenant", result.getId()));
 		}
 		return result;		
-	}
-	
-	@RequestMapping(value = "/api/consent/subject/{subject}", method = RequestMethod.GET)
-	public @ResponseBody Consent getConsentBySubject(@PathVariable String subject,
-			HttpServletRequest request) throws Exception {
-		if (!Utils.validateAPIRequest(request, apiToken)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
-		}
-		Consent result = dataManager.getConsentBySubject(subject);
-		if(logger.isInfoEnabled()) {
-			logger.info(String.format("getConsentBySubject[%s]: %s", "tenant", subject));
-		}
-		return result;
 	}
 	
 	@RequestMapping(value = "/api/consent/student/{studentId}", method = RequestMethod.GET)
-	public @ResponseBody Consent getConsentByStudent(@PathVariable String studentId,
+	public @ResponseBody Consent getConsentByStudent(
+			@PathVariable String studentId,
 			HttpServletRequest request) throws Exception {
-		if (!Utils.validateAPIRequest(request, apiToken)) {
+		if (!validateStudentAuthorization(studentId, "ALL", request)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
 		Consent result = dataManager.getConsentByStudent(studentId);
@@ -101,6 +95,20 @@ public class ConsentController {
 		return result;
 	}
 	
+	private boolean validateStudentAuthorization(String studentId, String action,
+			HttpServletRequest request) throws Exception {
+		String subject = getSubject(getAccoutProfile(request));
+		String resourceName = "student";
+		Map<String, String> attributes = new HashMap<String, String>();
+		attributes.put("student-studentId", studentId);
+		AuthorizationDTO authorization = authorizationManager.getAuthorization(subject, action, 
+				resourceName, attributes);
+		if(!authorizationManager.validateAuthorization(authorization)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid or call not authorized");
+		}
+		return true;
+	}
+
 	@ExceptionHandler({EntityNotFoundException.class, StorageException.class})
 	@ResponseStatus(value=HttpStatus.BAD_REQUEST)
 	@ResponseBody

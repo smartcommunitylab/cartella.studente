@@ -13,7 +13,6 @@ import it.smartcommunitylab.csengine.ui.Profile;
 
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -28,17 +27,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import eu.trentorise.smartcampus.profileservice.BasicProfileService;
-import eu.trentorise.smartcampus.profileservice.ProfileServiceException;
-import eu.trentorise.smartcampus.profileservice.model.AccountProfile;
-
 @Controller
-public class ProfileController {
+public class ProfileController extends AuthController {
 	private static final transient Logger logger = LoggerFactory.getLogger(ProfileController.class);
-	
-	@Autowired
-	@Value("${apiToken}")	
-	private String apiToken;
 	
 	@Autowired
 	@Value("${profile.serverUrl}")	
@@ -58,16 +49,9 @@ public class ProfileController {
 	@Autowired
 	private DocumentManager documentManager;
 	
-	private BasicProfileService profileConnector;
-	
-	@PostConstruct
-	public void init() throws Exception {
-		profileConnector = new BasicProfileService(profileServerUrl);
-	}
-	
 	@RequestMapping(value = "/api/profile", method = RequestMethod.GET)
 	public @ResponseBody Profile getProfileByToken(HttpServletRequest request) throws Exception {
-		String cf = getCF(request, profileConnector);  
+		String cf = getCF(getAccoutProfile(request));  
 		if(Utils.isEmpty(cf)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
@@ -94,27 +78,6 @@ public class ProfileController {
 		}
 		return result;
 	}
-	
-	private String getCF(HttpServletRequest request, BasicProfileService profileConnector) {
-	String result = null;
-	String token = request.getHeader("Authorization");
-	if(Utils.isNotEmpty(token)) {
-		token = token.replace("Bearer ", "");
-		try {
-			AccountProfile accountProfile = profileConnector.getAccountProfile(token);
-			result = accountProfile.getAttribute(profileAccount, profileAttribute);
-		} catch (SecurityException e) {
-			if(logger.isInfoEnabled()) {
-				logger.info(String.format("getCF[%s]: %s", token, e.getMessage()));
-			}
-		} catch (ProfileServiceException e) {
-			if(logger.isInfoEnabled()) {
-				logger.info(String.format("getCF[%s]: %s", token, e.getMessage()));
-			}
-		}
-	}
-	return result;
-}
 	
 	@ExceptionHandler({EntityNotFoundException.class, StorageException.class})
 	@ResponseStatus(value=HttpStatus.BAD_REQUEST)

@@ -1,16 +1,19 @@
 package it.smartcommunitylab.csengine.controller;
 
 import io.swagger.annotations.ApiParam;
+import it.smartcommunitylab.aac.authorization.beans.AuthorizationDTO;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
 import it.smartcommunitylab.csengine.exception.UnauthorizedException;
-import it.smartcommunitylab.csengine.model.Certificate;
 import it.smartcommunitylab.csengine.model.CertificationRequest;
-import it.smartcommunitylab.csengine.model.Experience;
+import it.smartcommunitylab.csengine.model.Document;
+import it.smartcommunitylab.csengine.model.Student;
+import it.smartcommunitylab.csengine.model.StudentExperience;
 import it.smartcommunitylab.csengine.storage.DocumentManager;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -34,7 +37,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
 @Controller
-public class CertifierController {
+public class CertifierController extends AuthController {
 	private static final transient Logger logger = LoggerFactory.getLogger(CertifierController.class);
 	
 	@Autowired
@@ -47,12 +50,27 @@ public class CertifierController {
 	@Autowired
 	private DocumentManager documentManager;
 
+	@RequestMapping(value = "/api/certifier/{certifierId}/student", method = RequestMethod.GET)
+	public @ResponseBody List<Student> getStudentsByCertifier(
+			@PathVariable String certifierId,
+			@ApiParam Pageable pageable,
+			HttpServletRequest request) throws Exception {
+		if (!validateCertifierAuthorization(certifierId, "ALL", request)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+		}
+		List<Student> result = dataManager.searchStudentByCertifier(certifierId, pageable);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("getStudentsByCertifier[%s]: %s", "tenant", result.size()));
+		}
+		return result;
+	}
+	
 	@RequestMapping(value = "/api/certifier/{certifierId}/certification/", method = RequestMethod.GET)
 	public @ResponseBody List<CertificationRequest> getCertificationRequest(
 			@PathVariable String certifierId,
 			@ApiParam Pageable pageable,
 			HttpServletRequest request) throws Exception {
-		if (!Utils.validateAPIRequest(request, apiToken)) {
+		if (!validateCertifierAuthorization(certifierId, "ALL", request)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
 		List<CertificationRequest> result = dataManager.getCertificationRequestByCertifier(certifierId, pageable);
@@ -67,7 +85,7 @@ public class CertifierController {
 			@PathVariable String certifierId,
 			@RequestBody CertificationRequest certificationRequest,
 			HttpServletRequest request) throws Exception {
-		if (!Utils.validateAPIRequest(request, apiToken)) {
+		if (!validateCertifierAuthorization(certifierId, "ALL", request)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
 		certificationRequest.setCertifierId(certifierId);
@@ -83,7 +101,7 @@ public class CertifierController {
 			@PathVariable String certifierId,
 			@PathVariable String certificationId,
 			HttpServletRequest request) throws Exception {
-		if (!Utils.validateAPIRequest(request, apiToken)) {
+		if (!validateCertifierAuthorization(certifierId, "ALL", request)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
 		CertificationRequest result = dataManager.removeCertificationRequest(certificationId);
@@ -95,57 +113,73 @@ public class CertifierController {
 	
 	@RequestMapping(value = "/api/certifier/{certifierId}/student/{studentId}/experience/{experienceId}/certify", 
 			method = RequestMethod.PUT)
-	public @ResponseBody Experience certifyExperience(
+	public @ResponseBody StudentExperience certifyExperience(
 			@PathVariable String studentId,
 			@PathVariable String experienceId,
 			@RequestParam String certifierId,
 			HttpServletRequest request) throws Exception {
-		if (!Utils.validateAPIRequest(request, apiToken)) {
+		if (!validateCertifierAuthorization(certifierId, "ALL", request)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		Experience result = dataManager.certifyMyExperience(experienceId, studentId, certifierId);
+		StudentExperience result = dataManager.certifyMyExperience(experienceId, studentId, certifierId);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("certifyExperience[%s]: %s - %s - %s", "tenant", studentId, experienceId, certifierId));
 		}
 		return result;
 	}
 	
-	@RequestMapping(value = "/api/certifier/{certifierId}/certificate/experience/{experienceId}/student/{studentId}/file", 
+	@RequestMapping(value = "/api/certifier/{certifierId}/experience/{experienceId}/student/{studentId}/document/{storageId}/file", 
 			method = RequestMethod.POST)
-	public @ResponseBody Certificate uploadFile(
+	public @ResponseBody Document uploadFile(
 			@PathVariable String certifierId,
 			@PathVariable String experienceId,
 			@PathVariable String studentId,
+			@PathVariable String storageId,
 			@RequestParam("file") MultipartFile file,
 			@RequestParam("filename") String filename,
 			HttpServletRequest request) throws Exception {
-		if (!Utils.validateAPIRequest(request, apiToken)) {
+		if (!validateCertifierAuthorization(certifierId, "ALL", request)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		Certificate result = documentManager.addFileToCertificate(experienceId, studentId, filename, file);
+		Document result = documentManager.addFileToDocument(experienceId, studentId, storageId, filename, file);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("uploadFile[%s]: %s", "tenant", result.getStorageId()));
 		}
 		return result;
 	}
 	
-	@RequestMapping(value = "/api/certifier/{certifierId}/certificate/experience/{experienceId}/student/{studentId}/file", 
+	@RequestMapping(value = "/api/certifier/{certifierId}/experience/{experienceId}/student/{studentId}/document/{storageId}/file", 
 			method = RequestMethod.DELETE)
-	public @ResponseBody Certificate deleteFileFromCertificate(
+	public @ResponseBody Document deleteFileFromCertificate(
 			@PathVariable String certifierId,
 			@PathVariable String experienceId,
 			@PathVariable String studentId,
+			@PathVariable String storageId,
 			HttpServletRequest request) throws Exception {
-		if (!Utils.validateAPIRequest(request, apiToken)) {
+		if (!validateCertifierAuthorization(certifierId, "ALL", request)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
-		Certificate result = documentManager.removeFileFromCertificate(experienceId, studentId);
+		Document result = documentManager.removeFileFromDocument(experienceId, studentId, storageId);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("deleteFileFromCertificate[%s]: %s", "tenant", result.getStorageId()));
 		}
 		return result;
 	}
-	
+
+	private boolean validateCertifierAuthorization(String certifierId, String action, 
+			HttpServletRequest request) throws Exception {
+		String subject = getSubject(getAccoutProfile(request));
+		String resourceName = "certifier";
+		Map<String, String> attributes = new HashMap<String, String>();
+		attributes.put("certifier-certifierId", certifierId);
+		AuthorizationDTO authorization = authorizationManager.getAuthorization(subject, action, 
+				resourceName, attributes);
+		if(!authorizationManager.validateAuthorization(authorization)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid or call not authorized");
+		}
+		return true;
+	}
+
 	@ExceptionHandler({EntityNotFoundException.class, StorageException.class})
 	@ResponseStatus(value=HttpStatus.BAD_REQUEST)
 	@ResponseBody

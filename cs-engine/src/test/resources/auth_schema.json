@@ -1,0 +1,91 @@
+{
+	"name": "cartellastudente",
+	"nodes": [
+		{
+			"qname": "student",
+			"params": [
+				"studentId"
+			],
+			"childrenQnames": [
+				"student-data"
+			]
+		},
+		{
+			"qname": "student-data",
+			"params": [
+				"dataType"
+			],
+			"childrenQnames": [
+				"student-data-attr"
+			]
+		},
+		{
+			"qname": "student-data-attr",
+			"params": [
+				"experienceId",
+				"expType",
+				"schoolYear",
+				"institutional",
+				"storageId",
+				"certificationId",
+				"authId",
+				"registrationId"
+			],
+			"childrenQnames": []
+		},
+		{
+			"qname": "institute",
+			"params": [
+				"teachingUnitId"
+			],
+			"childrenQnames": [
+				"institute-data"
+			]
+		},
+		{
+			"qname": "institute-data",
+			"params": [
+				"dataType"
+			],
+			"childrenQnames": [
+				"institute-data-attr"
+			]
+		},
+		{
+			"qname": "institute-data-attr",
+			"params": [
+				"expId",
+				"expType",
+				"schoolYear",
+				"institutional"
+			],
+			"childrenQnames": []
+		},
+		{
+			"qname": "certifier",
+			"params": [
+				"certifierId"
+			],
+			"childrenQnames": [
+				"certifier-data"
+			]
+		},
+		{
+			"qname": "certifier-data",
+			"params": [
+				"dataType"
+			],
+			"childrenQnames": [
+				"certifier-data-attr"
+			]
+		},
+		{
+			"qname": "certifier-data-attr",
+			"params": [
+				"studentId", 
+				"expId"
+			],
+			"childrenQnames": []
+		}		
+	]
+}

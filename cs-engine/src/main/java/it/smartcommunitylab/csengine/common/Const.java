@@ -11,6 +11,9 @@ public class Const {
 	public static final String EXP_TYPE_EXAM  = "EXAM";
 	public static final String EXP_TYPE_SUBJECT  = "SUBJECT";
 	public static final String EXP_TYPE_MOBILITY  = "MOBILITY";
+	public static final String EXP_TYPE_JOB  = "JOB";
+	
+	public static final String CERT_TYPE_LANG  = "LANG";
 	
 	public static final String ATTR_INSTITUTIONAL = "institutional";
 	public static final String ATTR_EDUCATIONAL = "educational";
@@ -37,4 +40,5 @@ public class Const {
 	public static final String ATTR_EXTERNALCANDIDATE = "externalCandidate";
 	public static final String ATTR_CERTIFIER = "certifier";
 	public static final String ATTR_LANG = "lang";
+	public static final String ATTR_LEVEL = "level";
 }

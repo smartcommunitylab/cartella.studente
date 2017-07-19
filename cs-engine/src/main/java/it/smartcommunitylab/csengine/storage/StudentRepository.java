@@ -12,7 +12,7 @@ public interface StudentRepository extends MongoRepository<Student, String>, Stu
 	@Query(value="{studentId:{$in : ?0}}")
 	List<Student> findByIds(List<String> studentIds);
 	
-	@Query(value="{cf:?0}}")
+	@Query(value="{cf:?0}")
 	Student findByCF(String cf);
 	
 	@Query(value="{origin:?0, extId:?1}")

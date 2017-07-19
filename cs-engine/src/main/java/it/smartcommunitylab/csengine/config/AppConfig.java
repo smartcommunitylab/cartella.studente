@@ -17,10 +17,12 @@
 package it.smartcommunitylab.csengine.config;
 
 import it.smartcommunitylab.csengine.common.Const;
+import it.smartcommunitylab.csengine.cv.CVTransformer;
 import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.model.StudentExperience;
+import it.smartcommunitylab.csengine.security.AuthorizationManager;
 import it.smartcommunitylab.csengine.storage.DocumentManager;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
 
@@ -126,6 +128,16 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 	@Bean
 	DocumentManager getDocumentManager() {
 		return new DocumentManager();
+	}
+	
+	@Bean
+	AuthorizationManager getAuthorizationManager() {
+		return new AuthorizationManager();
+	}
+	
+	@Bean
+	CVTransformer getCVTransformer() {
+		return new CVTransformer();
 	}
 	
 	@Override
