@@ -1,9 +1,9 @@
-import {Certificate} from './Certificate.class'
+import {Document} from './Document.class'
 import {ExperienceContainer} from './ExperienceContainer.class'
 import {Student} from './Student.class'
 
 export class StudentExperience {
-  certificate:Certificate;
+  document:Document;
   experience:ExperienceContainer;
   experienceId:string;
   id:string;

@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { NavController, NavParams, ModalController } from 'ionic-angular';
 import { UserService } from '../../services/user.service'
 import { Activity } from '../../classes/Activity.class'
-import { Certificate } from '../../classes/Certificate.class'
+import { Document } from '../../classes/Document.class'
 import { StudentExperience } from '../../classes/StudentExperience.class'
 import { ExperienceContainer } from '../../classes/ExperienceContainer.class'
 import { ExperienceTypes } from '../../assets/conf/expTypes'
@@ -25,7 +25,7 @@ export class AddActivityPage implements OnInit {
   studentExperience: StudentExperience = new StudentExperience();
   experienceContaniner: ExperienceContainer = new ExperienceContainer();
   activity: Activity = new Activity();
-  certificate: Certificate = new Certificate();
+  document: Document = new Document();
   dateFrom = new Date().toISOString();
   dateTo = new Date().toISOString();
   uploader: FileUploader = new FileUploader({});
@@ -104,7 +104,7 @@ export class AddActivityPage implements OnInit {
       this.studentExperience = JSON.parse(this.params.get('activity'));
       this.experienceContaniner = this.studentExperience.experience;
       this.activity = this.experienceContaniner.attributes as Activity;
-      this.certificate = this.studentExperience.certificate as Certificate;
+      this.document = this.studentExperience.document as Document;
       this.dateFrom = new Date(this.experienceContaniner.attributes.dateFrom).toISOString();
       this.dateTo = new Date(this.experienceContaniner.attributes.dateTo).toISOString();
     }
@@ -114,9 +114,9 @@ export class AddActivityPage implements OnInit {
     this.uploader.clearQueue();
     (<HTMLInputElement>document.getElementById("uploadInputFile")).value = "";
   }
-  removeActualCertificate(): void {
-    this.userService.deleteCertificate(this.studentExperience).then(() =>
-      this.certificate = null)
+  removeActualDocument(): void {
+    this.userService.deleteDocument(this.studentExperience).then(() =>
+      this.document = null)
   }
   addActivity(): void {
 
@@ -134,7 +134,7 @@ export class AddActivityPage implements OnInit {
         this.userService.updateActivity(this.studentExperience).then(activity => {
           this.experienceContaniner = activity;
           if (this.uploader.queue.length > 0) {
-            this.uploadCertificate(this.uploader.queue[0]).then(() => this.navCtrl.pop())
+            this.uploadDocument(this.uploader.queue[0]).then(() => this.navCtrl.pop())
           } else {
             this.navCtrl.pop();
             this.utilsService.toast(this.translate.instant('toast_add_activity'), 3000, 'middle');
@@ -147,7 +147,7 @@ export class AddActivityPage implements OnInit {
         this.userService.addActivity(this.studentExperience).then(activity => {
           this.experienceContaniner = activity;
           if (this.uploader.queue.length > 0) {
-            this.uploadCertificate(this.uploader.queue[0]).then(() => this.navCtrl.pop())
+            this.uploadDocument(this.uploader.queue[0]).then(() => this.navCtrl.pop())
           } else {
             this.navCtrl.pop();
             this.utilsService.toast(this.translate.instant('toast_add_activity'), 3000, 'middle');
@@ -158,10 +158,10 @@ export class AddActivityPage implements OnInit {
       }
     }
   }
-  uploadCertificate(item): Promise<void> {
+  uploadDocument(item): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      this.userService.createCertificate(this.experienceContaniner).then(experienceId => {
-        this.webAPIConnectorService.uploadCertificate(this.uploader, this.userService.getUserId(), experienceId, item);
+      this.userService.createDocument(this.experienceContaniner).then(experienceId => {
+        this.webAPIConnectorService.uploadDocument(this.uploader, this.userService.getUserId(), experienceId, item);
         resolve();
       })
     })

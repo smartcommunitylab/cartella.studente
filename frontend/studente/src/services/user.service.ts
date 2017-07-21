@@ -395,20 +395,23 @@ getUserEvents():Promise<StudentExperience[]> {
      })
   })
   }
-  createCertificate(experience):Promise<any> {
+  createDocument(experience):Promise<any> {
      return new Promise<any>((resolve, reject) => {
-      this.webAPIConnector.createCertificate(experience, this.getUserId()).then(response=>{
-
-        resolve(response.experienceId)
+      this.webAPIConnector.createDocument(experience, this.getUserId()).then(response=>{
+        var returnValuse = {
+          experienceId :response.experienceId,
+          storageId:response.storageId
+        }
+        resolve(returnValuse)
   }).catch((error: any):any => {
        reject()
 
      })
   })
   }
-    deleteCertificate(experience):Promise<any> {
+    deleteDocument(experience):Promise<any> {
      return new Promise<any>((resolve, reject) => {
-      this.webAPIConnector.deleteCertificate(experience, this.getUserId()).then(response=>{
+      this.webAPIConnector.deleteDocument(experience, this.getUserId()).then(response=>{
 
         resolve(response.experienceId)
   }).catch((error: any):any => {

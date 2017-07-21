@@ -19,7 +19,7 @@ export class MobilityPanel implements OnInit {
   @Input() mobility: StudentExperience;
   @Input() index: number;
   @Output() onDeleted = new EventEmitter<string>();
-  certificateInstitutional = false;
+  documentInstitutional = false;
   loader = null;
   uploader: FileUploader = new FileUploader({});
 
@@ -38,8 +38,8 @@ export class MobilityPanel implements OnInit {
       this.toggle();
     }
     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
-      this.mobility.certificate = JSON.parse(response);
-      this.certificateInstitutional = false;
+      this.mobility.document = JSON.parse(response);
+      this.documentInstitutional = false;
       this.hideSpinner();
     };
     // this.loader = this.loading.create({
@@ -55,18 +55,18 @@ export class MobilityPanel implements OnInit {
   updateMobility(): void {
     this.navCtrl.push(AddMobilityPage, { mobility: JSON.stringify(this.mobility) });
   }
-  addCertificate(): void {
-    this.certificateInstitutional = true;
+  addDocument(): void {
+    this.documentInstitutional = true;
   }
   removeCertification(): void {
     this.uploader.clearQueue();
     (<HTMLInputElement>document.getElementById("uploadInputFile")).value = "";
-    this.certificateInstitutional = false;
+    this.documentInstitutional = false;
   }
-  removeActualCertificate(): void {
+  removeActualDocument(): void {
     let alert = this.alertCtrl.create({
-      title: this.translate.instant('alert_remove_certificate_mobility_title'),
-      message: this.translate.instant('alert_remove_certificate_mobility_message'),
+      title: this.translate.instant('alert_remove_document_mobility_title'),
+      message: this.translate.instant('alert_remove_document_mobility_message'),
       buttons: [
         {
           text: this.translate.instant('alert_cancel'),
@@ -79,11 +79,11 @@ export class MobilityPanel implements OnInit {
           cssClass: 'pop-up-button',
           handler: () => {
             this.showSpinner();
-            this.userService.deleteCertificate(this.mobility).then(() => {
-              this.utilsService.toast(this.translate.instant('toast_delete_certificate'), 3000, 'middle');
+            this.userService.deleteDocument(this.mobility).then(() => {
+              this.utilsService.toast(this.translate.instant('toast_delete_document'), 3000, 'middle');
               this.hideSpinner();
-              this.certificateInstitutional = false
-              this.mobility.certificate = null
+              this.documentInstitutional = false
+              this.mobility.document = null
             })
           }
         }
@@ -93,11 +93,11 @@ export class MobilityPanel implements OnInit {
 
 
   }
-  uploadCertificate(item): Promise<void> {
+  uploadDocument(item): Promise<void> {
     return new Promise<void>((resolve, reject) => {
 
-      this.userService.createCertificate(this.mobility.experience).then(experienceId => {
-        this.webAPIConnectorService.uploadCertificate(this.uploader, this.userService.getUserId(), experienceId, item);
+      this.userService.createDocument(this.mobility.experience).then(experienceId => {
+        this.webAPIConnectorService.uploadDocument(this.uploader, this.userService.getUserId(), experienceId, item);
         resolve();
       })
     })
@@ -105,7 +105,7 @@ export class MobilityPanel implements OnInit {
   }
   saveCertification(): void {
     this.showSpinner();
-    this.uploadCertificate(this.uploader.queue[0]).then((certificate) => {
+    this.uploadDocument(this.uploader.queue[0]).then((document) => {
     })
   }
   deleteMobility(): void {
@@ -155,7 +155,7 @@ export class MobilityPanel implements OnInit {
 }
 
 //  this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
-//       this.mobility.certificate = JSON.parse(response);
-//       this.certificateInstitutional = false;
+//       this.mobility.document = JSON.parse(response);
+//       this.documentInstitutional = false;
 //       this.hideSpinner();
 //     };

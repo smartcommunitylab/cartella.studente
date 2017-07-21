@@ -20,7 +20,7 @@ export class CertificationPanel implements OnInit {
   @Input() certification: StudentExperience;
   @Input() index: number;
   @Output() onDeleted = new EventEmitter<string>();
-  certificateInstitutional = false;
+  documentInstitutional = false;
   loader = null;
   uploader: FileUploader = new FileUploader({});
   constructor(public navCtrl: NavController,
@@ -38,8 +38,8 @@ export class CertificationPanel implements OnInit {
       this.toggle();
     }
     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
-      this.certification.certificate = JSON.parse(response);
-      this.certificateInstitutional = false;
+      this.certification.document = JSON.parse(response);
+      this.documentInstitutional = false;
       this.hideSpinner();
     };
   }
@@ -49,7 +49,7 @@ export class CertificationPanel implements OnInit {
   getCertification(): StudentExperience {
     return this.certification;
   }
-isLanguageCertificate(): boolean {
+isLanguageDocument(): boolean {
   var certification =  this.certification.experience.attributes as Certification;
   return (certification.type== CertificationsTypes.CERT_TYPE_LANG);
   
@@ -57,18 +57,18 @@ isLanguageCertificate(): boolean {
   updateCertification(): void {
     this.navCtrl.push(AddCertificationPage, { certification: JSON.stringify(this.certification) });
   }
-  addCertificate(): void {
-    this.certificateInstitutional = true;
+  addDocument(): void {
+    this.documentInstitutional = true;
   }
   removeCertification(): void {
     this.uploader.clearQueue();
     (<HTMLInputElement>document.getElementById("uploadInputFile")).value = "";
-    this.certificateInstitutional = false;
+    this.documentInstitutional = false;
   }
-  removeActualCertificate(): void {
+  removeActualDocument(): void {
     let alert = this.alertCtrl.create({
-      title: this.translate.instant('alert_remove_certificate_mobility_title'),
-      message: this.translate.instant('alert_remove_certificate_mobility_message'),
+      title: this.translate.instant('alert_remove_document_mobility_title'),
+      message: this.translate.instant('alert_remove_document_mobility_message'),
       buttons: [
         {
           text: this.translate.instant('alert_cancel'),
@@ -81,11 +81,11 @@ isLanguageCertificate(): boolean {
           cssClass: 'pop-up-button',
           handler: () => {
             this.showSpinner();
-            this.userService.deleteCertificate(this.certification).then(() => {
-              this.utilsService.toast(this.translate.instant('toast_delete_certificate'), 3000, 'middle');
+            this.userService.deleteDocument(this.certification).then(() => {
+              this.utilsService.toast(this.translate.instant('toast_delete_document'), 3000, 'middle');
               this.hideSpinner();
-              this.certificateInstitutional = false
-              this.certification.certificate = null
+              this.documentInstitutional = false
+              this.certification.document = null
             })
           }
         }
@@ -95,11 +95,11 @@ isLanguageCertificate(): boolean {
 
 
   }
-  uploadCertificate(item): Promise<void> {
+  uploadDocument(item): Promise<void> {
     return new Promise<void>((resolve, reject) => {
 
-      this.userService.createCertificate(this.certification.experience).then(experienceId => {
-        this.webAPIConnectorService.uploadCertificate(this.uploader, this.userService.getUserId(), experienceId, item);
+      this.userService.createDocument(this.certification.experience).then(experienceId => {
+        this.webAPIConnectorService.uploadDocument(this.uploader, this.userService.getUserId(), experienceId, item);
         resolve();
       })
     })
@@ -107,7 +107,7 @@ isLanguageCertificate(): boolean {
   }
   saveCertification(): void {
     this.showSpinner();
-    this.uploadCertificate(this.uploader.queue[0]).then((certificate) => {
+    this.uploadDocument(this.uploader.queue[0]).then((document) => {
     })
   }
   deleteCertification(): void {

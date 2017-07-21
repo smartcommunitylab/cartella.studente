@@ -1,6 +1,6 @@
 <div class="exam-expandable-list" (click)="toggle()">
   <div class="exam-title">{{exam.experience.attributes.qualification}}</div>
-  <div class="exam-certificate"><span *ngIf="exam.experience.attributes.institutional">{{'institutional_label'|translate}}</span><span *ngIf="!exam.experience.attributes.institutional">{{'not_institutional_label'|translate}}</span></div>
+  <div class="exam-document"><span *ngIf="exam.experience.attributes.institutional">{{'institutional_label'|translate}}</span><span *ngIf="!exam.experience.attributes.institutional">{{'not_institutional_label'|translate}}</span></div>
   <button class="stage-expansion" clear ion-button icon-only> <ion-icon class="experience-expansion-icon" item-right  [name]="opened ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
 </div>
 <div padding *ngIf="opened">
@@ -8,5 +8,5 @@
   <div class="exam-title"> <span class="registration-institute-label">{{'exam_result_label'|translate}}</span>{{exam.experience.attributes.result}}</div>
   <div class="exam-title" *ngIf="exam.experience.attributes.grade"> <span class="registration-institute-label">{{'exam_grade_label'|translate}}</span>{{exam.experience.attributes.grade}}</div>
   <div class="exam-title"> <span class="registration-institute-label">{{'exam_year_label'|translate}}</span>{{exam.experience.attributes.schoolYear}}</div>
-  <button *ngIf="exam.certificate!=null && exam.certificate.documentPresent">download</button>
+  <button *ngIf="exam.document!=null && exam.document.documentPresent">download</button>
 </div>
