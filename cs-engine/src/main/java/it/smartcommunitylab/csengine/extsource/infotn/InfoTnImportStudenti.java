@@ -1,14 +1,25 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
+import it.smartcommunitylab.aac.authorization.beans.AccountAttributeDTO;
+import it.smartcommunitylab.aac.authorization.beans.AuthorizationDTO;
+import it.smartcommunitylab.aac.authorization.beans.AuthorizationUserDTO;
+import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.Utils;
+import it.smartcommunitylab.csengine.model.Consent;
 import it.smartcommunitylab.csengine.model.Student;
+import it.smartcommunitylab.csengine.security.AuthorizationManager;
+import it.smartcommunitylab.csengine.storage.RepositoryManager;
 import it.smartcommunitylab.csengine.storage.StudentRepository;
 
 import java.io.FileReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +42,25 @@ public class InfoTnImportStudenti {
 	private String sourceFolder;
 	
 	@Autowired
+	@Value("${profile.account}")
+	private String profileAccount;
+
+	@Autowired
+	@Value("${profile.attribute}")
+	private String profileAttribute;
+	
+	@Autowired
+	@Value("${authorization.userType}")	
+	private String userType;
+
+	@Autowired
 	StudentRepository studentRepository;
+	
+	@Autowired
+	private RepositoryManager dataManager;
+	
+	@Autowired
+	AuthorizationManager authorizationManager;
 	
 	SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ITALY);
 	SimpleDateFormat sdfStandard = new SimpleDateFormat("dd/MM/yyyy");
@@ -61,18 +90,52 @@ public class InfoTnImportStudenti {
 						total += 1;
 						Studente studente = jp.readValueAs(Studente.class);
 						logger.info("converting " + studente.getExtid());
+						Student student = null;
 						Student studentDb = studentRepository.findByExtId(studente.getOrigin(), 
 								studente.getExtid());
-						if(studentDb != null) {
+						if(studentDb == null) {
+							student = convertToStudent(studente);
+							studentRepository.save(student);
+							stored += 1;
+							logger.info(String.format("Save Student: %s - %s - %s", studente.getOrigin(), 
+									studente.getExtid(), student.getId()));
+						} else {
 							logger.warn(String.format("Student already exists: %s - %s", 
 									studente.getOrigin(), studente.getExtid()));
-							continue;
+							student = studentDb;
 						}
-						Student student = convertToStudent(studente);
-						studentRepository.save(student);
-						stored += 1;
-						logger.info(String.format("Save Student: %s - %s - %s", studente.getOrigin(), 
-								studente.getExtid(), student.getId()));
+						//save consent
+						Consent consent = dataManager.getConsentByStudent(student.getId());
+						if(consent == null) {
+							consent = new Consent();
+							consent.setStudentId(student.getId());
+							consent.setSubject(student.getCf());
+							consent.setAuthorized(Boolean.FALSE);
+							dataManager.addConsent(consent);
+							//set autorizhation
+							AccountAttributeDTO account = new AccountAttributeDTO();
+							account.setAccountName(profileAccount);
+							account.setAttributeName(profileAttribute);
+							account.setAttributeValue(student.getCf());
+							AuthorizationUserDTO user = new AuthorizationUserDTO();
+							user.setAccountAttribute(account);
+							user.setType(userType);
+							List<String> actions = new ArrayList<String>();
+							actions.add(Const.AUTH_ACTION_ADD);
+							actions.add(Const.AUTH_ACTION_DELETE);
+							actions.add(Const.AUTH_ACTION_READ);
+							actions.add(Const.AUTH_ACTION_UPDATE);
+							Map<String, String> attributes = new HashMap<String, String>();
+							attributes.put("student-studentId", student.getId());
+							AuthorizationDTO authorization = authorizationManager.getNewAuthorization(user, user, 
+									actions, "student", attributes);
+							try {
+								authorizationManager.insertAuthorization(authorization);
+							} catch (Exception e) {
+								logger.warn(String.format("Error creating authorization: %s - %s - %s", 
+										studente.getOrigin(), studente.getExtid(), e.getMessage()));
+							}
+						}
 					}
 				} else {
           logger.warn("Error: records should be an array: skipping.");

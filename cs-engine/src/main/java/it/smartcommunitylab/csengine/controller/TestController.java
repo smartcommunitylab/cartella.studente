@@ -3,6 +3,7 @@ package it.smartcommunitylab.csengine.controller;
 import java.util.Map;
 
 import it.smartcommunitylab.aac.authorization.beans.AuthorizationDTO;
+import it.smartcommunitylab.aac.authorization.beans.RequestedAuthorizationDTO;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
@@ -53,7 +54,7 @@ public class TestController extends AuthController {
 	
 	@RequestMapping(value = "/test/auth/validate", method = RequestMethod.POST)
 	public @ResponseBody String validateAuth(
-			@RequestBody AuthorizationDTO auth,
+			@RequestBody RequestedAuthorizationDTO auth,
 			HttpServletRequest request) throws Exception {
 		return Boolean.toString(authorizationManager.validateAuthorization(auth));
 	}

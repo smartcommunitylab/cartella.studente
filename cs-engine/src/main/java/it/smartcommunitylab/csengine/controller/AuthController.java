@@ -1,6 +1,8 @@
 package it.smartcommunitylab.csengine.controller;
 
 import it.smartcommunitylab.aac.AACProfileService;
+import it.smartcommunitylab.aac.authorization.beans.AccountAttributeDTO;
+import it.smartcommunitylab.aac.authorization.beans.AuthorizationUserDTO;
 import it.smartcommunitylab.aac.model.AccountProfile;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.security.AuthorizationManager;
@@ -23,6 +25,10 @@ public class AuthController {
 	@Autowired
 	@Value("${authorization.clientSecret}")	
 	private String clientSecret;
+	
+	@Autowired
+	@Value("${authorization.userType}")	
+	private String userType;
 	
 	@Autowired
 	@Value("${profile.serverUrl}")
@@ -80,5 +86,22 @@ public class AuthController {
 			} 
 		}
 		return result;
-	}	
+	}
+	
+	protected AccountAttributeDTO getAccountByCF(HttpServletRequest request) {
+		String cf = getCF(getAccoutProfile(request));
+		AccountAttributeDTO account = new AccountAttributeDTO();
+		account.setAccountName(profileAccount);
+		account.setAttributeName(profileAttribute);
+		account.setAttributeValue(cf);
+		return account;
+	}
+	
+	protected AuthorizationUserDTO getUserByCF(HttpServletRequest request) {
+		AccountAttributeDTO accountDTO = getAccountByCF(request);
+		AuthorizationUserDTO userDTO = new AuthorizationUserDTO();
+		userDTO.setAccountAttribute(accountDTO);
+		userDTO.setType(userType);
+		return userDTO;
+	}
 }

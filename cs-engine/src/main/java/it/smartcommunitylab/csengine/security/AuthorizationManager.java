@@ -3,14 +3,17 @@ package it.smartcommunitylab.csengine.security;
 import it.smartcommunitylab.aac.AACAuthorizationService;
 import it.smartcommunitylab.aac.AACException;
 import it.smartcommunitylab.aac.AACService;
+import it.smartcommunitylab.aac.authorization.beans.AccountAttributeDTO;
 import it.smartcommunitylab.aac.authorization.beans.AuthorizationDTO;
 import it.smartcommunitylab.aac.authorization.beans.AuthorizationNodeValueDTO;
 import it.smartcommunitylab.aac.authorization.beans.AuthorizationResourceDTO;
 import it.smartcommunitylab.aac.authorization.beans.AuthorizationUserDTO;
+import it.smartcommunitylab.aac.authorization.beans.RequestedAuthorizationDTO;
 import it.smartcommunitylab.aac.model.TokenData;
 import it.smartcommunitylab.csengine.exception.UnauthorizedException;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -95,18 +98,11 @@ public class AuthorizationManager {
 		return result;
 	}
 	
-	public AuthorizationUserDTO getSubject(String subject) {
+	public RequestedAuthorizationDTO getReqAuthorization(AccountAttributeDTO account, 
+			String action, String resourceName, Map<String, String> attributes) {
+		RequestedAuthorizationDTO result = new RequestedAuthorizationDTO();
 		AuthorizationUserDTO userDTO = new AuthorizationUserDTO();
-		userDTO.setId(subject);
-		userDTO.setType(userType);
-		return userDTO;
-	}
-	
-	public AuthorizationDTO getAuthorization(String subject, String action, String resourceName, 
-			Map<String, String> attributes) {
-		AuthorizationDTO result = new AuthorizationDTO();
-		AuthorizationUserDTO userDTO = new AuthorizationUserDTO();
-		userDTO.setId(subject);
+		userDTO.setAccountAttribute(account);
 		userDTO.setType(userType);
 		result.setEntity(userDTO);
 		result.setAction(action);
@@ -128,7 +124,32 @@ public class AuthorizationManager {
 		return result;
 	}
 	
-	public boolean validateAuthorization(AuthorizationDTO authorization) 
+	public AuthorizationDTO getNewAuthorization(AuthorizationUserDTO subject,
+			AuthorizationUserDTO entity, List<String> actions, String resourceName, 
+			Map<String, String> attributes) {
+		AuthorizationDTO auth = new AuthorizationDTO();
+		auth.setSubject(subject);
+		auth.setEntity(entity);
+		auth.setAction(actions);
+		AuthorizationResourceDTO resource= new AuthorizationResourceDTO();
+		resource.setQnameRef(resourceName);
+		resource.setValues(new ArrayList<AuthorizationNodeValueDTO>());
+		for(String key : attributes.keySet()) {
+			String value = attributes.get(key);
+			int indexOf = key.lastIndexOf("-");
+			String attrName = key.substring(indexOf + 1);
+			String qname = key.substring(0, indexOf);
+			AuthorizationNodeValueDTO nodeValue = new AuthorizationNodeValueDTO();
+			nodeValue.setQname(qname);
+			nodeValue.setName(attrName);
+			nodeValue.setValue(value);
+			resource.getValues().add(nodeValue);
+		}
+		auth.setResource(resource);
+		return auth;
+	}
+	
+	public boolean validateAuthorization(RequestedAuthorizationDTO authorization) 
 			throws UnauthorizedException, SecurityException, AACException {
 		boolean result = false;
 		if(isTokenExpired()) {

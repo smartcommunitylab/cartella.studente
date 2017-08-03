@@ -1,13 +1,21 @@
 {
 	"subject": {
-		"id": "1",
+		"accountAttribute": {
+			"accountName": "adc",
+			"attributeName": "pat_attribute_codicefiscale",
+			"attributeValue": "ABCDEF12G34H567I"
+		},
 		"type": "user"
 	},
 	"entity": {
-		"id": "429",
+		"accountAttribute": {
+			"accountName": "adc",
+			"attributeName": "pat_attribute_codicefiscale",
+			"attributeValue": "ABCDEF12G34H567I"
+		},
 		"type": "user"
 	},
-	"action": "ALL",
+	"action": ["READ", "ADD", "UPDATE", "DELETE"],
 	"resource": {
 		"qnameRef": "student",
 		"values": 

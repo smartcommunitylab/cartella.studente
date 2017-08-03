@@ -1,6 +1,8 @@
 package it.smartcommunitylab.csengine.controller;
 
-import it.smartcommunitylab.aac.authorization.beans.AuthorizationDTO;
+import it.smartcommunitylab.aac.authorization.beans.AccountAttributeDTO;
+import it.smartcommunitylab.aac.authorization.beans.RequestedAuthorizationDTO;
+import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
@@ -21,7 +23,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -41,11 +42,14 @@ public class ConsentController extends AuthController {
 	@RequestMapping(value = "/api/consent/student/{studentId}", method = RequestMethod.POST)
 	public @ResponseBody Consent addConsent(
 			@PathVariable String studentId,
-			@RequestBody Consent consent,
 			HttpServletRequest request) throws Exception {
-		if (!validateStudentAuthorization(studentId, "ALL", request)) {
+		if (!validateStudentAuthorization(studentId, Const.AUTH_ACTION_ADD, request)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
+		Consent consent = new Consent();
+		consent.setStudentId(studentId);
+		consent.setSubject(getCF(getAccoutProfile(request)));
+		consent.setAuthorized(Boolean.TRUE);
 		Consent result = dataManager.addConsent(consent);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("addConsent[%s]: %s", "tenant", result.getId()));
@@ -57,7 +61,7 @@ public class ConsentController extends AuthController {
 	public @ResponseBody Consent removeAuthorization(
 			@PathVariable String studentId,
 			HttpServletRequest request) throws Exception {
-		if (!validateStudentAuthorization(studentId, "ALL", request)) {
+		if (!validateStudentAuthorization(studentId, Const.AUTH_ACTION_UPDATE, request)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
 		Consent result = dataManager.removeAuthorization(studentId);
@@ -71,7 +75,7 @@ public class ConsentController extends AuthController {
 	public @ResponseBody Consent addAuthorization(
 			@PathVariable String studentId,
 			HttpServletRequest request) throws Exception {
-		if (!validateStudentAuthorization(studentId, "ALL", request)) {
+		if (!validateStudentAuthorization(studentId, Const.AUTH_ACTION_UPDATE, request)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
 		Consent result = dataManager.addAuthorization(studentId);
@@ -85,7 +89,7 @@ public class ConsentController extends AuthController {
 	public @ResponseBody Consent getConsentByStudent(
 			@PathVariable String studentId,
 			HttpServletRequest request) throws Exception {
-		if (!validateStudentAuthorization(studentId, "ALL", request)) {
+		if (!validateStudentAuthorization(studentId, Const.AUTH_ACTION_READ, request)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
 		Consent result = dataManager.getConsentByStudent(studentId);
@@ -97,11 +101,11 @@ public class ConsentController extends AuthController {
 	
 	private boolean validateStudentAuthorization(String studentId, String action,
 			HttpServletRequest request) throws Exception {
-		String subject = getSubject(getAccoutProfile(request));
 		String resourceName = "student";
 		Map<String, String> attributes = new HashMap<String, String>();
 		attributes.put("student-studentId", studentId);
-		AuthorizationDTO authorization = authorizationManager.getAuthorization(subject, action, 
+		AccountAttributeDTO account = getAccountByCF(request);
+		RequestedAuthorizationDTO authorization = authorizationManager.getReqAuthorization(account, action, 
 				resourceName, attributes);
 		if(!authorizationManager.validateAuthorization(authorization)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid or call not authorized");

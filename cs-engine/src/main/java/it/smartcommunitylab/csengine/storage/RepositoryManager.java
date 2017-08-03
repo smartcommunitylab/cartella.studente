@@ -512,11 +512,9 @@ public class RepositoryManager {
 			consent.setCreationDate(now);
 			consent.setLastUpdate(now);
 			consent.setId(Utils.getUUID());
-			consent.setAuthorized(Boolean.TRUE);
 			consentDb = consentRepository.save(consent);
 		} else {
 			Date now = new Date();
-			consentDb.setAuthorized(Boolean.TRUE);
 			consentDb.setLastUpdate(now);
 			consentRepository.save(consentDb);
 		}
