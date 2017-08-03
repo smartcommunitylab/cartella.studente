@@ -3,7 +3,7 @@ import { NavController, NavParams, ModalController } from 'ionic-angular';
 import { UserService } from '../../services/user.service'
 import { Stage } from '../../classes/Stage.class'
 import { StudentExperience } from '../../classes/StudentExperience.class'
-import { Certificate } from '../../classes/Certificate.class'
+import { Document } from '../../classes/Document.class'
 import { Certification } from '../../classes/Certification.class'
 import { ExperienceContainer } from '../../classes/ExperienceContainer.class'
 import { ExperienceTypes } from '../../assets/conf/expTypes'
@@ -27,9 +27,9 @@ import { WebAPIConnectorService } from '../../services/webAPIConnector.service'
 export class AddStagePage implements OnInit {
   studentExperience: StudentExperience = new StudentExperience();
   experienceContaniner: ExperienceContainer = new ExperienceContainer();
-  certification: Certification = new Certification();
+  //certification: Certification = new Certification();
   stage: Stage = new Stage();
-  certificate: Certificate = new Certificate();
+  document: Document = new Document();
   dateFrom = new Date().toISOString();
   dateTo = new Date().toISOString();
   uploader: FileUploader = new FileUploader({});
@@ -104,8 +104,8 @@ export class AddStagePage implements OnInit {
     if (stage != null) {
       this.studentExperience = JSON.parse(this.params.get('stage'));
       this.experienceContaniner = this.studentExperience.experience;
-      this.certification = this.experienceContaniner.attributes as Certification;
-      this.certificate = this.studentExperience.certificate as Certificate;
+      //this.certification = this.experienceContaniner.attributes as Certification;
+      this.document = this.studentExperience.document as Document;
 
       this.stage = this.experienceContaniner.attributes as Stage;
       this.dateFrom = new Date(this.experienceContaniner.attributes.dateFrom).toISOString();
@@ -116,9 +116,9 @@ export class AddStagePage implements OnInit {
     this.uploader.clearQueue();
     (<HTMLInputElement>document.getElementById("uploadInputFile")).value = "";
   }
-  removeActualCertificate(): void {
-    this.userService.deleteCertificate(this.studentExperience).then(() =>
-      this.certificate = null)
+  removeActualDocument(): void {
+    this.userService.deleteDocument(this.studentExperience).then(() =>
+      this.document = null)
   }
   addStage(): void {
 
@@ -127,8 +127,8 @@ export class AddStagePage implements OnInit {
     this.submitAttempt = true;
     if (this.stageForm.valid) {
       this.stage.type = ExperienceTypes.EXP_TYPE_STAGE;
-      this.stage.duration = 10
-      this.stage.geocode = [0, 0]
+      // this.stage.duration = 10
+      // this.stage.geocode = [0, 0]
       this.stage.dateFrom = new Date(this.dateFrom).getTime();
       this.stage.dateTo = new Date(this.dateTo).getTime();
       this.experienceContaniner.attributes = this.stage;
@@ -138,7 +138,7 @@ export class AddStagePage implements OnInit {
         this.userService.updateStage(this.studentExperience).then(stage => {
           this.experienceContaniner = stage;
           if (this.uploader.queue.length > 0) {
-            this.uploadCertificate(this.uploader.queue[0]).then(() => this.navCtrl.pop())
+            this.uploadDocument(this.uploader.queue[0]).then(() => this.navCtrl.pop())
           } else {
             this.navCtrl.pop();
             this.utilsService.toast(this.translate.instant('toast_add_stage'), 3000, 'middle');
@@ -150,7 +150,7 @@ export class AddStagePage implements OnInit {
         this.userService.addStage(this.studentExperience).then(stage => {
           this.experienceContaniner = stage;
           if (this.uploader.queue.length > 0) {
-            this.uploadCertificate(this.uploader.queue[0]).then(() => this.navCtrl.pop())
+            this.uploadDocument(this.uploader.queue[0]).then(() => this.navCtrl.pop())
           } else {
             this.navCtrl.pop();
             this.utilsService.toast(this.translate.instant('toast_add_stage'), 3000, 'middle');
@@ -160,10 +160,11 @@ export class AddStagePage implements OnInit {
       }
     }
   }
-  uploadCertificate(item): Promise<void> {
+  uploadDocument(item): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      this.userService.createCertificate(this.experienceContaniner).then(experienceId => {
-        this.webAPIConnectorService.uploadCertificate(this.uploader, this.userService.getUserId(), experienceId, item);
+      //create document
+      this.userService.createDocument(this.experienceContaniner).then(experienceId => {
+        this.webAPIConnectorService.uploadDocument(this.uploader, this.userService.getUserId(), experienceId, item);
         resolve();
       })
     })

@@ -19,7 +19,7 @@ export class StagePanel implements OnInit {
   @Input() stage: StudentExperience;
   @Input() index: number;
   @Output() onDeleted = new EventEmitter<string>();
-  certificateInstitutional = false;
+  documentInstitutional = false;
   loader = null;
   uploader: FileUploader = new FileUploader({});
   constructor(public navCtrl: NavController,
@@ -37,8 +37,8 @@ export class StagePanel implements OnInit {
       this.toggle();
     }
     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
-      this.stage.certificate = JSON.parse(response);
-      this.certificateInstitutional = false;
+      this.stage.document = JSON.parse(response);
+      this.documentInstitutional = false;
       this.hideSpinner();
     };
    }
@@ -51,18 +51,18 @@ export class StagePanel implements OnInit {
   updateStage(): void {
     this.navCtrl.push(AddStagePage, { stage: JSON.stringify(this.stage) });
   }
- addCertificate(): void {
-    this.certificateInstitutional = true;
+ addDocument(): void {
+    this.documentInstitutional = true;
   }
   removeCertification(): void {
     this.uploader.clearQueue();
     (<HTMLInputElement>document.getElementById("uploadInputFile")).value = "";
-    this.certificateInstitutional = false;
+    this.documentInstitutional = false;
   }
-  removeActualCertificate(): void {
+  removeActualDocument(): void {
     let alert = this.alertCtrl.create({
-      title: this.translate.instant('alert_remove_certificate_mobility_title'),
-      message: this.translate.instant('alert_remove_certificate_mobility_message'),
+      title: this.translate.instant('alert_remove_document_mobility_title'),
+      message: this.translate.instant('alert_remove_document_mobility_message'),
       buttons: [
         {
           text: this.translate.instant('alert_cancel'),
@@ -75,11 +75,11 @@ export class StagePanel implements OnInit {
           cssClass: 'pop-up-button',
           handler: () => {
             this.showSpinner();
-            this.userService.deleteCertificate(this.stage).then(() => {
-              this.utilsService.toast(this.translate.instant('toast_delete_certificate'), 3000, 'middle');
+            this.userService.deleteDocument(this.stage).then(() => {
+              this.utilsService.toast(this.translate.instant('toast_delete_document'), 3000, 'middle');
               this.hideSpinner();
-              this.certificateInstitutional = false
-              this.stage.certificate = null
+              this.documentInstitutional = false
+              this.stage.document = null
             })
           }
         }
@@ -89,11 +89,11 @@ export class StagePanel implements OnInit {
 
 
   }
-  uploadCertificate(item): Promise<void> {
+  uploadDocument(item): Promise<void> {
     return new Promise<void>((resolve, reject) => {
 
-      this.userService.createCertificate(this.stage.experience).then(experienceId => {
-        this.webAPIConnectorService.uploadCertificate(this.uploader, this.userService.getUserId(), experienceId, item);
+      this.userService.createDocument(this.stage.experience).then(experienceId => {
+        this.webAPIConnectorService.uploadDocument(this.uploader, this.userService.getUserId(), experienceId, item);
         resolve();
       })
     })
@@ -101,7 +101,7 @@ export class StagePanel implements OnInit {
   }
   saveCertification(): void {
     this.showSpinner();
-    this.uploadCertificate(this.uploader.queue[0]).then((certificate) => {
+    this.uploadDocument(this.uploader.queue[0]).then((document) => {
     })
   }
   deleteStage(): void {

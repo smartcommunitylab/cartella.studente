@@ -1,6 +1,6 @@
 import {Experience} from './Experience.class'
 import {Student} from './Student.class'
-import {Certificate} from './Certificate.class'
+import {Document} from './Document.class'
 export class ExperienceContainer {
 
 attributes:Experience;

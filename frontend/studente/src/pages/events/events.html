@@ -36,7 +36,7 @@
     <ion-card  *ngFor="let event of events| experiencefilter:filter:'title'| orderBy:'event.attributes.title':order">
       <div class="experience-expandable-list">
         <div class="experience-title">{{event.attributes.title}}</div>
-        <div class="experience-certificate"><span *ngIf="event.certificate">{{'certificate_label'|translate}}</span><span *ngIf="!event.certificate">{{'not_certificate_label'|translate}}</span></div>
+        <div class="experience-document"><span *ngIf="event.document">{{'document_label'|translate}}</span><span *ngIf="!event.document">{{'not_document_label'|translate}}</span></div>
         <button class="stage-expansion" clear  ion-button icon-only (click)="toggleDetails(event)"> <ion-icon class="experience-expansion-icon" item-right [name]="isDetailsShown(event) ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
       </div>
       <div padding *ngIf="isDetailsShown(event)">

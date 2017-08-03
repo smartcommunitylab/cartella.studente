@@ -7,6 +7,7 @@ import { Registration } from '../classes/Registration.class'
 import { Experience } from '../classes/Experience.class'
 import { Student } from '../classes/Student.class'
 import { StudentExperience } from '../classes/StudentExperience.class'
+import { ExperienceContainer } from '../classes/ExperienceContainer.class'
 import { ExperienceTypes } from '../assets/conf/expTypes'
 // import {UserService } from './user.service'
 import { FileUploader } from 'ng2-file-upload';
@@ -45,9 +46,14 @@ export class WebAPIConnectorService {
     let url: string = this.getApiUrl() + 'profile';
 
     return this.http.get(url)
+      .timeout(5000)
       .toPromise()
-      .then(response => response.json())
-      .catch(this.handleError);
+      .then(response => {
+        return response.json()
+      }
+      ).catch(response => {
+        return this.handleError
+      });
   }
   consent(studentId: string, subject: string): Promise<any> {
     let url: string = this.getApiUrl() + 'consent';
@@ -72,8 +78,14 @@ export class WebAPIConnectorService {
     let url: string = this.getApiUrl() + 'student/' + studentId + '/registration';
 
     return this.http.get(url, options)
+      .timeout(5000)
       .toPromise()
-      .then(response => response.json()).catch(response => this.handleError);
+      .then(response => {
+        return response.json()
+      }
+      ).catch(response => {
+        return this.handleError
+      });
   }
   getSubjectsByRegistration(studentId: string, registrationId: string): Promise<any[]> {
     let options = new DefaultRequestOptions();
@@ -133,26 +145,27 @@ export class WebAPIConnectorService {
       .toPromise()
       .then(response => response.json()).catch(response => this.handleError);
   }
-  createCertificate(experience: StudentExperience, studentId: string): Promise<any> {
-    let body = {}
+  createDocument(experience: ExperienceContainer, studentId: string): Promise<any> {
+    let body = experience.attributes;
+      
     let expId: string = experience.id;
-    let url: string = this.getApiUrl() + 'student/' + studentId + '/experience/' + expId + '/certificate';
+    let url: string = this.getApiUrl() + 'student/' + studentId + '/experience/' + expId + '/document';
 
     return this.http.post(url, body)
       .toPromise()
       .then(response => response.json()).catch(response => this.handleError);
   }
-  deleteCertificate(experience: StudentExperience, studentId: string): Promise<any> {
+  deleteDocument(experience: StudentExperience, studentId: string): Promise<any> {
     let body = {}
     let expId: string = experience.experienceId;
-    let url: string = this.getApiUrl() + 'student/' + studentId + '/experience/' + expId + '/certificate/file';
+    let url: string = this.getApiUrl() + 'student/' + studentId + '/experience/' + expId + '/document/file';
 
     return this.http.delete(url)
       .toPromise()
       .then(response => response.json()).catch(response => this.handleError);
   }
-  uploadCertificate(uploader: FileUploader, userId: string, experienceId: string, item): void {
-    var newUrl = this.config.getConfig('apiUrl') + 'student/' + userId + '/experience/' + experienceId + '/certificate/file';
+  uploadDocument(uploader: FileUploader, userId: string, experienceId: string, item, storageId?:string): void {
+    var newUrl = this.config.getConfig('apiUrl') + 'student/' + userId + '/experience/' + experienceId + '/document/'+storageId+'/file';
     uploader.setOptions({ url: newUrl, authToken: `Bearer ${sessionStorage.getItem('access_token')}`, disableMultipart: false });
     item.withCredentials = false;
     uploader.onBuildItemForm = (item, form) => {
@@ -165,10 +178,10 @@ export class WebAPIConnectorService {
 
     return this.http.get(url)
       .toPromise()
-      .then(response => 
-      
+      .then(response =>
+
         response.text()
-      
+
       ).catch(response => this.handleError);
   }
   sendUserImage(uploader: FileUploader, image, studentId: string) {

@@ -20,11 +20,13 @@ import { CertificationsPage } from '../pages/certifications/certifications';
 import { CurriculumPage } from '../pages/curriculum/curriculum';
 import { EventsPage } from '../pages/events/events';
 import { StagesPage } from '../pages/stages/stages';
+import { JobsPage } from '../pages/jobs/jobs';
 import { MobilitiesPage } from '../pages/mobilities/mobilities';
 import { ExamPage } from '../pages/exam/exams';
 import { ProfilePage } from '../pages/profile/profile';
 import { NotificationsPage } from '../pages/notifications/notifications';
 import { AddStagePage } from '../pages/addStage/addStage';
+import { AddJobPage } from '../pages/addJob/addJob';
 import { AddMobilityPage } from '../pages/addMobility/addMobility';
 import { AddActivityPage } from '../pages/addActivity/addActivity';
 import { AddCertificationPage } from '../pages/addCertification/addCertification';
@@ -38,18 +40,20 @@ import { LoginService } from '../services/login.service';
 import { WebAPIConnectorService, requestOptionsProvider } from '../services/webAPIConnector.service';
 import { TrainingService } from '../services/training.service';
 import { UserService } from '../services/user.service';
+import {ExperienceService} from '../services/experience.service'
 import { UtilsService} from '../services/utils.services'
 import { ExperienceFilterPipe } from '../pipes/experience-filter.pipe.ts';
 import { OrderBy } from '../pipes/orderBy.pipe.ts';
 import { NgInit } from '../directives/ngInit';
 import { StagePanel } from '../pages/stages/stagePanel'
+import { JobPanel } from '../pages/jobs/jobPanel'
 import { MobilityPanel } from '../pages/mobilities/mobilityPanel'
 import { ExamPanel } from '../pages/exam/examPanel'
 import { ActivityPanel } from '../pages/activities/activityPanel'
 import { CertificationPanel } from '../pages/certifications/certificationPanel'
 import { RegistrationPanel } from '../pages/institute/registrationPanel'
 import { Subjects } from '../pages/institute/subjects'
-import {GeoService} from '../services/geo.service'
+import { GeoService } from '../services/geo.service'
 
 export const deepLinkConfig: DeepLinkConfig = {
   links: [
@@ -60,11 +64,13 @@ export const deepLinkConfig: DeepLinkConfig = {
     { component: CurriculumPage, name: 'Curriculum', segment: 'curriculum' },
     { component: EventsPage, name: 'Events', segment: 'events' },
     { component: StagesPage, name: 'Stage', segment: 'stage' },
+    { component: JobsPage, name: 'Job', segment: 'job' },
     { component: MobilitiesPage, name: 'Mobility', segment: 'mobility' },
     { component: ExamPage, name: 'Exam', segment: 'exam' },
     { component: ProfilePage, name: 'Profile', segment: 'profile' },
     { component: NotificationsPage, name: 'Notifications', segment: 'notifications' },
     { component: AddStagePage, name: 'AddStage', segment: 'addStage' },
+    { component: AddJobPage, name: 'AddJob', segment: 'addJob' },
     { component: AddMobilityPage, name: 'AddMobility', segment: 'addMobility' },
     { component: AddEventPage, name: 'AddEvent', segment: 'addEvent' },
     { component: AddActivityPage, name: 'AddActivity', segment: 'addActivity' },
@@ -89,9 +95,11 @@ function initConfig(config: ConfigService) {
     ProfilePage,
     NotificationsPage,
     StagesPage,
+    JobsPage,
     MobilitiesPage,
     ExamPage,
     AddStagePage,
+    AddJobPage,
     AddMobilityPage,
     AddEventPage,
     AddActivityPage,
@@ -106,6 +114,7 @@ function initConfig(config: ConfigService) {
     NgInit,
     FileSelectDirective,
     StagePanel,
+    JobPanel,
     MobilityPanel,
     ExamPanel,
     CertificationPanel,
@@ -137,9 +146,11 @@ function initConfig(config: ConfigService) {
     CurriculumPage,
     EventsPage,
     StagesPage,
+    JobsPage,
     MobilitiesPage,
     ExamPage,
     AddStagePage,
+    AddJobPage,
     AddMobilityPage,
     AddActivityPage,
     AddEventPage,
@@ -156,6 +167,7 @@ function initConfig(config: ConfigService) {
     ConfigService,
     GeoService,
     UserService,
+    ExperienceService,
     UtilsService,
     { provide: APP_INITIALIZER, useFactory: initConfig, deps: [ConfigService], multi: true },
     TranslateService,

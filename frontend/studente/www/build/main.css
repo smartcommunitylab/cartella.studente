@@ -24382,7 +24382,7 @@ ion-navbar.toolbar {
   margin: 6px;
 }
 
-.experience-certificate {
+.experience-document {
   width: 50% !important;
   margin: 6px;
 }
@@ -24468,6 +24468,21 @@ ion-navbar.toolbar {
 }
 
 .stage-filter .filter-search-icon {
+  font-size: 40px;
+}
+
+.job-filter {
+  width: 100%;
+  display: -webkit-inline-flex;
+  display: -ms-inline-flexbox;
+  display: inline-flex;
+}
+
+.job-filter input {
+  min-width: 50%;
+}
+
+.job-filter .filter-search-icon {
   font-size: 40px;
 }
 
@@ -24595,7 +24610,7 @@ ion-navbar.toolbar {
   margin: 6px;
 }
 
-.exam-certificate {
+.exam-document {
   width: 50% !important;
 }
 
@@ -24681,7 +24696,7 @@ page-home .home-title-label.experience-title {
   margin: 6px;
 }
 
-.registration-certificate {
+.registration-document {
   width: 50% !important;
 }
 
@@ -24710,6 +24725,16 @@ page-home .home-title-label.experience-title {
   text-align: center;
   font-style: italic;
   font-size: 16px;
+}
+
+.row-add-job {
+  height: 44px;
+  position: relative;
+}
+
+.row-add-job .button-add-job {
+  position: absolute;
+  right: 5px;
 }
 
 .login-label {
