@@ -1,1 +1,24 @@
-create database 'CartellaStudente'
+db.getCollection('student').createIndex( {"cf":1} );
+db.getCollection('personInCharge').createIndex( {"cf":1} );
+db.getCollection('studentExperience').createIndex( 
+{"studentId":1},
+{"experienceId":1}, 
+{"experience.type":1}, 
+{"experience.attributes.instituteId":1}, 
+{"experience.attributes.teachingUnitId":1},
+{"experience.attributes.schoolYear":1},
+{"experience.attributes.certifierId":1} );
+db.getCollection('registration').createIndex( 
+{"studentId":1},
+{"teachingUnitId":1},
+{"schoolYear":1} );
+db.getCollection('cV').createIndex( {"studentId":1} );
+db.getCollection('certificationRequest').createIndex( {"studentId":1} );
+db.getCollection('studentAuth').createIndex( {"studentId":1} );
+db.getCollection('consent').createIndex( {"studentId":1} );
+db.getCollection('course').createIndex( 
+{"instituteId":1},
+{"teachingUnitId":1},
+{"schoolYear":1} );
+
+
