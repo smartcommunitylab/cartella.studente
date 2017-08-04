@@ -104,4 +104,15 @@ public class AuthController {
 		userDTO.setType(userType);
 		return userDTO;
 	}
+	
+	protected AuthorizationUserDTO getUserByCF(String cf) {
+		AccountAttributeDTO accountDTO = new AccountAttributeDTO();
+		accountDTO.setAccountName(profileAccount);
+		accountDTO.setAttributeName(profileAttribute);
+		accountDTO.setAttributeValue(cf);
+		AuthorizationUserDTO userDTO = new AuthorizationUserDTO();
+		userDTO.setAccountAttribute(accountDTO);
+		userDTO.setType(userType);
+		return userDTO;
+	}
 }

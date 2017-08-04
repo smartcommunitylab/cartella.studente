@@ -26,6 +26,7 @@ import it.smartcommunitylab.csengine.model.StudentExperience;
 import it.smartcommunitylab.csengine.model.TeachingUnit;
 import it.smartcommunitylab.csengine.storage.DocumentManager;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
+import it.smartcommunitylab.csengine.ui.AuthorizationByCF;
 import it.smartcommunitylab.csengine.ui.StudentRegistration;
 
 import java.io.File;
@@ -592,17 +593,22 @@ public class StudentController extends AuthController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/api/student/{studentId}/auth", method = RequestMethod.POST)
+	@RequestMapping(value = "/api/student/{studentId}/auth/cf", method = RequestMethod.POST)
 	public @ResponseBody StudentAuth addAuthorization(
 			@PathVariable String studentId,
-			@RequestBody AuthorizationDTO auth,
+			@RequestBody AuthorizationByCF authCF,
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByResource(studentId, "Authorization", null, null, null, 
 				Const.AUTH_ACTION_ADD, request)) {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
 		AuthorizationUserDTO subjectDTO = getUserByCF(request);
+		AuthorizationUserDTO entityDTO = getUserByCF(authCF.getCf());
+		AuthorizationDTO auth = new AuthorizationDTO();
+		auth.setAction(authCF.getActions());
 		auth.setSubject(subjectDTO);
+		auth.setEntity(entityDTO);
+		auth.setResource(authCF.getResource());
 		AuthorizationDTO authorizationDTO = authorizationManager.insertAuthorization(auth);
 		StudentAuth studentAuth = new StudentAuth();
 		studentAuth.setStudentId(studentId);
