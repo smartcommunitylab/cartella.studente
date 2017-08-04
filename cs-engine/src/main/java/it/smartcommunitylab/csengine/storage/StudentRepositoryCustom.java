@@ -12,7 +12,4 @@ public interface StudentRepositoryCustom {
 	
 	List<Student> findByCertifier(String certifierId, Pageable pageable);
 	
-	List<Student> findByExperience(String experienceId, String teachingUnitId,	
-			String schoolYear, Pageable pageable);
-	
 }

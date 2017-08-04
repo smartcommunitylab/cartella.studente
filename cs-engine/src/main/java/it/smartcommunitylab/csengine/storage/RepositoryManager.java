@@ -414,12 +414,6 @@ public class RepositoryManager {
 		return result;
 	}
 
-	public List<Student> searchStudentByExperience(String experienceId, String teachingUnitId,
-			String schoolYear, Pageable pageable) {
-		List<Student> result = studentRepository.findByExperience(experienceId, teachingUnitId, schoolYear, pageable);
-		return result;
-	}
-
 	public void certifyIsExperience(String experienceId, List<String> students) 
 			throws StorageException, EntityNotFoundException {
 		for(String studentId : students) {
