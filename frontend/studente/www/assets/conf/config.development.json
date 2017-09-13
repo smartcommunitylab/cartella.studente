@@ -1,5 +1,5 @@
 {
-  "apiUrl": "http://192.168.42.60:9090/cs-engine/api/",
+  "apiUrl": "http://192.168.42.60:6010/cs-engine/api/",
   "aacUrl": "https://am-dev.smartcommunitylab.it/aac",
   "geocoderUrl":"https://os.smartcommunitylab.it/core.geocoder/",
   "mapPositionAutocomplete":[46.069672,11.121270],

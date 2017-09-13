@@ -3,10 +3,12 @@ import {ExperienceContainer} from './ExperienceContainer.class'
 import {Student} from './Student.class'
 
 export class StudentExperience {
-  document:Document;
+  documents:Document [];
+  document:Document; //tmp
   experience:ExperienceContainer;
   experienceId:string;
   id:string;
   student:Student;
   studentId:string;
+  checked: boolean = false;
 }

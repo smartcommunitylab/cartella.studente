@@ -166,12 +166,25 @@ export class WebAPIConnectorService {
   }
   uploadDocument(uploader: FileUploader, userId: string, experienceId: string, item, storageId?:string): void {
     var newUrl = this.config.getConfig('apiUrl') + 'student/' + userId + '/experience/' + experienceId + '/document/'+storageId+'/file';
-    uploader.setOptions({ url: newUrl, authToken: `Bearer ${sessionStorage.getItem('access_token')}`, disableMultipart: false });
+    uploader.setOptions(
+      { url: newUrl,
+         authToken: `Bearer ${sessionStorage.getItem('access_token')}`,
+          disableMultipart: false
+      }
+         );
     item.withCredentials = false;
     uploader.onBuildItemForm = (item, form) => {
       form.append("filename", item.file.name);
     };
     item.upload();
+  }
+    getUrlFile(studentId: string, experienceId: string, storageId: string): Promise<any> {
+   let url: string = this.getApiUrl() + 'student/' + studentId + '/experience/' + experienceId+ '/document/' + storageId+'/link';
+
+    return this.http.get(url)
+      .toPromise()
+      .then(response =>response.text()
+      ).catch(response => this.handleError);
   }
   getUserImage(studentId: string): Promise<any> {
     let url: string = this.getApiUrl() + 'student/' + studentId + '/photo';

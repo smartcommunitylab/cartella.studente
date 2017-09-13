@@ -260,6 +260,7 @@
   "cert_type_other": "Altro",
   "addDocument_lang_placeholder": "Inserisci la lingua",
   "addDocument_level_placeholder": "Inserisci il livello",
+  "addDocument_name_doc_placeholder":"Name of the document",
   "stage_contact_label":"Contatto: ",
   "stage_duration_label":"Durata (ore): "
 }

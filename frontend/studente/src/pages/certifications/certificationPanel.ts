@@ -9,6 +9,7 @@ import { AddCertificationPage } from '../addCertification/addCertification'
 import { UserService } from '../../services/user.service'
 import { FileUploader } from 'ng2-file-upload';
 import { WebAPIConnectorService } from '../../services/webAPIConnector.service'
+import { Observable } from 'rxjs/Rx';
 
 @Component({
   selector: 'certification-panel',
@@ -37,6 +38,17 @@ export class CertificationPanel implements OnInit {
     if (this.index == 0) {
       this.toggle();
     }
+      Observable.forkJoin(
+            this.certification.documents.map(
+              (i,index) => this.getFileUrl(i).then(url => {
+                //da finire con il giusto ordine TO DO
+                this.certification.documents[index]['documentUri']=url;
+                console.log("get file")
+              })
+            )
+          ).subscribe(() =>console.log("done"))
+    //load urls of documents
+
     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
       this.certification.document = JSON.parse(response);
       this.documentInstitutional = false;
@@ -98,7 +110,7 @@ isLanguageDocument(): boolean {
   uploadDocument(item): Promise<void> {
     return new Promise<void>((resolve, reject) => {
 
-      this.userService.createDocument(this.certification.experience).then(experienceId => {
+      this.userService.createDocument(this.certification).then(experienceId => {
         this.webAPIConnectorService.uploadDocument(this.uploader, this.userService.getUserId(), experienceId, item);
         resolve();
       })
@@ -156,5 +168,17 @@ isLanguageDocument(): boolean {
       this.loader.dismiss().catch(() => { });
     }
   }
+  private getFileUrl(file): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+    this.webAPIConnectorService.getUrlFile(this.userService.getUserId(),file.experienceId,file.storageId).then(url=>
+    {
+      //add url to file
+      // this.certification.documents[0]['documentUri']=url;
+       resolve(url);
+    }
+    )}
+    )
+  }
 }
+
 

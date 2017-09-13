@@ -16,7 +16,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { UtilsService } from '../../services/utils.services'
 import { TranslateService } from 'ng2-translate';
 import { CertificationsTypes } from '../../assets/conf/certificationsTypes';
-import {Observable} from 'rxjs/Rx';
+import { Observable } from 'rxjs/Rx';
 
 // import { checkingDates } from '../../validators/validators';
 
@@ -31,7 +31,7 @@ export class AddCertificationPage implements OnInit {
   experienceContaniner: ExperienceContainer = new ExperienceContainer();
   certification: Certification = new Certification();
   document: Document = new Document();
-  documents:Document[] = [];
+  documents: Document[] = [];
   dateFrom = new Date().toISOString();
   dateTo = new Date().toISOString();
   items = [];
@@ -118,7 +118,7 @@ export class AddCertificationPage implements OnInit {
       this.studentExperience = JSON.parse(this.params.get('certification'));
       this.experienceContaniner = this.studentExperience.experience;
       this.certification = this.experienceContaniner.attributes as Certification;
-      this.document = this.studentExperience.document as Document;
+      this.documents = this.studentExperience.documents as Document[];
       this.dateFrom = new Date(this.experienceContaniner.attributes.dateFrom).toISOString();
       this.dateTo = new Date(this.experienceContaniner.attributes.dateTo).toISOString();
     }
@@ -126,99 +126,120 @@ export class AddCertificationPage implements OnInit {
   addDocument() {
     // this.documentEdit= true;
     //check if theere are info for doc and in that case add new doc in documents
-    if (this.document)
-    {
+    if (this.document && this.checkDocumentParams()) {
       this.documents.push(this.document)
       this.document = new Document();
+       (<HTMLInputElement>document.getElementById("uploadInputFile")).value = "";
     } else {
-
+      this.utilsService.toast( this.translate.instant('toast_error_fields_missing'),3000,'middle')
     }
 
   }
-isLanguage(): boolean {
-  if (this.type['value'] && this.type['value'] == CertificationsTypes.CERT_TYPE_LANG) {
-    return true
-  }
-  return false
-}
-chooseAddress(): void {
-  let myModal = this.modalCtrl.create(MapModal);
-  myModal.onDidDismiss(address => {
-    if (address) {
-      this.certification.location = address.location;
-      this.certification.geocode = [address.e.latlng.lng, address.e.latlng.lng]
+  checkDocumentParams(): boolean {
+    if (this.document.attributes['name'] == "") {
+      return false
     }
-  });
-  myModal.present();
-}
-removeCertification(): void {
-  this.uploader.clearQueue();
-    (<HTMLInputElement>document.getElementById("uploadInputFile")).value = "";
+    if (this.uploader.queue.length==(this.documents.length+1)){
+      this.document.documentUri=this.uploader.queue[this.uploader.queue.length-1].file.name;
+      return true;
+    }
+    return false;
   }
-removeActualDocument(): void {
-  this.userService.deleteDocument(this.studentExperience).then(() =>
-    this.document = null)
-}
-addCertification(): void {
-  this.submitAttempt = true;
-  console.log(!this.certificationForm.controls.location.valid);
-  console.log(this.certification.geocode);
-  console.log((this.certificationForm.controls.location.dirty || this.submitAttempt));
-  console.log((!this.certificationForm.controls.location.valid && (this.certificationForm.controls.location.dirty || this.submitAttempt) && !this.certification.geocode));
-  if(this.certificationForm.valid) {
-    this.certification.type = this.type['value'];
-    this.certification.dateFrom = new Date(this.dateFrom).getTime();
-    this.certification.dateTo = new Date(this.dateTo).getTime();
-    this.experienceContaniner.attributes = this.certification;
-    this.studentExperience.experience = this.experienceContaniner;
-    if (this.experienceContaniner.id != null) {
-      this.userService.updateCertification(this.studentExperience).then(certification => {
-        this.experienceContaniner = certification;
-        // map them into a array of observables and forkJoin
-Observable.forkJoin(
-   this.uploader.queue.map(
-      i =>  this.uploadDocument(i).then(()=>console.log("uploaded"))
-   )
-).subscribe(() => this.navCtrl.pop())
-        // if (this.uploader.queue.length > 0) {
-        //   this.uploadDocument(this.uploader.queue[0]).then(() => this.navCtrl.pop())
-        // } else {
-        //   this.navCtrl.pop();
-        // }
+  isLanguage(): boolean {
+    if (this.type['value'] && this.type['value'] == CertificationsTypes.CERT_TYPE_LANG) {
+      return true
+    }
+    return false
+  }
+  chooseAddress(): void {
+    let myModal = this.modalCtrl.create(MapModal);
+    myModal.onDidDismiss(address => {
+      if (address) {
+        this.certification.location = address.location;
+        this.certification.geocode = [address.e.latlng.lng, address.e.latlng.lng]
       }
-      );
-    }
-    else {
-      this.userService.addCertification(this.studentExperience).then(certification => {
-        this.experienceContaniner = certification;
-        Observable.forkJoin(
-   this.uploader.queue.map(
-      i =>  this.uploadDocument(i).then(()=>console.log("uploaded"))
-   )
-).subscribe(() => this.navCtrl.pop())
-        // if (this.uploader.queue.length > 0) {
-        //   this.uploadDocument(this.uploader.queue[0]).then(() => this.navCtrl.pop())
-        // } else {
-        //   this.navCtrl.pop();
-        // }
-      }
-      );
-    }
+    });
+    myModal.present();
   }
-  //  else {
-  // this.utilsService.toast( this.translate.instant('toast_error_fields_missing'),3000,'middle');
+
+  removeOldDocument (doc,index) {
+    this.documents.splice(index,1);
+    this.uploader.queue.splice(index,1);
+
+  }
+  // removeCertification(): void {
+  //   this.uploader.clearQueue();
+  //   (<HTMLInputElement>document.getElementById("uploadInputFile")).value = "";
   // }
-}
-uploadDocument(item): Promise < void> {
-  return new Promise<void>((resolve, reject) => {
-    this.userService.createDocument(this.experienceContaniner).then(exp => {
-      this.webAPIConnector.uploadDocument(this.uploader, this.userService.getUserId(), exp.experienceId, item,exp.storageId);
-      resolve();
-    })
-  })
+  // removeActualDocument(): void {
+  //   this.userService.deleteDocument(this.studentExperience).then(() =>
+  //     this.document = null)
+  // }
+  addCertification(): void {
+    this.submitAttempt = true;
+    console.log(!this.certificationForm.controls.location.valid);
+    console.log(this.certification.geocode);
+    console.log((this.certificationForm.controls.location.dirty || this.submitAttempt));
+    console.log((!this.certificationForm.controls.location.valid && (this.certificationForm.controls.location.dirty || this.submitAttempt) && !this.certification.geocode));
+    if (this.certificationForm.valid) {
+      this.certification.type = this.type['value'];
+      this.certification.dateFrom = new Date(this.dateFrom).getTime();
+      this.certification.dateTo = new Date(this.dateTo).getTime();
+      this.experienceContaniner.attributes = this.certification;
+      this.studentExperience.experience = this.experienceContaniner;
+      if (this.experienceContaniner.id != null) {
+        this.userService.updateCertification(this.studentExperience).then(certification => {
+          this.experienceContaniner = certification;
+          // map them into a array of observables and forkJoin
+          Observable.forkJoin(
+            this.uploader.queue.map(
+              i => this.uploadDocument(i).then(() =>{
+                console.log("uploaded");
+              })
+            )
+          ).subscribe(() => this.navCtrl.pop())
+          // if (this.uploader.queue.length > 0) {
+          //   this.uploadDocument(this.uploader.queue[0]).then(() => this.navCtrl.pop())
+          // } else {
+          //   this.navCtrl.pop();
+          // }
+        }
+        );
+      }
+      else {
+        this.userService.addCertification(this.studentExperience).then(certification => {
+          this.experienceContaniner = certification;
+          Observable.forkJoin(
+            this.uploader.queue.map(
+              i => this.uploadDocument(i).then(() =>{
 
-}
-discard(): void {
-  this.navCtrl.pop();
-}
+               console.log("uploaded");
+              })
+            )
+          ).subscribe(() => this.navCtrl.pop())
+          // if (this.uploader.queue.length > 0) {
+          //   this.uploadDocument(this.uploader.queue[0]).then(() => this.navCtrl.pop())
+          // } else {
+          //   this.navCtrl.pop();
+          // }
+        }
+        );
+      }
+    }
+    //  else {
+    // this.utilsService.toast( this.translate.instant('toast_error_fields_missing'),3000,'middle');
+    // }
+  }
+  uploadDocument(item): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      this.userService.createDocument(this.experienceContaniner).then(exp => {
+        this.webAPIConnector.uploadDocument(this.uploader, this.userService.getUserId(), exp.experienceId, item, exp.storageId);
+        resolve();
+      })
+    })
+
+  }
+  discard(): void {
+    this.navCtrl.pop();
+  }
 }
