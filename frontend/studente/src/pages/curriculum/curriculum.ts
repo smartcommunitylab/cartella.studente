@@ -1,10 +1,13 @@
 import { Component, OnInit } from '@angular/core';
+import { DatePipe } from '@angular/common';
 import { NavController, NavParams, LoadingController } from 'ionic-angular';
 import { TranslateService } from 'ng2-translate';
 import { UserService } from '../../services/user.service';
 import { Student } from '../../classes/Student.class';
 import { StudentExperience } from '../../classes/StudentExperience.class';
+import { Registration } from '../../classes/Registration.class';
 import { Experience } from '../../classes/Experience.class';
+import { Document } from '../../classes/Document.class';
 import { ExperienceContainer } from '../../classes/ExperienceContainer.class';
 
 @Component({
@@ -17,9 +20,10 @@ export class CurriculumPage implements OnInit {
   loader = null;
 
   experiences: StudentExperience[] = [];
-  skills: StudentExperience[] = [];
   trainings: StudentExperience[] = [];
-  attachments: StudentExperience[] = [];
+  registrations: Registration[] = [];
+  skills: StudentExperience[] = [];
+  attachments: Document[] = [];
 
   constructor(public navCtrl: NavController,
     public params: NavParams,
@@ -30,7 +34,7 @@ export class CurriculumPage implements OnInit {
   ngOnInit(): void { }
 
   ionViewWillEnter() {
-    
+
     this.experiences = [];
     this.skills = [];
     this.trainings = [];
@@ -39,11 +43,20 @@ export class CurriculumPage implements OnInit {
     this.showSpinner();
     this.userService.getUserInfo().then(student => {
       this.student = student;
-      this.initExperiences();
-      this.initTrainings();
-      this.initSkills();
-      this.initAttachments();
-      this.hideSpinner()
+
+      Promise.all([
+        this.initExperiences(),
+        this.initTrainingRegistrations(),
+        this.initSkills(),
+      ]).then(value => {
+        // load documents only after experiences gets loaded.
+        this.initAttachments().then(resp => {
+          console.log("total number of attachments is " + this.attachments.length);
+          this.hideSpinner();
+        })
+
+      });
+
     }
     );
   }
@@ -62,65 +75,93 @@ export class CurriculumPage implements OnInit {
   }
 
   private initExperiences() {
-    // call experience API.
-    let exp1 = new StudentExperience();
-    exp1.experience = new ExperienceContainer();
-    exp1.experience.attributes = new Experience();
-    exp1.experience.attributes.id = "Experience 1";
-    exp1.experience.attributes.instituteId = "ABC";
-    this.experiences.push(exp1);
-    let exp2 = new StudentExperience();
-    exp2.experience = new ExperienceContainer();
-    exp2.experience.attributes = new Experience();
-    exp2.experience.attributes.id = "Experience 2";
-    exp2.experience.attributes.instituteId = "DEF";
-    this.experiences.push(exp2);
+
+    return new Promise<StudentExperience[]>((resolve, reject) => {
+      // call experience API (STAGE + JOB).
+      var p1 = this.userService.getUserStages();
+
+      var p2 = this.userService.getUserJobs();
+
+      Promise.all([p1, p2]).then(values => {
+        for (var v = 0; v < values.length; v++) {
+          this.experiences = this.experiences.concat(values[v]);
+          console.log(values[v].length);//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
+        }
+        resolve();
+        console.log("total number of experiences (job + stage) is " + this.experiences.length);
+      }).catch((error: any): any => {
+        reject()
+
+      })
+
+
+    });
+
+
   }
 
-  private initSkills() {
+  private initSkills(): Promise<any> {
+    debugger;
     // call skills API.
-    let skill1 = new StudentExperience();
-    skill1.experience = new ExperienceContainer();
-    skill1.experience.attributes = new Experience();
-    skill1.experience.attributes.id = "Skill 1";
-    skill1.experience.attributes.instituteId = "ABC";
-    this.skills.push(skill1);
-    let skill2 = new StudentExperience();
-    skill2.experience = new ExperienceContainer();
-    skill2.experience.attributes = new Experience();
-    skill2.experience.attributes.id = "SKill 2";
-    skill2.experience.attributes.instituteId = "DEF";
-    this.skills.push(skill2);
+    return new Promise<StudentExperience[]>((resolve, reject) => {
+      this.userService.getUserCertifications().then(cert => {
+        for (var c = 0; c < cert.length; c++) {
+          if (cert[c].experience.attributes.type.toLowerCase() == "lang") {
+            this.skills.push(cert[c]);
+          }
+        }
+        resolve(this.skills);
+        console.log("total number of certificates with language type is " + this.skills.length);
+      }).catch((error: any): any => {
+        reject()
+
+      })
+    })
+
   }
 
-  private initTrainings() {
+  private initTrainingRegistrations() {
+    debugger;
+
     // call training API.
-    let training1 = new StudentExperience();
-    training1.experience = new ExperienceContainer();
-    training1.experience.attributes = new Experience();
-    training1.experience.attributes.id = "Training 1";
-    training1.experience.attributes.instituteId = "ABC";
-    this.trainings.push(training1);
-    let training2 = new StudentExperience();
-    training2.experience = new ExperienceContainer();
-    training2.experience.attributes = new Experience();
-    training2.experience.attributes.id = "Training 2";
-    training2.experience.attributes.instituteId = "DEF";
-    this.trainings.push(training2);
+    return new Promise<StudentExperience[]>((resolve, reject) => {
+      var p1 = this.userService.getUserMobilities();
+      var p2 = this.userService.getUserRegistrations();
+
+      Promise.all([p1, p2]).then(values => {
+        // mobility.
+        this.trainings = this.trainings.concat(values[0]);
+        console.log("total number of trainings (mobility) is " + this.trainings.length);
+        // registration.
+        // this.registrations = this.registrations.concat(values[1]); // registration -> [{registrtions[], teachingUnit}, {registrations[], teachingUnit}..]
+        // this.registrations[0].registrations
+        console.log("total number of registrations is " + this.registrations.length);
+        resolve();
+      }).catch((error: any): any => {
+        reject()
+      });
+    });
+
   }
 
   private initAttachments() {
-    // call attachment API.
-    let attach1 = new StudentExperience();
-    attach1.experience = new ExperienceContainer();
-    attach1.experience.attributes = new Experience();
-    attach1.experience.attributes.id = "attachment 1";
-    this.attachments.push(attach1);
-    let attach2 = new StudentExperience();
-    attach2.experience = new ExperienceContainer();
-    attach2.experience.attributes = new Experience();
-    attach2.experience.attributes.id = "attachment 2";
-    this.attachments.push(attach2);
+    return new Promise<Document[]>((resolve, reject) => {
+      for (var e = 0; e < this.experiences.length; e++) {
+        if (this.experiences[e].documents)
+        this.attachments = this.attachments.concat(this.experiences[e].documents);
+      }
+      for (var t = 0; t < this.trainings.length; t++) {
+        if (this.trainings[t].documents)
+          this.attachments = this.attachments.concat(this.trainings[t].documents);
+      }
+      for (var s = 0; s < this.skills.length; s++) {
+        if (this.skills[s].documents)
+          this.attachments = this.attachments.concat(this.skills[s].documents);
+      }
+     
+      resolve();
+    });
+
   }
 
   toggle(event, experience) {
@@ -144,7 +185,7 @@ export class CurriculumPage implements OnInit {
     alert(this.experiences[0].checked);
     alert(this.trainings[0].checked);
     alert(this.skills[0].checked);
-    alert(this.attachments[0].checked); 
+    alert(this.attachments[0].checked);
   }
 
 }

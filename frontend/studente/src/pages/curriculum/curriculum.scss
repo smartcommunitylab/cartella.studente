@@ -24,6 +24,11 @@
         right: 0px;
     }
 
+    .div-checkbox {
+        position: absolute;
+        right: 5px;
+    }
+
     .checkbox-md .checkbox-icon {
         border-color: cadetblue;
         background-color: white;
@@ -33,5 +38,11 @@
         border-color: cadetblue;
         background-color: cadetblue;
     }
+
+    .key {
+        color: gray;
+    }
+
+
     
 }

@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { ErrorHandler, NgModule } from '@angular/core';
+import { ErrorHandler, NgModule, LOCALE_ID } from '@angular/core';
 import { IonicApp, IonicErrorHandler, IonicModule, DeepLinkConfig } from 'ionic-angular';
 import { SplashScreen } from '@ionic-native/splash-screen';
 import { StatusBar } from '@ionic-native/status-bar';
@@ -8,6 +8,7 @@ import { HttpModule, Http } from "@angular/http";
 import { TranslateModule, TranslateStaticLoader, TranslateLoader, TranslateService } from 'ng2-translate';
 import { Ng2OrderModule } from 'ng2-order-pipe';
 import { FileSelectDirective, FileDropDirective } from 'ng2-file-upload';
+import { PipesModule } from '../pipes/pipe.modules';
 
 import { ConfigService } from '../services/config.service';
 import { MyApp } from './app.component';
@@ -120,10 +121,11 @@ function initConfig(config: ConfigService) {
     CertificationPanel,
     ActivityPanel,
     Subjects,
-    RegistrationPanel
+    RegistrationPanel,
   ],
   imports: [
     BrowserModule,
+    PipesModule,
     HttpModule,
     Ng2OrderModule,
     IonicModule.forRoot(MyApp, {}, deepLinkConfig),
