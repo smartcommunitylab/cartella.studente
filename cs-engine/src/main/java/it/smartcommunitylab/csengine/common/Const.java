@@ -8,7 +8,11 @@ public class Const {
 	public static final String AUTH_ACTION_ADD = "ADD";
 	public static final String AUTH_ACTION_UPDATE = "UPDATE";
 	public static final String AUTH_ACTION_DELETE = "DELETE";
-
+	
+	public static final String TYPOLOGY_QNAME_ORDINE = "ORDINE";
+	public static final String TYPOLOGY_QNAME_TIPOLOGIA = "TIPOLOGIA";
+	public static final String TYPOLOGY_QNAME_INDIRIZZO = "INDIRIZZO";
+	
 	public static final String EXP_TYPE_ACTIVITY  = "ACTIVITY";
 	public static final String EXP_TYPE_STAGE  = "STAGE";
 	public static final String EXP_TYPE_EVENT  = "EVENT";

@@ -52,8 +52,12 @@ public class TeachingUnitController extends AuthController {
 	private DocumentManager documentManager;
 		
 	@RequestMapping(value = "/api/tu", method = RequestMethod.GET)
-	public @ResponseBody List<TeachingUnit> getTeachingUnits(HttpServletRequest request) throws Exception {
-		List<TeachingUnit> result = dataManager.getTeachingUnit();
+	public @ResponseBody List<TeachingUnit> getTeachingUnits(
+			@RequestParam(required=false) String ordine,
+			@RequestParam(required=false) String tipologia,
+			@RequestParam(required=false) String indirizzo,
+			HttpServletRequest request) throws Exception {
+		List<TeachingUnit> result = dataManager.getTeachingUnit(ordine, tipologia, indirizzo);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getTeachingUnits[%s]: %s", "tenant", result.size()));
 		}
