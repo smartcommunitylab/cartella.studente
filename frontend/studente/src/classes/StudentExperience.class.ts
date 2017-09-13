@@ -10,4 +10,5 @@ export class StudentExperience {
   id:string;
   student:Student;
   studentId:string;
+  checked: boolean = false;
 }

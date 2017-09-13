@@ -262,5 +262,16 @@
   "addDocument_level_placeholder": "Inserisci il livello",
   "addDocument_name_doc_placeholder":"Name of the document",
   "stage_contact_label":"Contatto: ",
-  "stage_duration_label":"Durata (ore): "
+  "stage_duration_label":"Durata (ore): ",
+  "cv_download_label": "SCARICA CV",
+  "cv_main_heading": "Seleziona i contenuti che desideri mantenere nel curriculum al momento dell'esportazion",
+  "cv_personal_info": "Informazion Personali",
+  "cv_experience_label":"ESPERIENZA PROFESSIONALE",
+  "cv_empty_experience_label": "Non sono presenti esperienza professionale",
+  "cv_training_label": "ISTRUZIONE FORMAZIONE",
+  "cv_empty_training_label": "Non sono presenti istruzion/formazione",
+  "cv_skills_label": "COMPETENZA PERSONALE",
+  "cv_empty_skills_label": "Non sono presenti competenza personale",
+  "cv_attachment_label": "ALLEGATI",
+  "cv_empty_attachment_label": "Non sono presenti allegati."
 }

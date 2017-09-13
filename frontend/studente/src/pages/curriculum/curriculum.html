@@ -7,5 +7,111 @@
 </ion-header>
 
 <ion-content padding>
- <div>cv</div>
+
+  <button ion-button color="secondary" class="curriculum button" (click)="downloadCV()">{{'cv_download_label'|translate}}</button>
+
+  <ion-label class="curriculum heading-italic" padding>{{'cv_main_heading'|translate}}</ion-label>
+
+  <div class="curriculum div anagrafic-part">
+
+    <ion-label padding class="curriculum heading-bold">{{'cv_personal_info'|translate}}</ion-label>
+    <ion-label padding>{{student.name}} {{student.surname}} </ion-label>
+
+    <ion-row>
+      <ion-icon padding name="md-pin"></ion-icon>
+      <div padding>{{student.address}}</div>
+    </ion-row>
+
+    <ion-row>
+      <ion-col>
+        <ion-row>
+          <ion-icon padding name="md-call"></ion-icon>
+          <div padding>{{student.phone}}</div>
+        </ion-row>
+      </ion-col>
+      <ion-col>
+        <ion-row>
+          <ion-icon padding name="md-phone-portrait"></ion-icon>
+          <div padding>{{student.mobilePhone}}</div>
+        </ion-row>
+      </ion-col>
+    </ion-row>
+
+    <ion-row>
+      <ion-icon padding name="md-mail"></ion-icon>
+      <div padding>{{student.email}}</div>
+    </ion-row>
+
+    <ion-row>
+        <ion-label padding>{{'profile_birthday_label'|translate}}:  {{student.birthdate}}</ion-label>
+    </ion-row>
+  </div>
+
+  <div class="curriculum div">
+    <ion-row>
+      <ion-label padding>{{'cv_experience_label'|translate}}</ion-label>
+      <ion-label padding class="curriculum link" *ngIf="(experiences && experiences.length>0)" (click)="selectAll(experiences)">Seleziona tutto</ion-label>
+    </ion-row>
+    <ion-list *ngIf="(experiences && experiences.length>0)">
+      <ion-item *ngFor="let experience of experiences;">
+        <ion-label>{{experience.experience.attributes.id}}</ion-label>
+        <ion-label>{{experience.experience.attributes.instituteId}}</ion-label>
+        <ion-checkbox checked="false" [(ngModel)]="experience.checked" (click)="toggle($event,experience)" item-right></ion-checkbox>
+      </ion-item>
+    </ion-list>
+    <ion-item *ngIf="(experiences && experiences.length==0)">
+        {{'cv_empty_experience_label'|translate}}
+    </ion-item>
+  </div>
+
+  <div class="curriculum div">
+    <ion-row>
+      <ion-label padding>{{'cv_training_label'|translate}}</ion-label>
+      <ion-label padding class="curriculum link" *ngIf="(trainings && trainings.length>0)" (click)="selectAll(trainings)">Seleziona tutto</ion-label>
+    </ion-row>
+    <ion-list *ngIf="(trainings && trainings.length>0)">
+      <ion-item *ngFor="let training of trainings;">
+        <ion-label>{{training.experience.attributes.id}}</ion-label>
+        <ion-label>{{training.experience.attributes.instituteId}}</ion-label>
+        <ion-checkbox checked="false" [(ngModel)]="training.checked" (click)="toggle($event,training)" item-right></ion-checkbox>
+      </ion-item>
+    </ion-list>
+    <ion-item *ngIf="(trainings && trainings.length==0)">
+        {{'cv_empty_training_label'|translate}}
+    </ion-item>
+  </div>
+
+  <div class="curriculum div">
+    <ion-row>
+      <ion-label padding>{{'cv_skills_label'|translate}}</ion-label>
+      <ion-label padding class="curriculum link" *ngIf="(skills && skills.length>0)" (click)="selectAll(skills)">Seleziona tutto</ion-label>
+    </ion-row>
+    <ion-list *ngIf="(skills && skills.length>0)">
+      <ion-item *ngFor="let skill of skills;">
+        <ion-label>{{skill.experience.attributes.id}}</ion-label>
+        <ion-label>{{skill.experience.attributes.instituteId}}</ion-label>
+        <ion-checkbox checked="false" [(ngModel)]="skill.checked" (click)="toggle($event,skill)" item-right></ion-checkbox>
+      </ion-item>
+    </ion-list>
+    <ion-item *ngIf="(skills && skills.length==0)">
+        {{'cv_empty_skills_label'|translate}}
+    </ion-item>
+  </div>
+
+  <div class="curriculum div">
+    <ion-row>
+      <ion-label padding>ALLEGATI</ion-label>
+      <ion-label padding class="curriculum link" *ngIf="(attachments && attachments.length>0)" (click)="selectAll(attachments)">Seleziona tutto</ion-label>
+    </ion-row>
+    <ion-list *ngIf="(attachments && attachments.length>0)">
+      <ion-item *ngFor="let attachment of attachments;">
+        <ion-label>{{attachment.experience.attributes.id}}</ion-label>
+        <ion-checkbox checked="false" [(ngModel)]="attachment.checked" (click)="toggle($event,attachment)" item-right></ion-checkbox>
+      </ion-item>
+    </ion-list>
+    <ion-item *ngIf="(attachments && attachments.length==0)">
+        {{'cv_empty_attachment_label'|translate}}
+    </ion-item>
+  </div>
+
 </ion-content>
