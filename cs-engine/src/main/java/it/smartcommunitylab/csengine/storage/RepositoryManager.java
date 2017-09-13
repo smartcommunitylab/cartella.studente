@@ -17,7 +17,9 @@ import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentAuth;
 import it.smartcommunitylab.csengine.model.StudentExperience;
 import it.smartcommunitylab.csengine.model.TeachingUnit;
+import it.smartcommunitylab.csengine.model.Typology;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -644,8 +646,27 @@ public class RepositoryManager {
 	}
 
 
-	public List<TeachingUnit> getTeachingUnit() {
-		return teachingUnitRepository.findAll();
+	public List<TeachingUnit> getTeachingUnit(String ordine, String tipologia, String indirizzo) {
+		List<Typology> classification = new ArrayList<Typology>();
+		if(Utils.isNotEmpty(ordine)) {
+			Typology typology = new Typology();
+			typology.setQualifiedName(Const.TYPOLOGY_QNAME_ORDINE);
+			typology.setCode(ordine);
+			classification.add(typology);
+		}
+		if(Utils.isNotEmpty(tipologia)) {
+			Typology typology = new Typology();
+			typology.setQualifiedName(Const.TYPOLOGY_QNAME_TIPOLOGIA);
+			typology.setCode(tipologia);
+			classification.add(typology);
+		}
+		if(Utils.isNotEmpty(indirizzo)) {
+			Typology typology = new Typology();
+			typology.setQualifiedName(Const.TYPOLOGY_QNAME_INDIRIZZO);
+			typology.setCode(indirizzo);
+			classification.add(typology);
+		}
+		return teachingUnitRepository.findByClassification(classification);
 	}
 
 	public List<Registration> getRegistrationByTeachingUnit(String teachingUnitId, String schoolYear) {

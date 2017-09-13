@@ -1,5 +1,8 @@
 package it.smartcommunitylab.csengine.model;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class TeachingUnit extends BaseObject {
 	private String name;
 	private String description;
@@ -10,6 +13,7 @@ public class TeachingUnit extends BaseObject {
 	private String pec;
 	private Double[] geocode;
 	private String instituteId;
+	private Map<String, Typology> classifications = new HashMap<String, Typology>();
 	
 	public String getName() {
 		return name;
@@ -64,6 +68,12 @@ public class TeachingUnit extends BaseObject {
 	}
 	public void setInstituteId(String instituteId) {
 		this.instituteId = instituteId;
+	}
+	public Map<String, Typology> getClassifications() {
+		return classifications;
+	}
+	public void setClassifications(Map<String, Typology> classifications) {
+		this.classifications = classifications;
 	}
 	
 }
