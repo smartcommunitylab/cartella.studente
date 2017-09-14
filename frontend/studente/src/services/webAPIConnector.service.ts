@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core'
-import { Http, BaseRequestOptions, RequestOptions } from '@angular/http'
+import { Http, BaseRequestOptions, RequestOptions, ResponseContentType } from '@angular/http'
+import * as FileSaver from 'file-saver';
 import { ConfigService } from './config.service'
 import { LoginService } from './login.service'
 import { Exam } from '../classes/Exam.class'
@@ -9,7 +10,7 @@ import { Student } from '../classes/Student.class'
 import { StudentExperience } from '../classes/StudentExperience.class'
 import { ExperienceContainer } from '../classes/ExperienceContainer.class'
 import { ExperienceTypes } from '../assets/conf/expTypes'
-// import {UserService } from './user.service'
+import { Curriculum } from '../classes/Curriculum.class'
 import { FileUploader } from 'ng2-file-upload';
 
 @Injectable()
@@ -203,6 +204,47 @@ export class WebAPIConnectorService {
     image.withCredentials = false;
     image.upload();
   }
+
+  getUserCV(studentId: string): Promise<any> {
+    let url: string = this.getApiUrl() + 'student/' + studentId + '/cv';
+
+    return this.http.get(url)
+      .toPromise()
+      .then(response => response.json()).catch(response => this.handleError);
+  }
+
+  updateUserCV(curriculum, studentId): Promise<any> {
+    let body = curriculum;
+    
+    let url: string = this.getApiUrl() + 'student/' + studentId + '/cv';
+
+    return this.http.put(url, body)
+      .toPromise()
+      .then(response => response.json()).catch(response => this.handleError);
+  }
+
+  addUserCV(curriculum, studentId): Promise<any> {
+    let body = curriculum;
+    
+    let url: string = this.getApiUrl() + 'student/' + studentId + '/cv';
+
+    return this.http.post(url, body)
+      .toPromise()
+      .then(response => response.json()).catch(response => this.handleError);
+  }
+
+  downloadCVInODTFormat(studentId: string): Promise<any> {
+    let url: string = this.getApiUrl() + 'student/' + studentId + '/cv/export/odt';
+
+    return this.http.get(url, { responseType: ResponseContentType.Blob }).toPromise().then(downloadedCV => {
+      console.log("cv downloaded successfully.")
+
+      FileSaver.saveAs(downloadedCV.blob(), "curriculum.odt");
+      
+    }).catch(error => this.handleError);
+
+  }
+
   private handleError(error: any): Promise<any> {
     console.error('An error occurred', error);
     return Promise.reject(error);

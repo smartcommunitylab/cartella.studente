@@ -1,14 +1,32 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Injectable } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { NavController, NavParams, LoadingController } from 'ionic-angular';
+import { Http, BaseRequestOptions, RequestOptions } from '@angular/http'
 import { TranslateService } from 'ng2-translate';
+
+import { ConfigService } from '../../services/config.service'
+import { ExperienceTypes } from '../../assets/conf/expTypes'
 import { UserService } from '../../services/user.service';
 import { Student } from '../../classes/Student.class';
 import { StudentExperience } from '../../classes/StudentExperience.class';
-import { Registration } from '../../classes/Registration.class';
+import { UserRegistration } from './UserRegistration';
+import { Registration } from './Registration';
 import { Experience } from '../../classes/Experience.class';
 import { Document } from '../../classes/Document.class';
 import { ExperienceContainer } from '../../classes/ExperienceContainer.class';
+import { Curriculum } from '../../classes/Curriculum.class';
+import { WebAPIConnectorService } from '../../services/webAPIConnector.service';
+
+@Injectable()
+export class DefaultRequestOptions extends BaseRequestOptions {
+
+  constructor() {
+    super();
+    this.headers.set('Accept', 'application/json');
+    this.headers.set('Content-Type', 'application/json');
+    this.headers.set('Authorization', `Bearer ${sessionStorage.getItem('access_token')}`);
+  }
+}
 
 @Component({
   selector: 'page-curriculum',
@@ -25,13 +43,18 @@ export class CurriculumPage implements OnInit {
   skills: StudentExperience[] = [];
   attachments: Document[] = [];
 
+  userRegistration: UserRegistration[] = [];
+
   constructor(public navCtrl: NavController,
     public params: NavParams,
     private userService: UserService,
     public loading: LoadingController,
-    private translate: TranslateService) { }
+    private translate: TranslateService,
+    private http: Http,
+    private webAPIConnector: WebAPIConnectorService,
+    private config: ConfigService) { }
 
-  ngOnInit(): void { }
+  ngOnInit(): void {}
 
   ionViewWillEnter() {
 
@@ -61,25 +84,14 @@ export class CurriculumPage implements OnInit {
     );
   }
 
-  private showSpinner() {
-    this.loader = this.loading.create({
-      content: this.translate.instant('loading'),
-    });
-    this.loader.present().catch(() => { });
-  }
-
-  private hideSpinner() {
-    if (this.loading !== undefined) {
-      this.loader.dismiss().catch(() => { });
-    }
-  }
-
+  /**
+   * initialize experiences(expTYPE: STAGE, JOB)
+   */
   private initExperiences() {
 
     return new Promise<StudentExperience[]>((resolve, reject) => {
       // call experience API (STAGE + JOB).
       var p1 = this.userService.getUserStages();
-
       var p2 = this.userService.getUserJobs();
 
       Promise.all([p1, p2]).then(values => {
@@ -91,18 +103,16 @@ export class CurriculumPage implements OnInit {
         console.log("total number of experiences (job + stage) is " + this.experiences.length);
       }).catch((error: any): any => {
         reject()
-
       })
-
-
     });
-
 
   }
 
+  /**
+   * initialize skills(expTYPE: CERTIFICATION)
+   */
   private initSkills(): Promise<any> {
-    debugger;
-    // call skills API.
+     // call skills API.
     return new Promise<StudentExperience[]>((resolve, reject) => {
       this.userService.getUserCertifications().then(cert => {
         for (var c = 0; c < cert.length; c++) {
@@ -120,21 +130,23 @@ export class CurriculumPage implements OnInit {
 
   }
 
+  /**
+   * initialize trainings(expTYPE: MOBILITY) and registrations(/registration).
+   */
   private initTrainingRegistrations() {
-    debugger;
-
     // call training API.
     return new Promise<StudentExperience[]>((resolve, reject) => {
       var p1 = this.userService.getUserMobilities();
-      var p2 = this.userService.getUserRegistrations();
+      var p2 = this.getUserRegistrations();
 
       Promise.all([p1, p2]).then(values => {
         // mobility.
         this.trainings = this.trainings.concat(values[0]);
         console.log("total number of trainings (mobility) is " + this.trainings.length);
         // registration.
-        // this.registrations = this.registrations.concat(values[1]); // registration -> [{registrtions[], teachingUnit}, {registrations[], teachingUnit}..]
-        // this.registrations[0].registrations
+        for (var r = 0; r < this.userRegistration.length; r++) {
+          this.registrations = this.registrations.concat(this.userRegistration[r].registrations);
+        }
         console.log("total number of registrations is " + this.registrations.length);
         resolve();
       }).catch((error: any): any => {
@@ -144,6 +156,23 @@ export class CurriculumPage implements OnInit {
 
   }
 
+  getUserRegistrations(): Promise<UserRegistration[]> {
+    return new Promise<UserRegistration[]>((resolve, reject) => {
+      let options = new DefaultRequestOptions();
+      let url: string = this.config.getConfig('apiUrl') + 'student/' + this.userService.getUserId() + '/registration';
+
+      return this.http.get(url, options).timeout(5000).toPromise().then(response => {
+        this.userRegistration = response.json(); // registration -> [{registrtions[], teachingUnit}, {registrations[], teachingUnit}..]
+        resolve(this.userRegistration);
+      }).catch(response => {
+        return this.handleError;
+      });
+    })
+  }
+
+  /**
+   * initialize attachments(documents) from experiences, certificates
+   */
   private initAttachments() {
     return new Promise<Document[]>((resolve, reject) => {
       for (var e = 0; e < this.experiences.length; e++) {
@@ -167,9 +196,9 @@ export class CurriculumPage implements OnInit {
   toggle(event, experience) {
     // call PUT CV update.
     if (experience.checked) {
-      alert("CHECKED")
+      // alert("CHECKED")
     } else {
-      alert("UNCHECKED")
+      // alert("UNCHECKED")
     }
 
   }
@@ -181,11 +210,135 @@ export class CurriculumPage implements OnInit {
     }
   }
 
-  downloadCV() {
-    alert(this.experiences[0].checked);
-    alert(this.trainings[0].checked);
-    alert(this.skills[0].checked);
-    alert(this.attachments[0].checked);
+  selectAllTrainingRegistration() {
+    // select all trainings.
+    for (var t=0; t < this.trainings.length; t++) {
+      this.trainings[t].checked = true;
+    }
+    // select all registrations.
+    for (var r=0; r < this.registrations.length; r++) {
+      this.registrations[r].checked = true;
+    }
+
   }
 
+  downloadCV() {
+
+    /** save and then download CV.**/
+    
+    // post body.
+    var post = {};
+
+    //1. collect checked experiences.
+    var studentExperienceIdMap = {};
+    var job = [];
+    var stage = [];
+    for (var e = 0; e < this.experiences.length; e++) {
+      if (this.experiences[e].checked) {
+        if (this.experiences[e].experience.type.toUpperCase() == ExperienceTypes.EXP_TYPE_STAGE) {
+          stage.push(this.experiences[e].id);
+        } else if (this.experiences[e].experience.type.toUpperCase() == ExperienceTypes.EXP_TYPE_JOB) {
+          job.push(this.experiences[e].id);
+        }
+      }
+    }
+
+    //2. collect checked certificates.
+    var certification = [];
+    for (var c = 0; c < this.skills.length; c++) {
+      if (this.skills[c].checked) {
+        certification.push(this.skills[c].id);
+      }
+      
+
+    }
+    //3. collect documents.
+    var storageIdList = [];
+    for (var d = 0; d < this.attachments.length; d++) {
+      if (this.attachments[d].checked) {
+        storageIdList.push(this.attachments[d].storageId);
+      }
+    }
+
+    //4. collect checked trainings(MOBILITY)
+    var mobility = [];
+    for (var t = 0; t < this.trainings.length; t++) {
+      if (this.trainings[t].checked) {
+        mobility.push(this.trainings[t].id);
+      }
+    }
+
+    //5. collect checked registrations
+    var registrationIdList = [];
+    for (var r = 0; r < this.registrations.length; r++) {
+      if (this.registrations[r].checked) {
+        registrationIdList.push(this.registrations[r].id);
+      }
+    }
+
+    studentExperienceIdMap['STAGE'] = stage;
+    studentExperienceIdMap['JOB'] = job;
+    studentExperienceIdMap['CERTIFICATION'] = certification;
+    studentExperienceIdMap['MOBILITY'] = mobility;
+    post['studentExperienceIdMap'] = studentExperienceIdMap;
+    post['registrationIdList']
+    post['registrationIdList'] = registrationIdList;
+    post['storageIdList'] = storageIdList;
+    
+
+    alert(JSON.stringify(post));
+
+    // call GET CV.
+    var curriculum: Curriculum;
+    let options = new DefaultRequestOptions();
+    let url: string = this.config.getConfig('apiUrl') + 'student/' + this.userService.getUserId() + '/registration';
+
+    this.userService.getUserCV().then(cv => {
+      curriculum = cv;
+      if (curriculum.id) {
+        // update CV.
+        post['id'] = curriculum.id;
+        this.userService.updateUserCV(post).then(updatedCV => {
+          
+          if (updatedCV.id == curriculum.id) {
+            this.userService.downloadUserCVInODTFormat();
+          }
+        });
+
+      } else {
+        // create CV.
+        this.userService.addUserCV(post).then(addedCV => {
+
+          if (addedCV.id) {
+            this.userService.downloadUserCVInODTFormat();
+          }
+        }).catch(error => {
+
+        })
+      }
+
+
+     });
+
+
+
+  }
+
+  private showSpinner() {
+    this.loader = this.loading.create({
+      content: this.translate.instant('loading'),
+    });
+    this.loader.present().catch(() => { });
+  }
+
+  private hideSpinner() {
+    if (this.loading !== undefined) {
+      this.loader.dismiss().catch(() => { });
+    }
+  }
+
+  private handleError(error: any): Promise<any> {
+    console.error('An error occurred', error);
+    return Promise.reject(error);
+  }
 }

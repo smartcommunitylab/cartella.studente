@@ -99,14 +99,14 @@
   <div class="curriculum div">
     <ion-row>
       <ion-label padding class="key">{{'cv_training_label'|translate}}</ion-label>
-      <ion-label padding class="curriculum link" *ngIf="(trainings && trainings.length>0)" (click)="selectAll(trainings)">Seleziona tutto</ion-label>
+      <ion-label padding class="curriculum link" *ngIf="(trainings && trainings.length>0)" (click)="selectAllTrainingRegistration()">Seleziona tutto</ion-label>
     </ion-row>
 
     <ion-list *ngIf="(registrations && registrations.length>0)">
 
       <div padding *ngFor="let registration of registrations;" class="curriculum div">
       
-        <!-- <ion-row>
+        <ion-row>
           <ion-col>
             <label>{{ registration.dateFrom | localizedDate:'MMM yyyy' }} - {{ registration.dateTo | localizedDate:'MMM yyyy' }} </label>
           </ion-col>
@@ -118,7 +118,7 @@
               <ion-checkbox checked="false" [(ngModel)]="registration.checked" (click)="toggle($event,registration)"></ion-checkbox>
             </div>
           </ion-col>
-        </ion-row> -->
+        </ion-row>
 
         <ion-row>
           <ion-col></ion-col>
@@ -229,8 +229,8 @@
     </ion-row>
     <ion-list *ngIf="(attachments && attachments.length>0)">
       <ion-item *ngFor="let attachment of attachments;">
-        <ion-label *ngIf="attachment.attributes.title">{{attachment.experience.attributes.title}}</ion-label>
-        <ion-label *ngIf="!attachment.attributes.title && attachment.filename">{{attachment.experience.filename}}</ion-label>
+        <ion-label *ngIf="attachment.attributes.title">{{attachment.attributes.title}}</ion-label>
+        <ion-label *ngIf="!attachment.attributes.title && attachment.filename">{{attachment.filename}}</ion-label>
         <ion-checkbox checked="false" [(ngModel)]="attachment.checked" (click)="toggle($event,attachment)" item-right></ion-checkbox>
       </ion-item>
     </ion-list>
