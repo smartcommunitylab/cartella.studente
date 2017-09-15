@@ -1,37 +1,62 @@
-.curriculum {
-    &.div{
-        margin-top: 20px;
-        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
-    }
-    &.anagrafic-part {
-        background-color:lightgrey
-    }
-    &.heading-bold {
-        font-weight: bold;
-    }
-    &.heading-italic {
-        font-style: italic;
-    }
-    &.button {
-        float: right;
-        background-color: green;
-        color: white;
-        font-size: 16px;
-    }
-    &.link {
-        color: cadetblue;
-        position: absolute;
-        right: 0px;
-    }
-
-    .checkbox-md .checkbox-icon {
-        border-color: cadetblue;
-        background-color: white;
-    }
-
-    .checkbox-md .checkbox-checked {
-        border-color: cadetblue;
-        background-color: cadetblue;
+page-curriculum{
+	ion-header{
+		ion-navbar{
+			ion-title{
+				toolbar-title-md{
+					padding: 00px;font-size: 2rem;font-weight: 500;color: #424242;
+				}ion-row{
+					text-align: left;img{
+						height: 50px;padding: 2px;
+					}
+				}
+			}
+		}
     }
     
+    ion-content{
+		button{
+			float: right;background-color: green;color: white;font-size: 16px;
+		}
+    }
+    
+    .toolbar-title-md{
+		padding: 00px;font-size: 2rem;font-weight: 500;color: #424242;
+    }
+    
+    .div{
+        margin-top: 20px;
+        box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+        
+    }
+    .anagrafic-part{
+		background-color: lightgrey
+    }
+    
+    .heading-bold{
+		font-weight: bold;
+    }
+    .heading-italic{
+		font-style: italic;
+    }
+    
+    .link{
+		color: cadetblue;position: absolute;right: 0px;
+    }
+    
+    .left{
+		text-align: left;padding: 00px;
+    }
+    
+    .div-checkbox{
+		position: absolute;right: 5px;
+    }
+    .checkbox-md.checkbox-icon{
+		border-color: cadetblue;background-color: white;
+    }
+    .checkbox-md.checkbox-checked{
+		border-color: cadetblue;background-color: cadetblue;
+    }
+    .key{
+		color: gray;
+	}
 }

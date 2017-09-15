@@ -22,7 +22,7 @@ export class MyApp {
       statusBar.styleDefault();
       splashScreen.hide();
       translate.setDefaultLang('it');
-
+      
       login.checkLoginStatus().then(
         status => {
           switch (status) {

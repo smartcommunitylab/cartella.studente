@@ -10,7 +10,8 @@ export class Experience {
   categorization?:Map<string,string>;
   instituteId?:string;
   schoolYear?:string;
-  registrationId?:string;
+  registrationId?: string;
+  type: string;
   constructor() {
       }
 }
