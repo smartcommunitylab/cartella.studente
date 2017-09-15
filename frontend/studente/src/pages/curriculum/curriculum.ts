@@ -74,7 +74,7 @@ export class CurriculumPage implements OnInit {
       ]).then(value => {
         // load documents only after experiences gets loaded.
         this.initAttachments().then(resp => {
-          console.log("total number of attachments is " + this.attachments.length);
+          //console.log("total number of attachments is " + this.attachments.length);
           this.hideSpinner();
         })
 
@@ -97,10 +97,10 @@ export class CurriculumPage implements OnInit {
       Promise.all([p1, p2]).then(values => {
         for (var v = 0; v < values.length; v++) {
           this.experiences = this.experiences.concat(values[v]);
-          console.log(values[v].length);//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
+          //console.log(values[v].length);//https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
         }
         resolve();
-        console.log("total number of experiences (job + stage) is " + this.experiences.length);
+        //console.log("total number of experiences (job + stage) is " + this.experiences.length);
       }).catch((error: any): any => {
         reject()
       })
@@ -121,7 +121,7 @@ export class CurriculumPage implements OnInit {
           }
         }
         resolve(this.skills);
-        console.log("total number of certificates with language type is " + this.skills.length);
+        //console.log("total number of certificates with language type is " + this.skills.length);
       }).catch((error: any): any => {
         reject()
 
@@ -142,12 +142,12 @@ export class CurriculumPage implements OnInit {
       Promise.all([p1, p2]).then(values => {
         // mobility.
         this.trainings = this.trainings.concat(values[0]);
-        console.log("total number of trainings (mobility) is " + this.trainings.length);
+        //console.log("total number of trainings (mobility) is " + this.trainings.length);
         // registration.
         for (var r = 0; r < this.userRegistration.length; r++) {
           this.registrations = this.registrations.concat(this.userRegistration[r].registrations);
         }
-        console.log("total number of registrations is " + this.registrations.length);
+        //console.log("total number of registrations is " + this.registrations.length);
         resolve();
       }).catch((error: any): any => {
         reject()
@@ -286,7 +286,7 @@ export class CurriculumPage implements OnInit {
     post['storageIdList'] = storageIdList;
     
 
-    alert(JSON.stringify(post));
+    console.log(JSON.stringify(post));
 
     // call GET CV.
     var curriculum: Curriculum;
@@ -338,7 +338,7 @@ export class CurriculumPage implements OnInit {
   }
 
   private handleError(error: any): Promise<any> {
-    console.error('An error occurred', error);
+    //console.error('An error occurred', error);
     return Promise.reject(error);
   }
 }
