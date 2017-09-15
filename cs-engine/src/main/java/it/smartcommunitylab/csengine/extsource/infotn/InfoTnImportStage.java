@@ -106,8 +106,8 @@ public class InfoTnImportStage {
 		result.setExtId(stage.getExtid());
 		result.setId(Utils.getUUID());
 		result.setType(Const.EXP_TYPE_STAGE);
-		result.getAttributes().put(Const.ATTR_DATEFROM, sdf.parse(stage.getDatefrom()));
-		result.getAttributes().put(Const.ATTR_DATETO, sdf.parse(stage.getDateto()));
+		result.getAttributes().put(Const.ATTR_DATEFROM, sdf.parse(stage.getDatefrom()).getTime());
+		result.getAttributes().put(Const.ATTR_DATETO, sdf.parse(stage.getDateto()).getTime());
 		result.getAttributes().put(Const.ATTR_EDUCATIONAL, Boolean.TRUE);
 		result.getAttributes().put(Const.ATTR_INSTITUTIONAL, Boolean.TRUE);
 		result.getAttributes().put(Const.ATTR_CERTIFIED, Boolean.TRUE);

@@ -109,10 +109,8 @@ public class CVTransformer {
 				StudentExperience studentExperience = studentExperienceRepository.findOne(experienceId);
 				if(studentExperience != null) {
 					CVMobility cvMobility = new CVMobility();
-					cvMobility.setDateFrom(sdf.format((Date) studentExperience.getExperience()
-							.getAttributes().get(Const.ATTR_DATEFROM)));
-					cvMobility.setDateTo(sdf.format((Date) studentExperience.getExperience()
-							.getAttributes().get(Const.ATTR_DATETO)));
+					cvMobility.setDateFrom(sdf.format(getExperienceDate(studentExperience, Const.ATTR_DATEFROM)));
+					cvMobility.setDateTo(sdf.format(getExperienceDate(studentExperience, Const.ATTR_DATETO)));
 					cvMobility.setTitle((String) studentExperience.getExperience()
 							.getAttributes().get(Const.ATTR_TITLE));
 					cvMobility.setLocation((String) studentExperience.getExperience()
@@ -149,10 +147,8 @@ public class CVTransformer {
 				StudentExperience studentExperience = studentExperienceRepository.findOne(experienceId);
 				if(studentExperience != null) {
 					CVStage cvStage = new CVStage();
-					cvStage.setDateFrom(sdf.format((Date) studentExperience.getExperience()
-							.getAttributes().get(Const.ATTR_DATEFROM)));
-					cvStage.setDateTo(sdf.format((Date) studentExperience.getExperience()
-							.getAttributes().get(Const.ATTR_DATETO)));
+					cvStage.setDateFrom(sdf.format(getExperienceDate(studentExperience, Const.ATTR_DATEFROM)));
+					cvStage.setDateTo(sdf.format(getExperienceDate(studentExperience, Const.ATTR_DATETO)));
 					cvStage.setTitle((String) studentExperience.getExperience()
 							.getAttributes().get(Const.ATTR_TITLE));
 					cvStage.setDescription((String) studentExperience.getExperience()
@@ -174,10 +170,8 @@ public class CVTransformer {
 				StudentExperience studentExperience = studentExperienceRepository.findOne(experienceId);
 				if(studentExperience != null) {
 					CVStage cvStage = new CVStage();
-					cvStage.setDateFrom(sdf.format((Date) studentExperience.getExperience()
-							.getAttributes().get(Const.ATTR_DATEFROM)));
-					cvStage.setDateTo(sdf.format((Date) studentExperience.getExperience()
-							.getAttributes().get(Const.ATTR_DATETO)));
+					cvStage.setDateFrom(sdf.format(getExperienceDate(studentExperience, Const.ATTR_DATEFROM)));
+					cvStage.setDateTo(sdf.format(getExperienceDate(studentExperience, Const.ATTR_DATETO)));
 					cvStage.setTitle((String) studentExperience.getExperience()
 							.getAttributes().get(Const.ATTR_TITLE));
 					cvStage.setDescription((String) studentExperience.getExperience()
@@ -220,10 +214,8 @@ public class CVTransformer {
 					String type = (String) studentExperience.getExperience().getAttributes().get(Const.ATTR_TYPE);
 					if(Utils.isNotEmpty(type) && type.equals(Const.CERT_TYPE_LANG)) {
 						CVLangCertification cvLangCert = new CVLangCertification();
-						cvLangCert.setDateFrom(sdf.format((Date) studentExperience.getExperience()
-								.getAttributes().get(Const.ATTR_DATEFROM)));
-						cvLangCert.setDateTo(sdf.format((Date) studentExperience.getExperience()
-								.getAttributes().get(Const.ATTR_DATETO)));
+						cvLangCert.setDateFrom(sdf.format(getExperienceDate(studentExperience, Const.ATTR_DATEFROM)));
+						cvLangCert.setDateTo(sdf.format(getExperienceDate(studentExperience, Const.ATTR_DATETO)));
 						cvLangCert.setName((String) studentExperience.getExperience()
 								.getAttributes().get(Const.ATTR_TITLE));
 						cvLangCert.setLang((String) studentExperience.getExperience()
@@ -271,10 +263,25 @@ public class CVTransformer {
 		List<String> result = new ArrayList<String>();
 		for(Document document : studentExperience.getDocuments()) {
 			if(cv.getStorageIdList().contains(document.getStorageId())) {
-				result.add((String) document.getAttributes().get(Const.ATTR_TITLE));
+				String title = (String) document.getAttributes().get(Const.ATTR_TITLE);
+				if(Utils.isNotEmpty(title)) {
+					result.add(title);
+				} else {
+					result.add(document.getFilename());
+				}
 			}
 		}
 		return result;
+	}
+	
+	private Date getExperienceDate(StudentExperience studentExperience, String attribute) {
+		if(studentExperience.getExperience().getAttributes().get(attribute) instanceof Date) {
+			return (Date) studentExperience.getExperience().getAttributes().get(attribute);
+		} else if(studentExperience.getExperience().getAttributes().get(attribute) instanceof Long) {
+			return new Date((Long) studentExperience.getExperience().getAttributes().get(attribute));
+		} else {
+			return null;
+		}
 	}
 	
 }

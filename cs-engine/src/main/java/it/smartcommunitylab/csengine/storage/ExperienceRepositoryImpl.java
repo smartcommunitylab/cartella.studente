@@ -4,7 +4,6 @@ import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.model.Experience;
 
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,10 +36,10 @@ public class ExperienceRepositoryImpl implements ExperienceRepositoryCustom {
 			criteria = criteria.and("attributes." + Const.ATTR_CERTIFIERID).is(certifierId);
 		}
 		if(dateFrom != null) {
-			criteria = criteria.and("attributes." + Const.ATTR_DATEFROM).gte(new Date(dateFrom));
+			criteria = criteria.and("attributes." + Const.ATTR_DATEFROM).gte(dateFrom);
 		}
 		if(dateTo != null) {
-			criteria = criteria.and("attributes." + Const.ATTR_DATEFROM).lte(new Date(dateTo));
+			criteria = criteria.and("attributes." + Const.ATTR_DATEFROM).lte(dateTo);
 		}
 		Query query = new Query(criteria).with(pageable);
 		List<Experience> result = mongoTemplate.find(query, Experience.class);

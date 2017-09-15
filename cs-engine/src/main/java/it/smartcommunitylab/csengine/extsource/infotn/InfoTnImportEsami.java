@@ -101,8 +101,8 @@ public class InfoTnImportEsami {
 		result.setExtId(esame.getExtid());
 		result.setId(Utils.getUUID());
 		result.setType(Const.EXP_TYPE_EXAM);
-		result.getAttributes().put(Const.ATTR_DATEFROM, sdf.parse(esame.getDatefrom()));
-		result.getAttributes().put(Const.ATTR_DATETO, sdf.parse(esame.getDateto()));
+		result.getAttributes().put(Const.ATTR_DATEFROM, sdf.parse(esame.getDatefrom()).getTime());
+		result.getAttributes().put(Const.ATTR_DATETO, sdf.parse(esame.getDateto()).getTime());
 		result.getAttributes().put(Const.ATTR_EDUCATIONAL, Boolean.TRUE);
 		result.getAttributes().put(Const.ATTR_INSTITUTIONAL, Boolean.TRUE);
 		result.getAttributes().put(Const.ATTR_SCHOOLYEAR, getSchoolYear(esame.getSchoolyear()));

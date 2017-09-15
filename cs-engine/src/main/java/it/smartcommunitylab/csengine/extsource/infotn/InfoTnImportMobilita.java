@@ -122,8 +122,8 @@ public class InfoTnImportMobilita {
 		result.setExtId(mob.getExtid());
 		result.setId(Utils.getUUID());
 		result.setType(Const.EXP_TYPE_MOBILITY);
-		result.getAttributes().put(Const.ATTR_DATEFROM, sdf.parse(mob.getDatefrom()));
-		result.getAttributes().put(Const.ATTR_DATETO, sdf.parse(mob.getDateto()));
+		result.getAttributes().put(Const.ATTR_DATEFROM, sdf.parse(mob.getDatefrom()).getTime());
+		result.getAttributes().put(Const.ATTR_DATETO, sdf.parse(mob.getDateto()).getTime());
 		result.getAttributes().put(Const.ATTR_EDUCATIONAL, Boolean.TRUE);
 		result.getAttributes().put(Const.ATTR_INSTITUTIONAL, Boolean.TRUE);
 		result.getAttributes().put(Const.ATTR_CERTIFIED, Boolean.TRUE);
