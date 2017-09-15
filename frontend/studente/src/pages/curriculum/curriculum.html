@@ -3,7 +3,7 @@
 
     <ion-title>
       <ion-row>
-          <img class="profile-img" *ngIf="student.contentType" [src]="profilePicture" />
+          <img class="profile-img" *ngIf="student.contentType" [src]="student.imageUrl" />
           <img class="profile-img" *ngIf="!student.contentType" src="assets/images/profile-pictures.png" />
           <ion-label>{{student.name}} {{student.surname}}</ion-label>
           <ion-label >{{'title_curriculum'|translate}}</ion-label>

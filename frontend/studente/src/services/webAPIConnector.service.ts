@@ -57,8 +57,8 @@ export class WebAPIConnectorService {
       });
   }
   consent(studentId: string, subject: string): Promise<any> {
-    let url: string = this.getApiUrl() + 'consent';
-
+    let url: string = this.getApiUrl() + 'consent/student/' + studentId;
+    // let url: string = this.getApiUrl() + 'consent';
     return this.http.post(url, {
       "studentId": studentId,
       "subject": subject
