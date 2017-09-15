@@ -111,7 +111,7 @@
   <div class="div">
     <ion-row>
       <ion-label padding class="key">{{'cv_training_label'|translate}}</ion-label>
-      <ion-label padding class="link" *ngIf="(trainings && trainings.length>0)" (click)="selectAllTrainingRegistration()">Seleziona tutto</ion-label>
+      <ion-label padding class="link" *ngIf="((trainings && trainings.length>0)||(registrations && registrations.length>0))" (click)="selectAllTrainingRegistration()">Seleziona tutto</ion-label>
     </ion-row>
 
     <ion-list *ngIf="(registrations && registrations.length>0)">

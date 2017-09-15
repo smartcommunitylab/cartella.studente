@@ -189,12 +189,7 @@ export class CurriculumPage implements OnInit {
         if (this.skills[s].documents && this.skills[s].checked)
           this.attachments = this.attachments.concat(this.skills[s].documents);
       }
-
-      // reset selection.
-      // for (var a = 0; a < this.attachments.length; a++) {
-      //   this.attachments[a].checked = false;
-      // }
-     
+    
       resolve();
     }).catch(error => {
       return this.handleError;
@@ -208,6 +203,7 @@ export class CurriculumPage implements OnInit {
       // alert("CHECKED")
       this.attachments = this.attachments.concat(experience.documents);
     } else if (!experience.checked && experience.documents) {
+      // unchecked the documents and remove from the attachment list.
       for (var d = 0; d < experience.documents.length; d++) {
         experience.documents[d].checked = false;
       }
