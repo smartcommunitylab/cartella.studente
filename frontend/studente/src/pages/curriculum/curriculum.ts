@@ -189,6 +189,8 @@ export class CurriculumPage implements OnInit {
       }
      
       resolve();
+    }).catch(error => {
+      return this.handleError;
     });
 
   }
@@ -306,6 +308,7 @@ export class CurriculumPage implements OnInit {
         });
 
       } else {
+        debugger;
         // create CV.
         this.userService.addUserCV(post).then(addedCV => {
 
@@ -313,15 +316,23 @@ export class CurriculumPage implements OnInit {
             this.userService.downloadUserCVInODTFormat();
           }
         }).catch(error => {
-
+          return this.handleError;
         })
       }
 
 
-     });
-
-
-
+    }).catch(error => {
+      debugger;
+       // create CV.
+      this.userService.addUserCV(post).then(addedCV => {
+        if (addedCV.id) {
+          this.userService.downloadUserCVInODTFormat();
+        }
+      }).catch(error => {
+        return this.handleError;
+        })
+      });
+    
   }
 
   private showSpinner() {

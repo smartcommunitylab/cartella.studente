@@ -461,7 +461,7 @@ export class UserService {
 
   addUserCV(curriculum): Promise<any> {
     return new Promise<Curriculum>((resolve, reject) => {
-      this.webAPIConnector.updateUserCV(curriculum, this.getUserId()).then(curriculum => {
+      this.webAPIConnector.addUserCV(curriculum, this.getUserId()).then(curriculum => {
         resolve(curriculum);
       }).catch((error: any): any => { reject() })
     })
