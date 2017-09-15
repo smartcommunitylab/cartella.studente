@@ -36,6 +36,7 @@ export class CurriculumPage implements OnInit {
 
   student: Student = new Student();
   loader = null;
+  profilePicture: string;
 
   experiences: StudentExperience[] = [];
   trainings: StudentExperience[] = [];
@@ -71,15 +72,18 @@ export class CurriculumPage implements OnInit {
         this.initExperiences(),
         this.initTrainingRegistrations(),
         this.initSkills(),
+        this.userService.getUserImage()
       ]).then(value => {
-        // load documents only after experiences gets loaded.
-        // this.initAttachments().then(resp => {
-          //console.log("total number of attachments is " + this.attachments.length);
+        this.userService.getUserImage().then(url => {
+          if (value[3]) {
+            this.profilePicture = url;
+          } else {
+            this.profilePicture = "assets/images/profile-pictures.png";
+          }
           this.hideSpinner();
-        // })
-
+        }
+        );
       });
-
     }
     );
   }
