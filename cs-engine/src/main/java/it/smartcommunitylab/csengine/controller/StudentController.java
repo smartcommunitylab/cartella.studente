@@ -49,6 +49,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -81,6 +83,9 @@ public class StudentController extends AuthController {
 	
 	@Autowired
 	private CVTransformer cvTransformer;
+	
+	@Autowired
+	private ResourceLoader resourceLoader;
 
 	@RequestMapping(value = "/api/student/{studentId}", method = RequestMethod.GET)
 	public @ResponseBody Student getStudentById(@PathVariable String studentId,
@@ -383,7 +388,9 @@ public class StudentController extends AuthController {
 		cvTransformer.getCvTemplate(result);
 		
 		// 1) Load ODT file and set Velocity template engine and cache it to the registry
-		InputStream isTemplate = ClassLoader.getSystemResourceAsStream("templates/ecv_template_it.odt");
+		//InputStream isTemplate = ClassLoader.getSystemResourceAsStream("templates/ecv_template_it.odt");
+		Resource resource = resourceLoader.getResource("classpath:templates/ecv_template_it.odt");
+		InputStream isTemplate = resource.getInputStream();
 		IXDocReport report = XDocReportRegistry.getRegistry().loadReport(isTemplate, TemplateEngineKind.Velocity);
 
 		// 2) Create Java model context 
