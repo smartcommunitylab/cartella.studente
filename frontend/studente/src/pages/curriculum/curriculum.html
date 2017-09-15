@@ -237,7 +237,7 @@
   <div class="div">
     <ion-row>
       <ion-label padding class="key">ALLEGATI</ion-label>
-      <ion-label padding class="link" *ngIf="(attachments && attachments.length>0)" (click)="selectAll(attachments)">Seleziona tutto</ion-label>
+      <ion-label padding class="link" *ngIf="(attachments && attachments.length>0)" (click)="selectAllDocument()">Seleziona tutto</ion-label>
     </ion-row>
     <ion-list *ngIf="(attachments && attachments.length>0)">
       <ion-item *ngFor="let attachment of attachments;">

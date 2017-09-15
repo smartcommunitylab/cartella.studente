@@ -73,10 +73,10 @@ export class CurriculumPage implements OnInit {
         this.initSkills(),
       ]).then(value => {
         // load documents only after experiences gets loaded.
-        this.initAttachments().then(resp => {
+        // this.initAttachments().then(resp => {
           //console.log("total number of attachments is " + this.attachments.length);
           this.hideSpinner();
-        })
+        // })
 
       });
 
@@ -174,19 +174,26 @@ export class CurriculumPage implements OnInit {
    * initialize attachments(documents) from experiences, certificates
    */
   private initAttachments() {
+    
+    this.attachments = [];
     return new Promise<Document[]>((resolve, reject) => {
       for (var e = 0; e < this.experiences.length; e++) {
-        if (this.experiences[e].documents)
+        if (this.experiences[e].documents && this.experiences[e].checked)
         this.attachments = this.attachments.concat(this.experiences[e].documents);
       }
       for (var t = 0; t < this.trainings.length; t++) {
-        if (this.trainings[t].documents)
+        if (this.trainings[t].documents && this.trainings[t].checked)
           this.attachments = this.attachments.concat(this.trainings[t].documents);
       }
       for (var s = 0; s < this.skills.length; s++) {
-        if (this.skills[s].documents)
+        if (this.skills[s].documents && this.skills[s].checked)
           this.attachments = this.attachments.concat(this.skills[s].documents);
       }
+
+      // reset selection.
+      // for (var a = 0; a < this.attachments.length; a++) {
+      //   this.attachments[a].checked = false;
+      // }
      
       resolve();
     }).catch(error => {
@@ -197,18 +204,28 @@ export class CurriculumPage implements OnInit {
 
   toggle(event, experience) {
     // call PUT CV update.
-    if (experience.checked) {
+    if (experience.checked && experience.documents) {
       // alert("CHECKED")
-    } else {
-      // alert("UNCHECKED")
+      this.attachments = this.attachments.concat(experience.documents);
+    } else if (!experience.checked && experience.documents) {
+      for (var d = 0; d < experience.documents.length; d++) {
+        experience.documents[d].checked = false;
+      }
+      this.initAttachments().then(resp => { });
     }
-
   }
 
   selectAll(expList) {
     // call PUT CV update.
     for (var i = 0; i < expList.length; i++) {
       expList[i].checked = true;
+    }
+    this.initAttachments().then(resp => { });
+  }
+
+  selectAllDocument() {
+    for (var d = 0; d < this.attachments.length; d++) {
+      this.attachments[d].checked = true;
     }
   }
 
@@ -221,6 +238,8 @@ export class CurriculumPage implements OnInit {
     for (var r=0; r < this.registrations.length; r++) {
       this.registrations[r].checked = true;
     }
+
+    this.initAttachments().then(resp => { });
 
   }
 
