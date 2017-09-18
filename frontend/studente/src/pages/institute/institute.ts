@@ -29,27 +29,31 @@ isDetailsShown(registration) {
     return this.shownRegistration === registration;
 };
 
-  ngOnInit():void {
-      let paramRegistration = this.params.get('paramRegistration');
-      if (paramRegistration!=null){
+//   ngOnInit():void {
+//       let paramRegistration = this.params.get('paramRegistration');
+//       if (paramRegistration!=null){
 
-        this.registrations = paramRegistration.registrations;
-                this.teachingUnit = paramRegistration.teachingUnit;
+//         this.registrations = paramRegistration.registrations;
+//                 this.teachingUnit = paramRegistration.teachingUnit;
 
-      }
+//       }
 
-  }
+//   }
 ////loaded when it is showed
-//ionViewWillEnter () {
-//    let loader = this.loading.create({
-//    content: this.translate.instant('loading'),
-//  });
-//  loader.present().then(() => {
-//        this.userService.getUserExams().then(registrations =>{
-//        this.registrations=registrations
-//          loader.dismiss();
+ionViewWillEnter () {
+   let loader = this.loading.create({
+   content: this.translate.instant('loading'),
+ });
+   loader.present().then(() => {
+    let paramRegistration = this.params.get('paramRegistration');
+    if (paramRegistration != null) {
+        //    this.userService.getUserExams().then(registrations =>{
+        this.registrations = paramRegistration.registrations;
+        this.teachingUnit = paramRegistration.teachingUnit;
+        loader.dismiss();
+    }
+ })
 //  })
-//  })
-//}
+}
 }
 

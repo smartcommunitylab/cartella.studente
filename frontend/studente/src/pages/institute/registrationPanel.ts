@@ -29,6 +29,38 @@ export class RegistrationPanel implements OnInit {
   }
   toggle() {
     this.opened = !this.opened;
+    }
+  
+  open(event) {
+     console.log(event);
   }
+  
 }
 
+
+
+/**
+ *
+ *  @Input() exam: StudentExperience;
+  @Input() index: number;
+
+  @Output() onDeleted = new EventEmitter<string>();
+  constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService, public loading: LoadingController, private alertCtrl: AlertController, private translate: TranslateService, private utilsService: UtilsService) {
+
+  }
+  opened: Boolean = false;
+  ngOnInit(): void {
+    if (this.index == 0) {
+      this.toggle();
+    }
+  }
+  toggle() {
+    this.opened = !this.opened;
+  }
+  open(event) {
+    console.log(event);
+  }
+  getExam(): StudentExperience {
+    return this.exam;
+  }
+ */
