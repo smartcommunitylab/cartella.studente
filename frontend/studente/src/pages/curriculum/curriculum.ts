@@ -45,6 +45,7 @@ export class CurriculumPage implements OnInit {
   attachments: Document[] = [];
 
   userRegistration: UserRegistration[] = [];
+  agreegatedUserRegsMap = {};
 
   constructor(public navCtrl: NavController,
     public params: NavParams,
@@ -144,14 +145,21 @@ export class CurriculumPage implements OnInit {
       var p2 = this.getUserRegistrations();
 
       Promise.all([p1, p2]).then(values => {
+        
         // mobility.
         this.trainings = this.trainings.concat(values[0]);
         //console.log("total number of trainings (mobility) is " + this.trainings.length);
+        
         // registration.
-        for (var r = 0; r < this.userRegistration.length; r++) {
-          this.registrations = this.registrations.concat(this.userRegistration[r].registrations);
-        }
+        this.registrations = this.agreegatedRegs(values[1]);
+
+        // for (var r = 0; r < values[1].length; r++) {
+        //   // agreegate registrations.
+        //   this.registrations
+        //   this.registrations = this.registrations.concat(values[1][r].registrations);
+        // }
         //console.log("total number of registrations is " + this.registrations.length);
+        
         resolve();
       }).catch((error: any): any => {
         reject()
@@ -160,18 +168,80 @@ export class CurriculumPage implements OnInit {
 
   }
 
+  agreegatedRegs(unAgreegated) {
+    var agreegatedRegs: Registration[] = [];
+    
+    for (var r = 0; r < unAgreegated.length; r++) {
+      
+      for (var sr = 0; sr < unAgreegated[r].registrations.length; sr++) {
+        
+        var key = this.getKey(unAgreegated[r].registrations[sr]);
+        
+        if (!this.agreegatedUserRegsMap[key]) {
+          this.agreegatedUserRegsMap[key] = [];
+        }
+
+        this.agreegatedUserRegsMap[key].push(unAgreegated[r].registrations[sr]);
+      }
+
+    }
+
+    // order sub list
+    for (var key in this.agreegatedUserRegsMap) {
+      
+      this.agreegatedUserRegsMap[key].sort(function (reg1, reg2) {
+       
+        if (reg1.dateFrom > reg2.dateFrom) {
+          return -1;
+       
+        } else if (reg1.dateFrom < reg2.dateFrom) {
+            return 1;
+        
+        } else {
+          return 0;	
+        }
+      });;
+    
+    }
+
+    // assign it to viewable list after modification.
+    for (var key in this.agreegatedUserRegsMap) {
+
+      var subList = this.agreegatedUserRegsMap[key];
+
+      if (subList && subList.length > 0) {
+        var agreegatedRegistration: Registration;
+
+        agreegatedRegistration = subList[subList.length - 1];
+        agreegatedRegistration.dateTo = subList[0].dateTo;
+    
+        agreegatedRegs.push(agreegatedRegistration);
+      }
+      
+    }
+
+    return agreegatedRegs;
+
+  }
+  
   getUserRegistrations(): Promise<UserRegistration[]> {
+    
     return new Promise<UserRegistration[]>((resolve, reject) => {
       let options = new DefaultRequestOptions();
       let url: string = this.config.getConfig('apiUrl') + 'student/' + this.userService.getUserId() + '/registration';
 
       return this.http.get(url, options).timeout(5000).toPromise().then(response => {
-        this.userRegistration = response.json(); // registration -> [{registrtions[], teachingUnit}, {registrations[], teachingUnit}..]
-        resolve(this.userRegistration);
+        var tmp: UserRegistration[] = [];
+        tmp = response.json();
+        resolve(tmp);// registration -> [{registrtions[], teachingUnit}, {registrations[], teachingUnit}..]
       }).catch(response => {
         return this.handleError;
       });
     })
+  }
+
+  getKey(regListElement) {
+    return regListElement.teachingUnit.name + "_" + regListElement.course;
   }
 
   /**
@@ -293,7 +363,14 @@ export class CurriculumPage implements OnInit {
     var registrationIdList = [];
     for (var r = 0; r < this.registrations.length; r++) {
       if (this.registrations[r].checked) {
-        registrationIdList.push(this.registrations[r].id);
+        // take all registration for the key in map.
+        var key = this.getKey(this.registrations[r]);
+        for (var cr = 0; cr < this.agreegatedUserRegsMap[key].length; cr++) {
+          console.log(this.agreegatedUserRegsMap[key][cr].id);
+          registrationIdList.push(this.agreegatedUserRegsMap[key][cr].id);
+        }
+
+        // registrationIdList.push(this.registrations[r].id);
       }
     }
 
