@@ -1,9 +1,9 @@
 <div class="exam-expandable-list" (click)="toggle()">
   <div class="experience-title">{{stage.experience.attributes.title}}</div>
   <div class="experience-document"><span *ngIf="stage.experience.attributes.institutional">{{'institutional_label'|translate}}</span><span *ngIf="!stage.experience.attributes.institutional">{{'not_institutional_label'|translate}}</span></div>
-  <button class="stage-expansion" clear ion-button icon-only> <ion-icon class="experience-expansion-icon" item-right [name]="opened ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
+  <button class="stage-expansion" clear ion-button icon-only> <ion-icon class="experience-expansion-icon" item-right [name]="index==0 ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
 </div>
-<div padding *ngIf="opened">
+<div padding *ngIf="index == 0">
   <div class="experience-title" *ngIf="stage.experience.attributes.dateFrom"> <span class="registration-institute-label">{{'stage_dateFrom_label'|translate}}</span>{{stage.experience.attributes.dateFrom
     |date}}</div>
   <div class="experience-title" *ngIf="stage.experience.attributes.dateTo"> <span class="registration-institute-label">{{'stage_dateTo_label'|translate}}</span>{{stage.experience.attributes.dateTo

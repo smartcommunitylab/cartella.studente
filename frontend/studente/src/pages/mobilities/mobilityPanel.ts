@@ -32,23 +32,21 @@ export class MobilityPanel implements OnInit {
     private webAPIConnectorService: WebAPIConnectorService,
     private utilsService: UtilsService) {
   }
-  opened: Boolean = false;
+
   ngOnInit(): void {
-    if (this.index == 0) {
-      this.toggle();
-    }
+
     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
       this.mobility.document = JSON.parse(response);
       this.documentInstitutional = false;
       this.hideSpinner();
     };
-    // this.loader = this.loading.create({
-    //   content: this.translate.instant('loading'),
-    // });
+  
   }
+
   toggle() {
-    this.opened = !this.opened;
+    this.index = this.index == 0 ? -1 : 0;
   }
+  
   getMobility(): StudentExperience {
     return this.mobility;
   }

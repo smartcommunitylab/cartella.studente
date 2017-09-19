@@ -31,20 +31,20 @@ export class StagePanel implements OnInit {
     private utilsService: UtilsService,
     private webAPIConnectorService: WebAPIConnectorService) {
   }
-  opened: Boolean = false;
+
   ngOnInit(): void {
-    if (this.index == 0) {
-      this.toggle();
-    }
+  
     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
       this.stage.document = JSON.parse(response);
       this.documentInstitutional = false;
       this.hideSpinner();
     };
-   }
-  toggle() {
-    this.opened = !this.opened;
   }
+  
+  toggle() {
+    this.index = this.index == 0 ? -1 : 0;
+  }
+
   getStage(): StudentExperience {
     return this.stage;
   }

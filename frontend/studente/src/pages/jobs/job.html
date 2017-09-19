@@ -1,9 +1,9 @@
 <div class="experience-expandable-list" (click)="toggle()">
   <div class="experience-title">{{job.experience.attributes.title}}</div>
   <div class="experience-document"><span *ngIf="job.experience.attributes.institutional">{{'institutional_label'|translate}}</span><span *ngIf="!job.experience.attributes.institutional">{{'not_institutional_label'|translate}}</span></div>
-  <button class="job-expansion" clear ion-button icon-only> <ion-icon class="experience-expansion-icon" item-right [name]="opened ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
+  <button class="job-expansion" clear ion-button icon-only> <ion-icon class="experience-expansion-icon" item-right [name]="index == 0 ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
 </div>
-<div padding *ngIf="opened">
+<div padding *ngIf="index == 0">
   <div class="experience-title" *ngIf="job.experience.attributes.dateFrom"> <span class="registration-institute-label">{{'job_dateFrom_label'|translate}}</span>{{job.experience.attributes.dateFrom
     |date}}</div>
   <div class="experience-title" *ngIf="job.experience.attributes.dateTo"> <span class="registration-institute-label">{{'job_dateTo_label'|translate}}</span>{{job.experience.attributes.dateTo

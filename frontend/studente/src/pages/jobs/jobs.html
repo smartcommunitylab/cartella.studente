@@ -37,7 +37,7 @@
     </ion-row>
   </ion-grid>
   <ion-list *ngIf="(jobs && jobs.length>0)">
-    <ion-card *ngFor="let job of jobs| experiencefilter:filter:'title'|  orderBy:'experience.attributes.dateFrom':false; let i = index">
+    <ion-card *ngFor="let job of jobs| experiencefilter:filter:'title'; let i = index">
       <job-panel [job]="job" [index]="i" (onDeleted)="onDeleted($event)"></job-panel>
     </ion-card>
   </ion-list>
