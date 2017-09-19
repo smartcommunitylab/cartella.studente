@@ -11,7 +11,7 @@ import { UtilsService } from '../../services/utils.services'
 })
 export class StagesPage {
   stages: StudentExperience[] = null;
-  order = true;
+  order: string = "a-z";
   icon = "ios-arrow-down";
   shownStage = null;
   constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService, public loading: LoadingController, private alertCtrl: AlertController, private translate: TranslateService, private utilsService: UtilsService) {
@@ -40,4 +40,11 @@ export class StagesPage {
       })
     })
   }
+
+  onSelectChange(selectedValue: any) {
+    this.utilsService.sortExperience(selectedValue, this.stages).then(sortedList => {
+      this.stages = sortedList;
+    })
+  }
+  
 }

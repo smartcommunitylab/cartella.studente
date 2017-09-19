@@ -11,7 +11,7 @@ import { UtilsService } from '../../services/utils.services'
 })
 export class JobsPage {
   jobs: StudentExperience[] = null;
-  order = true;
+  order: string = "a-z";
   icon = "ios-arrow-down";
   shownJob = null;
   constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService, public loading: LoadingController, private alertCtrl: AlertController, private translate: TranslateService, private utilsService: UtilsService) {
@@ -40,4 +40,11 @@ export class JobsPage {
       })
     })
   }
+
+  onSelectChange(selectedValue: any) {
+    this.utilsService.sortExperience(selectedValue, this.jobs).then(sortedList => {
+      this.jobs = sortedList;
+    })
+  }
+
 }

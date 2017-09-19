@@ -119,6 +119,8 @@
   "registration_class_label": "Classe: ",
   "registration_teachingUnit_label": "Unita` didattica: ",
   "order_label": "Ordinamento",
+  "order_label_earliest": "Primo",
+  "order_label_newest": "Recente",
   "institutional_label": "Istituzionale",
   "not_institutional_label": "Non istituzionale",
   "exam_title_label": "Titolo di studio: ",

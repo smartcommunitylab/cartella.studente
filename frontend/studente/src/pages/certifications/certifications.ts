@@ -12,7 +12,7 @@ import { UtilsService } from '../../services/utils.services'
 })
 export class CertificationsPage {
   certifications: StudentExperience[] = null;
-  order = true;
+  order: string = "latest";
   icon = "ios-arrow-down";
   shownCertification = null;
   constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService, public loading: LoadingController, private alertCtrl: AlertController, private translate: TranslateService, private utilsService: UtilsService) {
@@ -37,7 +37,7 @@ export class CertificationsPage {
     this.navCtrl.push(AddCertificationPage, { certification: JSON.stringify(certification) });
   }
 
- 
+
   onDeleted(stageId: string) {
     for (var i = 0; i < this.certifications.length; i++) {
       if (this.certifications[i].experience.id == stageId) {
@@ -52,9 +52,19 @@ export class CertificationsPage {
     });
     loader.present().then(() => {
       this.userService.getUserCertifications().then(certifications => {
-        this.certifications = certifications
+        this.utilsService.sortExperience(this.order, certifications).then(sortedList => {
+          this.certifications = sortedList;
+        })
         loader.dismiss();
       })
     })
   }
+
+  onSelectChange(selectedValue: any) {
+    this.utilsService.sortExperience(selectedValue, this.certifications).then(sortedList => {
+      this.certifications = sortedList;
+      
+    })
+  }
+
 }

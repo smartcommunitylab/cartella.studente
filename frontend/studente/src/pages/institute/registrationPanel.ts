@@ -35,6 +35,9 @@ export class RegistrationPanel implements OnInit {
      console.log(event);
   }
   
+  // getRegistration(): Registration {
+  //   return this.registration;
+  // }
 }
 
 
