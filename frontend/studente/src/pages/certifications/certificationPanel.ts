@@ -38,15 +38,15 @@ export class CertificationPanel implements OnInit {
     // if (this.index == 0) {
     //   this.toggle();
     // }
-    Observable.forkJoin(
-      this.certification.documents.map(
-        (i, index) => this.getFileUrl(i).then(url => {
-          //da finire con il giusto ordine TO DO
-          this.certification.documents[index]['documentUri'] = url;
-          console.log("get file")
-        })
-      )
-    ).subscribe(() => console.log("done"))
+    // Observable.forkJoin(
+    //   this.certification.documents.map(
+    //     (i, index) => this.getFileUrl(i).then(url => {
+    //       //da finire con il giusto ordine TO DO
+    //       this.certification.documents[index]['documentUri'] = url;
+    //       console.log("get file")
+    //     })
+    //   )
+    // ).subscribe(() => console.log("done"))
     //load urls of documents
 
     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
@@ -54,6 +54,14 @@ export class CertificationPanel implements OnInit {
       this.documentInstitutional = false;
       this.hideSpinner();
     };
+  }
+
+  downloadDocument(document) {
+    return new Promise<any>((resolve, reject) => {
+      this.getFileUrl(document).then(url => {
+        window.open(url, '_blank');
+       });
+    });    
   }
 
   toggle() {
