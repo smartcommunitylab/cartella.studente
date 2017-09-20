@@ -164,7 +164,7 @@
           <ion-label>{{doc.documentUri}}</ion-label>
         </ion-col>
            <ion-col col-3>
-          <ion-label>{{doc.attributes.name}}</ion-label>
+          <ion-label>{{doc.attributes.title}}</ion-label>
         </ion-col> 
         <ion-col col-3>
           <button class="button-add-stage label-button" ion-button clear (click)="removeOldDocument(doc,i)">{{'addDocument_remove_actual_document_label'|translate}}</button>
@@ -184,7 +184,7 @@
          <ion-col col-3 >
           <ion-item>
           <ion-input type="text" [ngModelOptions]="{standalone: true}" placeholder="{{'addDocument_name_doc_placeholder'|translate}}"
-              [(ngModel)]="document.attributes.name"></ion-input>
+              [(ngModel)]="document.attributes.title"></ion-input>
           </ion-item>
         </ion-col>
                 <ion-col>

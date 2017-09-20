@@ -3,43 +3,45 @@
     <ion-title>
       {{'title_activities'|translate}}
     </ion-title>
-        <ion-buttons end>
-      <button-home></button-home><button-notifications></button-notifications><button-profile></button-profile>
+    <ion-buttons end>
+      <button-home></button-home>
+      <button-notifications></button-notifications>
+      <button-profile></button-profile>
     </ion-buttons>
   </ion-navbar>
 </ion-header>
 
 <ion-content padding>
   <ion-grid>
-  <ion-row>
-    <ion-col col-8>
-    <div class="search-filter">
-    <input type="text" [(ngModel)]="filter" placeholder="{{'stage_filter_placeholder'|translate}}">
-    <ion-icon class="filter-search-icon" name="md-search"></ion-icon>
-    <ion-item>
-      <ion-label>{{'order_label'|translate}}</ion-label>
-      <ion-select [(ngModel)]="order">
-        <ion-option value=true>A-Z</ion-option>
-        <ion-option value=false>Z-A</ion-option>
-      </ion-select>
-    </ion-item>
-  </div>
+    <ion-row>
+      <ion-col col-8>
+        <div class="search-filter">
+          <input type="text" [(ngModel)]="filter" placeholder="{{'stage_filter_placeholder'|translate}}">
+          <ion-icon class="filter-search-icon" name="md-search"></ion-icon>
+          <ion-item>
+            <ion-label>{{'order_label'|translate}}</ion-label>
+            <ion-select [(ngModel)]="order" (ionChange)="onSelectChange($event)">
+              <ion-option value="a-z">A-Z</ion-option>
+              <ion-option value="z-a">Z-A</ion-option>
+              <ion-option value="earliest">{{'order_label_earliest'|translate}}</ion-option>
+              <ion-option value="latest">{{'order_label_newest'|translate}}</ion-option>
+            </ion-select>
+          </ion-item>
+        </div>
       </ion-col>
-    <ion-col col-4>
-  <div>
-    <button class="button-add-stage label-button" ion-button clear (click)="addNewActivity()">{{'activity_add_new_button'|translate}}</button>
-  </div>
-</ion-col>
+      <ion-col col-4>
+        <div>
+          <button class="button-add-stage label-button" ion-button clear (click)="addNewActivity()">{{'activity_add_new_button'|translate}}</button>
+        </div>
+      </ion-col>
     </ion-row>
-    </ion-grid>
+  </ion-grid>
   <ion-list *ngIf="(activities && activities.length>0)">
-    <ion-card  *ngFor="let activity of activities| experiencefilter:filter:'title'|  orderBy:'experience.attributes.dateFrom':false; let i = index">
-<activity-panel [activity]="activity" [index]="i" (onDeleted)="onDeleted($event)"></activity-panel>
-
-
+    <ion-card *ngFor="let activity of activities| experiencefilter:filter:'title'; let i = index">
+      <activity-panel [activity]="activity" [index]="i" (onDeleted)="onDeleted($event)"></activity-panel>
     </ion-card>
   </ion-list>
-      <ion-card class="eperience-empty-list-label" *ngIf="(activities && activities.length==0)">
-      {{'activities_empty_list_label'|translate}}
+  <ion-card class="eperience-empty-list-label" *ngIf="(activities && activities.length==0)">
+    {{'activities_empty_list_label'|translate}}
   </ion-card>
 </ion-content>

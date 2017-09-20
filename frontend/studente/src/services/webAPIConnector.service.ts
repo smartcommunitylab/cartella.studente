@@ -57,8 +57,8 @@ export class WebAPIConnectorService {
       });
   }
   consent(studentId: string, subject: string): Promise<any> {
-    let url: string = this.getApiUrl() + 'consent';
-
+    let url: string = this.getApiUrl() + 'consent/student/' + studentId;
+    // let url: string = this.getApiUrl() + 'consent';
     return this.http.post(url, {
       "studentId": studentId,
       "subject": subject
@@ -165,6 +165,18 @@ export class WebAPIConnectorService {
       .toPromise()
       .then(response => response.json()).catch(response => this.handleError);
   }
+
+
+  deleteStudentDocumentFile(studentId: string, expId: string, storageId: string): Promise<any> {
+    let body = {}
+    // DELETE /api/student/{studentId}/experience/{experienceId}/document/{storageId}
+    let url: string = this.getApiUrl() + 'student/' + studentId + '/experience/' + expId + '/document/' + storageId;
+
+    return this.http.delete(url)
+      .toPromise()
+      .then(response => response.json()).catch(response => this.handleError);
+  }
+  
   uploadDocument(uploader: FileUploader, userId: string, experienceId: string, item, storageId?:string): void {
     var newUrl = this.config.getConfig('apiUrl') + 'student/' + userId + '/experience/' + experienceId + '/document/'+storageId+'/file';
     uploader.setOptions(
@@ -243,6 +255,33 @@ export class WebAPIConnectorService {
       
     }).catch(error => this.handleError);
 
+  }
+
+  // downloadDocument(url: string, fileName:string): Promise<any> {
+    
+  //   console.log(url);
+  //   return this.http.get(url, { responseType: ResponseContentType.Blob }).toPromise().then(downloadedCV => {
+  //     console.log("document downloaded successfully.")
+
+  //     FileSaver.saveAs(downloadedCV.blob(), fileName);
+      
+  //   }).catch(error => this.handleError);
+
+  // }
+
+  createDocument2(experience: ExperienceContainer, item, studentId: string): Promise<any> {
+    let body = {};
+    // as per the attributes google sheet, each document must contain attributs->title and filename.
+    var attrs = {};
+    attrs['title'] = item.file.name;
+    body['attributes'] = attrs;
+              
+    let expId: string = experience.id;
+    let url: string = this.getApiUrl() + 'student/' + studentId + '/experience/' + expId + '/document';
+
+    return this.http.post(url, body)
+      .toPromise()
+      .then(response => response.json()).catch(response => this.handleError);
   }
 
   private handleError(error: any): Promise<any> {

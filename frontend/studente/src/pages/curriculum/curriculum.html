@@ -67,7 +67,7 @@
 
     <ion-list *ngIf="(experiences && experiences.length>0)">
 
-      <div padding *ngFor="let experience of experiences;" class="div">
+      <div padding *ngFor="let experience of experiences|orderBy:'experience.attributes.dateFrom':false;" class="div">
         <ion-row>
           <ion-col>
             <label>{{ experience.experience.attributes.dateFrom | localizedDate:'MMM yyyy' }} - {{ experience.experience.attributes.dateTo | localizedDate:'MMM yyyy' }} </label>
@@ -116,7 +116,7 @@
 
     <ion-list *ngIf="(registrations && registrations.length>0)">
 
-      <div padding *ngFor="let registration of registrations;" class="div">
+      <div padding *ngFor="let registration of registrations|orderBy:'dateFrom':false;" class="div">
       
         <ion-row>
           <ion-col>
@@ -154,7 +154,7 @@
 
     <ion-list *ngIf="(trainings && trainings.length>0)">
 
-      <div padding *ngFor="let training of trainings;" class="curriculum div">
+      <div padding *ngFor="let training of trainings|orderBy:'experience.attributes.dateFrom':false;" class="curriculum div">
         <ion-row>
           <ion-col>
             <label>{{ training.experience.attributes.dateFrom | localizedDate:'MMM yyyy' }} - {{ training.experience.attributes.dateTo | localizedDate:'MMM yyyy' }} </label>
@@ -205,7 +205,7 @@
         <ion-label>{{skill.experience.attributes.instituteId}}</ion-label>
         <ion-checkbox checked="false" [(ngModel)]="skill.checked" (click)="toggle($event,skill)" item-right></ion-checkbox>
       </ion-item> -->
-      <div padding *ngFor="let skill of skills;" class="curriculum div">
+      <div padding *ngFor="let skill of skills|orderBy:'experience.attributes.dateFrom':false;" class="curriculum div">
           <ion-row>
             <ion-col>
               <label>{{skill.experience.attributes.lang}} </label>

@@ -1,9 +1,9 @@
 <div class="experience-expandable-list" (click)="toggle()">
   <div class="experience-title">{{mobility.experience.attributes.title}}</div>
   <div class="experience-document"><span *ngIf="mobility.experience.attributes.institutional">{{'institutional_label'|translate}}</span><span *ngIf="!mobility.experience.attributes.institutional">{{'not_institutional_label'|translate}}</span></div>
-  <button class="mobility-expansion" clear ion-button icon-only> <ion-icon class="experience-expansion-icon" item-right [name]="opened ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
+  <button class="mobility-expansion" clear ion-button icon-only> <ion-icon class="experience-expansion-icon" item-right [name]="index == 0 ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
 </div>
-<div padding *ngIf="opened">
+<div padding *ngIf="index == 0">
   <div class="experience-title" *ngIf="mobility.experience.attributes.dateFrom"> <span class="registration-institute-label">{{'mobility_dateFrom_label'|translate}}</span>{{mobility.experience.attributes.dateFrom
     |date}}
   </div>
@@ -37,7 +37,8 @@
     <button class="label-button" ion-button clear (click)="addDocument()" *ngIf="(mobility.document!=null && mobility.document.documentPresent)">
         {{'modify_document_button'|translate}}
     </button>
-    <button *ngIf="(mobility.document!=null && mobility.document.documentPresent)" class="button-add-stage label-button" ion-button clear (click)="removeActualDocument()">
+    <button *ngIf="(mobility.document!=null && mobility.document.documentPresent)" class="button-add-stage label-button" ion-button
+      clear (click)="removeActualDocument()">
         {{'addDocument_remove_actual_document_label'|translate}}
         </button>
   </div>

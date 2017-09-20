@@ -1,6 +1,7 @@
 
 export class Experience {
-  id:string;
+  id: string;
+  title: string;
   institutional:boolean;
   dateFrom:number;
   dateTo:number;

@@ -10,8 +10,8 @@ import { UtilsService } from '../../services/utils.services'
   templateUrl: 'mobilities.html'
 })
 export class MobilitiesPage {
-  mobilities: StudentExperience[] = null;
-  order = true;
+  mobilities: StudentExperience[] = [];
+  order: string = "latest";
   icon = "ios-arrow-down";
   shownMobility = null;
   constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService, public loading: LoadingController, private alertCtrl: AlertController, private translate: TranslateService, private utilsService: UtilsService) {
@@ -35,9 +35,18 @@ export class MobilitiesPage {
     });
     loader.present().then(() => {
       this.userService.getUserMobilities().then(mobilities => {
-        this.mobilities = mobilities
+        this.utilsService.sortExperience(this.order, mobilities).then(sortedList => {
+          this.mobilities = sortedList;
+        })
         loader.dismiss();
       })
     })
   }
+
+  onSelectChange(selectedValue: any) {
+    this.utilsService.sortExperience(selectedValue, this.mobilities).then(sortedList => {
+      this.mobilities = sortedList;
+    })
+  }
+
 }

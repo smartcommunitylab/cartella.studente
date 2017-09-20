@@ -32,6 +32,7 @@ export class AddCertificationPage implements OnInit {
   certification: Certification = new Certification();
   document: Document = new Document();
   documents: Document[] = [];
+  delDocuments: Document[] = [];
   dateFrom = new Date().toISOString();
   dateTo = new Date().toISOString();
   items = [];
@@ -119,6 +120,7 @@ export class AddCertificationPage implements OnInit {
       this.experienceContaniner = this.studentExperience.experience;
       this.certification = this.experienceContaniner.attributes as Certification;
       this.documents = this.studentExperience.documents as Document[];
+      this.delDocuments = [];
       this.dateFrom = new Date(this.experienceContaniner.attributes.dateFrom).toISOString();
       this.dateTo = new Date(this.experienceContaniner.attributes.dateTo).toISOString();
     }
@@ -136,13 +138,20 @@ export class AddCertificationPage implements OnInit {
 
   }
   checkDocumentParams(): boolean {
-    if (this.document.attributes['name'] == "") {
+    if (this.document.attributes['title'] == "") {
       return false
     }
-    if (this.uploader.queue.length==(this.documents.length+1)){
-      this.document.documentUri=this.uploader.queue[this.uploader.queue.length-1].file.name;
+
+    if (this.uploader.queue.length > 0 && this.uploader.queue[this.uploader.queue.length - 1].file.name) {
+      this.document.documentUri = this.uploader.queue[this.uploader.queue.length - 1].file.name;
       return true;
     }
+
+    // if (this.uploader.queue.length==(this.documents.length+1)){
+    //   this.document.documentUri=this.uploader.queue[this.uploader.queue.length-1].file.name;
+    //   return true;
+    // }
+
     return false;
   }
   isLanguage(): boolean {
@@ -163,8 +172,11 @@ export class AddCertificationPage implements OnInit {
   }
 
   removeOldDocument (doc,index) {
-    this.documents.splice(index,1);
-    this.uploader.queue.splice(index,1);
+    // maintain list of documents to be deleted on save operation.
+    this.delDocuments.push(this.documents[index]);
+    this.documents.splice(index, 1);
+    this.uploader.queue.splice(index, 1);
+        
 
   }
   // removeCertification(): void {
@@ -190,21 +202,40 @@ export class AddCertificationPage implements OnInit {
       if (this.experienceContaniner.id != null) {
         this.userService.updateCertification(this.studentExperience).then(certification => {
           this.experienceContaniner = certification;
-          // map them into a array of observables and forkJoin
-          Observable.forkJoin(
-            this.uploader.queue.map(
-              i => this.uploadDocument(i).then(() =>{
-                console.log("uploaded");
-              })
-            )
-          ).subscribe(() => this.navCtrl.pop())
-          // if (this.uploader.queue.length > 0) {
-          //   this.uploadDocument(this.uploader.queue[0]).then(() => this.navCtrl.pop())
-          // } else {
-          //   this.navCtrl.pop();
-          // }
-        }
-        );
+          
+           // check if there are documents to be deleted.
+           var promisesDelDocuments: Promise<any>[] = [];
+           for (var d = 0; d < this.delDocuments.length; d++) {
+             promisesDelDocuments.push(this.deleteDocument(this.delDocuments[d]));
+           }
+          
+           Promise.all(promisesDelDocuments).then(values => {
+            //  alert("PROMISE DELETE ALL.")
+             // clear delete document list.
+             this.delDocuments = [];
+
+             var promisesUploadDocuments: Promise<any>[] = [];
+             this.uploader.queue.map(i => {
+              promisesUploadDocuments.push(this.uploadDocument(i));
+             })
+             
+             Promise.all(promisesUploadDocuments).then(() => {
+              //  alert("PROMISE UPLOAD ALL.")
+               this.navCtrl.pop()
+             });
+
+           });
+          
+          // // map them into a array of observables and forkJoin
+          // Observable.forkJoin(
+          //   this.uploader.queue.map(
+          //     i => this.uploadDocument(i).then(() =>{
+          //       console.log("uploaded");
+          //     })
+          //   )
+          // ).subscribe(() => this.navCtrl.pop());
+
+        });
       }
       else {
         this.userService.addCertification(this.studentExperience).then(certification => {
@@ -232,13 +263,22 @@ export class AddCertificationPage implements OnInit {
   }
   uploadDocument(item): Promise<void> {
     return new Promise<void>((resolve, reject) => {
-      this.userService.createDocument(this.experienceContaniner).then(exp => {
+      this.userService.createDocument2(this.experienceContaniner, item).then(exp => {
         this.webAPIConnector.uploadDocument(this.uploader, this.userService.getUserId(), exp.experienceId, item, exp.storageId);
         resolve();
       })
     })
 
   }
+
+  deleteDocument(item): Promise<void> {
+    return new Promise<void>((resolve, reject) => {
+      this.webAPIConnector.deleteStudentDocumentFile(this.userService.getUserId(), this.studentExperience.experienceId, item.storageId);
+      resolve();
+    })
+
+  }
+
   discard(): void {
     this.navCtrl.pop();
   }

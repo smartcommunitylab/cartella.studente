@@ -32,11 +32,9 @@ export class ActivityPanel implements OnInit {
     private webAPIConnectorService: WebAPIConnectorService,
     private utilsService: UtilsService) {
   }
-  opened: Boolean = false;
+
   ngOnInit(): void {
-    if (this.index == 0) {
-      this.toggle();
-    }
+
     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
       this.activity.document = JSON.parse(response);
       this.documentInstitutional = false;
@@ -46,23 +44,29 @@ export class ActivityPanel implements OnInit {
       content: this.translate.instant('loading'),
     });
   }
+
   toggle() {
-    this.opened = !this.opened;
+    this.index = this.index == 0 ? -1 : 0;
   }
+
   getActivity(): StudentExperience {
     return this.activity;
   }
+  
   updateActivity(): void {
     this.navCtrl.push(AddActivityPage, { activity: JSON.stringify(this.activity) });
   }
-addDocument(): void {
+
+  addDocument(): void {
     this.documentInstitutional = true;
   }
+
   removeCertification(): void {
     this.uploader.clearQueue();
     (<HTMLInputElement>document.getElementById("uploadInputFile")).value = "";
     this.documentInstitutional = false;
   }
+
   removeActualDocument(): void {
     let alert = this.alertCtrl.create({
       title: this.translate.instant('alert_remove_document_mobility_title'),
@@ -91,8 +95,8 @@ addDocument(): void {
     });
     alert.present();
 
-
   }
+
   uploadDocument(item): Promise<void> {
     return new Promise<void>((resolve, reject) => {
 
@@ -103,11 +107,13 @@ addDocument(): void {
     })
 
   }
+
   saveCertification(): void {
     this.showSpinner();
     this.uploadDocument(this.uploader.queue[0]).then((document) => {
     })
   }
+
   deleteActivity(): void {
     //ask confirmation
 
@@ -142,7 +148,8 @@ addDocument(): void {
     alert.present();
 
   }
-    private showSpinner() {
+
+  private showSpinner() {
     this.loader = this.loading.create({
       content: this.translate.instant('loading'),
     });
@@ -154,5 +161,6 @@ addDocument(): void {
       this.loader.dismiss().catch(() => { });
     }
   }
+
 }
 

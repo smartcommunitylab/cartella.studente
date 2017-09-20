@@ -11,7 +11,7 @@ import { UtilsService } from '../../services/utils.services'
 })
 export class StagesPage {
   stages: StudentExperience[] = null;
-  order = true;
+  order: string = "latest";
   icon = "ios-arrow-down";
   shownStage = null;
   constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService, public loading: LoadingController, private alertCtrl: AlertController, private translate: TranslateService, private utilsService: UtilsService) {
@@ -35,9 +35,18 @@ export class StagesPage {
     });
     loader.present().then(() => {
       this.userService.getUserStages().then(stages => {
-        this.stages = stages
+        this.utilsService.sortExperience(this.order, stages).then(sortedList => {
+          this.stages = sortedList;
+        })
         loader.dismiss();
       })
     })
   }
+
+  onSelectChange(selectedValue: any) {
+    this.utilsService.sortExperience(selectedValue, this.stages).then(sortedList => {
+      this.stages = sortedList;
+    })
+  }
+  
 }

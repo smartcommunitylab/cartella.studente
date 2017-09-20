@@ -2,8 +2,8 @@ import { Component, Output, EventEmitter, Input, OnInit } from '@angular/core';
 import { NavController, NavParams, LoadingController, AlertController } from 'ionic-angular';
 import { TranslateService } from 'ng2-translate';
 import { UtilsService } from '../../services/utils.services'
-import {CertificationsTypes } from '../../assets/conf/certificationsTypes'
-import {Certification } from '../../classes/Certification.class'
+import { CertificationsTypes } from '../../assets/conf/certificationsTypes'
+import { Certification } from '../../classes/Certification.class'
 import { StudentExperience } from '../../classes/StudentExperience.class'
 import { AddCertificationPage } from '../addCertification/addCertification'
 import { UserService } from '../../services/user.service'
@@ -33,20 +33,20 @@ export class CertificationPanel implements OnInit {
     private webAPIConnectorService: WebAPIConnectorService,
     private utilsService: UtilsService) {
   }
-  opened: Boolean = false;
+
   ngOnInit(): void {
-    if (this.index == 0) {
-      this.toggle();
-    }
-      Observable.forkJoin(
-            this.certification.documents.map(
-              (i,index) => this.getFileUrl(i).then(url => {
-                //da finire con il giusto ordine TO DO
-                this.certification.documents[index]['documentUri']=url;
-                console.log("get file")
-              })
-            )
-          ).subscribe(() =>console.log("done"))
+    // if (this.index == 0) {
+    //   this.toggle();
+    // }
+    // Observable.forkJoin(
+    //   this.certification.documents.map(
+    //     (i, index) => this.getFileUrl(i).then(url => {
+    //       //da finire con il giusto ordine TO DO
+    //       this.certification.documents[index]['documentUri'] = url;
+    //       console.log("get file")
+    //     })
+    //   )
+    // ).subscribe(() => console.log("done"))
     //load urls of documents
 
     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
@@ -55,28 +55,44 @@ export class CertificationPanel implements OnInit {
       this.hideSpinner();
     };
   }
-  toggle() {
-    this.opened = !this.opened;
+
+  downloadDocument(document) {
+    return new Promise<any>((resolve, reject) => {
+      this.getFileUrl(document).then(url => {
+        window.open(url, '_blank');
+       });
+    });    
   }
+
+  toggle() {
+    this.index = this.index == 0 ? -1 : 0;
+  }
+
   getCertification(): StudentExperience {
     return this.certification;
   }
-isLanguageDocument(): boolean {
-  var certification =  this.certification.experience.attributes as Certification;
-  return (certification.type== CertificationsTypes.CERT_TYPE_LANG);
-  
-}
+
+
+  isLanguageDocument(): boolean {
+    var certification = this.certification.experience.attributes as Certification;
+    return (certification.type == CertificationsTypes.CERT_TYPE_LANG);
+  }
+
   updateCertification(): void {
     this.navCtrl.push(AddCertificationPage, { certification: JSON.stringify(this.certification) });
   }
+
   addDocument(): void {
     this.documentInstitutional = true;
   }
+
   removeCertification(): void {
     this.uploader.clearQueue();
     (<HTMLInputElement>document.getElementById("uploadInputFile")).value = "";
     this.documentInstitutional = false;
   }
+
+
   removeActualDocument(): void {
     let alert = this.alertCtrl.create({
       title: this.translate.instant('alert_remove_document_mobility_title'),
@@ -107,6 +123,7 @@ isLanguageDocument(): boolean {
 
 
   }
+
   uploadDocument(item): Promise<void> {
     return new Promise<void>((resolve, reject) => {
 
@@ -117,11 +134,13 @@ isLanguageDocument(): boolean {
     })
 
   }
+
   saveCertification(): void {
     this.showSpinner();
     this.uploadDocument(this.uploader.queue[0]).then((document) => {
     })
   }
+
   deleteCertification(): void {
     //ask confirmation
 
@@ -156,6 +175,7 @@ isLanguageDocument(): boolean {
     alert.present();
 
   }
+
   private showSpinner() {
     this.loader = this.loading.create({
       content: this.translate.instant('loading'),
@@ -168,17 +188,25 @@ isLanguageDocument(): boolean {
       this.loader.dismiss().catch(() => { });
     }
   }
+
   private getFileUrl(file): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-    this.webAPIConnectorService.getUrlFile(this.userService.getUserId(),file.experienceId,file.storageId).then(url=>
-    {
-      //add url to file
-      // this.certification.documents[0]['documentUri']=url;
-       resolve(url);
+      this.webAPIConnectorService.getUrlFile(this.userService.getUserId(), file.experienceId, file.storageId).then(url => {
+        //add url to file
+        // this.certification.documents[0]['documentUri']=url;
+        resolve(url);
+      }
+      )
     }
-    )}
     )
   }
+
+  ionViewDidEnter() {
+    // if (this.index == 0) {
+    //   this.toggle();
+    // }
+  }
+
 }
 
 

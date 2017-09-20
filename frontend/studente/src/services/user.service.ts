@@ -345,6 +345,7 @@ export class UserService {
       })
     })
   }
+
   updateCertification(certification: StudentExperience): Promise<ExperienceContainer> {
     return new Promise<ExperienceContainer>((resolve, reject) => {
       this.webAPIConnector.updateExperience(certification, this.getUserId()).then(certification => {
@@ -357,6 +358,7 @@ export class UserService {
       })
     })
   }
+  
   deleteCertification(certification: StudentExperience): Promise<Certification> {
     return new Promise<Certification>((resolve, reject) => {
       this.webAPIConnector.deleteExperience(certification.experienceId, this.getUserId()).then(certification => {
@@ -398,6 +400,22 @@ export class UserService {
       })
     })
   }
+
+  createDocument2(experience, item): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      this.webAPIConnector.createDocument2(experience, item, this.getUserId()).then(response => {
+        var returnValuse = {
+          experienceId: response.experienceId,
+          storageId: response.storageId
+        }
+        resolve(returnValuse)
+      }).catch((error: any): any => {
+        reject()
+
+      })
+    })
+  }
+
   createDocument(experience): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       this.webAPIConnector.createDocument(experience, this.getUserId()).then(response => {

@@ -31,34 +31,39 @@ export class JobPanel implements OnInit {
     private utilsService: UtilsService,
     private webAPIConnectorService: WebAPIConnectorService) {
   }
-  opened: Boolean = false;
+
   ngOnInit(): void {
-    if (this.index == 0) {
-      this.toggle();
-    }
+
     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
       this.job.document = JSON.parse(response);
       this.documentInstitutional = false;
       this.hideSpinner();
     };
-   }
-  toggle() {
-    this.opened = !this.opened;
+
   }
+
+  toggle() {
+    this.index = this.index == 0 ? -1 : 0;
+  }
+
   getJob(): StudentExperience {
     return this.job;
   }
+  
   updateJob(): void {
     this.navCtrl.push(AddJobPage, { job: JSON.stringify(this.job) });
   }
- addDocument(): void {
+
+  addDocument(): void {
     this.documentInstitutional = true;
   }
+
   removeCertification(): void {
     this.uploader.clearQueue();
     (<HTMLInputElement>document.getElementById("uploadInputFile")).value = "";
     this.documentInstitutional = false;
   }
+
   removeActualDocument(): void {
     let alert = this.alertCtrl.create({
       title: this.translate.instant('alert_remove_document_mobility_title'),
@@ -87,8 +92,8 @@ export class JobPanel implements OnInit {
     });
     alert.present();
 
-
   }
+
   uploadDocument(item): Promise<void> {
     return new Promise<void>((resolve, reject) => {
 
@@ -99,11 +104,13 @@ export class JobPanel implements OnInit {
     })
 
   }
+
   saveCertification(): void {
     this.showSpinner();
     this.uploadDocument(this.uploader.queue[0]).then((document) => {
     })
   }
+
   deleteJob(): void {
     //ask confirmation
 
@@ -136,7 +143,8 @@ export class JobPanel implements OnInit {
     alert.present();
 
   }
-    private showSpinner() {
+
+  private showSpinner() {
     this.loader = this.loading.create({
       content: this.translate.instant('loading'),
     });
