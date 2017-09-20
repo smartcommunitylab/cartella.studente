@@ -12,7 +12,7 @@ import { UtilsService } from '../../services/utils.services'
 })
 export class ActivitiesPage {
   activities: StudentExperience[] = null
-  order = true;
+  order: string = "latest";
   icon = "ios-arrow-down";
   shownActivity = null;
   constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService, public loading: LoadingController, private alertCtrl: AlertController, private translate: TranslateService, private utilsService: UtilsService) {
@@ -44,6 +44,7 @@ export class ActivitiesPage {
       }
     }
   }
+
   //loaded when it is showed
   ionViewWillEnter() {
     let loader = this.loading.create({
@@ -51,9 +52,18 @@ export class ActivitiesPage {
     });
     loader.present().then(() => {
       this.userService.getUserActivities().then(activities => {
-        this.activities = activities
+        this.utilsService.sortExperience(this.order, activities).then(sortedList => {
+          this.activities = sortedList;
+        })
         loader.dismiss();
       })
     })
   }
+
+  onSelectChange(selectedValue: any) {
+    this.utilsService.sortExperience(selectedValue, this.activities).then(sortedList => {
+      this.activities = sortedList;
+    })
+  }
+
 }
