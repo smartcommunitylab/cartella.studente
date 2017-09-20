@@ -4,12 +4,16 @@ public class Unita {
 	private String origin;
 	private String extid;
 	private String datefrom;
+	private String dateto;
 	private String origin_institute;
 	private String extid_institute;
 	private String name;
 	private String description;
 	private String address;
 	private String ordinescuola;
+	private String tiposcuola;
+	private String indirizzodidattico;
+	private String mgindirizzodidattico;
 	private String tipoorario;
 	
 	public String getOrigin() {
@@ -71,5 +75,29 @@ public class Unita {
 	}
 	public void setTipoorario(String tipoorario) {
 		this.tipoorario = tipoorario;
+	}
+	public String getDateto() {
+		return dateto;
+	}
+	public void setDateto(String dateto) {
+		this.dateto = dateto;
+	}
+	public String getTiposcuola() {
+		return tiposcuola;
+	}
+	public void setTiposcuola(String tiposcuola) {
+		this.tiposcuola = tiposcuola;
+	}
+	public String getIndirizzodidattico() {
+		return indirizzodidattico;
+	}
+	public void setIndirizzodidattico(String indirizzodidattico) {
+		this.indirizzodidattico = indirizzodidattico;
+	}
+	public String getMgindirizzodidattico() {
+		return mgindirizzodidattico;
+	}
+	public void setMgindirizzodidattico(String mgindirizzodidattico) {
+		this.mgindirizzodidattico = mgindirizzodidattico;
 	}
 }

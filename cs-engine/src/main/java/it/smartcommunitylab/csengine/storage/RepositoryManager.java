@@ -651,19 +651,19 @@ public class RepositoryManager {
 		if(Utils.isNotEmpty(ordine)) {
 			Typology typology = new Typology();
 			typology.setQualifiedName(Const.TYPOLOGY_QNAME_ORDINE);
-			typology.setCode(ordine);
+			typology.setName(ordine);
 			classification.add(typology);
 		}
 		if(Utils.isNotEmpty(tipologia)) {
 			Typology typology = new Typology();
 			typology.setQualifiedName(Const.TYPOLOGY_QNAME_TIPOLOGIA);
-			typology.setCode(tipologia);
+			typology.setName(tipologia);
 			classification.add(typology);
 		}
 		if(Utils.isNotEmpty(indirizzo)) {
 			Typology typology = new Typology();
 			typology.setQualifiedName(Const.TYPOLOGY_QNAME_INDIRIZZO);
-			typology.setCode(indirizzo);
+			typology.setName(indirizzo);
 			classification.add(typology);
 		}
 		return teachingUnitRepository.findByClassification(classification);

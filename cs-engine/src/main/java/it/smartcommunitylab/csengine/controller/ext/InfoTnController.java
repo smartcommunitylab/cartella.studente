@@ -20,6 +20,7 @@ import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportMobilita;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportStage;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportStudenti;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportUnita;
+import it.smartcommunitylab.csengine.extsource.infotn.InfoTnUpdateUnita;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -71,6 +72,9 @@ public class InfoTnController {
 	
 	@Autowired
 	InfoTnImportMobilita importMobilita;
+	
+	@Autowired
+	InfoTnUpdateUnita updateUnita;
 	
 	@RequestMapping(value = "/extsource/infotn/istituzioni/empty", method = RequestMethod.GET)
 	public @ResponseBody String importIstituzioniFromEmpty() throws Exception {
@@ -130,6 +134,11 @@ public class InfoTnController {
 	@RequestMapping(value = "/extsource/infotn/mobilita/empty", method = RequestMethod.GET)
 	public @ResponseBody String importMobilitaFromEmpty() throws Exception {
 		return importMobilita.importMobilitaFromEmpty();
+	}
+	
+	@RequestMapping(value = "/extsource/infotn/unita/update/clasification", method = RequestMethod.GET)
+	public @ResponseBody String upateUnitaClassificazione() throws Exception {
+		return updateUnita.upateUnitaClassificazione();
 	}
 	
 	@ExceptionHandler({EntityNotFoundException.class, StorageException.class})

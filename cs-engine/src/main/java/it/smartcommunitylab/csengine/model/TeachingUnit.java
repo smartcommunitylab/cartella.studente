@@ -14,6 +14,7 @@ public class TeachingUnit extends BaseObject {
 	private Double[] geocode;
 	private String instituteId;
 	private Map<String, Typology> classifications = new HashMap<String, Typology>();
+	private String codiceIstat;
 	
 	public String getName() {
 		return name;
@@ -74,6 +75,12 @@ public class TeachingUnit extends BaseObject {
 	}
 	public void setClassifications(Map<String, Typology> classifications) {
 		this.classifications = classifications;
+	}
+	public String getCodiceIstat() {
+		return codiceIstat;
+	}
+	public void setCodiceIstat(String codiceIstat) {
+		this.codiceIstat = codiceIstat;
 	}
 	
 }
