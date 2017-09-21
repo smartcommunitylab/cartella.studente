@@ -2,10 +2,8 @@ package it.smartcommunitylab.csengine.extsource.infotn;
 
 import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.Utils;
-import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.TeachingUnit;
 import it.smartcommunitylab.csengine.model.Typology;
-import it.smartcommunitylab.csengine.storage.InstituteRepository;
 import it.smartcommunitylab.csengine.storage.TeachingUnitRepository;
 
 import java.io.FileReader;
@@ -25,24 +23,21 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
-public class InfoTnImportUnita {
-	private static final transient Logger logger = LoggerFactory.getLogger(InfoTnImportUnita.class);
+public class InfoTnUpdateUnita {
+	private static final transient Logger logger = LoggerFactory.getLogger(InfoTnUpdateUnita.class);
 	
 	@Autowired
 	@Value("${infotn.source.folder}")	
 	private String sourceFolder;
 	
 	@Autowired
-	InstituteRepository instituteRepository;
-	
-	@Autowired
 	TeachingUnitRepository teachingUnitRepository;
 	
-	public String importUnitaFromEmpty() throws Exception {
-		logger.info("start importUnitaFromEmpty");
+	public String upateUnitaClassificazione() throws Exception {
+		logger.info("start upateUnitaClassificazione");
 		int total = 0;
 		int stored = 0;
-		FileReader fileReader = new FileReader(sourceFolder + "FBK_Unità scolastiche v.01.json");
+		FileReader fileReader = new FileReader(sourceFolder + "FBK_Unità Scolastiche v02.json");
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		JsonFactory jsonFactory = new JsonFactory();
@@ -65,24 +60,20 @@ public class InfoTnImportUnita {
 						logger.info("converting " + unita.getExtid());
 						TeachingUnit teachingUnitDb = teachingUnitRepository.findByExtId(unita.getOrigin(), 
 								unita.getExtid());
-						if(teachingUnitDb != null) {
-							logger.warn(String.format("TU already exists: %s - %s", 
+						if(teachingUnitDb == null) {
+							logger.warn(String.format("TU not found: %s - %s", 
 									unita.getOrigin(), unita.getExtid()));
 							continue;
 						}
-						Institute instituteDb = instituteRepository.findByExtId(unita.getOrigin_institute(), 
-								unita.getExtid_institute());
-						if(instituteDb == null) {
-							logger.warn(String.format("Institute not found: %s - %s", 
-									unita.getOrigin_institute(), unita.getExtid_institute()));
-							continue;
+						if(updateTeachingUnit(teachingUnitDb, unita)) {
+							teachingUnitRepository.save(teachingUnitDb);
+							stored += 1;
+							logger.info(String.format("Update TeachingUnit: %s - %s - %s", unita.getOrigin(), 
+									unita.getExtid(), teachingUnitDb.getId()));
+						} else {
+							logger.info("Skip TeachingUnit: %s - %s - %s", unita.getOrigin(), 
+									unita.getExtid(), teachingUnitDb.getId());
 						}
-						TeachingUnit teachingUnit = convertToTeachingUnit(unita);
-						teachingUnit.setInstituteId(instituteDb.getId());
-						teachingUnitRepository.save(teachingUnit);
-						stored += 1;
-						logger.info(String.format("Save TeachingUnit: %s - %s - %s", unita.getOrigin(), 
-								unita.getExtid(), teachingUnit.getId()));
 					}
 				} else {
           logger.warn("Error: records should be an array: skipping.");
@@ -96,14 +87,8 @@ public class InfoTnImportUnita {
 		return stored + "/" + total;
 	}
 	
-	private TeachingUnit convertToTeachingUnit(Unita unita) {
-		TeachingUnit result = new TeachingUnit();
-		result.setOrigin(unita.getOrigin());
-		result.setExtId(unita.getExtid());
-		result.setId(Utils.getUUID());
-		result.setName(unita.getName());
-		result.setDescription(unita.getDescription());
-		result.setAddress(unita.getAddress());
+	private boolean updateTeachingUnit(TeachingUnit tu, Unita unita) {
+		boolean update = false;
 		Map<String, Typology> classifications = new HashMap<String, Typology>();
 		if(Utils.isNotEmpty(unita.getOrdinescuola())) {
 			Typology typology = new Typology();
@@ -124,8 +109,9 @@ public class InfoTnImportUnita {
 			classifications.put(Const.TYPOLOGY_QNAME_INDIRIZZO, typology);
 		}
 		if(classifications.size() > 0) {
-			result.setClassifications(classifications);
+			tu.setClassifications(classifications);
+			update = true;
 		}
-		return result;
+		return update;
 	}
 }

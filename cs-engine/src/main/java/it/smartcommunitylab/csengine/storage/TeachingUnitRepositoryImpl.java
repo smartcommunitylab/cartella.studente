@@ -18,7 +18,7 @@ public class TeachingUnitRepositoryImpl implements TeachingUnitRepositoryCustom 
 	public List<TeachingUnit> findByClassification(List<Typology> classification) {
 		Criteria criteria = new Criteria();
 		for(Typology typology : classification) {
-			criteria = criteria.and("classifications." + typology.getQualifiedName() + ".code").is(typology.getCode());
+			criteria = criteria.and("classifications." + typology.getQualifiedName() + ".name").is(typology.getName());
 		}
 		Query query = new Query(criteria);
 		List<TeachingUnit> result = mongoTemplate.find(query, TeachingUnit.class);
