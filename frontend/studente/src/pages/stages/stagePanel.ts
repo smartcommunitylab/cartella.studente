@@ -33,14 +33,22 @@ export class StagePanel implements OnInit {
   }
 
   ngOnInit(): void {
-  
+
     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
       this.stage.document = JSON.parse(response);
       this.documentInstitutional = false;
       this.hideSpinner();
     };
   }
-  
+
+  downloadDocument(document) {
+    return new Promise<any>((resolve, reject) => {
+      this.getFileUrl(document).then(url => {
+        window.open(url, '_blank');
+      });
+    });
+  }
+
   toggle() {
     this.index = this.index == 0 ? -1 : 0;
   }
@@ -51,7 +59,7 @@ export class StagePanel implements OnInit {
   updateStage(): void {
     this.navCtrl.push(AddStagePage, { stage: JSON.stringify(this.stage) });
   }
- addDocument(): void {
+  addDocument(): void {
     this.documentInstitutional = true;
   }
   removeCertification(): void {
@@ -136,7 +144,7 @@ export class StagePanel implements OnInit {
     alert.present();
 
   }
-    private showSpinner() {
+  private showSpinner() {
     this.loader = this.loading.create({
       content: this.translate.instant('loading'),
     });
@@ -147,6 +155,18 @@ export class StagePanel implements OnInit {
     if (this.loading !== undefined) {
       this.loader.dismiss().catch(() => { });
     }
+  }
+
+  private getFileUrl(file): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      this.webAPIConnectorService.getUrlFile(this.userService.getUserId(), file.experienceId, file.storageId).then(url => {
+        //add url to file
+        // this.certification.documents[0]['documentUri']=url;
+        resolve(url);
+      }
+      )
+    }
+    )
   }
 }
 

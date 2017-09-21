@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, NavParams, ModalController } from 'ionic-angular';
+import { NavController, NavParams, ModalController, LoadingController } from 'ionic-angular';
 import { UserService } from '../../services/user.service'
 import { Stage } from '../../classes/Stage.class'
 import { StudentExperience } from '../../classes/StudentExperience.class'
@@ -15,7 +15,7 @@ import { MapModal } from '../map/mapmodal'
 import { GeoService } from '../../services/geo.service'
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { WebAPIConnectorService } from '../../services/webAPIConnector.service'
-
+import { Observable } from 'rxjs/Rx';
 
 
 @Component({
@@ -30,6 +30,8 @@ export class AddStagePage implements OnInit {
   //certification: Certification = new Certification();
   stage: Stage = new Stage();
   document: Document = new Document();
+  documents: Document[] = [];
+  delDocuments: Document[] = [];
   dateFrom = new Date().toISOString();
   dateTo = new Date().toISOString();
   uploader: FileUploader = new FileUploader({});
@@ -46,7 +48,8 @@ export class AddStagePage implements OnInit {
     private webAPIConnectorService: WebAPIConnectorService,
     public modalCtrl: ModalController,
     public GeoService: GeoService,
-    public formBuilder: FormBuilder) {
+    public formBuilder: FormBuilder,
+    public loading: LoadingController) {
     this.stageForm = formBuilder.group({
       title: ['', Validators.compose([Validators.required])],
       // dateFrom: ['', Validators.compose([Validators.required])],
@@ -104,25 +107,46 @@ export class AddStagePage implements OnInit {
     if (stage != null) {
       this.studentExperience = JSON.parse(this.params.get('stage'));
       this.experienceContaniner = this.studentExperience.experience;
-      //this.certification = this.experienceContaniner.attributes as Certification;
-      this.document = this.studentExperience.document as Document;
-
       this.stage = this.experienceContaniner.attributes as Stage;
+      this.documents = this.studentExperience.documents as Document[];
+      this.delDocuments = [];
       this.dateFrom = new Date(this.experienceContaniner.attributes.dateFrom).toISOString();
       this.dateTo = new Date(this.experienceContaniner.attributes.dateTo).toISOString();
     }
   }
-  removeCertification(): void {
-    this.uploader.clearQueue();
-    (<HTMLInputElement>document.getElementById("uploadInputFile")).value = "";
+
+  addDocument() {
+    //check if theere are info for doc and in that case add new doc in documents
+    if (this.document && this.checkDocumentParams()) {
+      this.documents.push(this.document)
+      this.document = new Document();
+      (<HTMLInputElement>document.getElementById("uploadInputFile")).value = "";
+    } else {
+      this.utilsService.toast(this.translate.instant('toast_error_fields_missing'), 3000, 'middle')
+    }
+
   }
-  removeActualDocument(): void {
-    this.userService.deleteDocument(this.studentExperience).then(() =>
-      this.document = null)
+  checkDocumentParams(): boolean {
+    if (!this.document.attributes['title'] || this.document.attributes['title'] == "") {
+      return false
+    }
+
+    if (this.uploader.queue.length > 0 && this.uploader.queue[this.uploader.queue.length - 1].file.name) {
+      this.document.documentUri = this.uploader.queue[this.uploader.queue.length - 1].file.name;
+      return true;
+    }
+
+    return false;
   }
+
+  removeOldDocument(doc, index) {
+    // maintain list of documents to be deleted on save operation.
+    this.delDocuments.push(this.documents[index]);
+    this.documents.splice(index, 1);
+    this.uploader.queue.splice(index, 1);
+  }
+
   addStage(): void {
-
-
 
     this.submitAttempt = true;
     if (this.stageForm.valid) {
@@ -137,40 +161,74 @@ export class AddStagePage implements OnInit {
       if (this.experienceContaniner.id != null) {
         this.userService.updateStage(this.studentExperience).then(stage => {
           this.experienceContaniner = stage;
-          if (this.uploader.queue.length > 0) {
-            this.uploadDocument(this.uploader.queue[0]).then(() => this.navCtrl.pop())
-          } else {
-            this.navCtrl.pop();
-            this.utilsService.toast(this.translate.instant('toast_add_stage'), 3000, 'middle');
+          // check if there are documents to be deleted.
+          var promisesDelDocuments: Promise<any>[] = [];
+          for (var d = 0; d < this.delDocuments.length; d++) {
+            //promisesDelDocuments.push(this.deleteDocument(this.delDocuments[d]));
+            promisesDelDocuments.push(this.userService.deleteDocumentInPromise(this.studentExperience.experienceId, this.delDocuments[d].storageId));
           }
-        }
-        );
+
+          Promise.all(promisesDelDocuments).then(values => {
+            console.log("PROMISE DELETE ALL.")
+            // clear delete document list.
+            this.delDocuments = [];
+            var promisesUploadDocuments: Promise<any>[] = [];
+            this.uploader.queue.map(i => {
+              promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(this.uploader, i, this.experienceContaniner));
+            })
+
+            let loader = this.loading.create({
+              content: this.translate.instant('loading'),
+            });
+            loader.present().then(() => {
+              Promise.all(promisesUploadDocuments).then(values => {
+                console.log("popping now")
+                loader.dismiss();
+                this.navCtrl.pop();
+              }).catch(error => {
+                loader.dismiss();
+                this.utilsService.toast(this.translate.instant('toast_error_fields_missing'), 3000, 'middle');
+                return this.handleError;
+              })
+            })
+          });
+        });
       }
       else {
-        this.userService.addStage(this.studentExperience).then(stage => {
-          this.experienceContaniner = stage;
-          if (this.uploader.queue.length > 0) {
-            this.uploadDocument(this.uploader.queue[0]).then(() => this.navCtrl.pop())
-          } else {
-            this.navCtrl.pop();
-            this.utilsService.toast(this.translate.instant('toast_add_stage'), 3000, 'middle');
-          }
-        }
-        );
+        let loader = this.loading.create({
+          content: this.translate.instant('loading'),
+        });
+        loader.present().then(() => {
+          this.userService.addStage(this.studentExperience).then(certification => {
+            this.experienceContaniner = certification;
+            var promisesUploadDocuments: Promise<any>[] = [];
+            this.uploader.queue.map(i => {
+              // promisesUploadDocuments.push(this.uploadDocument(i));
+              promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(this.uploader, i, this.experienceContaniner));
+            })
+
+            if (promisesUploadDocuments.length > 0) {
+              Observable.forkJoin(promisesUploadDocuments).subscribe(values => {
+                console.log(values);
+                loader.dismiss();
+                this.navCtrl.pop()
+              })
+            } else {
+              loader.dismiss();
+            }
+          });
+        });
       }
     }
   }
-  uploadDocument(item): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      //create document
-      this.userService.createDocument(this.experienceContaniner).then(experienceId => {
-        this.webAPIConnectorService.uploadDocument(this.uploader, this.userService.getUserId(), experienceId, item);
-        resolve();
-      })
-    })
 
-  }
   discard(): void {
     this.navCtrl.pop();
   }
+
+  private handleError(error: any): Promise<any> {
+    console.error('An error occurred', error);
+    return Promise.reject(error);
+  }
+
 }

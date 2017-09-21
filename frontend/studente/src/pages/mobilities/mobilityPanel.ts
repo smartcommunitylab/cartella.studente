@@ -40,13 +40,21 @@ export class MobilityPanel implements OnInit {
       this.documentInstitutional = false;
       this.hideSpinner();
     };
-  
+
+  }
+
+  downloadDocument(document) {
+    return new Promise<any>((resolve, reject) => {
+      this.getFileUrl(document).then(url => {
+        window.open(url, '_blank');
+      });
+    });
   }
 
   toggle() {
     this.index = this.index == 0 ? -1 : 0;
   }
-  
+
   getMobility(): StudentExperience {
     return this.mobility;
   }
@@ -150,10 +158,17 @@ export class MobilityPanel implements OnInit {
       this.loader.dismiss().catch(() => { });
     }
   }
-}
 
-//  this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
-//       this.mobility.document = JSON.parse(response);
-//       this.documentInstitutional = false;
-//       this.hideSpinner();
-//     };
+  private getFileUrl(file): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      this.webAPIConnectorService.getUrlFile(this.userService.getUserId(), file.experienceId, file.storageId).then(url => {
+        //add url to file
+        // this.certification.documents[0]['documentUri']=url;
+        resolve(url);
+      }
+      )
+    }
+    )
+  }
+
+}

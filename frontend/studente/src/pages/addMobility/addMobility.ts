@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, NavParams, ModalController } from 'ionic-angular';
+import { NavController, NavParams, ModalController, LoadingController } from 'ionic-angular';
 import { UserService } from '../../services/user.service'
 import { Mobility } from '../../classes/Mobility.class'
 import { StudentExperience } from '../../classes/StudentExperience.class'
@@ -15,7 +15,7 @@ import { MapModal } from '../map/mapmodal'
 import { GeoService } from '../../services/geo.service'
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { WebAPIConnectorService } from '../../services/webAPIConnector.service'
-
+import { Observable } from 'rxjs/Rx';
 
 
 @Component({
@@ -30,6 +30,8 @@ export class AddMobilityPage implements OnInit {
   //certification: Certification = new Certification();
   mobility: Mobility = new Mobility();
   document: Document = new Document();
+  documents: Document[] = [];
+  delDocuments: Document[] = [];
   dateFrom = new Date().toISOString();
   dateTo = new Date().toISOString();
   uploader: FileUploader = new FileUploader({});
@@ -46,7 +48,8 @@ export class AddMobilityPage implements OnInit {
     private webAPIConnectorService: WebAPIConnectorService,
     public modalCtrl: ModalController,
     public GeoService: GeoService,
-    public formBuilder: FormBuilder) {
+    public formBuilder: FormBuilder,
+    public loading: LoadingController) {
     this.mobilityForm = formBuilder.group({
       title: ['', Validators.compose([Validators.required])],
       // dateFrom: ['', Validators.compose([Validators.required])],
@@ -105,29 +108,50 @@ export class AddMobilityPage implements OnInit {
     if (mobility != null) {
       this.studentExperience = JSON.parse(this.params.get('mobility'));
       this.experienceContaniner = this.studentExperience.experience;
-      // this.certification = this.experienceContaniner.attributes as Certification;
-      this.document = this.studentExperience.document as Document;
       this.mobility = this.experienceContaniner.attributes as Mobility;
+      this.documents = this.studentExperience.documents as Document[];
+      this.delDocuments = [];
       this.dateFrom = new Date(this.experienceContaniner.attributes.dateFrom).toISOString();
       this.dateTo = new Date(this.experienceContaniner.attributes.dateTo).toISOString();
     }
-     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
-     //upload of document is finish so come back
-     this.navCtrl.pop();
-    };
+    // this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
+    //   //upload of document is finish so come back
+    //   this.navCtrl.pop();
+    // };
   }
-  removeCertification(): void {
-    this.uploader.clearQueue();
-    (<HTMLInputElement>document.getElementById("uploadInputFile")).value = "";
+
+  addDocument() {
+    //check if theere are info for doc and in that case add new doc in documents
+    if (this.document && this.checkDocumentParams()) {
+      this.documents.push(this.document)
+      this.document = new Document();
+      (<HTMLInputElement>document.getElementById("uploadInputFile")).value = "";
+    } else {
+      this.utilsService.toast(this.translate.instant('toast_error_fields_missing'), 3000, 'middle')
+    }
+
   }
-  removeActualDocument(): void {
-    this.userService.deleteDocument(this.studentExperience).then(() =>
-      this.document = null)
+  checkDocumentParams(): boolean {
+    if (!this.document.attributes['title'] || this.document.attributes['title'] == "") {
+      return false
+    }
+
+    if (this.uploader.queue.length > 0 && this.uploader.queue[this.uploader.queue.length - 1].file.name) {
+      this.document.documentUri = this.uploader.queue[this.uploader.queue.length - 1].file.name;
+      return true;
+    }
+
+    return false;
   }
+
+  removeOldDocument(doc, index) {
+    // maintain list of documents to be deleted on save operation.
+    this.delDocuments.push(this.documents[index]);
+    this.documents.splice(index, 1);
+    this.uploader.queue.splice(index, 1);
+  }
+
   addMobility(): void {
-
-
-
     this.submitAttempt = true;
     if (this.mobilityForm.valid) {
       this.mobility.type = ExperienceTypes.EXP_TYPE_STAGE;
@@ -139,29 +163,68 @@ export class AddMobilityPage implements OnInit {
       if (this.experienceContaniner.id != null) {
         this.userService.updateMobility(this.studentExperience).then(mobility => {
           this.experienceContaniner = mobility;
-          if (this.uploader.queue.length > 0) {
-            this.uploadDocument(this.uploader.queue[0]);
-          } else {
-            this.navCtrl.pop();
-            this.utilsService.toast(this.translate.instant('toast_add_mobility'), 3000, 'middle');
+          // check if there are documents to be deleted.
+          var promisesDelDocuments: Promise<any>[] = [];
+          for (var d = 0; d < this.delDocuments.length; d++) {
+            //promisesDelDocuments.push(this.deleteDocument(this.delDocuments[d]));
+            promisesDelDocuments.push(this.userService.deleteDocumentInPromise(this.studentExperience.experienceId, this.delDocuments[d].storageId));
           }
-        }
-        );
+
+          Promise.all(promisesDelDocuments).then(values => {
+            console.log("PROMISE DELETE ALL.")
+            // clear delete document list.
+            this.delDocuments = [];
+            var promisesUploadDocuments: Promise<any>[] = [];
+            this.uploader.queue.map(i => {
+              promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(this.uploader, i, this.experienceContaniner));
+            })
+
+
+            let loader = this.loading.create({
+              content: this.translate.instant('loading'),
+            });
+            loader.present().then(() => {
+              Promise.all(promisesUploadDocuments).then(values => {
+                console.log("popping now")
+                loader.dismiss();
+                this.navCtrl.pop();
+              }).catch(error => {
+                loader.dismiss();
+                this.utilsService.toast(this.translate.instant('toast_error_fields_missing'), 3000, 'middle');
+                return this.handleError;
+              })
+            })
+          });
+        });
       }
       else {
-        this.userService.addMobility(this.studentExperience).then(mobility => {
-          this.experienceContaniner = mobility;
-          if (this.uploader.queue.length > 0) {
-            this.uploadDocument(this.uploader.queue[0]);
-          } else {
-            this.navCtrl.pop();
-            this.utilsService.toast(this.translate.instant('toast_add_mobility'), 3000, 'middle');
-          }
-        }
-        );
+        let loader = this.loading.create({
+          content: this.translate.instant('loading'),
+        });
+        loader.present().then(() => {
+          this.userService.addMobility(this.studentExperience).then(certification => {
+            this.experienceContaniner = certification;
+            var promisesUploadDocuments: Promise<any>[] = [];
+            this.uploader.queue.map(i => {
+              // promisesUploadDocuments.push(this.uploadDocument(i));
+              promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(this.uploader, i, this.experienceContaniner));
+            })
+
+            if (promisesUploadDocuments.length > 0) {
+              Observable.forkJoin(promisesUploadDocuments).subscribe(values => {
+                console.log(values);
+                loader.dismiss();
+                this.navCtrl.pop()
+              })
+            } else {
+              loader.dismiss();
+            }
+          });
+        });
       }
     }
   }
+
   uploadDocument(item): Promise<void> {
     return new Promise<void>((resolve, reject) => {
       this.userService.createDocument(this.experienceContaniner).then(experienceId => {
@@ -174,4 +237,10 @@ export class AddMobilityPage implements OnInit {
   discard(): void {
     this.navCtrl.pop();
   }
+
+  private handleError(error: any): Promise<any> {
+    console.error('An error occurred', error);
+    return Promise.reject(error);
+  }
+
 }
