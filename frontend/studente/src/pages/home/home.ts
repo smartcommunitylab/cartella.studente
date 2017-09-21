@@ -13,6 +13,7 @@ import { JobsPage } from '../jobs/jobs'
 import { CurriculumPage } from '../curriculum/curriculum'
 import { CertificationsPage } from '../certifications/certifications'
 import { UserService } from '../../services/user.service'
+import { TranslateService } from 'ng2-translate';
 
 @Component({
   selector: 'page-home',
@@ -22,7 +23,7 @@ export class HomePage implements OnInit {
 
   registrations: Registration[] = [];
   experiences: Experience[] = [];
-  constructor(public navCtrl: NavController, private userService: UserService, public loading: LoadingController) {
+  constructor(public navCtrl: NavController, private userService: UserService, public loading: LoadingController, public translate:TranslateService) {
 
   }
   openRegistration(registration: Registration): void {
@@ -55,7 +56,7 @@ export class HomePage implements OnInit {
 
   ngOnInit(): void {
     let loader = this.loading.create({
-      content: 'Getting latest entries...',
+      content: this.translate.instant('loading'),
     });
     loader.present().then(() => {
       this.userService.getUserRegistrations().then(registrations => {
