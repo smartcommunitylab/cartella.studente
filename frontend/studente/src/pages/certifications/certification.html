@@ -6,10 +6,10 @@
 <div padding *ngIf="index == 0">
   <!--<div padding>-->
   <div class="experience-title" *ngIf="certification.experience.attributes.dateFrom"> <span class="registration-institute-label">{{'document_dateFrom_label'|translate}}</span>{{certification.experience.attributes.dateFrom
-    |date}}
+    |localizedDate}}
   </div>
   <div class="experience-title" *ngIf="certification.experience.attributes.dateTo"> <span class="registration-institute-label">{{'document_dateTo_label'|translate}}</span>{{certification.experience.attributes.dateTo
-    |date}}
+    |localizedDate}}
   </div>
   <div class="experience-title" *ngIf="certification.experience.attributes.location"> <span class="registration-institute-label">{{'document_location_label'|translate}}</span>{{certification.experience.attributes.location}}</div>
   <div class="experience-title" *ngIf="certification.experience.attributes.certifier"> <span class="registration-institute-label">{{'document_certifier_label'|translate}}</span>{{certification.experience.attributes.certifier}}</div>

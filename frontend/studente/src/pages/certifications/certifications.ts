@@ -46,7 +46,7 @@ export class CertificationsPage {
     }
   }
   //loaded when it is showed
-  ionViewWillEnter() {
+  ionViewDidEnter() {
     let loader = this.loading.create({
       content: this.translate.instant('loading'),
     });
@@ -54,8 +54,9 @@ export class CertificationsPage {
       this.userService.getUserCertifications().then(certifications => {
         this.utilsService.sortExperience(this.order, certifications).then(sortedList => {
           this.certifications = sortedList;
+          loader.dismiss();
         })
-        loader.dismiss();
+
       })
     })
   }
@@ -63,7 +64,7 @@ export class CertificationsPage {
   onSelectChange(selectedValue: any) {
     this.utilsService.sortExperience(selectedValue, this.certifications).then(sortedList => {
       this.certifications = sortedList;
-      
+
     })
   }
 

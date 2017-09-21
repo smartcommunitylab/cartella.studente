@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, NavParams, ModalController } from 'ionic-angular';
+import { NavController, NavParams, ModalController, LoadingController } from 'ionic-angular';
 import { UserService } from '../../services/user.service'
 import { WebAPIConnectorService } from '../../services/webAPIConnector.service'
 import { ExperienceService } from '../../services/experience.service'
@@ -55,7 +55,8 @@ export class AddCertificationPage implements OnInit {
     public GeoService: GeoService,
     public formBuilder: FormBuilder,
     public utilsService: UtilsService,
-    public translate: TranslateService) {
+    public translate: TranslateService,
+    public loading: LoadingController) {
     this.certificationForm = formBuilder.group({
       title: ['', Validators.compose([Validators.required])],
       dateFrom: ['', Validators.compose([Validators.required])],
@@ -131,9 +132,9 @@ export class AddCertificationPage implements OnInit {
     if (this.document && this.checkDocumentParams()) {
       this.documents.push(this.document)
       this.document = new Document();
-       (<HTMLInputElement>document.getElementById("uploadInputFile")).value = "";
+      (<HTMLInputElement>document.getElementById("uploadInputFile")).value = "";
     } else {
-      this.utilsService.toast( this.translate.instant('toast_error_fields_missing'),3000,'middle')
+      this.utilsService.toast(this.translate.instant('toast_error_fields_missing'), 3000, 'middle')
     }
 
   }
@@ -171,12 +172,12 @@ export class AddCertificationPage implements OnInit {
     myModal.present();
   }
 
-  removeOldDocument (doc,index) {
+  removeOldDocument(doc, index) {
     // maintain list of documents to be deleted on save operation.
     this.delDocuments.push(this.documents[index]);
     this.documents.splice(index, 1);
     this.uploader.queue.splice(index, 1);
-        
+
 
   }
   // removeCertification(): void {
@@ -202,30 +203,41 @@ export class AddCertificationPage implements OnInit {
       if (this.experienceContaniner.id != null) {
         this.userService.updateCertification(this.studentExperience).then(certification => {
           this.experienceContaniner = certification;
-          
-           // check if there are documents to be deleted.
-           var promisesDelDocuments: Promise<any>[] = [];
-           for (var d = 0; d < this.delDocuments.length; d++) {
-             promisesDelDocuments.push(this.deleteDocument(this.delDocuments[d]));
-           }
-          
-           Promise.all(promisesDelDocuments).then(values => {
-            //  alert("PROMISE DELETE ALL.")
-             // clear delete document list.
-             this.delDocuments = [];
 
-             var promisesUploadDocuments: Promise<any>[] = [];
-             this.uploader.queue.map(i => {
+          // check if there are documents to be deleted.
+          var promisesDelDocuments: Promise<any>[] = [];
+          for (var d = 0; d < this.delDocuments.length; d++) {
+            promisesDelDocuments.push(this.deleteDocument(this.delDocuments[d]));
+          }
+
+          Promise.all(promisesDelDocuments).then(values => {
+            console.log("PROMISE DELETE ALL.")
+            // clear delete document list.
+            this.delDocuments = [];
+            var promisesUploadDocuments: Promise<any>[] = [];
+            this.uploader.queue.map(i => {
               promisesUploadDocuments.push(this.uploadDocument(i));
-             })
-             
-             Promise.all(promisesUploadDocuments).then(() => {
-              //  alert("PROMISE UPLOAD ALL.")
-               this.navCtrl.pop()
-             });
+            })
 
-           });
-          
+            let loader = this.loading.create({
+              content: this.translate.instant('loading'),
+            });
+            loader.present().then(() => {
+              Promise.all(promisesUploadDocuments).then(values => {
+                console.log("popping now")
+                loader.dismiss();
+                this.navCtrl.pop();
+              }).catch(error => {
+                loader.dismiss();
+                this.utilsService.toast(this.translate.instant('toast_error_fields_missing'), 3000, 'middle');
+                return this.handleError;
+              })
+
+            })
+
+
+          });
+
           // // map them into a array of observables and forkJoin
           // Observable.forkJoin(
           //   this.uploader.queue.map(
@@ -242,12 +254,12 @@ export class AddCertificationPage implements OnInit {
           this.experienceContaniner = certification;
           Observable.forkJoin(
             this.uploader.queue.map(
-              i => this.uploadDocument(i).then(() =>{
+              i => this.uploadDocument(i).then(() => {
 
-               console.log("uploaded");
+                console.log("uploaded");
               })
             )
-          ).subscribe(() => this.navCtrl.pop())
+          ).subscribe(() => { alert("wrong pop"); this.navCtrl.pop() })
           // if (this.uploader.queue.length > 0) {
           //   this.uploadDocument(this.uploader.queue[0]).then(() => this.navCtrl.pop())
           // } else {
@@ -261,25 +273,40 @@ export class AddCertificationPage implements OnInit {
     // this.utilsService.toast( this.translate.instant('toast_error_fields_missing'),3000,'middle');
     // }
   }
-  uploadDocument(item): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
+  uploadDocument(item): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
       this.userService.createDocument2(this.experienceContaniner, item).then(exp => {
-        this.webAPIConnector.uploadDocument(this.uploader, this.userService.getUserId(), exp.experienceId, item, exp.storageId);
-        resolve();
+        this.webAPIConnector.uploadDocumentWithPromise(this.uploader, this.userService.getUserId(), exp.experienceId, item, exp.storageId).then(resp => {
+          resolve(true);
+        }).catch(error => {
+          return this.handleError;
+        })
+      }).catch(error => {
+        return this.handleError;
       })
     })
 
   }
 
-  deleteDocument(item): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      this.webAPIConnector.deleteStudentDocumentFile(this.userService.getUserId(), this.studentExperience.experienceId, item.storageId);
-      resolve();
+  deleteDocument(item): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      this.webAPIConnector.deleteStudentDocumentFile(this.userService.getUserId(), this.studentExperience.experienceId, item.storageId).then(resp => {
+        resolve();
+      }).catch(error => {
+        return this.handleError;
+      })
+    }).catch(error => {
+      return this.handleError;
     })
 
   }
 
   discard(): void {
     this.navCtrl.pop();
+  }
+
+  private handleError(error: any): Promise<any> {
+    console.error('An error occurred', error);
+    return Promise.reject(error);
   }
 }

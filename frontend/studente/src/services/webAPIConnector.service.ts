@@ -148,7 +148,7 @@ export class WebAPIConnectorService {
   }
   createDocument(experience: ExperienceContainer, studentId: string): Promise<any> {
     let body = experience.attributes;
-      
+
     let expId: string = experience.id;
     let url: string = this.getApiUrl() + 'student/' + studentId + '/experience/' + expId + '/document';
 
@@ -176,27 +176,52 @@ export class WebAPIConnectorService {
       .toPromise()
       .then(response => response.json()).catch(response => this.handleError);
   }
-  
-  uploadDocument(uploader: FileUploader, userId: string, experienceId: string, item, storageId?:string): void {
-    var newUrl = this.config.getConfig('apiUrl') + 'student/' + userId + '/experience/' + experienceId + '/document/'+storageId+'/file';
+
+  uploadDocument(uploader: FileUploader, userId: string, experienceId: string, item, storageId?: string): void {
+    var newUrl = this.config.getConfig('apiUrl') + 'student/' + userId + '/experience/' + experienceId + '/document/' + storageId + '/file';
+    console.log(newUrl);
     uploader.setOptions(
-      { url: newUrl,
-         authToken: `Bearer ${sessionStorage.getItem('access_token')}`,
-          disableMultipart: false
+      {
+        url: newUrl,
+        authToken: `Bearer ${sessionStorage.getItem('access_token')}`,
+        disableMultipart: false
       }
-         );
+    );
     item.withCredentials = false;
     uploader.onBuildItemForm = (item, form) => {
       form.append("filename", item.file.name);
     };
     item.upload();
   }
-    getUrlFile(studentId: string, experienceId: string, storageId: string): Promise<any> {
-   let url: string = this.getApiUrl() + 'student/' + studentId + '/experience/' + experienceId+ '/document/' + storageId+'/link';
+
+  uploadDocumentWithPromise(uploader: FileUploader, userId: string, experienceId: string, item, storageId?: string): Promise<any> {
+
+    return new Promise<any>((resolve, reject) => {
+      var newUrl = this.config.getConfig('apiUrl') + 'student/' + userId + '/experience/' + experienceId + '/document/' + storageId + '/file';
+      console.log(newUrl);
+      uploader.setOptions(
+        {
+          url: newUrl,
+          authToken: `Bearer ${sessionStorage.getItem('access_token')}`,
+          disableMultipart: false
+        }
+      );
+      item.withCredentials = false;
+      uploader.onBuildItemForm = (item, form) => {
+        form.append("filename", item.file.name);
+        resolve();
+      };
+      item.upload();
+    });
+
+  }
+
+  getUrlFile(studentId: string, experienceId: string, storageId: string): Promise<any> {
+    let url: string = this.getApiUrl() + 'student/' + studentId + '/experience/' + experienceId + '/document/' + storageId + '/link';
 
     return this.http.get(url)
       .toPromise()
-      .then(response =>response.text()
+      .then(response => response.text()
       ).catch(response => this.handleError);
   }
   getUserImage(studentId: string): Promise<any> {
@@ -227,7 +252,7 @@ export class WebAPIConnectorService {
 
   updateUserCV(curriculum, studentId): Promise<any> {
     let body = curriculum;
-    
+
     let url: string = this.getApiUrl() + 'student/' + studentId + '/cv';
 
     return this.http.put(url, body)
@@ -237,7 +262,7 @@ export class WebAPIConnectorService {
 
   addUserCV(curriculum, studentId): Promise<any> {
     let body = curriculum;
-    
+
     let url: string = this.getApiUrl() + 'student/' + studentId + '/cv';
 
     return this.http.post(url, body)
@@ -252,19 +277,19 @@ export class WebAPIConnectorService {
       console.log("cv downloaded successfully.")
 
       FileSaver.saveAs(downloadedCV.blob(), "curriculum.odt");
-      
+
     }).catch(error => this.handleError);
 
   }
 
   // downloadDocument(url: string, fileName:string): Promise<any> {
-    
+
   //   console.log(url);
   //   return this.http.get(url, { responseType: ResponseContentType.Blob }).toPromise().then(downloadedCV => {
   //     console.log("document downloaded successfully.")
 
   //     FileSaver.saveAs(downloadedCV.blob(), fileName);
-      
+
   //   }).catch(error => this.handleError);
 
   // }
@@ -272,12 +297,15 @@ export class WebAPIConnectorService {
   createDocument2(experience: ExperienceContainer, item, studentId: string): Promise<any> {
     let body = {};
     // as per the attributes google sheet, each document must contain attributs->title and filename.
-    var attrs = {};
-    attrs['title'] = item.file.name;
-    body['attributes'] = attrs;
-              
+    // var attrs = {};
+    // attrs['title'] = item.file.name;
+    // body['attributes'] = attrs;
+    body['filename'] = item.file.name;
+
     let expId: string = experience.id;
     let url: string = this.getApiUrl() + 'student/' + studentId + '/experience/' + expId + '/document';
+
+    console.log("create document call ->[" + url + "] body: " + body);
 
     return this.http.post(url, body)
       .toPromise()

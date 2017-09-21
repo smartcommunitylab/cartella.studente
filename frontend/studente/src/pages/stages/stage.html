@@ -5,9 +5,9 @@
 </div>
 <div padding *ngIf="index == 0">
   <div class="experience-title" *ngIf="stage.experience.attributes.dateFrom"> <span class="registration-institute-label">{{'stage_dateFrom_label'|translate}}</span>{{stage.experience.attributes.dateFrom
-    |date}}</div>
+    |localizedDate}}</div>
   <div class="experience-title" *ngIf="stage.experience.attributes.dateTo"> <span class="registration-institute-label">{{'stage_dateTo_label'|translate}}</span>{{stage.experience.attributes.dateTo
-    |date}}</div>
+    |localizedDate}}</div>
   <div class="experience-title" *ngIf="stage.experience.attributes.location"> <span class="registration-institute-label">{{'stage_location_label'|translate}}</span>{{stage.experience.attributes.location}}</div>
   <div class="experience-title" *ngIf="stage.experience.attributes.description"> <span class="registration-institute-label">{{'stage_description_label'|translate}}</span>{{stage.experience.attributes.description}}</div>
     <div class="experience-title" *ngIf="stage.experience.attributes.contact"> <span class="registration-institute-label">{{'stage_contact_label' |translate}}</span>{{stage.experience.attributes.contact}}</div>
