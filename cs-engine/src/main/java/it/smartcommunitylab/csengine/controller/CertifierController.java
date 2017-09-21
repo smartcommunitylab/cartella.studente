@@ -67,7 +67,7 @@ public class CertifierController extends AuthController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/api/certifier/{certifierId}/certification/", method = RequestMethod.GET)
+	@RequestMapping(value = "/api/certifier/{certifierId}/certification", method = RequestMethod.GET)
 	public @ResponseBody List<CertificationRequest> getCertificationRequest(
 			@PathVariable String certifierId,
 			@ApiParam Pageable pageable,
@@ -82,7 +82,7 @@ public class CertifierController extends AuthController {
 		return result;		
 	}
 	
-	@RequestMapping(value = "/api/certifier/{certifierId}/certification/", method = RequestMethod.POST)
+	@RequestMapping(value = "/api/certifier/{certifierId}/certification", method = RequestMethod.POST)
 	public @ResponseBody CertificationRequest addCertificationRequest(
 			@PathVariable String certifierId,
 			@RequestBody CertificationRequest certificationRequest,
