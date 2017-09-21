@@ -5,9 +5,9 @@
 </div>
 <div padding *ngIf="index == 0">
   <div class="experience-title" *ngIf="job.experience.attributes.dateFrom"> <span class="registration-institute-label">{{'job_dateFrom_label'|translate}}</span>{{job.experience.attributes.dateFrom
-    |date}}</div>
+    |localizedDate}}</div>
   <div class="experience-title" *ngIf="job.experience.attributes.dateTo"> <span class="registration-institute-label">{{'job_dateTo_label'|translate}}</span>{{job.experience.attributes.dateTo
-    |date}}</div>
+    |localizedDate}}</div>
   <div class="experience-title" *ngIf="job.experience.attributes.location"> <span class="registration-institute-label">{{'job_location_label'|translate}}</span>{{job.experience.attributes.location}}</div>
   <div class="experience-title" *ngIf="job.experience.attributes.description"> <span class="registration-institute-label">{{'job_description_label'|translate}}</span>{{job.experience.attributes.description}}</div>
   <!--<div class="experience-title" *ngIf="job.document!=null && job.document.documentPresent"> <span class="registration-institute-label">{{'document_document_label'|translate}}</span>
