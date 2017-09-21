@@ -170,7 +170,8 @@ export class AddActivityPage implements OnInit {
           // check if there are documents to be deleted.
           var promisesDelDocuments: Promise<any>[] = [];
           for (var d = 0; d < this.delDocuments.length; d++) {
-            promisesDelDocuments.push(this.deleteDocument(this.delDocuments[d]));
+            // promisesDelDocuments.push(this.deleteDocument(this.delDocuments[d]));
+            promisesDelDocuments.push(this.userService.deleteDocumentInPromise(this.studentExperience.experienceId, this.delDocuments[d].storageId));
           }
 
           Promise.all(promisesDelDocuments).then(values => {
@@ -179,7 +180,8 @@ export class AddActivityPage implements OnInit {
             this.delDocuments = [];
             var promisesUploadDocuments: Promise<any>[] = [];
             this.uploader.queue.map(i => {
-              promisesUploadDocuments.push(this.uploadDocument(i));
+              // promisesUploadDocuments.push(this.uploadDocument(i));
+              promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(this.uploader, i, this.experienceContaniner));
             })
 
             if (promisesUploadDocuments.length > 0) {
@@ -200,15 +202,6 @@ export class AddActivityPage implements OnInit {
             }
           });
 
-          // // map them into a array of observables and forkJoin
-          // Observable.forkJoin(
-          //   this.uploader.queue.map(
-          //     i => this.uploadDocument(i).then(() =>{
-          //       console.log("uploaded");
-          //     })
-          //   )
-          // ).subscribe(() => this.navCtrl.pop());
-
         });
       }
       else {
@@ -220,7 +213,8 @@ export class AddActivityPage implements OnInit {
             this.experienceContaniner = certification;
             var promisesUploadDocuments: Promise<any>[] = [];
             this.uploader.queue.map(i => {
-              promisesUploadDocuments.push(this.uploadDocument(i));
+              // promisesUploadDocuments.push(this.uploadDocument(i));
+              promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(this.uploader, i, this.experienceContaniner));
             })
             if (promisesUploadDocuments.length > 0) {
               Observable.forkJoin(promisesUploadDocuments).subscribe(values => {
@@ -237,36 +231,10 @@ export class AddActivityPage implements OnInit {
     }
   }
 
-  uploadDocument(item): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-      this.userService.createDocument2(this.experienceContaniner, item).then(exp => {
-        this.webAPIConnectorService.uploadDocumentWithPromise(this.uploader, this.userService.getUserId(), exp.experienceId, item, exp.storageId).then(resp => {
-          resolve("ok");
-        }).catch(error => {
-          return this.handleError;
-        })
-      }).catch(error => {
-        return this.handleError;
-      })
-    })
-
-  }
-
-  deleteDocument(item): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-      this.webAPIConnectorService.deleteStudentDocumentFile(this.userService.getUserId(), this.studentExperience.experienceId, item.storageId).then(resp => {
-        resolve();
-      }).catch(error => {
-        return this.handleError;
-      })
-    }).catch(error => {
-      return this.handleError;
-    })
-
-  }
   discard(): void {
     this.navCtrl.pop();
   }
+  
   private handleError(error: any): Promise<any> {
     console.error('An error occurred', error);
     return Promise.reject(error);

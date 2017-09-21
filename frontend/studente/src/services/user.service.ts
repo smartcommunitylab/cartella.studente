@@ -430,6 +430,7 @@ export class UserService {
       })
     })
   }
+
   deleteDocument(experience): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       this.webAPIConnector.deleteDocument(experience, this.getUserId()).then(response => {
@@ -490,6 +491,39 @@ export class UserService {
       this.webAPIConnector.downloadCVInODTFormat(this.getUserId()).then(downloadedCV => { }).catch((error: any): any => { reject() })
     });
     
-}
+  }
+
+  uploadDocumentInPromise(uploader, item, experienceContaniner: ExperienceContainer): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      this.createDocument2(experienceContaniner, item).then(exp => {
+        this.webAPIConnector.uploadDocumentWithPromise(uploader, this.getUserId(), exp.experienceId, item, exp.storageId).then(resp => {
+          resolve(true);
+        }).catch(error => {
+          return this.handleError;
+        })
+      }).catch(error => {
+        return this.handleError;
+      })
+    })
+
+  }
+
+  deleteDocumentInPromise(experienceId: string, storageId:string): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      this.webAPIConnector.deleteStudentDocumentFile(this.getUserId(), experienceId, storageId).then(resp => {
+        resolve();
+      }).catch(error => {
+        return this.handleError;
+      })
+    }).catch(error => {
+      return this.handleError;
+    })
+
+  }
+
+  private handleError(error: any): Promise<any> {
+    console.error('An error occurred', error);
+    return Promise.reject(error);
+  }
   
 }

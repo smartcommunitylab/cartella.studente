@@ -174,8 +174,6 @@ export class AddCertificationPage implements OnInit {
     this.delDocuments.push(this.documents[index]);
     this.documents.splice(index, 1);
     this.uploader.queue.splice(index, 1);
-
-
   }
 
   addCertification(): void {
@@ -197,7 +195,8 @@ export class AddCertificationPage implements OnInit {
           // check if there are documents to be deleted.
           var promisesDelDocuments: Promise<any>[] = [];
           for (var d = 0; d < this.delDocuments.length; d++) {
-            promisesDelDocuments.push(this.deleteDocument(this.delDocuments[d]));
+            //promisesDelDocuments.push(this.deleteDocument(this.delDocuments[d]));
+            promisesDelDocuments.push(this.userService.deleteDocumentInPromise(this.studentExperience.experienceId, this.delDocuments[d].storageId));
           }
 
           Promise.all(promisesDelDocuments).then(values => {
@@ -206,7 +205,7 @@ export class AddCertificationPage implements OnInit {
             this.delDocuments = [];
             var promisesUploadDocuments: Promise<any>[] = [];
             this.uploader.queue.map(i => {
-              promisesUploadDocuments.push(this.uploadDocument(i));
+              promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(this.uploader, i, this.experienceContaniner));
             })
             
 
@@ -236,7 +235,8 @@ export class AddCertificationPage implements OnInit {
             this.experienceContaniner = certification;
             var promisesUploadDocuments: Promise<any>[] = [];
             this.uploader.queue.map(i => {
-              promisesUploadDocuments.push(this.uploadDocument(i));
+              // promisesUploadDocuments.push(this.uploadDocument(i));
+              promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(this.uploader, i, this.experienceContaniner));
             })
             
             if (promisesUploadDocuments.length > 0) {
@@ -252,38 +252,35 @@ export class AddCertificationPage implements OnInit {
         });
       }
     }
-    //  else {
-    // this.utilsService.toast( this.translate.instant('toast_error_fields_missing'),3000,'middle');
-    // }
-  }
+   }
 
-  uploadDocument(item): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-      this.userService.createDocument2(this.experienceContaniner, item).then(exp => {
-        this.webAPIConnector.uploadDocumentWithPromise(this.uploader, this.userService.getUserId(), exp.experienceId, item, exp.storageId).then(resp => {
-          resolve(true);
-        }).catch(error => {
-          return this.handleError;
-        })
-      }).catch(error => {
-        return this.handleError;
-      })
-    })
+  // uploadDocument(item): Promise<any> {
+  //   return new Promise<any>((resolve, reject) => {
+  //     this.userService.createDocument2(this.experienceContaniner, item).then(exp => {
+  //       this.webAPIConnector.uploadDocumentWithPromise(this.uploader, this.userService.getUserId(), exp.experienceId, item, exp.storageId).then(resp => {
+  //         resolve(true);
+  //       }).catch(error => {
+  //         return this.handleError;
+  //       })
+  //     }).catch(error => {
+  //       return this.handleError;
+  //     })
+  //   })
 
-  }
+  // }
 
-  deleteDocument(item): Promise<any> {
-    return new Promise<any>((resolve, reject) => {
-      this.webAPIConnector.deleteStudentDocumentFile(this.userService.getUserId(), this.studentExperience.experienceId, item.storageId).then(resp => {
-        resolve();
-      }).catch(error => {
-        return this.handleError;
-      })
-    }).catch(error => {
-      return this.handleError;
-    })
+  // deleteDocument(item): Promise<any> {
+  //   return new Promise<any>((resolve, reject) => {
+  //     this.webAPIConnector.deleteStudentDocumentFile(this.userService.getUserId(), this.studentExperience.experienceId, item.storageId).then(resp => {
+  //       resolve();
+  //     }).catch(error => {
+  //       return this.handleError;
+  //     })
+  //   }).catch(error => {
+  //     return this.handleError;
+  //   })
 
-  }
+  // }
 
   discard(): void {
     this.navCtrl.pop();

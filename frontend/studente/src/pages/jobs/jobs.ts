@@ -11,7 +11,7 @@ import { UtilsService } from '../../services/utils.services'
 })
 export class JobsPage {
   jobs: StudentExperience[] = null;
-  order: string = "a-z";
+  order: string = "latest";
   icon = "ios-arrow-down";
   shownJob = null;
   constructor(public navCtrl: NavController, public params: NavParams, private userService: UserService, public loading: LoadingController, private alertCtrl: AlertController, private translate: TranslateService, private utilsService: UtilsService) {
@@ -35,8 +35,10 @@ export class JobsPage {
     });
     loader.present().then(() => {
       this.userService.getUserJobs().then(jobs => {
-        this.jobs = jobs
-        loader.dismiss();
+        this.utilsService.sortExperience(this.order, jobs).then(sortedList => {
+          this.jobs = sortedList;
+          loader.dismiss();
+        })
       })
     })
   }
