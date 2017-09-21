@@ -249,6 +249,7 @@
   "addDocument_title_missing_label": "Titolo del Certificato mancante",
   "addDocument_description_missing_label": "Descrizione del documento mancante",
   "toast_error_fields_missing": "Campi obbligatori non inseriti",
+  "toast_error": "error",
   "addDocument_error_date": "Data non corretta",
   "add_document_button": "Aggiungi documento",
   "addDocument_save_document_label": "Salva",

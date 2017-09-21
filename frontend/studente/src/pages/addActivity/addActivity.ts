@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, NavParams, ModalController } from 'ionic-angular';
+import { NavController, NavParams, ModalController, LoadingController } from 'ionic-angular';
 import { UserService } from '../../services/user.service'
 import { Activity } from '../../classes/Activity.class'
 import { Document } from '../../classes/Document.class'
@@ -14,6 +14,7 @@ import { MapModal } from '../map/mapmodal'
 import { GeoService } from '../../services/geo.service'
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { WebAPIConnectorService } from '../../services/webAPIConnector.service'
+import { Observable } from 'rxjs/Rx';
 
 @Component({
   selector: 'page-add-activity',
@@ -26,6 +27,8 @@ export class AddActivityPage implements OnInit {
   experienceContaniner: ExperienceContainer = new ExperienceContainer();
   activity: Activity = new Activity();
   document: Document = new Document();
+  documents: Document[] = [];
+  delDocuments: Document[] = [];
   dateFrom = new Date().toISOString();
   dateTo = new Date().toISOString();
   uploader: FileUploader = new FileUploader({});
@@ -44,7 +47,8 @@ export class AddActivityPage implements OnInit {
     private webAPIConnectorService: WebAPIConnectorService,
     public modalCtrl: ModalController,
     public GeoService: GeoService,
-    public formBuilder: FormBuilder) {
+    public formBuilder: FormBuilder,
+    public loading: LoadingController) {
     this.activityForm = formBuilder.group({
       title: ['', Validators.compose([Validators.required])],
       // dateFrom: ['', Validators.compose([Validators.required])],
@@ -104,12 +108,34 @@ export class AddActivityPage implements OnInit {
       this.studentExperience = JSON.parse(this.params.get('activity'));
       this.experienceContaniner = this.studentExperience.experience;
       this.activity = this.experienceContaniner.attributes as Activity;
-      this.document = this.studentExperience.document as Document;
+      this.documents = this.studentExperience.documents as Document[];
+      this.delDocuments = [];
       this.dateFrom = new Date(this.experienceContaniner.attributes.dateFrom).toISOString();
       this.dateTo = new Date(this.experienceContaniner.attributes.dateTo).toISOString();
     }
   }
 
+  addDocument() {
+    //check if theere are info for doc and in that case add new doc in documents
+    if (this.document && this.checkDocumentParams()) {
+      this.documents.push(this.document)
+      this.document = new Document();
+      (<HTMLInputElement>document.getElementById("uploadInputFile")).value = "";
+    } else {
+      this.utilsService.toast(this.translate.instant('toast_error_fields_missing'), 3000, 'middle')
+    }
+
+  }
+  checkDocumentParams(): boolean {
+    if (!this.document.attributes['title'] || this.document.attributes['title'] == "") {
+      return false
+    }
+
+    if (this.uploader.queue.length > 0 && this.uploader.queue[this.uploader.queue.length - 1].file.name) {
+      this.document.documentUri = this.uploader.queue[this.uploader.queue.length - 1].file.name;
+      return true;
+    }
+  }
   removeCertification(): void {
     this.uploader.clearQueue();
     (<HTMLInputElement>document.getElementById("uploadInputFile")).value = "";
@@ -118,11 +144,18 @@ export class AddActivityPage implements OnInit {
     this.userService.deleteDocument(this.studentExperience).then(() =>
       this.document = null)
   }
-  addActivity(): void {
+  removeOldDocument(doc, index) {
+    // maintain list of documents to be deleted on save operation.
+    this.delDocuments.push(this.documents[index]);
+    this.documents.splice(index, 1);
+    this.uploader.queue.splice(index, 1);
 
+
+  }
+
+  addActivity(): void {
     this.submitAttempt = true;
     if (this.activityForm.valid) {
-
       this.activity.type = ExperienceTypes.EXP_TYPE_ACTIVITY;
       this.activity.duration = 10
       this.activity.geocode = [0, 0]
@@ -133,41 +166,109 @@ export class AddActivityPage implements OnInit {
       if (this.experienceContaniner.id != null) {
         this.userService.updateActivity(this.studentExperience).then(activity => {
           this.experienceContaniner = activity;
-          if (this.uploader.queue.length > 0) {
-            this.uploadDocument(this.uploader.queue[0]).then(() => this.navCtrl.pop())
-          } else {
-            this.navCtrl.pop();
-            this.utilsService.toast(this.translate.instant('toast_add_activity'), 3000, 'middle');
 
+          // check if there are documents to be deleted.
+          var promisesDelDocuments: Promise<any>[] = [];
+          for (var d = 0; d < this.delDocuments.length; d++) {
+            promisesDelDocuments.push(this.deleteDocument(this.delDocuments[d]));
           }
-        }
-        );
+
+          Promise.all(promisesDelDocuments).then(values => {
+            console.log("PROMISE DELETE ALL.")
+            // clear delete document list.
+            this.delDocuments = [];
+            var promisesUploadDocuments: Promise<any>[] = [];
+            this.uploader.queue.map(i => {
+              promisesUploadDocuments.push(this.uploadDocument(i));
+            })
+
+            if (promisesUploadDocuments.length > 0) {
+              let loader = this.loading.create({
+                content: this.translate.instant('loading'),
+              });
+              loader.present().then(() => {
+                Observable.forkJoin(promisesUploadDocuments)
+                  .subscribe(t => {
+                    // alert(t);
+                    console.log("popping now");
+                    loader.dismiss();
+                    this.navCtrl.pop();
+                  });
+              })
+            } else {
+              this.navCtrl.pop();
+            }
+          });
+
+          // // map them into a array of observables and forkJoin
+          // Observable.forkJoin(
+          //   this.uploader.queue.map(
+          //     i => this.uploadDocument(i).then(() =>{
+          //       console.log("uploaded");
+          //     })
+          //   )
+          // ).subscribe(() => this.navCtrl.pop());
+
+        });
       }
       else {
-        this.userService.addActivity(this.studentExperience).then(activity => {
-          this.experienceContaniner = activity;
-          if (this.uploader.queue.length > 0) {
-            this.uploadDocument(this.uploader.queue[0]).then(() => this.navCtrl.pop())
-          } else {
-            this.navCtrl.pop();
-            this.utilsService.toast(this.translate.instant('toast_add_activity'), 3000, 'middle');
-
-          }
-        }
-        );
+        let loader = this.loading.create({
+          content: this.translate.instant('loading'),
+        });
+        loader.present().then(() => {
+          this.userService.addCertification(this.studentExperience).then(certification => {
+            this.experienceContaniner = certification;
+            var promisesUploadDocuments: Promise<any>[] = [];
+            this.uploader.queue.map(i => {
+              promisesUploadDocuments.push(this.uploadDocument(i));
+            })
+            if (promisesUploadDocuments.length > 0) {
+              Observable.forkJoin(promisesUploadDocuments).subscribe(values => {
+                console.log(values);
+                loader.dismiss();
+                this.navCtrl.pop()
+              })
+            } else {
+              loader.dismiss();
+            }
+          });
+        });
       }
     }
   }
-  uploadDocument(item): Promise<void> {
-    return new Promise<void>((resolve, reject) => {
-      this.userService.createDocument(this.experienceContaniner).then(experienceId => {
-        this.webAPIConnectorService.uploadDocument(this.uploader, this.userService.getUserId(), experienceId, item);
-        resolve();
+
+  uploadDocument(item): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      this.userService.createDocument2(this.experienceContaniner, item).then(exp => {
+        this.webAPIConnectorService.uploadDocumentWithPromise(this.uploader, this.userService.getUserId(), exp.experienceId, item, exp.storageId).then(resp => {
+          resolve("ok");
+        }).catch(error => {
+          return this.handleError;
+        })
+      }).catch(error => {
+        return this.handleError;
       })
+    })
+
+  }
+
+  deleteDocument(item): Promise<any> {
+    return new Promise<any>((resolve, reject) => {
+      this.webAPIConnectorService.deleteStudentDocumentFile(this.userService.getUserId(), this.studentExperience.experienceId, item.storageId).then(resp => {
+        resolve();
+      }).catch(error => {
+        return this.handleError;
+      })
+    }).catch(error => {
+      return this.handleError;
     })
 
   }
   discard(): void {
     this.navCtrl.pop();
+  }
+  private handleError(error: any): Promise<any> {
+    console.error('An error occurred', error);
+    return Promise.reject(error);
   }
 }

@@ -45,6 +45,15 @@ export class ActivityPanel implements OnInit {
     });
   }
 
+  downloadDocument(document) {
+    return new Promise<any>((resolve, reject) => {
+      this.getFileUrl(document).then(url => {
+        window.open(url, '_blank');
+      });
+    });
+  }
+
+
   toggle() {
     this.index = this.index == 0 ? -1 : 0;
   }
@@ -160,6 +169,18 @@ export class ActivityPanel implements OnInit {
     if (this.loading !== undefined) {
       this.loader.dismiss().catch(() => { });
     }
+  }
+
+  private getFileUrl(file): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      this.webAPIConnectorService.getUrlFile(this.userService.getUserId(), file.experienceId, file.storageId).then(url => {
+        //add url to file
+        // this.certification.documents[0]['documentUri']=url;
+        resolve(url);
+      }
+      )
+    }
+    )
   }
 
 }

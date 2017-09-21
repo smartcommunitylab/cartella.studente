@@ -18,7 +18,6 @@ import { TranslateService } from 'ng2-translate';
 import { CertificationsTypes } from '../../assets/conf/certificationsTypes';
 import { Observable } from 'rxjs/Rx';
 
-// import { checkingDates } from '../../validators/validators';
 
 @Component({
   selector: 'page-add-certification',
@@ -43,7 +42,6 @@ export class AddCertificationPage implements OnInit {
   submitAttempt = false;
   uploader: FileUploader = new FileUploader({});
   showList = false;
-  // documentEdit = false;
 
   constructor(public navCtrl: NavController,
     public params: NavParams,
@@ -127,7 +125,6 @@ export class AddCertificationPage implements OnInit {
     }
   }
   addDocument() {
-    // this.documentEdit= true;
     //check if theere are info for doc and in that case add new doc in documents
     if (this.document && this.checkDocumentParams()) {
       this.documents.push(this.document)
@@ -139,7 +136,7 @@ export class AddCertificationPage implements OnInit {
 
   }
   checkDocumentParams(): boolean {
-    if (this.document.attributes['title'] == "") {
+    if (!this.document.attributes['title'] || this.document.attributes['title'] == "") {
       return false
     }
 
@@ -180,14 +177,7 @@ export class AddCertificationPage implements OnInit {
 
 
   }
-  // removeCertification(): void {
-  //   this.uploader.clearQueue();
-  //   (<HTMLInputElement>document.getElementById("uploadInputFile")).value = "";
-  // }
-  // removeActualDocument(): void {
-  //   this.userService.deleteDocument(this.studentExperience).then(() =>
-  //     this.document = null)
-  // }
+
   addCertification(): void {
     this.submitAttempt = true;
     console.log(!this.certificationForm.controls.location.valid);
@@ -218,6 +208,7 @@ export class AddCertificationPage implements OnInit {
             this.uploader.queue.map(i => {
               promisesUploadDocuments.push(this.uploadDocument(i));
             })
+            
 
             let loader = this.loading.create({
               content: this.translate.instant('loading'),
@@ -232,47 +223,40 @@ export class AddCertificationPage implements OnInit {
                 this.utilsService.toast(this.translate.instant('toast_error_fields_missing'), 3000, 'middle');
                 return this.handleError;
               })
-
             })
-
-
           });
-
-          // // map them into a array of observables and forkJoin
-          // Observable.forkJoin(
-          //   this.uploader.queue.map(
-          //     i => this.uploadDocument(i).then(() =>{
-          //       console.log("uploaded");
-          //     })
-          //   )
-          // ).subscribe(() => this.navCtrl.pop());
-
         });
       }
       else {
-        this.userService.addCertification(this.studentExperience).then(certification => {
-          this.experienceContaniner = certification;
-          Observable.forkJoin(
-            this.uploader.queue.map(
-              i => this.uploadDocument(i).then(() => {
-
-                console.log("uploaded");
+        let loader = this.loading.create({
+          content: this.translate.instant('loading'),
+        });
+        loader.present().then(() => {
+          this.userService.addCertification(this.studentExperience).then(certification => {
+            this.experienceContaniner = certification;
+            var promisesUploadDocuments: Promise<any>[] = [];
+            this.uploader.queue.map(i => {
+              promisesUploadDocuments.push(this.uploadDocument(i));
+            })
+            
+            if (promisesUploadDocuments.length > 0) {
+              Observable.forkJoin(promisesUploadDocuments).subscribe(values => {
+                console.log(values);
+                loader.dismiss();
+                this.navCtrl.pop()
               })
-            )
-          ).subscribe(() => { alert("wrong pop"); this.navCtrl.pop() })
-          // if (this.uploader.queue.length > 0) {
-          //   this.uploadDocument(this.uploader.queue[0]).then(() => this.navCtrl.pop())
-          // } else {
-          //   this.navCtrl.pop();
-          // }
-        }
-        );
+            } else {
+              loader.dismiss();
+            }
+          });
+        });
       }
     }
     //  else {
     // this.utilsService.toast( this.translate.instant('toast_error_fields_missing'),3000,'middle');
     // }
   }
+
   uploadDocument(item): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       this.userService.createDocument2(this.experienceContaniner, item).then(exp => {
