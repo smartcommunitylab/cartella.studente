@@ -9,6 +9,7 @@ import { TranslateModule, TranslateStaticLoader, TranslateLoader, TranslateServi
 import { Ng2OrderModule } from 'ng2-order-pipe';
 import { FileSelectDirective, FileDropDirective } from 'ng2-file-upload';
 import { PipesModule } from '../pipes/pipe.modules';
+import { DatePicker } from 'ionic2-date-picker';
 
 import { ConfigService } from '../services/config.service';
 import { MyApp } from './app.component';
@@ -122,6 +123,7 @@ function initConfig(config: ConfigService) {
     ActivityPanel,
     Subjects,
     RegistrationPanel,
+    DatePicker
   ],
   imports: [
     BrowserModule,
@@ -159,7 +161,8 @@ function initConfig(config: ConfigService) {
     AddCertificationPage,
     NotificationsPage,
     ProfilePage,
-    ConsentPage
+    ConsentPage,
+    DatePicker
   ],
   providers: [
     StatusBar,

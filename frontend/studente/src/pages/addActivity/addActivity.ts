@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, NavParams, ModalController, LoadingController } from 'ionic-angular';
+import { NavController, NavParams, ModalController, LoadingController, ViewController } from 'ionic-angular';
 import { UserService } from '../../services/user.service'
 import { Activity } from '../../classes/Activity.class'
 import { Document } from '../../classes/Document.class'
@@ -15,10 +15,12 @@ import { GeoService } from '../../services/geo.service'
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { WebAPIConnectorService } from '../../services/webAPIConnector.service'
 import { Observable } from 'rxjs/Rx';
+import { DatePicker } from 'ionic2-date-picker';
 
 @Component({
   selector: 'page-add-activity',
-  templateUrl: 'addActivity.html'
+  templateUrl: 'addActivity.html',
+  providers: [DatePicker]
 })
 
 
@@ -48,7 +50,23 @@ export class AddActivityPage implements OnInit {
     public modalCtrl: ModalController,
     public GeoService: GeoService,
     public formBuilder: FormBuilder,
-    public loading: LoadingController) {
+    public loading: LoadingController,
+    public viewCtrl: ViewController,
+    public datePickerFrom: DatePicker,
+    public datePickerTo: DatePicker) {
+
+    //dateFrom.
+    this.datePickerFrom = new DatePicker(<any>this.modalCtrl, <any>this.viewCtrl);
+    this.datePickerFrom.onDateSelected.subscribe((date) => {
+      this.dateFrom = date;
+    });
+
+    //dateTo.
+    this.datePickerTo = new DatePicker(<any>this.modalCtrl, <any>this.viewCtrl);
+    this.datePickerTo.onDateSelected.subscribe((date) => {
+      this.dateTo = date;
+    });
+
     this.activityForm = formBuilder.group({
       title: ['', Validators.compose([Validators.required])],
       // dateFrom: ['', Validators.compose([Validators.required])],
@@ -57,6 +75,15 @@ export class AddActivityPage implements OnInit {
       // contact: ['', Validators.compose([Validators.required])],
       description: ['', Validators.compose([Validators.required])]
     });
+
+  }
+
+  showCalendarDateFrom() {
+    this.datePickerFrom.showCalendar();
+  }
+
+  showCalendarDateTo() {
+    this.datePickerTo.showCalendar();
   }
 
   selectPlace(item) {

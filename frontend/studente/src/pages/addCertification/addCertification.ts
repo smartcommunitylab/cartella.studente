@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { NavController, NavParams, ModalController, LoadingController } from 'ionic-angular';
+import { NavController, NavParams, ModalController, LoadingController, ViewController } from 'ionic-angular';
 import { UserService } from '../../services/user.service'
 import { WebAPIConnectorService } from '../../services/webAPIConnector.service'
 import { ExperienceService } from '../../services/experience.service'
@@ -17,11 +17,13 @@ import { UtilsService } from '../../services/utils.services'
 import { TranslateService } from 'ng2-translate';
 import { CertificationsTypes } from '../../assets/conf/certificationsTypes';
 import { Observable } from 'rxjs/Rx';
+import { DatePicker } from 'ionic2-date-picker';
 
 
 @Component({
   selector: 'page-add-certification',
-  templateUrl: 'addCertification.html'
+  templateUrl: 'addCertification.html',
+  providers: [DatePicker]
 })
 
 
@@ -54,7 +56,24 @@ export class AddCertificationPage implements OnInit {
     public formBuilder: FormBuilder,
     public utilsService: UtilsService,
     public translate: TranslateService,
-    public loading: LoadingController) {
+    public loading: LoadingController,
+    public viewCtrl: ViewController,
+    public datePickerFrom: DatePicker,
+    public datePickerTo: DatePicker) {
+    
+    
+    //dateFrom.
+    this.datePickerFrom = new DatePicker(<any>this.modalCtrl, <any>this.viewCtrl);
+    this.datePickerFrom.onDateSelected.subscribe((date) => {
+      this.dateFrom = date;
+    });
+
+    //dateTo.
+    this.datePickerTo = new DatePicker(<any>this.modalCtrl, <any>this.viewCtrl);
+    this.datePickerTo.onDateSelected.subscribe((date) => {
+      this.dateTo = date;
+    })
+
     this.certificationForm = formBuilder.group({
       title: ['', Validators.compose([Validators.required])],
       dateFrom: ['', Validators.compose([Validators.required])],
@@ -66,6 +85,14 @@ export class AddCertificationPage implements OnInit {
     this.typesData = experienceService.getCertificationTypes();
     this.type = this.typesData[0];
 
+  }
+
+  showCalendarDateFrom() {
+    this.datePickerFrom.showCalendar();
+  }
+
+  showCalendarDateTo() {
+    this.datePickerTo.showCalendar();
   }
 
   checkingDates(dateFromKey: string, dateToKey: string) {

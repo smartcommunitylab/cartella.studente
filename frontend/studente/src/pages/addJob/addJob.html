@@ -30,7 +30,8 @@
         </ion-col>
         <ion-col col-3>
           <ion-item>
-            <ion-datetime displayFormat="DD/MM/YYYY" [ngModelOptions]="{standalone: true}" [(ngModel)]="dateFrom" placeholder="{{'addJob_date_from_placeholder'|translate}}"></ion-datetime>
+            <!-- <ion-datetime displayFormat="DD/MM/YYYY" [ngModelOptions]="{standalone: true}" [(ngModel)]="dateFrom" placeholder="{{'addJob_date_from_placeholder'|translate}}"></ion-datetime> -->
+            <ion-label (click)="showCalendarDateFrom()">{{dateFrom | localizedDate:'dd/MM/yyyy'}}</ion-label>
           </ion-item>
         </ion-col>
       </ion-row>
@@ -40,7 +41,8 @@
         </ion-col>
         <ion-col col-3>
           <ion-item>
-            <ion-datetime displayFormat="DD/MM/YYYY" [ngModelOptions]="{standalone: true}" [(ngModel)]="dateTo" placeholder="{{'addJob_date_to_placeholder'|translate}}"></ion-datetime>
+            <!-- <ion-datetime displayFormat="DD/MM/YYYY" [ngModelOptions]="{standalone: true}" [(ngModel)]="dateTo" placeholder="{{'addJob_date_to_placeholder'|translate}}"></ion-datetime> -->
+            <ion-label (click)="showCalendarDateTo()">{{dateTo | localizedDate:'dd/MM/yyyy'}}</ion-label>
           </ion-item>
         </ion-col>
       </ion-row>

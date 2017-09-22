@@ -31,7 +31,8 @@
         </ion-col>
         <ion-col col-3>
           <div class="form-input">
-            <ion-datetime class="border-input" displayFormat="DD/MM/YYYY" formControlName="dateFrom" [(ngModel)]="dateFrom" placeholder="{{'addDocument_date_from_placeholder'|translate}}"></ion-datetime>
+            <!-- <ion-datetime class="border-input" displayFormat="DD/MM/YYYY" formControlName="dateFrom" [(ngModel)]="dateFrom" placeholder="{{'addDocument_date_from_placeholder'|translate}}"></ion-datetime> -->
+            <ion-label (click)="showCalendarDateFrom()">{{dateFrom | localizedDate:'dd/MM/yyyy'}}</ion-label>
             <div class="error-label">
               <div *ngIf="certificationForm.hasError('dateError')">{{'addDocument_error_date'|translate}}</div>
             </div>
@@ -44,7 +45,8 @@
         </ion-col>
         <ion-col col-3>
           <div class="form-input">
-            <ion-datetime class="border-input" displayFormat="DD/MM/YYYY" formControlName="dateTo" [(ngModel)]="dateTo" placeholder="{{'addDocument_date_to_placeholder'|translate}}"></ion-datetime>
+            <!-- <ion-datetime class="border-input" displayFormat="DD/MM/YYYY" formControlName="dateTo" [(ngModel)]="dateTo" placeholder="{{'addDocument_date_to_placeholder'|translate}}"></ion-datetime> -->
+            <ion-label (click)="showCalendarDateTo()">{{dateTo | localizedDate:'dd/MM/yyyy'}}</ion-label>
             <div class="error-label">
               <div *ngIf="certificationForm.hasError('dateError')">{{'addDocument_error_date'|translate}}</div>
             </div>
