@@ -188,7 +188,6 @@ export class AddStagePage implements OnInit {
               }).catch(error => {
                 loader.dismiss();
                 this.utilsService.toast(this.translate.instant('toast_error_fields_missing'), 3000, 'middle');
-                return this.handleError;
               })
             })
           });
@@ -226,9 +225,5 @@ export class AddStagePage implements OnInit {
     this.navCtrl.pop();
   }
 
-  private handleError(error: any): Promise<any> {
-    console.error('An error occurred', error);
-    return Promise.reject(error);
-  }
 
 }

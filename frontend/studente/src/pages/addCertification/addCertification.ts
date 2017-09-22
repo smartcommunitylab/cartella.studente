@@ -205,6 +205,7 @@ export class AddCertificationPage implements OnInit {
             this.delDocuments = [];
             var promisesUploadDocuments: Promise<any>[] = [];
             this.uploader.queue.map(i => {
+              
               promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(this.uploader, i, this.experienceContaniner));
             })
             
@@ -219,8 +220,7 @@ export class AddCertificationPage implements OnInit {
                 this.navCtrl.pop();
               }).catch(error => {
                 loader.dismiss();
-                this.utilsService.toast(this.translate.instant('toast_error_fields_missing'), 3000, 'middle');
-                return this.handleError;
+                this.utilsService.toast(this.translate.instant('toast_error'), 3000, 'middle');
               })
             })
           });
@@ -286,8 +286,4 @@ export class AddCertificationPage implements OnInit {
     this.navCtrl.pop();
   }
 
-  private handleError(error: any): Promise<any> {
-    console.error('An error occurred', error);
-    return Promise.reject(error);
-  }
 }
