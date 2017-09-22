@@ -170,8 +170,9 @@ export class AddActivityPage implements OnInit {
           // check if there are documents to be deleted.
           var promisesDelDocuments: Promise<any>[] = [];
           for (var d = 0; d < this.delDocuments.length; d++) {
-            // promisesDelDocuments.push(this.deleteDocument(this.delDocuments[d]));
-            promisesDelDocuments.push(this.userService.deleteDocumentInPromise(this.studentExperience.experienceId, this.delDocuments[d].storageId));
+            if (this.delDocuments[d].storageId) { //with this check we make sure to not call delete for intermediate selection and deletion.
+              promisesDelDocuments.push(this.userService.deleteDocumentInPromise(this.studentExperience.experienceId, this.delDocuments[d].storageId));
+            }
           }
 
           Promise.all(promisesDelDocuments).then(values => {
@@ -180,8 +181,9 @@ export class AddActivityPage implements OnInit {
             this.delDocuments = [];
             var promisesUploadDocuments: Promise<any>[] = [];
             this.uploader.queue.map(i => {
-              // promisesUploadDocuments.push(this.uploadDocument(i));
-              promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(this.uploader, i, this.experienceContaniner));
+              var temp: FileUploader = new FileUploader({});
+              temp.queue.push(i);
+              promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(temp, i, this.experienceContaniner));
             })
 
             if (promisesUploadDocuments.length > 0) {

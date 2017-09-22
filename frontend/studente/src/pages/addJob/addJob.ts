@@ -50,7 +50,7 @@ export class AddJobPage implements OnInit {
     public GeoService: GeoService,
     public formBuilder: FormBuilder,
     public loading: LoadingController) {
-    
+
     this.jobForm = formBuilder.group({
       title: ['', Validators.compose([Validators.required])],
       // dateFrom: ['', Validators.compose([Validators.required])],
@@ -116,7 +116,7 @@ export class AddJobPage implements OnInit {
       this.dateTo = new Date(this.experienceContaniner.attributes.dateTo).toISOString();
     }
   }
-  
+
   addDocument() {
     //check if theere are info for doc and in that case add new doc in documents
     if (this.document && this.checkDocumentParams()) {
@@ -162,68 +162,70 @@ export class AddJobPage implements OnInit {
       if (this.experienceContaniner.id != null) {
         this.userService.updateJob(this.studentExperience).then(job => {
           this.experienceContaniner = job;
-         // check if there are documents to be deleted.
-         var promisesDelDocuments: Promise<any>[] = [];
-         for (var d = 0; d < this.delDocuments.length; d++) {
-          //  promisesDelDocuments.push(this.deleteDocument(this.delDocuments[d]));
-          promisesDelDocuments.push(this.userService.deleteDocumentInPromise(this.studentExperience.experienceId, this.delDocuments[d].storageId)); 
-         }
+          // check if there are documents to be deleted.
+          var promisesDelDocuments: Promise<any>[] = [];
+          for (var d = 0; d < this.delDocuments.length; d++) {
+            if (this.delDocuments[d].storageId) { //with this check we make sure to not call delete for intermediate selection and deletion.
+              promisesDelDocuments.push(this.userService.deleteDocumentInPromise(this.studentExperience.experienceId, this.delDocuments[d].storageId));
+            }
+          }
 
-         Promise.all(promisesDelDocuments).then(values => {
-           console.log("PROMISE DELETE ALL.")
-           // clear delete document list.
-           this.delDocuments = [];
-           var promisesUploadDocuments: Promise<any>[] = [];
-           this.uploader.queue.map(i => {
-            //  promisesUploadDocuments.push(this.uploadDocument(i));
-            promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(this.uploader, i, this.experienceContaniner)); 
-           })
-           
+          Promise.all(promisesDelDocuments).then(values => {
+            console.log("PROMISE DELETE ALL.")
+            // clear delete document list.
+            this.delDocuments = [];
+            var promisesUploadDocuments: Promise<any>[] = [];
+            this.uploader.queue.map(i => {
+              var temp: FileUploader = new FileUploader({});
+              temp.queue.push(i);
+              promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(temp, i, this.experienceContaniner));
+            })
 
-           let loader = this.loading.create({
-             content: this.translate.instant('loading'),
-           });
-           loader.present().then(() => {
-             Promise.all(promisesUploadDocuments).then(values => {
-               console.log("popping now")
-               loader.dismiss();
-               this.navCtrl.pop();
-             }).catch(error => {
-               loader.dismiss();
-               this.utilsService.toast(this.translate.instant('toast_error'), 3000, 'middle');
-             })
-           })
-         });
-       });
-     }
-     else {
-       let loader = this.loading.create({
-         content: this.translate.instant('loading'),
-       });
-       loader.present().then(() => {
-        this.userService.addJob(this.studentExperience).then(job => {
-           this.experienceContaniner = job;
-           var promisesUploadDocuments: Promise<any>[] = [];
-           this.uploader.queue.map(i => {
-            //  promisesUploadDocuments.push(this.uploadDocument(i));
-            promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(this.uploader, i, this.experienceContaniner)); 
-           })
-           
-           if (promisesUploadDocuments.length > 0) {
-             Observable.forkJoin(promisesUploadDocuments).subscribe(values => {
-               console.log(values);
-               loader.dismiss();
-               this.navCtrl.pop()
-             })
-           } else {
-             loader.dismiss();
-           }
-         });
-       });
-     }
-   }
-  
- }
+
+            let loader = this.loading.create({
+              content: this.translate.instant('loading'),
+            });
+            loader.present().then(() => {
+              Promise.all(promisesUploadDocuments).then(values => {
+                console.log("popping now")
+                loader.dismiss();
+                this.navCtrl.pop();
+              }).catch(error => {
+                loader.dismiss();
+                this.utilsService.toast(this.translate.instant('toast_error'), 3000, 'middle');
+              })
+            })
+          });
+        });
+      }
+      else {
+        let loader = this.loading.create({
+          content: this.translate.instant('loading'),
+        });
+        loader.present().then(() => {
+          this.userService.addJob(this.studentExperience).then(job => {
+            this.experienceContaniner = job;
+            var promisesUploadDocuments: Promise<any>[] = [];
+            this.uploader.queue.map(i => {
+              //  promisesUploadDocuments.push(this.uploadDocument(i));
+              promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(this.uploader, i, this.experienceContaniner));
+            })
+
+            if (promisesUploadDocuments.length > 0) {
+              Observable.forkJoin(promisesUploadDocuments).subscribe(values => {
+                console.log(values);
+                loader.dismiss();
+                this.navCtrl.pop()
+              })
+            } else {
+              loader.dismiss();
+            }
+          });
+        });
+      }
+    }
+
+  }
 
   discard(): void {
     this.navCtrl.pop();

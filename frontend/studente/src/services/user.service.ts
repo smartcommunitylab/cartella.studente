@@ -496,17 +496,29 @@ export class UserService {
   uploadDocumentInPromise(uploader, item, experienceContaniner: ExperienceContainer): Promise<any> {
     return new Promise<any>((resolve, reject) => {
       this.createDocument2(experienceContaniner, item).then(exp => {
-        this.webAPIConnector.uploadDocumentWithPromise(uploader, this.getUserId(), exp.experienceId, item, exp.storageId).then(resp => {
-          resolve(true);
-        }).catch(error => {
-          return this.handleError;
-        })
-      }).catch(error => {
-        return this.handleError;
-      })
-    })
 
+        this.webAPIConnector.uploadDocument(uploader, this.getUserId(), exp.experienceId, item, exp.storageId);
+          
+        uploader.onCompleteItem = (item, response, status, headers) => {
+          var actualResponse = JSON.parse(item._xhr.response);
+          if (status == 200) {
+            console.log('upload complete for ' + item.file.name);
+            resolve();
+          } else {
+            console.error(response);
+            this.deleteDocument(experienceContaniner).then(exp => {
+              reject();
+            });
+          }
+        }
+      }).catch(error => {
+        console.error(error);
+        reject();
+        })
+    })
+    
   }
+  
 
   deleteDocumentInPromise(experienceId: string, storageId:string): Promise<any> {
     return new Promise<any>((resolve, reject) => {

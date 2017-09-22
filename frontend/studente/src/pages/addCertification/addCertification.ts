@@ -9,7 +9,7 @@ import { StudentExperience } from '../../classes/StudentExperience.class'
 import { ExperienceContainer } from '../../classes/ExperienceContainer.class'
 import { ExperienceTypes } from '../../assets/conf/expTypes';
 import { ConfigService } from '../../services/config.service'
-import { FileUploader } from 'ng2-file-upload';
+import { FileUploader, FileItem } from 'ng2-file-upload';
 import { MapModal } from '../map/mapmodal'
 import { GeoService } from '../../services/geo.service'
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
@@ -196,17 +196,20 @@ export class AddCertificationPage implements OnInit {
           var promisesDelDocuments: Promise<any>[] = [];
           for (var d = 0; d < this.delDocuments.length; d++) {
             //promisesDelDocuments.push(this.deleteDocument(this.delDocuments[d]));
-            promisesDelDocuments.push(this.userService.deleteDocumentInPromise(this.studentExperience.experienceId, this.delDocuments[d].storageId));
+            if (this.delDocuments[d].storageId) { //with this check we make sure to not call delete for intermediate selection and deletion.
+              promisesDelDocuments.push(this.userService.deleteDocumentInPromise(this.studentExperience.experienceId, this.delDocuments[d].storageId));
+            }
           }
-
+          
           Promise.all(promisesDelDocuments).then(values => {
             console.log("PROMISE DELETE ALL.")
             // clear delete document list.
             this.delDocuments = [];
             var promisesUploadDocuments: Promise<any>[] = [];
             this.uploader.queue.map(i => {
-              
-              promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(this.uploader, i, this.experienceContaniner));
+              var temp: FileUploader = new FileUploader({});
+              temp.queue.push(i);
+              promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(temp, i, this.experienceContaniner));
             })
             
 

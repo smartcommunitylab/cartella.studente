@@ -191,30 +191,45 @@ export class WebAPIConnectorService {
     uploader.onBuildItemForm = (item, form) => {
       form.append("filename", item.file.name);
     };
-    item.upload();
+    uploader.uploadItem(item);
   }
 
-  uploadDocumentWithPromise(uploader: FileUploader, userId: string, experienceId: string, item, storageId?: string): Promise<any> {
+  // uploadDocumentWithPromise(uploader: FileUploader, userId: string, experienceId: string, item, storageId?: string) { //: Promise<any>
 
-    return new Promise<any>((resolve, reject) => {
-      var newUrl = this.config.getConfig('apiUrl') + 'student/' + userId + '/experience/' + experienceId + '/document/' + storageId + '/file';
-      console.log(newUrl);
-      uploader.setOptions(
-        {
-          url: newUrl,
-          authToken: `Bearer ${sessionStorage.getItem('access_token')}`,
-          disableMultipart: false
-        }
-      );
-      item.withCredentials = false;
-      uploader.onBuildItemForm = (item, form) => {
-        form.append("filename", item.file.name);
-        resolve();
-      };
-      item.upload();
-    });
+  //   // return new Promise<any>((resolve, reject) => {
+  //     var newUrl = this.config.getConfig('apiUrl') + 'student/' + userId + '/experience/' + experienceId + '/document/' + storageId + '/file';
+  //     console.log(newUrl);
+  //     uploader.setOptions(
+  //       {
+  //         url: newUrl,
+  //         authToken: `Bearer ${sessionStorage.getItem('access_token')}`,
+  //         disableMultipart: false
+  //       }
+  //     );
+  //     item.withCredentials = false;
 
-  }
+  //     uploader.onBuildItemForm = (item, form) => {
+  //       form.append("filename", item.file.name);
+  //     };
+      
+  //     uploader.uploadItem(item);
+
+  //     // uploader.onCompleteItem = (item, response, status, headers) => {
+
+  //     //   var actualResponse = JSON.parse(item._xhr.response);
+
+  //     //   if (status == 200) {
+  //     //     console.log('upload complete for ' + item.file.name);
+  //     //     resolve();
+  //     //   } else {
+  //     //     console.log('upload did not complete for ' + item.file.name);
+  //     //     reject();
+  //     //   }
+  //     // }
+
+  //   // });
+
+  // }
 
   getUrlFile(studentId: string, experienceId: string, storageId: string): Promise<any> {
     let url: string = this.getApiUrl() + 'student/' + studentId + '/experience/' + experienceId + '/document/' + storageId + '/link';
