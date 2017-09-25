@@ -36,6 +36,7 @@ export class AddStagePage implements OnInit {
   delDocuments: Document[] = [];
   dateFrom = new Date().toISOString();
   dateTo = new Date().toISOString();
+  dateError: boolean = false;
   uploader: FileUploader = new FileUploader({});
   stageForm: FormGroup;
   submitAttempt = false;
@@ -70,10 +71,7 @@ export class AddStagePage implements OnInit {
 
     this.stageForm = formBuilder.group({
       title: ['', Validators.compose([Validators.required])],
-      // dateFrom: ['', Validators.compose([Validators.required])],
-      // dateTo: ['', Validators.compose([Validators.required])],
       location: ['', Validators.compose([Validators.required])],
-      // contact: ['', Validators.compose([Validators.required])],
       description: ['', Validators.compose([Validators.required])]
     });
   }
@@ -176,84 +174,98 @@ export class AddStagePage implements OnInit {
   addStage(): void {
 
     this.submitAttempt = true;
-    if (this.stageForm.valid) {
-      this.stage.type = ExperienceTypes.EXP_TYPE_STAGE;
-      // this.stage.duration = 10
-      // this.stage.geocode = [0, 0]
-      this.stage.dateFrom = new Date(this.dateFrom).getTime();
-      this.stage.dateTo = new Date(this.dateTo).getTime();
-      this.experienceContaniner.attributes = this.stage;
-      this.studentExperience.experience = this.experienceContaniner;
 
-      if (this.experienceContaniner.id != null) {
-        this.userService.updateStage(this.studentExperience).then(stage => {
-          this.experienceContaniner = stage;
-          // check if there are documents to be deleted.
-          var promisesDelDocuments: Promise<any>[] = [];
-          for (var d = 0; d < this.delDocuments.length; d++) {
-            if (this.delDocuments[d].storageId) { //with this check we make sure to not call delete for intermediate selection and deletion.
-              promisesDelDocuments.push(this.userService.deleteDocumentInPromise(this.studentExperience.experienceId, this.delDocuments[d].storageId));
+    if (this.checkingDates()) {
+      if (this.stageForm.valid) {
+        this.stage.type = ExperienceTypes.EXP_TYPE_STAGE;
+        // this.stage.duration = 10
+        // this.stage.geocode = [0, 0]
+        this.stage.dateFrom = new Date(this.dateFrom).getTime();
+        this.stage.dateTo = new Date(this.dateTo).getTime();
+        this.experienceContaniner.attributes = this.stage;
+        this.studentExperience.experience = this.experienceContaniner;
+
+        if (this.experienceContaniner.id != null) {
+          this.userService.updateStage(this.studentExperience).then(stage => {
+            this.experienceContaniner = stage;
+            // check if there are documents to be deleted.
+            var promisesDelDocuments: Promise<any>[] = [];
+            for (var d = 0; d < this.delDocuments.length; d++) {
+              if (this.delDocuments[d].storageId) { //with this check we make sure to not call delete for intermediate selection and deletion.
+                promisesDelDocuments.push(this.userService.deleteDocumentInPromise(this.studentExperience.experienceId, this.delDocuments[d].storageId));
+              }
             }
-          }
 
-          Promise.all(promisesDelDocuments).then(values => {
-            console.log("PROMISE DELETE ALL.")
-            // clear delete document list.
-            this.delDocuments = [];
-            var promisesUploadDocuments: Promise<any>[] = [];
-            this.uploader.queue.map(i => {
-              var temp: FileUploader = new FileUploader({});
-              temp.queue.push(i);
-              promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(temp, i, this.experienceContaniner));
-            })
+            Promise.all(promisesDelDocuments).then(values => {
+              console.log("PROMISE DELETE ALL.")
+              // clear delete document list.
+              this.delDocuments = [];
+              var promisesUploadDocuments: Promise<any>[] = [];
+              this.uploader.queue.map(i => {
+                var temp: FileUploader = new FileUploader({});
+                temp.queue.push(i);
+                promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(temp, i, this.experienceContaniner));
+              })
 
-            let loader = this.loading.create({
-              content: this.translate.instant('loading'),
+              let loader = this.loading.create({
+                content: this.translate.instant('loading'),
+              });
+              loader.present().then(() => {
+                Promise.all(promisesUploadDocuments).then(values => {
+                  console.log("popping now")
+                  loader.dismiss();
+                  this.navCtrl.pop();
+                }).catch(error => {
+                  loader.dismiss();
+                  this.utilsService.toast(this.translate.instant('toast_error_fields_missing'), 3000, 'middle');
+                })
+              })
             });
-            loader.present().then(() => {
-              Promise.all(promisesUploadDocuments).then(values => {
-                console.log("popping now")
-                loader.dismiss();
-                this.navCtrl.pop();
-              }).catch(error => {
-                loader.dismiss();
-                this.utilsService.toast(this.translate.instant('toast_error_fields_missing'), 3000, 'middle');
-              })
-            })
           });
-        });
-      }
-      else {
-        let loader = this.loading.create({
-          content: this.translate.instant('loading'),
-        });
-        loader.present().then(() => {
-          this.userService.addStage(this.studentExperience).then(certification => {
-            this.experienceContaniner = certification;
-            var promisesUploadDocuments: Promise<any>[] = [];
-            this.uploader.queue.map(i => {
-              // promisesUploadDocuments.push(this.uploadDocument(i));
-              promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(this.uploader, i, this.experienceContaniner));
-            })
+        }
+        else {
+          let loader = this.loading.create({
+            content: this.translate.instant('loading'),
+          });
+          loader.present().then(() => {
+            this.userService.addStage(this.studentExperience).then(certification => {
+              this.experienceContaniner = certification;
+              var promisesUploadDocuments: Promise<any>[] = [];
+              this.uploader.queue.map(i => {
+                // promisesUploadDocuments.push(this.uploadDocument(i));
+                promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(this.uploader, i, this.experienceContaniner));
+              })
 
-            if (promisesUploadDocuments.length > 0) {
-              Observable.forkJoin(promisesUploadDocuments).subscribe(values => {
-                console.log(values);
+              if (promisesUploadDocuments.length > 0) {
+                Observable.forkJoin(promisesUploadDocuments).subscribe(values => {
+                  console.log(values);
+                  loader.dismiss();
+                  this.navCtrl.pop()
+                })
+              } else {
                 loader.dismiss();
-                this.navCtrl.pop()
-              })
-            } else {
-              loader.dismiss();
-            }
+              }
+            });
           });
-        });
+        }
       }
+    } else {
+      this.dateError = true;
     }
+
   }
 
   discard(): void {
     this.navCtrl.pop();
   }
 
+  checkingDates() {
+    var d1 = Date.parse(this.dateFrom);
+    var d2 = Date.parse(this.dateTo);
+    if (d1 > d2 || d1 > Date.now() || d2 > Date.now()) {
+      return false;
+    };
+    return true;
+  }
 
 }

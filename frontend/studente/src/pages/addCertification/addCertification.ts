@@ -96,17 +96,13 @@ export class AddCertificationPage implements OnInit {
     this.datePickerTo.showCalendar();
   }
 
-  checkingDates(dateFromKey: string, dateToKey: string) {
-    // return (group: FormGroup): { [key: string]: any } => {
-      // let dateFrom = group.controls[dateFromKey];
-      // let dateTo = group.controls[dateToKey];
+  checkingDates() {
       var d1 = Date.parse(this.dateFrom);
       var d2 = Date.parse(this.dateTo);
       if (d1 > d2 || d1 > Date.now() || d2 > Date.now()) {
         return false;
       };
       return true;
-    // }
   }
 
   selectPlace(item) {
@@ -213,7 +209,7 @@ export class AddCertificationPage implements OnInit {
     console.log((this.certificationForm.controls.location.dirty || this.submitAttempt));
     console.log((!this.certificationForm.controls.location.valid && (this.certificationForm.controls.location.dirty || this.submitAttempt) && !this.certification.geocode));
   
-    if (this.checkingDates(this.dateFrom, this.dateTo)) {
+    if (this.checkingDates()) {
   
       if (this.certificationForm.valid) {
         this.certification.type = this.type['value'];

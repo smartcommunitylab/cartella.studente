@@ -179,7 +179,7 @@ export class AddActivityPage implements OnInit {
   addActivity(): void {
     this.submitAttempt = true;
 
-    if (this.checkingDates(this.dateFrom, this.dateTo)) {
+    if (this.checkingDates()) {
       if (this.activityForm.valid) {
         this.activity.type = ExperienceTypes.EXP_TYPE_ACTIVITY;
         this.activity.duration = 10
@@ -266,7 +266,7 @@ export class AddActivityPage implements OnInit {
     this.navCtrl.pop();
   }
 
-  checkingDates(dateFromKey: string, dateToKey: string) {
+  checkingDates() {
     var d1 = Date.parse(this.dateFrom);
     var d2 = Date.parse(this.dateTo);
     if (d1 > d2 || d1 > Date.now() || d2 > Date.now()) {

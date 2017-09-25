@@ -29,10 +29,13 @@
           <ion-label>{{'addJob_dateFrom_label'|translate}}</ion-label>
         </ion-col>
         <ion-col col-3>
-          <ion-item>
+          <div class="form-input">
             <!-- <ion-datetime displayFormat="DD/MM/YYYY" [ngModelOptions]="{standalone: true}" [(ngModel)]="dateFrom" placeholder="{{'addJob_date_from_placeholder'|translate}}"></ion-datetime> -->
             <ion-label (click)="showCalendarDateFrom()">{{dateFrom | localizedDate:'dd/MM/yyyy'}}</ion-label>
-          </ion-item>
+          </div>
+          <div class="error-label">
+            <div *ngIf="dateError">{{'addDocument_error_date'|translate}}</div>
+          </div>
         </ion-col>
       </ion-row>
       <ion-row>
@@ -40,10 +43,13 @@
           <ion-label>{{'addJob_dateTo_label'|translate}}</ion-label>
         </ion-col>
         <ion-col col-3>
-          <ion-item>
+          <div class="form-input">
             <!-- <ion-datetime displayFormat="DD/MM/YYYY" [ngModelOptions]="{standalone: true}" [(ngModel)]="dateTo" placeholder="{{'addJob_date_to_placeholder'|translate}}"></ion-datetime> -->
             <ion-label (click)="showCalendarDateTo()">{{dateTo | localizedDate:'dd/MM/yyyy'}}</ion-label>
-          </ion-item>
+          </div>
+          <div class="error-label">
+            <div *ngIf="dateError">{{'addDocument_error_date'|translate}}</div>
+          </div>
         </ion-col>
       </ion-row>
       <ion-row>
