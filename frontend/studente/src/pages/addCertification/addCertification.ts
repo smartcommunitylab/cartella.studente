@@ -102,12 +102,13 @@ export class AddCertificationPage implements OnInit {
       // let dateTo = group.controls[dateToKey];
       var d1 = Date.parse(this.dateFrom);
       var d2 = Date.parse(this.dateTo);
-      if (this.dateFrom > this.dateTo || d1 > Date.now() || d2 > Date.now()) {
+      if (d1 > d2 || d1 > Date.now() || d2 > Date.now()) {
         return false;
       };
       return true;
     // }
   }
+
   selectPlace(item) {
     //set name and coordinates of the selected place
     this.certification.location = item.name;
