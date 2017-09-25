@@ -50,6 +50,10 @@ export class LoginService  {
     return Promise.resolve(true);
   }
 
+  serverLogout(): void {
+    window.location = this.config.getConfig('aacUrl') + '/logout?target=' + window.location.href;
+  }
+
   /**
    * Check status of the login. Return LOGIN_STATUS value
    */

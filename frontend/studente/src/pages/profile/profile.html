@@ -99,6 +99,7 @@
     <ion-row>
       <ion-col>
         <button class="action-button " *ngIf="!editMode" ion-button (click)=openEditMode()>{{'profile_update_button'|translate}}</button>
+        <button class="action-button " *ngIf="!editMode" ion-button (click)=logout()>{{'logout_label'|translate}}</button>
         <button class="action-button " ion-button *ngIf="editMode" (click)=closeEditMode()>{{'profile_cancel_button'|translate}}</button>
         <button class="action-button " ion-button *ngIf="editMode" (click)=saveData()>{{'profile_confirm_button'|translate}}</button>
       </ion-col>

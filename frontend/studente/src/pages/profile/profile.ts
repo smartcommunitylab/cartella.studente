@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { NavController, NavParams, LoadingController, AlertController } from 'ionic-angular';
 import { UserService } from '../../services/user.service';
+import { LoginService } from '../../services/login.service';
+import { MyApp } from '../../app/app.component';
 import { Student } from '../../classes/Student.class';
 import { TranslateService } from 'ng2-translate';
 import { FileUploader } from 'ng2-file-upload';
@@ -18,6 +20,7 @@ export class ProfilePage implements OnInit {
   constructor(public navCtrl: NavController,
     public params: NavParams,
     private userService: UserService,
+    private loginService: LoginService,
     public loading: LoadingController,
     private translate: TranslateService,
     private alertCtrl: AlertController) {
@@ -110,4 +113,14 @@ export class ProfilePage implements OnInit {
       this.loader.dismiss().catch(() => { });
     }
   }
+
+  logout() {
+    this.loginService.logout().then(res => {
+      console.log("user logged out from client.");
+      this.loginService.serverLogout();
+    }).catch(error => {
+      console.error("user not logged out from server.");
+    })
+  }
+
 }
