@@ -36,6 +36,7 @@ export class AddCertificationPage implements OnInit {
   delDocuments: Document[] = [];
   dateFrom = new Date().toISOString();
   dateTo = new Date().toISOString();
+  dateError: boolean = false;
   items = [];
   type = {};
   language = "";
@@ -60,8 +61,8 @@ export class AddCertificationPage implements OnInit {
     public viewCtrl: ViewController,
     public datePickerFrom: DatePicker,
     public datePickerTo: DatePicker) {
-    
-    
+
+
     //dateFrom.
     this.datePickerFrom = new DatePicker(<any>this.modalCtrl, <any>this.viewCtrl);
     this.datePickerFrom.onDateSelected.subscribe((date) => {
@@ -76,11 +77,11 @@ export class AddCertificationPage implements OnInit {
 
     this.certificationForm = formBuilder.group({
       title: ['', Validators.compose([Validators.required])],
-      dateFrom: ['', Validators.compose([Validators.required])],
-      dateTo: ['', Validators.compose([Validators.required])],
+      // dateFrom: ['', Validators.compose([Validators.required])],
+      // dateTo: ['', Validators.compose([Validators.required])],
       location: ['', Validators.compose([Validators.required])],
       description: ['', Validators.compose([Validators.required])]
-    }, { validator: this.checkingDates('dateFrom', 'dateTo') });
+    }); //{ validator: this.checkingDates('dateFrom', 'dateTo') }
 
     this.typesData = experienceService.getCertificationTypes();
     this.type = this.typesData[0];
@@ -96,15 +97,16 @@ export class AddCertificationPage implements OnInit {
   }
 
   checkingDates(dateFromKey: string, dateToKey: string) {
-    return (group: FormGroup): { [key: string]: any } => {
-      let dateFrom = group.controls[dateFromKey];
-      let dateTo = group.controls[dateToKey];
-      var d1 = Date.parse(dateFrom.value);
-      var d2 = Date.parse(dateTo.value);
-      if (d1 > d2 || d1 > Date.now() || d2 > Date.now()) return {
-        dateError: true
+    // return (group: FormGroup): { [key: string]: any } => {
+      // let dateFrom = group.controls[dateFromKey];
+      // let dateTo = group.controls[dateToKey];
+      var d1 = Date.parse(this.dateFrom);
+      var d2 = Date.parse(this.dateTo);
+      if (this.dateFrom > this.dateTo || d1 > Date.now() || d2 > Date.now()) {
+        return false;
       };
-    }
+      return true;
+    // }
   }
   selectPlace(item) {
     //set name and coordinates of the selected place
@@ -209,80 +211,88 @@ export class AddCertificationPage implements OnInit {
     console.log(this.certification.geocode);
     console.log((this.certificationForm.controls.location.dirty || this.submitAttempt));
     console.log((!this.certificationForm.controls.location.valid && (this.certificationForm.controls.location.dirty || this.submitAttempt) && !this.certification.geocode));
-    if (this.certificationForm.valid) {
-      this.certification.type = this.type['value'];
-      this.certification.dateFrom = new Date(this.dateFrom).getTime();
-      this.certification.dateTo = new Date(this.dateTo).getTime();
-      this.experienceContaniner.attributes = this.certification;
-      this.studentExperience.experience = this.experienceContaniner;
-      if (this.experienceContaniner.id != null) {
-        this.userService.updateCertification(this.studentExperience).then(certification => {
-          this.experienceContaniner = certification;
-
-          // check if there are documents to be deleted.
-          var promisesDelDocuments: Promise<any>[] = [];
-          for (var d = 0; d < this.delDocuments.length; d++) {
-            //promisesDelDocuments.push(this.deleteDocument(this.delDocuments[d]));
-            if (this.delDocuments[d].storageId) { //with this check we make sure to not call delete for intermediate selection and deletion.
-              promisesDelDocuments.push(this.userService.deleteDocumentInPromise(this.studentExperience.experienceId, this.delDocuments[d].storageId));
-            }
-          }
-          
-          Promise.all(promisesDelDocuments).then(values => {
-            console.log("PROMISE DELETE ALL.")
-            // clear delete document list.
-            this.delDocuments = [];
-            var promisesUploadDocuments: Promise<any>[] = [];
-            this.uploader.queue.map(i => {
-              var temp: FileUploader = new FileUploader({});
-              temp.queue.push(i);
-              promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(temp, i, this.experienceContaniner));
-            })
-            
-
-            let loader = this.loading.create({
-              content: this.translate.instant('loading'),
-            });
-            loader.present().then(() => {
-              Promise.all(promisesUploadDocuments).then(values => {
-                console.log("popping now")
-                loader.dismiss();
-                this.navCtrl.pop();
-              }).catch(error => {
-                loader.dismiss();
-                this.utilsService.toast(this.translate.instant('toast_error'), 3000, 'middle');
-              })
-            })
-          });
-        });
-      }
-      else {
-        let loader = this.loading.create({
-          content: this.translate.instant('loading'),
-        });
-        loader.present().then(() => {
-          this.userService.addCertification(this.studentExperience).then(certification => {
+  
+    if (this.checkingDates(this.dateFrom, this.dateTo)) {
+  
+      if (this.certificationForm.valid) {
+        this.certification.type = this.type['value'];
+        this.certification.dateFrom = new Date(this.dateFrom).getTime();
+        this.certification.dateTo = new Date(this.dateTo).getTime();
+        this.experienceContaniner.attributes = this.certification;
+        this.studentExperience.experience = this.experienceContaniner;
+        if (this.experienceContaniner.id != null) {
+          this.userService.updateCertification(this.studentExperience).then(certification => {
             this.experienceContaniner = certification;
-            var promisesUploadDocuments: Promise<any>[] = [];
-            this.uploader.queue.map(i => {
-              // promisesUploadDocuments.push(this.uploadDocument(i));
-              promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(this.uploader, i, this.experienceContaniner));
-            })
-            
-            if (promisesUploadDocuments.length > 0) {
-              Observable.forkJoin(promisesUploadDocuments).subscribe(values => {
-                console.log(values);
-                loader.dismiss();
-                this.navCtrl.pop()
-              })
-            } else {
-              loader.dismiss();
+
+            // check if there are documents to be deleted.
+            var promisesDelDocuments: Promise<any>[] = [];
+            for (var d = 0; d < this.delDocuments.length; d++) {
+              //promisesDelDocuments.push(this.deleteDocument(this.delDocuments[d]));
+              if (this.delDocuments[d].storageId) { //with this check we make sure to not call delete for intermediate selection and deletion.
+                promisesDelDocuments.push(this.userService.deleteDocumentInPromise(this.studentExperience.experienceId, this.delDocuments[d].storageId));
+              }
             }
+
+            Promise.all(promisesDelDocuments).then(values => {
+              console.log("PROMISE DELETE ALL.")
+              // clear delete document list.
+              this.delDocuments = [];
+              var promisesUploadDocuments: Promise<any>[] = [];
+              this.uploader.queue.map(i => {
+                var temp: FileUploader = new FileUploader({});
+                temp.queue.push(i);
+                promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(temp, i, this.experienceContaniner));
+              })
+
+
+              let loader = this.loading.create({
+                content: this.translate.instant('loading'),
+              });
+              loader.present().then(() => {
+                Promise.all(promisesUploadDocuments).then(values => {
+                  console.log("popping now")
+                  loader.dismiss();
+                  this.navCtrl.pop();
+                }).catch(error => {
+                  loader.dismiss();
+                  this.utilsService.toast(this.translate.instant('toast_error'), 3000, 'middle');
+                })
+              })
+            });
           });
-        });
+        }
+        else {
+          let loader = this.loading.create({
+            content: this.translate.instant('loading'),
+          });
+          loader.present().then(() => {
+            this.userService.addCertification(this.studentExperience).then(certification => {
+              this.experienceContaniner = certification;
+              var promisesUploadDocuments: Promise<any>[] = [];
+              this.uploader.queue.map(i => {
+                // promisesUploadDocuments.push(this.uploadDocument(i));
+                promisesUploadDocuments.push(this.userService.uploadDocumentInPromise(this.uploader, i, this.experienceContaniner));
+              })
+
+              if (promisesUploadDocuments.length > 0) {
+                Observable.forkJoin(promisesUploadDocuments).subscribe(values => {
+                  console.log(values);
+                  loader.dismiss();
+                  this.navCtrl.pop()
+                })
+              } else {
+                loader.dismiss();
+              }
+            });
+          });
+        }
       }
+    } else {
+      this.dateError = true;
     }
-   }
+
+
+  }
 
   // uploadDocument(item): Promise<any> {
   //   return new Promise<any>((resolve, reject) => {
