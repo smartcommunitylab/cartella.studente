@@ -47,9 +47,9 @@ export class ProfilePage implements OnInit {
   openEditMode() {
     this.editMode = true;
   }
-  getProfileImage() {
-    return this.userService.getUserImage();
-  }
+  // getProfileImage() {
+  //   return this.userService.getUserImage();
+  // }
   closeEditMode() {
     //sicuro di non voler salvare i dati?
     this.uploader.clearQueue();
