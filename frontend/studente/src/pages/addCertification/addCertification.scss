@@ -1,4 +1,4 @@
-.stage-filter{
+page-add-certification {
   width: 100%;
   display: inline-flex;
   input {
@@ -7,4 +7,9 @@
   .filter-search-icon{
     font-size: 40px;
   }
+ 
+  ion-select {
+    max-width: fit-content;
+  }
+
 }
