@@ -27,16 +27,16 @@ export class UtilsService {
 
                 case 'a-z':
                     collection.sort(function (a, b) {
-                        if (a.experience.attributes.title < b.experience.attributes.title) return -1;
-                        if (a.experience.attributes.title > b.experience.attributes.title) return 1;
+                        if (a.experience.attributes.title.toLowerCase() < b.experience.attributes.title.toLowerCase()) return -1;
+                        if (a.experience.attributes.title.toLowerCase() > b.experience.attributes.title.toLowerCase()) return 1;
                         return 0;
                     })
                     break;
 
                 case 'z-a':
                     collection.sort(function (a, b) {
-                        if (a.experience.attributes.title < b.experience.attributes.title) return 1;
-                        if (a.experience.attributes.title > b.experience.attributes.title) return -1;
+                        if (a.experience.attributes.title.toLowerCase() < b.experience.attributes.title.toLowerCase()) return 1;
+                        if (a.experience.attributes.title.toLowerCase() > b.experience.attributes.title.toLowerCase()) return -1;
                         return 0;
                     })
                     break;
