@@ -106,12 +106,12 @@
           <ion-label>{{'addDocument_present_document_label'|translate}}</ion-label>
         </ion-col>
         <ion-col col-3>
-          <ion-label>{{doc.documentUri}}</ion-label>
+          <ion-item>
+            <ion-label *ngIf="doc.attributes.title">{{doc.attributes.title}}</ion-label>
+            <ion-label *ngIf="!doc.attributes.title && doc.filename">{{doc.filename}}</ion-label>
+          </ion-item>
         </ion-col>
-        <ion-col col-3>
-          <ion-label *ngIf="doc.attributes.title">{{doc.attributes.title}}</ion-label>
-          <ion-label *ngIf="!doc.attributes.title && doc.filename">{{doc.filename}}</ion-label>
-        </ion-col>
+        <ion-col col-3></ion-col>
         <ion-col col-3>
           <button class="button-add-stage label-button" ion-button clear (click)="removeOldDocument(doc,i)">{{'addDocument_remove_actual_document_label'|translate}}</button>
         </ion-col>

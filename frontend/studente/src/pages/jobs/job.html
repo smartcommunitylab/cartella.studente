@@ -5,9 +5,10 @@
 </div>
 <div padding *ngIf="index == 0">
   <div class="experience-title" *ngIf="job.experience.attributes.dateFrom"> <span class="registration-institute-label">{{'job_dateFrom_label'|translate}}</span>{{job.experience.attributes.dateFrom
-    |localizedDate}}</div>
-  <div class="experience-title" *ngIf="job.experience.attributes.dateTo"> <span class="registration-institute-label">{{'job_dateTo_label'|translate}}</span>{{job.experience.attributes.dateTo
-    |localizedDate}}</div>
+    |localizedDate}}
+  </div>
+  <div class="experience-title" *ngIf="job.experience.attributes.dateTo"> <span class="registration-institute-label">{{'job_dateTo_label'|translate}}</span>{{job.experience.attributes.dateTo |localizedDate}}
+  </div>
   <div class="experience-title" *ngIf="job.experience.attributes.location"> <span class="registration-institute-label">{{'job_location_label'|translate}}</span>{{job.experience.attributes.location}}</div>
   <div class="experience-title" *ngIf="job.experience.attributes.description"> <span class="registration-institute-label">{{'job_description_label'|translate}}</span>{{job.experience.attributes.description}}</div>
   <!--<div class="experience-title" *ngIf="job.document!=null && job.document.documentPresent"> <span class="registration-institute-label">{{'document_document_label'|translate}}</span>
@@ -21,7 +22,7 @@
     <button class="label-button" ion-button clear (click)="updateJob()">{{'update_button'|translate}}</button>
   </div>
 </div>-->
-<ng-container *ngFor="let doc of job.documents">
+  <ng-container *ngFor="let doc of job.documents">
     <ion-row class="experience-title" *ngIf="doc!=null && doc.documentPresent">
       <ion-col col-3>
         <ion-label>{{'document_document_label'|translate}}
@@ -33,10 +34,7 @@
       </ion-col>
       <ion-col col-6>
         <ion-item>
-            <!-- href="{{doc.documentUri}} -->
-          <a download="document.txt" class="button label-button" (click)="downloadDocument(doc)"> 
-            <ion-icon name="md-download"></ion-icon>
-          </a>
+          <ion-icon name="md-download" (click)="downloadDocument(doc)"></ion-icon>
         </ion-item>
       </ion-col>
     </ion-row>
@@ -52,7 +50,8 @@
     <button class="label-button" ion-button clear (click)="addDocument()" *ngIf="(job.document!=null && job.document.documentPresent)">
         {{'modify_document_button'|translate}}
     </button>
-    <button *ngIf="(job.document!=null && job.document.documentPresent)" class="button-add-job label-button" ion-button clear (click)="removeActualDocument()">
+    <button *ngIf="(job.document!=null && job.document.documentPresent)" class="button-add-job label-button" ion-button clear
+      (click)="removeActualDocument()">
         {{'addDocument_remove_actual_document_label'|translate}}
         </button>
   </div>
