@@ -27,13 +27,15 @@ export class ProfilePage implements OnInit {
   ngOnInit(): void {
     this.uploader.onCompleteItem = (item: any, response: any, status: any, headers: any) => {
       //this.student.imageUrl=response; 
-      this.uploader.clearQueue();  
-      this.userService.getUserImage().then(url =>
-      {
-         this.profilePicture = url;
-         }
-      );
-      this.hideSpinner();
+      this.uploader.clearQueue();
+      this.userService.getUserImage().then(url => {
+        this.profilePicture = url;
+        this.hideSpinner();
+      }).catch(error => {
+        this.profilePicture = "assets/images/profile-pictures.png";
+        this.hideSpinner();
+      });
+
       this.editMode = false;
     };
   }
@@ -91,12 +93,15 @@ export class ProfilePage implements OnInit {
     this.showSpinner();
     this.userService.getUserInfo().then(student => {
       this.student = student;
-      this.userService.getUserImage().then(url =>
-      { this.profilePicture = url; }
-      );
-      this.hideSpinner()
-    }
-    );
+      this.userService.getUserImage().then(url => {
+        this.profilePicture = url;
+        this.hideSpinner();
+      }).catch(error => {
+        this.profilePicture = "assets/images/profile-pictures.png";
+        this.hideSpinner();
+      });;
+    });
+
   }
 
 
