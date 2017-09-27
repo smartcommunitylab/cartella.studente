@@ -10,6 +10,7 @@ import { Ng2OrderModule } from 'ng2-order-pipe';
 import { FileSelectDirective, FileDropDirective } from 'ng2-file-upload';
 import { PipesModule } from '../pipes/pipe.modules';
 import { DatePicker } from 'ionic2-date-picker';
+import { IonicStorageModule } from '@ionic/storage';
 
 import { ConfigService } from '../services/config.service';
 import { MyApp } from './app.component';
@@ -56,6 +57,8 @@ import { CertificationPanel } from '../pages/certifications/certificationPanel'
 import { RegistrationPanel } from '../pages/institute/registrationPanel'
 import { Subjects } from '../pages/institute/subjects'
 import { GeoService } from '../services/geo.service'
+import { TermsPage } from '../pages/terms/terms';
+
 
 export const deepLinkConfig: DeepLinkConfig = {
   links: [
@@ -123,7 +126,8 @@ function initConfig(config: ConfigService) {
     ActivityPanel,
     Subjects,
     RegistrationPanel,
-    DatePicker
+    DatePicker,
+    TermsPage
   ],
   imports: [
     BrowserModule,
@@ -135,7 +139,8 @@ function initConfig(config: ConfigService) {
       provide: TranslateLoader,
       useFactory: (http: Http) => new TranslateStaticLoader(http, 'assets/i18n', '.json'),
       deps: [Http]
-    })
+    }),
+    IonicStorageModule.forRoot(),
   ],
   bootstrap: [IonicApp],
   entryComponents: [
@@ -162,7 +167,8 @@ function initConfig(config: ConfigService) {
     NotificationsPage,
     ProfilePage,
     ConsentPage,
-    DatePicker
+    DatePicker,
+    TermsPage
   ],
   providers: [
     StatusBar,

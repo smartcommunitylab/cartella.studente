@@ -14,6 +14,8 @@ import { CurriculumPage } from '../curriculum/curriculum'
 import { CertificationsPage } from '../certifications/certifications'
 import { UserService } from '../../services/user.service'
 import { TranslateService } from 'ng2-translate';
+import { TermsPage } from '../terms/terms';
+import { ConfigService } from '../../services/config.service';
 
 @Component({
   selector: 'page-home',
@@ -23,7 +25,16 @@ export class HomePage implements OnInit {
 
   registrations: Registration[] = [];
   experiences: Experience[] = [];
-  constructor(public navCtrl: NavController, private userService: UserService, public loading: LoadingController, public translate:TranslateService) {
+  constructor(public navCtrl: NavController, private userService: UserService, public loading: LoadingController, public translate: TranslateService,
+    private configSrv: ConfigService) {
+
+    // conditional setting of rootpage.
+    configSrv.readIsPrivacyAccepted().then(flag => {
+      if (!flag) {
+        this.navCtrl.setRoot(TermsPage);
+      }
+    });
+
 
   }
   openRegistration(registration: Registration): void {

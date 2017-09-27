@@ -1,0 +1,94 @@
+terms {
+div {
+  padding: 5px;
+  text-align: justify;
+}
+
+h1{
+    color: #214F9C;
+}
+
+h2{
+    color: #214F9C;
+}
+
+h3{
+    color: #214F9C;
+}
+
+div.help_title{ 
+    /*font-size: 20px;*/
+    font-weight: bold;
+    margin-bottom: 1em;
+    margin-left: 5%;
+    /*margin-top: 1em;*/
+    /*margin-top:60px;*/
+    text-align: center;
+    width: 90%;}    
+    
+div.start_title{ font-size: 45px;
+    font-weight: bold;
+    margin-left: 5%;
+    margin-top: 2em;
+    text-align: center;
+    width: 90%;}  
+    
+div.start_subtitle{ font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 1.8em;
+    margin-left: 5%;
+    margin-top: 2em;
+    text-align: center;
+    width: 90%;}   
+ 
+div.tips{ line-height: 24px;
+    margin-bottom: 1em;
+    margin-left: 5%;
+    text-align: center;
+    width: 90%;}
+
+div.tool_title{font-weight:bold; margin-bottom:10px;}
+div.tool_desc{font-size: 13px; line-height: 18px;}
+div.help_icon{ float:left;width:20%; text-align:center;}
+div.help_text{ float:left; width:77%;}
+div.policy_text.policy_text{float:left; width:98%; }
+div.policy_text.policy_text p {margin-bottom:10px; text-align:justify;}
+div.policy_text.policy_text ul li {font-size:13px; margin-bottom:5px;}
+
+
+.button {
+  border-color: #b2b2b2;
+  background-color: #f8f8f8;
+  color: #444;
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  padding: 0 12px;
+  min-width: 52px;
+  min-height: 47px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 2px;
+  vertical-align: top;
+  text-align: center;
+  text-overflow: ellipsis;
+  font-size: 16px;
+  line-height: 42px;
+  cursor: pointer; 
+}
+
+.button:after {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    bottom: -6px;
+    left: -6px;
+    content: ' ';
+}
+
+.button.button-calm {
+    border-color: #0a9ec7;
+    background-color: #11c1f3;
+    color: #fff; }
+
+}

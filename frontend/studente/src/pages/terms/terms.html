@@ -1,0 +1,16 @@
+<ion-header >
+    <ion-navbar color="primary" *ngIf="!accepting">
+        <button ion-button menuToggle>
+            <ion-icon name="menu"></ion-icon>
+        </button>
+        <ion-title>{{lbl_terms_of_service | translate}}</ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content class="padding">
+    <div [innerHTML]="termsFile"></div>
+    <div *ngIf="accepting" style="text-align:center;">
+        <div class="button button-calm" (click)="acceptPrivacy()">{{'lbl_accept' | translate}}</div>
+        <div class="button" (click)="refusePrivacy()">{{'lbl_reject' | translate}}</div>
+    </div>
+</ion-content>

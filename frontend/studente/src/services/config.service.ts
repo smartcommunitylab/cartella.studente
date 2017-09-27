@@ -1,6 +1,8 @@
 import { Inject, Injectable } from '@angular/core';
 import { Http } from '@angular/http';
 import { Observable } from 'rxjs/Rx';
+import { Storage } from '@ionic/storage';
+
 class EnvData {
    env: string;
 }
@@ -10,7 +12,7 @@ export class ConfigService {
     private config: Object = null;
     private env:    Object = null;
 
-    constructor(private http: Http) {
+    constructor(private http: Http, private storage:Storage) {
 
     }
 
@@ -78,5 +80,9 @@ export class ConfigService {
             });
 
         });
+    }
+
+    readIsPrivacyAccepted(): Promise<String> {
+        return this.storage.get("isPrivacyAccepted").then(flag => { return flag });
     }
 }
