@@ -90,19 +90,48 @@
         <span>{{'profile_birthday_label'|translate}}</span>
         <span class="profile-field" *ngIf="student.birthdate">{{student.birthdate}}</span>
       </ion-col>
-      <ion-col>
+      <ion-col *ngIf="!editMode">
         <div class="social-buttons">
           <div class="social-button">
-            <ion-icon name="logo-facebook">
-            </ion-icon>
+            <ion-icon name="logo-facebook" (click)="openSocialLink('facebook')"></ion-icon>
           </div>
           <div class="social-button">
-            <ion-icon name="logo-linkedin"></ion-icon>
+            <ion-icon name="logo-linkedin" (click)="openSocialLink('linkedin')"></ion-icon>
           </div>
           <div class="social-button">
-            <ion-icon name="logo-twitter"></ion-icon>
+            <ion-icon name="logo-twitter" (click)="openSocialLink('twitter')"></ion-icon>
           </div>
         </div>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="editMode">
+      <ion-col>
+        <span ><ion-icon name="logo-facebook"></ion-icon></span>
+        <span>
+          <ion-item class="profile-input">
+            <ion-input type="text" placeholder="{{'profile_link_placeholder'|translate}}" [(ngModel)]="facebook"></ion-input>
+          </ion-item>
+          </span>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="editMode">
+      <ion-col>
+        <span><ion-icon name="logo-linkedin"></ion-icon></span>
+        <span>
+          <ion-item class="profile-input">
+            <ion-input type="text" placeholder="{{'profile_link_placeholder'|translate}}" [(ngModel)]="linkedin"></ion-input>
+          </ion-item>
+        </span>
+      </ion-col>
+    </ion-row>
+    <ion-row *ngIf="editMode">
+      <ion-col>
+        <span><ion-icon name="logo-twitter"></ion-icon></span>
+        <span>
+          <ion-item class="profile-input">
+            <ion-input type="text" placeholder="{{'profile_link_placeholder'|translate}}" [(ngModel)]="twitter"></ion-input>
+          </ion-item>
+        </span>
       </ion-col>
     </ion-row>
     <ion-row>

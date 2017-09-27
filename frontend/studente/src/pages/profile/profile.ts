@@ -15,6 +15,9 @@ export class ProfilePage implements OnInit {
   loader = null;
   profilePicture: string = "";
   uploader: FileUploader = new FileUploader({});
+  facebook: string;
+  linkedin: string;
+  twitter: string;
 
   constructor(public navCtrl: NavController,
     public params: NavParams,
@@ -78,6 +81,10 @@ export class ProfilePage implements OnInit {
 
   saveData() {
     this.showSpinner();
+    this.student.socialMap = {};
+    this.student.socialMap['facebook'] = this.facebook;
+    this.student.socialMap['linkedin'] = this.linkedin;
+    this.student.socialMap['twitter'] = this.twitter;
     this.userService.saveUserInfo(this.student).then(student => {
       this.student = student;
       if (this.uploader.queue.length > 0) {
@@ -93,6 +100,15 @@ export class ProfilePage implements OnInit {
     this.showSpinner();
     this.userService.getUserInfo().then(student => {
       this.student = student;
+      if (this.student.socialMap) {
+        if (this.student.socialMap['facebook'])
+          this.facebook = this.student.socialMap['facebook'];
+        if (this.student.socialMap['linkedin'])
+          this.linkedin = this.student.socialMap['linkedin'];
+        if (this.student.socialMap['twitter'])
+          this.twitter = this.student.socialMap['twitter'];
+      }
+      
       this.userService.getUserImage().then(url => {
         this.profilePicture = url;
         this.hideSpinner();
@@ -125,6 +141,19 @@ export class ProfilePage implements OnInit {
     }).catch(error => {
       console.error("user not logged out from server.");
     })
+  }
+
+  openSocialLink(key) {
+    
+    alert(key);
+    
+    var url: string;
+    
+    if (this.student.socialMap && this.student.socialMap[key]) {
+      url = this.student.socialMap[key];
+      window.open(url, '_blank');
+    }
+
   }
 
 }

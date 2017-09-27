@@ -11,7 +11,7 @@ export class Student {
   phone:string;
   mobilePhone:string;
   email:string;
-  social:Map<string,string>;
+  socialMap: any = {};
    constructor() {
         }
 }

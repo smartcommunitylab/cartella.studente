@@ -113,6 +113,7 @@
   "profile_tel_input_placeholder": "Inserire un numero di telefono",
   "profile_cel_input_placeholder": "Inserire un numero di cellulare",
   "profile_mail_input_placeholder": "Inserire una mail",
+  "profile_link_placeholder": "Insert profile link",
   "alert_delete_certification_title": "Conferma",
   "alert_delete_certification_message": "Sei sicuro di voler annulare le modifiche?",
   "registration_course_label": "Corso: ",
