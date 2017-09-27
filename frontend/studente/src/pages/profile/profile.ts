@@ -145,8 +145,6 @@ export class ProfilePage implements OnInit {
 
   openSocialLink(key) {
     
-    alert(key);
-    
     var url: string;
     
     if (this.student.socialMap && this.student.socialMap[key]) {
