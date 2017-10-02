@@ -11,6 +11,7 @@ import { FileUploader } from 'ng2-file-upload';
 })
 export class ProfilePage implements OnInit {
   student: Student = new Student();
+  studentTemp: Student = new Student();
   editMode = false;
   loader = null;
   profilePicture: string = "";
@@ -48,6 +49,8 @@ export class ProfilePage implements OnInit {
   }
 
   openEditMode() {
+    // create clone student object.
+    this.studentTemp = JSON.parse(JSON.stringify(this.student));
     this.editMode = true;
   }
   // getProfileImage() {
@@ -70,7 +73,11 @@ export class ProfilePage implements OnInit {
           text: this.translate.instant('alert_confirm'),
           cssClass: 'pop-up-button',
           handler: () => {
-            //return do read mode
+            //return do read mode and discard intermediate objs.
+            this.studentTemp = JSON.parse(JSON.stringify(this.student));
+            this.facebook = this.student.socialMap['facebook'];
+            this.linkedin = this.student.socialMap['linkedin'];
+            this.twitter = this.student.socialMap['twitter'];
             this.editMode = false;
           }
         }
@@ -81,11 +88,11 @@ export class ProfilePage implements OnInit {
 
   saveData() {
     this.showSpinner();
-    this.student.socialMap = {};
-    this.student.socialMap['facebook'] = this.facebook;
-    this.student.socialMap['linkedin'] = this.linkedin;
-    this.student.socialMap['twitter'] = this.twitter;
-    this.userService.saveUserInfo(this.student).then(student => {
+    this.studentTemp.socialMap = {};
+    this.studentTemp.socialMap['facebook'] = this.facebook;
+    this.studentTemp.socialMap['linkedin'] = this.linkedin;
+    this.studentTemp.socialMap['twitter'] = this.twitter;
+    this.userService.saveUserInfo(this.studentTemp).then(student => {
       this.student = student;
       if (this.uploader.queue.length > 0) {
         this.userService.sendUserImage(this.uploader, this.uploader.queue[0]);
@@ -96,6 +103,7 @@ export class ProfilePage implements OnInit {
       }
     });
   }
+
   ionViewWillEnter() {
     this.showSpinner();
     this.userService.getUserInfo().then(student => {

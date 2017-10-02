@@ -50,7 +50,7 @@
         <span class="profile-field" *ngIf="!editMode && student.phone">{{student.phone}}</span>
         <span>
           <ion-item *ngIf="editMode" class="profile-input">
-            <ion-input type="text" placeholder="{{'profile_tel_input_placeholder'|translate}}" [(ngModel)]="student.phone"></ion-input>
+            <ion-input type="text" placeholder="{{'profile_tel_input_placeholder'|translate}}" [(ngModel)]="studentTemp.phone"></ion-input>
           </ion-item>
         </span>
       </ion-col>
@@ -65,7 +65,7 @@
         <span *ngIf="!editMode && student.mobilePhone" class="profile-field">{{student.mobilePhone}}</span>
         <span>
           <ion-item *ngIf="editMode" class="profile-input">
-            <ion-input type="text" placeholder="{{'profile_cel_input_placeholder'|translate}}" [(ngModel)]="student.mobilePhone"></ion-input>
+            <ion-input type="text" placeholder="{{'profile_cel_input_placeholder'|translate}}" [(ngModel)]="studentTemp.mobilePhone"></ion-input>
           </ion-item>
         </span>
       </ion-col>
@@ -80,17 +80,30 @@
         <span *ngIf="!editMode && student.email" class="profile-field">{{student.email}}</span>
         <span>
           <ion-item *ngIf="editMode" class="profile-input">
-            <ion-input type="text" placeholder="{{'profile_mail_input_placeholder'|translate}}" [(ngModel)]="student.email"></ion-input>
+            <ion-input type="text" placeholder="{{'profile_mail_input_placeholder'|translate}}" [(ngModel)]="studentTemp.email"></ion-input>
           </ion-item>
         </span>
       </ion-col>
     </ion-row>
+
     <ion-row>
       <ion-col>
         <span>{{'profile_birthday_label'|translate}}</span>
         <span class="profile-field" *ngIf="student.birthdate">{{student.birthdate}}</span>
       </ion-col>
-      <ion-col *ngIf="!editMode">
+      <ion-col>
+        <span class="span-input">{{'profile_addr_label'|translate}}</span>
+        <span *ngIf="!editMode && student.address" class="profile-field">{{student.address}}</span>
+        <span>
+            <ion-item *ngIf="editMode" class="profile-input">
+              <ion-input type="text" placeholder="{{'profile_addr_input_placeholder'|translate}}" [(ngModel)]="studentTemp.address"></ion-input>
+            </ion-item>
+          </span>
+      </ion-col>
+    </ion-row>
+
+    <ion-row *ngIf="!editMode">
+      <ion-col>
         <div class="social-buttons">
           <div class="social-button">
             <ion-icon name="logo-facebook" (click)="openSocialLink('facebook')"></ion-icon>
@@ -104,9 +117,10 @@
         </div>
       </ion-col>
     </ion-row>
+
     <ion-row *ngIf="editMode">
       <ion-col>
-        <span ><ion-icon name="logo-facebook"></ion-icon></span>
+        <span><ion-icon name="logo-facebook"></ion-icon></span>
         <span>
           <ion-item class="profile-input">
             <ion-input type="text" placeholder="{{'profile_link_placeholder'|translate}}" [(ngModel)]="facebook"></ion-input>
@@ -134,6 +148,7 @@
         </span>
       </ion-col>
     </ion-row>
+
     <ion-row>
       <ion-col>
         <button class="action-button " *ngIf="!editMode" ion-button (click)=openEditMode()>{{'profile_update_button'|translate}}</button>
@@ -142,5 +157,6 @@
         <button class="action-button " ion-button *ngIf="editMode" (click)=saveData()>{{'profile_confirm_button'|translate}}</button>
       </ion-col>
     </ion-row>
+
   </ion-grid>
 </ion-content>
