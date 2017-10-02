@@ -47,6 +47,11 @@ export class CurriculumPage implements OnInit {
   userRegistration: UserRegistration[] = [];
   agreegatedUserRegsMap = {};
 
+  selectAllProfExp: Boolean = false;
+  selectAllRegistrationsTrainings: Boolean = false;
+  selectAllSkills: Boolean = false;
+  selectAllAttachments: Boolean = false;
+
   constructor(public navCtrl: NavController,
     public params: NavParams,
     private userService: UserService,
@@ -249,7 +254,10 @@ export class CurriculumPage implements OnInit {
    */
   private initAttachments() {
 
+    var oldCount = this.attachments.length;
+
     this.attachments = [];
+    
     return new Promise<Document[]>((resolve, reject) => {
       for (var e = 0; e < this.experiences.length; e++) {
         if (this.experiences[e].documents && this.experiences[e].checked)
@@ -264,11 +272,131 @@ export class CurriculumPage implements OnInit {
           this.attachments = this.attachments.concat(this.skills[s].documents);
       }
 
+      if (this.attachments.length != oldCount) {
+        this.selectAllAttachments = false;
+      }
+
       resolve();
     }).catch(error => {
       return this.handleError;
     });
 
+  }
+
+
+
+  selectAllProfessionExperience(event, expList) {
+
+    // call PUT CV update.
+    for (var i = 0; i < expList.length; i++) {
+      expList[i].checked = this.selectAllProfExp;
+    }
+    this.initAttachments().then(resp => { });
+  }
+
+  toggleProfessionExperience(event, experience) {
+    // call PUT CV update.
+    if (experience.checked && experience.documents) {
+      // alert("CHECKED")
+      this.attachments = this.attachments.concat(experience.documents);
+    } else if (!experience.checked && experience.documents) {
+      // uncheck SELECTALL if one is unselected.
+      this.selectAllProfExp = false;
+      // unchecked the documents and remove from the attachment list.
+      for (var d = 0; d < experience.documents.length; d++) {
+        experience.documents[d].checked = false;
+      }
+      this.initAttachments().then(resp => { });
+    }
+  }
+
+  selectAllRegistrationTrainingsObjs(event, regs, trainings) {
+
+    // call PUT CV update.
+    for (var i = 0; i < regs.length; i++) {
+      regs[i].checked = this.selectAllRegistrationsTrainings;
+    }
+
+    for (var i = 0; i < trainings.length; i++) {
+      trainings[i].checked = this.selectAllRegistrationsTrainings;
+    }
+
+    this.initAttachments().then(resp => { });
+  }
+
+  toggleRegistration(event, experience) {
+    // call PUT CV update.
+    if (experience.checked && experience.documents) {
+      // alert("CHECKED")
+      this.attachments = this.attachments.concat(experience.documents);
+    } else if (!experience.checked) { //&& experience.documents -> since registration has no documents.
+      // uncheck SELECTALL if one is unselected.
+      this.selectAllRegistrationsTrainings = false;
+      // unchecked the documents and remove from the attachment list.
+      // for (var d = 0; d < experience.documents.length; d++) {
+      //   experience.documents[d].checked = false;
+      // }
+      // this.initAttachments().then(resp => { });
+    }
+  }
+
+  toggleTraining(event, experience) {
+    // call PUT CV update.
+    if (experience.checked && experience.documents) {
+      // alert("CHECKED")
+      this.attachments = this.attachments.concat(experience.documents);
+    } else if (!experience.checked && experience.documents) {
+      // uncheck SELECTALL if one is unselected.
+      this.selectAllRegistrationsTrainings = false;
+      // unchecked the documents and remove from the attachment list.
+      for (var d = 0; d < experience.documents.length; d++) {
+        experience.documents[d].checked = false;
+      }
+      this.initAttachments().then(resp => { });
+    }
+  }
+
+
+  selectAllSkillsObjs(event, expList) {
+
+    // call PUT CV update.
+    for (var i = 0; i < expList.length; i++) {
+      expList[i].checked = this.selectAllSkills;
+    }
+    this.initAttachments().then(resp => { });
+  }
+
+  toggleSkill(event, experience) {
+    // call PUT CV update.
+    if (experience.checked && experience.documents) {
+      // alert("CHECKED")
+      this.attachments = this.attachments.concat(experience.documents);
+    } else if (!experience.checked && experience.documents) {
+      // uncheck SELECTALL if one is unselected.
+      this.selectAllSkills = false;
+      // unchecked the documents and remove from the attachment list.
+      for (var d = 0; d < experience.documents.length; d++) {
+        experience.documents[d].checked = false;
+      }
+      this.initAttachments().then(resp => { });
+    }
+  }
+
+  selectAllAttachmentsObjs(event, expList) {
+
+    // call PUT CV update.
+    for (var i = 0; i < expList.length; i++) {
+      expList[i].checked = this.selectAllAttachments;
+    }
+    this.initAttachments().then(resp => { });
+  }
+
+  toggleAttachment(event, experience) {
+    // call PUT CV update.
+    if (!experience.checked) {
+      // uncheck SELECTALL if one is unselected.
+      this.selectAllAttachments = false;
+    }
   }
 
   toggle(event, experience) {
@@ -285,7 +413,8 @@ export class CurriculumPage implements OnInit {
     }
   }
 
-  selectAll(expList) {
+  selectAll(event, expList) {
+
     // call PUT CV update.
     for (var i = 0; i < expList.length; i++) {
       expList[i].checked = true;
