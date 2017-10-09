@@ -14,7 +14,7 @@ export class ProfilePage implements OnInit {
   studentTemp: Student = new Student();
   editMode = false;
   loader = null;
-  profilePicture: string = "";
+  profilePicture: string = "../assets/images/profile-pictures.png";
   uploader: FileUploader = new FileUploader({});
   facebook: string;
   linkedin: string;
@@ -36,7 +36,7 @@ export class ProfilePage implements OnInit {
         this.profilePicture = url;
         this.hideSpinner();
       }).catch(error => {
-        this.profilePicture = "assets/images/profile-pictures.png";
+        this.profilePicture = "../assets/images/profile-pictures.png";
         this.hideSpinner();
       });
 
@@ -121,7 +121,7 @@ export class ProfilePage implements OnInit {
         this.profilePicture = url;
         this.hideSpinner();
       }).catch(error => {
-        this.profilePicture = "assets/images/profile-pictures.png";
+        this.profilePicture = "../assets/images/profile-pictures.png";
         this.hideSpinner();
       });;
     });
