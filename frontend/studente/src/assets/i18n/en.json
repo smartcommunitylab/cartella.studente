@@ -284,5 +284,6 @@
   "lbl_terms_of_service": "Terms of service",
   "lbl_accept": "Accept",
   "lbl_reject": "Reject",
-  "terms_refused_alert_text": "Terms refused."
+  "terms_refused_alert_text": "Terms refused.",
+  "menu_about": "Information"
 }

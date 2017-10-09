@@ -286,5 +286,6 @@
   "lbl_terms_of_service": "Termini di utilizzo",
   "lbl_accept": "Accetto",
   "lbl_reject": "Rifiuto",
-  "terms_refused_alert_text": "Termini rifiutati."
+  "terms_refused_alert_text": "Termini rifiutati.",
+  "menu_about": "Informazioni"
 }

@@ -39,6 +39,7 @@ import { AppBar } from '../pages/components/app-bar/app-bar.component';
 import { ButtonHome } from '../pages/components/button-home/button-home.component';
 import { ButtonNotifications } from '../pages/components/button-notifications/button-notifications.component';
 import { ButtonProfile } from '../pages/components/button-profile/button-profile.component';
+import { ButtonCredits } from '../pages/components/button-credits/button-credits.component';
 import { LoginService } from '../services/login.service';
 import { WebAPIConnectorService, requestOptionsProvider } from '../services/webAPIConnector.service';
 import { TrainingService } from '../services/training.service';
@@ -58,6 +59,7 @@ import { RegistrationPanel } from '../pages/institute/registrationPanel'
 import { Subjects } from '../pages/institute/subjects'
 import { GeoService } from '../services/geo.service'
 import { TermsPage } from '../pages/terms/terms';
+import { CreditsPage } from '../pages/credits/credits';
 
 
 export const deepLinkConfig: DeepLinkConfig = {
@@ -114,6 +116,7 @@ function initConfig(config: ConfigService) {
     ButtonHome,
     ButtonProfile,
     ButtonNotifications,
+    ButtonCredits,
     ExperienceFilterPipe,
     OrderBy,
     NgInit,
@@ -127,7 +130,8 @@ function initConfig(config: ConfigService) {
     Subjects,
     RegistrationPanel,
     DatePicker,
-    TermsPage
+    TermsPage,
+    CreditsPage
   ],
   imports: [
     BrowserModule,
@@ -168,7 +172,8 @@ function initConfig(config: ConfigService) {
     ProfilePage,
     ConsentPage,
     DatePicker,
-    TermsPage
+    TermsPage,
+    CreditsPage
   ],
   providers: [
     StatusBar,

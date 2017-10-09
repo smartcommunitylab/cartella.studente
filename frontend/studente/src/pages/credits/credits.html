@@ -1,0 +1,44 @@
+<ion-header>
+    <ion-navbar color="primary" *ngIf="!accepting">
+        <button ion-button menuToggle>
+                <ion-icon name="menu"></ion-icon>
+            </button>
+        <ion-title>{{menu_about | translate}}</ion-title>
+    </ion-navbar>
+</ion-header>
+
+<ion-content class="padding">
+    <div>
+        <h2><strong>Cartella Studente</strong></h2>
+        <p>&nbsp;</p>
+        <p>Il progetto &ldquo;Cartella dello Studente&rdquo;, nato dalla collaborazione tra il Servizio Istruzione della Provincia
+            Autonomia di Trento e lo Smart Community Lab di FBK, valorizza le informazioni sul percorso scolastico degli
+            studenti iscritti alle scuole di secondo grado.</p>
+        <p>&nbsp;</p>
+        <p>In particolare la &ldquo;Cartella dello Studente&rdquo; &egrave; la raccolta ordinata della documentazione relativa
+            alla carriera scolastica dello studente e permette di:</p>
+        <ul>
+            <li>accedere alle informazioni legate alla carriera dello studente in modo facile, organizzato e sicuro, per lo studente
+                e per i suoi genitori/tutori;</li>
+            <li>tracciare le attivit&agrave; formative extra-scolastiche e lavorative, sia attraverso l'integrazione di fonti
+                dati esterne, sia attraverso l&rsquo;intervento diretto dell&rsquo;utente;</li>
+            <li>mettere a disposizione della comunit&agrave; scolastica servizi utili nel percorso didattico ed extra-didattico;</li>
+        </ul>
+        <p>&nbsp;</p>
+        <p>La &ldquo;Cartella dello Studente&rdquo; &egrave; un sistema aperto in continua evoluzione che permette alla comunit&agrave;
+            scolastica di avere un ruolo attivo nella creazione di nuovi servizi. Se hai un&rsquo;idea innovativa per la
+            realizzazione di un servino utile scrivici a <a href="mailto:cartella-studente@smartcommunitylab.eu">cartella-studente@smartcommunitylab.eu</a>            e valuteremo assieme le opportunit&agrave; di come realizzarlo.</p>
+        <p>&nbsp;</p>
+        <p class="credits img">
+            <ion-row>
+                <ion-col>
+                    <a target="_blank" href="http://www.provincia.tn.it/"><img src="../assets/images/pat.png"/></a>
+                </ion-col>
+                <ion-col>
+                    <a target="_blank" href="http://www.fbk.eu"><img src="../assets/images/fbk.png"/></a>
+                </ion-col>
+            </ion-row>
+        </p>
+    </div>
+
+</ion-content>
