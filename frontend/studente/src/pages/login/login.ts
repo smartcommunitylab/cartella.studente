@@ -22,10 +22,13 @@ export class LoginPage implements OnInit {
   }
 
   //login as a specific type of user
-  login(loginType: string): void {
+  login(loginType: any): void {
     //this.navCtrl.setRoot(HomePage);
     // TODO: uncomment
-    this.loginService.login(loginType);
+    if (loginType.title.toString().toLowerCase() == "studente") {
+      this.loginService.login(loginType);  
+    }
+    
   }
 
 }
