@@ -25,7 +25,7 @@ export class LoginPage implements OnInit {
   login(loginType: any): void {
     //this.navCtrl.setRoot(HomePage);
     // TODO: uncomment
-    if (loginType.title.toString().toLowerCase() == "studente") {
+    if (loginType.title.toString().toLowerCase() == "studente") { // enable student only login.
       this.loginService.login(loginType);  
     }
     
