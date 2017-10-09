@@ -1,13 +1,5 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
-import it.smartcommunitylab.csengine.common.Const;
-import it.smartcommunitylab.csengine.common.Utils;
-import it.smartcommunitylab.csengine.model.Institute;
-import it.smartcommunitylab.csengine.model.TeachingUnit;
-import it.smartcommunitylab.csengine.model.Typology;
-import it.smartcommunitylab.csengine.storage.InstituteRepository;
-import it.smartcommunitylab.csengine.storage.TeachingUnitRepository;
-
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +15,14 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
+import it.smartcommunitylab.csengine.common.Const;
+import it.smartcommunitylab.csengine.common.Utils;
+import it.smartcommunitylab.csengine.model.Institute;
+import it.smartcommunitylab.csengine.model.TeachingUnit;
+import it.smartcommunitylab.csengine.model.Typology;
+import it.smartcommunitylab.csengine.storage.InstituteRepository;
+import it.smartcommunitylab.csengine.storage.TeachingUnitRepository;
 
 @Component
 public class InfoTnImportUnita {
@@ -42,7 +42,7 @@ public class InfoTnImportUnita {
 		logger.info("start importUnitaFromEmpty");
 		int total = 0;
 		int stored = 0;
-		FileReader fileReader = new FileReader(sourceFolder + "FBK_Unità scolastiche v.01.json");
+		FileReader fileReader = new FileReader(sourceFolder + "FBK_Unità Scolastiche v02.json");
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		JsonFactory jsonFactory = new JsonFactory();
