@@ -21,9 +21,9 @@ export class LoginService  {
   
   // TODO translation
   types: any = [
-    { title: "Studente", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc id mollis turpis. Maurs rhoncus lobortis erat id egestas. Proin consectetur sem non placerat egestas. Sed mollis nisi non justo ultricies, sit amet varius quam tincidunt. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Phasellus iaculis diam nec placerat aliquet. Ut rhoncus feugiat ipsum non semper. Ut sed ligula suscipit massa ullamcorper porta.",style:"student-login" },
-    { title: "Scuola", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc id mollis turpis. Mauris rhoncus lobortis erat id egestas. Proin consectetur sem non placerat egestas. Sed mollis nisi non justo ultricies, sit amet varius quam tincidunt. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Phasellus iaculis diam nec placerat aliquet. Ut rhoncus feugiat ipsum non semper. Ut sed ligula suscipit massa ullamcorper porta.",style:"school-login"  },
-    { title: "Ente esterno", text: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc id mollis turpis. Mauris rhoncus lobortis erat id egestas. Proin consectetur sem non placerat egestas. Sed mollis nisi non justo ultricies, sit amet varius quam tincidunt. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Phasellus iaculis diam nec placerat aliquet. Ut rhoncus feugiat ipsum non semper. Ut sed ligula suscipit massa ullamcorper porta.",style:"external-login"  }
+    { title: "Studente", text: "Se sei uno studente entra per controllare ed aggiornare le tue esperienze formative. Tra i servizi disponibili la possibilità di generare un CV in modo assistito. Vuoi essere coinvolto nello sviluppo di servizi innovativi per la scuola? Proponici la tua idea e ti aiuteremo a realizzarla.",style:"student-login" },
+    { title: "Scuola", text: "Attraverso questa sezione gli istituti scolastici possono aggiornare le esperienza scuola-lavoro e vedere le esperienze extra didattiche degli studenti iscritti.",style:"school-login"  },
+    { title: "Ente esterno", text: "Se sei un professionista o un rappresentate di un'organizzazione che collabora con il mondo della scuola entra in questa sezione. Da qui potrai inserire opportunità di stage e di lavoro, opportunità formative e certificare corsi ed esperienze fatte dagli studenti di cui sei stato referente.",style:"external-login"  }
   ];
 
   /**
