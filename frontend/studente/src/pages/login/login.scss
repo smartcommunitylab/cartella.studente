@@ -51,3 +51,35 @@
   }
 
 }
+
+.line {
+  width: auto;
+  border-bottom: 1px solid lightgrey;
+  color: grey;
+}
+
+page-login {
+
+  .img {
+    text-align: center;  
+  }
+
+  .text {
+    color: black;
+  }
+
+  .footer {
+    white-space: nowrap;
+    a {
+      color: grey;
+      text-decoration: none;
+    }
+  }
+
+  .inner {
+    max-width: 978px;
+    max-height: 1007px;
+    position: absolute;
+    left: 25%;
+  }
+}
