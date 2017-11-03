@@ -10,5 +10,7 @@ public interface RegistrationRepositoryCustom {
 
 	public List<Registration> searchRegistration(String studentId, String teachingUnitId,
 			String schoolYear, Long dateFrom, Long dateTo, Pageable pageable);
+	
+	public List<Registration> findByClassification(String typologyName, String schoolYear);
 			
 }
