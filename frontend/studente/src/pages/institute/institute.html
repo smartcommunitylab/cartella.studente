@@ -3,8 +3,11 @@
     <ion-title>
       {{'title_institute'|translate}}
     </ion-title>
-        <ion-buttons end>
-      <button-home></button-home><button-notifications></button-notifications><button-profile></button-profile>
+    <ion-buttons end>
+      <button-credits></button-credits>
+      <button-home></button-home>
+      <button-notifications></button-notifications>
+      <button-profile></button-profile>
     </ion-buttons>
   </ion-navbar>
 </ion-header>
@@ -13,7 +16,7 @@
   <div class="row-add-stage">
   </div>
   <ion-list>
-    <ion-card  *ngFor="let registration of registrations| experiencefilter:filter:'title'|  orderBy:'dateFrom':false; let i = index">
+    <ion-card *ngFor="let registration of registrations| experiencefilter:filter:'title'|  orderBy:'dateFrom':false; let i = index">
       <!--<div class="registration-expandable-list">
         <div class="registration-title">{{registration.course}}</div>
         <button class="stage-expansion" clear  ion-button icon-only (click)="toggleDetails(registration)"> <ion-icon class="registration-expansion-icon" item-right [name]="isDetailsShown(registration) ? 'ios-arrow-up' : 'ios-arrow-down'"></ion-icon></button>
@@ -24,7 +27,7 @@
         <div class="registration-title"><span class="registration-institute-label"> {{'registration_class_label'|translate}}</span>{{registration.classroom}}</div>
         <div class="registration-title"><span class="registration-institute-label"> {{'registration_teachingUnit_label'|translate}}</span>{{teachingUnit.name}}</div>
       </div>-->
-       <registration-panel [registration]="registration" [index]="i" [teachingUnit]="teachingUnit"></registration-panel>
+      <registration-panel [registration]="registration" [index]="i" [teachingUnit]="teachingUnit"></registration-panel>
     </ion-card>
   </ion-list>
 </ion-content>

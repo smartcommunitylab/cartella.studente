@@ -5,26 +5,77 @@
       Login Page
     </ion-title>
 -->
-  <!--</ion-navbar>
+<!--</ion-navbar>
 </ion-header>-->
 <ion-content padding>
+<div class="inner">
   <ion-grid>
-        <ion-row>
-      <ion-col >
-          <div class="login-label">{{'app_name'|translate}}</div>
+    <ion-row>
+      <ion-col>
+        <div class="login-label">{{'app_name'|translate}}</div>
       </ion-col>
     </ion-row>
-            <ion-row>
-      <ion-col >
-          <div class="login-subtitle-label">{{'login_subtitle'|translate}}</div>
+    <ion-row>
+      <ion-col>
+        <div class="login-subtitle-label">{{'login_subtitle'|translate}}</div>
       </ion-col>
     </ion-row>
     <ion-row>
       <ion-col class="login-tile" col-4 *ngFor="let type of types">
-          <div><button class="login-button" [block]="true" ion-button (click)="login(type)" ngClass="{{type.style}}">{{type.title| uppercase}}</button>
+        <div><button class="login-button" [block]="true" ion-button (click)="login(type)" ngClass="{{type.style}}">{{type.title| uppercase}}</button>
         </div>
-        <div>{{type.text}}</div>
       </ion-col>
     </ion-row>
   </ion-grid>
+  <div class="line"></div>
+  <div padding class="text">
+    <p>Il progetto &ldquo;Cartella dello Studente&rdquo;, nato dalla collaborazione tra il Servizio Istruzione della Provincia
+      Autonomia di Trento e lo Smart Community Lab di FBK, valorizza le informazioni sul percorso scolastico degli studenti
+      iscritti alle scuole di secondo grado.</p>
+    <p>&nbsp;</p>
+    <p>In particolare la &ldquo;Cartella dello Studente&rdquo; &egrave; la raccolta ordinata della documentazione relativa alla
+      carriera scolastica dello studente e permette di:</p>
+    <ul>
+      <p>(1) accedere alle informazioni legate alla carriera dello studente in modo facile, organizzato e sicuro, per lo studente
+        e per i suoi genitori/tutori;</p>
+      <p>(2) tracciare le attivit&agrave; formative extra-scolastiche e lavorative, sia attraverso l'integrazione di fonti dati
+        esterne, sia attraverso l&rsquo;intervento diretto dell&rsquo;utente;</p>
+      <p>(3) mettere a disposizione della comunit&agrave; scolastica servizi utili nel percorso didattico ed extra-didattico;</p>
+    </ul>
+    <p>&nbsp;</p>
+    <p>La &ldquo;Cartella dello Studente&rdquo; &egrave; un sistema aperto in continua evoluzione che permette alla comunit&agrave;
+      scolastica di avere un ruolo attivo nella creazione di nuovi servizi. Se hai un&rsquo;idea innovativa per la realizzazione
+      di un servino utile scrivici a <a href="mailto:cartella-studente@smartcommunitylab.eu">cartella-studente@smartcommunitylab.eu</a>      e valuteremo assieme le opportunit&agrave; di come realizzarlo.</p>
+    <p>&nbsp;</p>
+    <p class="img">
+      <ion-row>
+        <ion-col>
+          <a target="_blank" href="http://www.provincia.tn.it/"><img src="assets/images/pat.png"/></a>
+        </ion-col>
+        <ion-col>
+          <a target="_blank" href="http://www.fbk.eu"><img src="assets/images/fbk.png"/></a>
+        </ion-col>
+      </ion-row>
+    </p>
+  </div>
+  <ion-grid>
+    <ion-row class="footer">
+      <ion-col col>
+        <a target="_blank" href="http://www.smartcommunitylab.it/">&#169; 2017 Smart Community</a>
+      </ion-col>
+      <ion-col></ion-col>
+      <ion-col></ion-col>
+      <ion-col></ion-col>
+      <ion-col></ion-col>
+      <ion-col></ion-col>
+      <ion-col></ion-col>
+      <ion-col>
+        <a target="_blank" href="http://www.smartcommunitylab.it/contatti/">Assistenza</a>
+      </ion-col>
+      <ion-col>
+        <a target="_blank" href="/cartella/assets/terms/terms.html">Privacy and Conditions.</a>
+      </ion-col>
+    </ion-row>
+  </ion-grid>
+</div>
 </ion-content>

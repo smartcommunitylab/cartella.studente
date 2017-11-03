@@ -4,6 +4,7 @@
       {{'title_profile'|translate|uppercase}}
     </ion-title>
     <ion-buttons end>
+      <button-credits></button-credits>
       <button-home></button-home>
       <button-notifications></button-notifications>
     </ion-buttons>
@@ -14,7 +15,7 @@
     <ion-row>
       <ion-col>
         <img class="profile-img" *ngIf="student.contentType" [src]="profilePicture" />
-        <img class="profile-img" *ngIf="!student.contentType" src="assets/images/profile-picture.png" />
+        <img class="profile-img" *ngIf="!student.contentType" src="assets/images/profile-pictures.png" />
       </ion-col>
     </ion-row>
     <ion-row *ngIf="editMode">
