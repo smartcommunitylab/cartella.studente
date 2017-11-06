@@ -12,7 +12,9 @@ import it.smartcommunitylab.csengine.storage.RepositoryManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
+import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 
 import org.slf4j.Logger;
@@ -27,6 +29,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
 @Controller
 public class StatsController extends AuthController {
 	private static final transient Logger logger = LoggerFactory.getLogger(StatsController.class);
@@ -36,14 +41,33 @@ public class StatsController extends AuthController {
 	
 	@Autowired
 	private DocumentManager documentManager;
+	
+	private Cache<String, RegistrationStats> statsCache;
 		
+	@PostConstruct
+	public void init() {
+		statsCache = CacheBuilder.newBuilder()
+				.maximumSize(100)
+		    .expireAfterAccess(1, TimeUnit.DAYS)
+		    .build();
+	}
+	
+	private String getStatsKey(String typology, String schoolYear) {
+		return typology + "_" + schoolYear;
+	}
+	
 	@RequestMapping(value = "/api/stats/registration/ordine", method = RequestMethod.GET)
 	public @ResponseBody List<RegistrationStats> getRegistrationStatsByOrdine(
 			@RequestParam List<String> schoolYears,
 			HttpServletRequest request) throws Exception {
 		List<RegistrationStats> result = new ArrayList<RegistrationStats>();
 		for(String schoolYear : schoolYears) {
-			RegistrationStats stats = dataManager.getRegistrationStats(schoolYear, Const.TYPOLOGY_QNAME_ORDINE);
+			String statsKey = getStatsKey(Const.TYPOLOGY_QNAME_ORDINE, schoolYear);
+			RegistrationStats stats = statsCache.asMap().get(statsKey);
+			if(stats == null) {
+				stats = dataManager.getRegistrationStats(schoolYear, Const.TYPOLOGY_QNAME_ORDINE);
+				statsCache.put(statsKey, stats);
+			}
 			result.add(stats);
 		}
 		if(logger.isInfoEnabled()) {
@@ -58,7 +82,12 @@ public class StatsController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		List<RegistrationStats> result = new ArrayList<RegistrationStats>();
 		for(String schoolYear : schoolYears) {
-			RegistrationStats stats = dataManager.getRegistrationStats(schoolYear, Const.TYPOLOGY_QNAME_TIPOLOGIA);
+			String statsKey = getStatsKey(Const.TYPOLOGY_QNAME_TIPOLOGIA, schoolYear);
+			RegistrationStats stats = statsCache.asMap().get(statsKey);
+			if(stats == null) {
+				stats = dataManager.getRegistrationStats(schoolYear, Const.TYPOLOGY_QNAME_TIPOLOGIA);
+				statsCache.put(statsKey, stats);
+			}
 			result.add(stats);
 		}
 		if(logger.isInfoEnabled()) {
@@ -73,7 +102,12 @@ public class StatsController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		List<RegistrationStats> result = new ArrayList<RegistrationStats>();
 		for(String schoolYear : schoolYears) {
-			RegistrationStats stats = dataManager.getRegistrationStats(schoolYear, Const.TYPOLOGY_QNAME_INDIRIZZO);
+			String statsKey = getStatsKey(Const.TYPOLOGY_QNAME_INDIRIZZO, schoolYear);
+			RegistrationStats stats = statsCache.asMap().get(statsKey);
+			if(stats == null) {
+				stats = dataManager.getRegistrationStats(schoolYear, Const.TYPOLOGY_QNAME_INDIRIZZO);
+				statsCache.put(statsKey, stats);
+			}
 			result.add(stats);
 		}
 		if(logger.isInfoEnabled()) {
