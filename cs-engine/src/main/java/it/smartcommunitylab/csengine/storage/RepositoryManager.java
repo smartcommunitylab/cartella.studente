@@ -784,7 +784,7 @@ public class RepositoryManager {
 		if(!found) {
 			KeyValue keyValue = new KeyValue();
 			keyValue.setName(typologyValue);
-			keyValue.setValue(0);
+			keyValue.setValue(1);
 			stats.getValues().add(keyValue);
 		}
 	}
