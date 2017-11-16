@@ -18,6 +18,8 @@ import it.smartcommunitylab.csengine.model.StudentAuth;
 import it.smartcommunitylab.csengine.model.StudentExperience;
 import it.smartcommunitylab.csengine.model.TeachingUnit;
 import it.smartcommunitylab.csengine.model.Typology;
+import it.smartcommunitylab.csengine.model.stats.KeyValue;
+import it.smartcommunitylab.csengine.model.stats.RegistrationStats;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -750,6 +752,41 @@ public class RepositoryManager {
 		}
 		studentAuthRepository.delete(studentAuthDB);
 		return studentAuthDB;
+	}
+	
+	public RegistrationStats getRegistrationStats(String schoolYear,
+			String typologyName) {
+		List<Registration> registrationList = 
+				registrationRepository.findByClassification(typologyName, schoolYear);
+		RegistrationStats result = new RegistrationStats();
+		result.setYear(schoolYear);
+		for(Registration registration : registrationList) {
+			Typology typology = registration.getTeachingUnit().getClassifications().get(typologyName);
+			if(typology != null) {
+				String typologyValue = typology.getName();
+				increaseStat(result, typologyValue);
+			}
+		}
+		return result;
+	}
+
+	private void increaseStat(RegistrationStats stats, String typologyValue) {
+		boolean found = false;
+		for(KeyValue keyValue : stats.getValues()) {
+			if(keyValue.getName().equals(typologyValue)) {
+				int count = (Integer) keyValue.getValue();
+				count++;
+				keyValue.setValue(count);
+				found = true;
+				break;
+			}
+		}
+		if(!found) {
+			KeyValue keyValue = new KeyValue();
+			keyValue.setName(typologyValue);
+			keyValue.setValue(1);
+			stats.getValues().add(keyValue);
+		}
 	}
 
 }
