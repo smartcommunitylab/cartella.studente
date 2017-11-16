@@ -1,26 +1,39 @@
-<div id="app-bar" [ngClass]="{'bar-expanded': expanded , 'bar-compressed':!expanded}" >
-  <div class="button-toggle" >      {{'bar-link-label'|translate |uppercase}}
-<button  clear  ion-button icon-only (click)="toggleBar()"> <ion-icon class="app-expansion-icon" item-right [name]="expanded ?  'ios-arrow-down':'ios-arrow-up' "></ion-icon></button></div>
- <ion-grid>
+<div id="app-bar" [ngClass]="{'bar-expanded': expanded , 'bar-compressed':!expanded}">
+  <div class="button-toggle"> {{'bar-link-label'|translate |uppercase}}
+    <button clear ion-button icon-only (click)="toggleBar()">
+      <ion-icon class="app-expansion-icon" item-right [name]="expanded ?  'ios-arrow-down':'ios-arrow-up' "></ion-icon>
+    </button>
+  </div>
+  <ion-grid>
     <ion-row>
       <ion-col col-auto>
-          <div><button class="app-bar-button" [block]="true" ion-button (click)="curriculum()">Curriculum</button>
+        <div>
+          <button class="app-bar-button" [block]="true" ion-button (click)="curriculum()">Curriculum</button>
         </div>
       </ion-col>
-       <ion-col col-auto>
-          <div><button class="app-bar-button" [block]="true" ion-button >Trova lavoro</button>
+      <ion-col col-auto>
+        <div>
+          <button class="app-bar-button" [block]="true" ion-button>Trova lavoro</button>
         </div>
       </ion-col>
-       <ion-col col-auto>
-          <div><button class="app-bar-button" [block]="true" ion-button>Trova università</button>
+      <ion-col col-auto>
+        <div>
+          <button class="app-bar-button" [block]="true" ion-button>Trova università</button>
         </div>
       </ion-col>
-             <ion-col col-auto>
-          <div><button class="app-bar-button" [block]="true" ion-button>Moodle</button>
+      <ion-col col-auto>
+        <div>
+          <button class="app-bar-button" [block]="true" ion-button>Moodle</button>
         </div>
       </ion-col>
-             <ion-col col-auto>
-          <div><button class="app-bar-button" [block]="true" ion-button>Biblioteca</button>
+      <ion-col col-auto>
+        <div>
+          <button class="app-bar-button" [block]="true" ion-button>Biblioteca</button>
+        </div>
+      </ion-col>
+      <ion-col col-auto>
+        <div>
+          <button class="app-bar-button" [block]="true" ion-button (click)="cedus()">Cedus</button>
         </div>
       </ion-col>
     </ion-row>

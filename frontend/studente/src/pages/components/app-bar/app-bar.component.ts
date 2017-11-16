@@ -8,14 +8,25 @@ import { CurriculumPage } from '../../curriculum/curriculum';
 })
 export class AppBar {
   expanded: boolean = false;
-  
+
   constructor(public navCtrl: NavController) { }
-  
-  toggleBar():void {
-    this.expanded=!this.expanded;
+
+  toggleBar(): void {
+    this.expanded = !this.expanded;
   }
 
-  curriculum(): void{
+  curriculum(): void {
     this.navCtrl.push(CurriculumPage);
+  }
+
+  cedus(): void {
+    var url = 'https://dev.smartcommunitylab.it/cedus/web/student';
+    var params = [
+      'height=' + screen.height,
+      'width=' + screen.width,
+      'fullscreen=yes' // only works in IE, but here for completeness
+    ].join(',');
+    window.open(url, '_target', params);
+    
   }
 }
