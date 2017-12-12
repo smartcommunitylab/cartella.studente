@@ -180,7 +180,7 @@ export class AddMobilityPage implements OnInit {
 
     if (this.checkingDates()) {
       if (this.mobilityForm.valid) {
-        this.mobility.type = ExperienceTypes.EXP_TYPE_STAGE;
+        this.mobility.type = ExperienceTypes.EXP_TYPE_MOBILITY;
         this.mobility.dateFrom = new Date(this.dateFrom).getTime();
         this.mobility.dateTo = new Date(this.dateTo).getTime();
         this.experienceContaniner.attributes = this.mobility;
@@ -242,10 +242,11 @@ export class AddMobilityPage implements OnInit {
                 Observable.forkJoin(promisesUploadDocuments).subscribe(values => {
                   console.log(values);
                   loader.dismiss();
-                  this.navCtrl.pop()
+                  this.navCtrl.pop();
                 })
               } else {
                 loader.dismiss();
+                this.navCtrl.pop();
               }
             });
           });

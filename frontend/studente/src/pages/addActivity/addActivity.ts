@@ -236,8 +236,8 @@ export class AddActivityPage implements OnInit {
             content: this.translate.instant('loading'),
           });
           loader.present().then(() => {
-            this.userService.addCertification(this.studentExperience).then(certification => {
-              this.experienceContaniner = certification;
+            this.userService.addActivity(this.studentExperience).then(activity => {
+              this.experienceContaniner = activity;
               var promisesUploadDocuments: Promise<any>[] = [];
               this.uploader.queue.map(i => {
                 // promisesUploadDocuments.push(this.uploadDocument(i));
@@ -247,10 +247,11 @@ export class AddActivityPage implements OnInit {
                 Observable.forkJoin(promisesUploadDocuments).subscribe(values => {
                   console.log(values);
                   loader.dismiss();
-                  this.navCtrl.pop()
+                  this.navCtrl.pop();
                 })
               } else {
                 loader.dismiss();
+                this.navCtrl.pop();
               }
             });
           });

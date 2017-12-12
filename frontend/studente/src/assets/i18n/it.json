@@ -117,7 +117,7 @@
   "profile_addr_input_placeholder": "Inserire una indirizzo",
   "profile_link_placeholder": "Inserire profilo link",
   "alert_delete_certification_title": "Conferma",
-  "alert_delete_certification_message": "Sei sicuro di voler annulare le modifiche?",
+  "alert_delete_certification_message": "Sei sicuro di voler cancellare la certificazione?",
   "registration_course_label": "Corso: ",
   "registration_year_label": "Anno: ",
   "registration_class_label": "Classe: ",

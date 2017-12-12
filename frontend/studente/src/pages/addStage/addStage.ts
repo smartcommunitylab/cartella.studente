@@ -240,10 +240,11 @@ export class AddStagePage implements OnInit {
                 Observable.forkJoin(promisesUploadDocuments).subscribe(values => {
                   console.log(values);
                   loader.dismiss();
-                  this.navCtrl.pop()
+                  this.navCtrl.pop();
                 })
               } else {
                 loader.dismiss();
+                this.navCtrl.pop();
               }
             });
           });

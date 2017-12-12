@@ -137,11 +137,11 @@ export class UserService {
       })
     })
   }
-  addJob(stage: StudentExperience): Promise<ExperienceContainer> {
+  addJob(job: StudentExperience): Promise<ExperienceContainer> {
     return new Promise<ExperienceContainer>((resolve, reject) => {
-      this.webAPIConnector.addExperience(stage.experience.attributes, this.getUserId(), ExperienceTypes.EXP_TYPE_JOB).then(stage => {
+      this.webAPIConnector.addExperience(job.experience.attributes, this.getUserId(), ExperienceTypes.EXP_TYPE_JOB).then(job => {
 
-        resolve(stage)
+        resolve(job)
 
       }).catch((error: any): any => {
         reject()
