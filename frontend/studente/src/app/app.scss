@@ -27,6 +27,12 @@ $student-color:#039be5;
 $school-color:#00897b;
   $sternal-color:#406584;
 
+
+  date-picker.ion-page.show-page {
+    overflow-y: auto;
+    background: white;
+  }
+
 .navigation-button-bar {
   color: $button-color;
   font-size: 20px;
@@ -117,3 +123,5 @@ $school-color:#00897b;
 
     border-bottom: 1px solid #dedede;
         }
+
+  
