@@ -76,6 +76,19 @@ public class TeachingUnitController extends AuthController {
 		}
 		return result;
 	}
+	
+	@RequestMapping(value = "/api/istituto/{istitutoId}/year/{schoolYear}/course", method = RequestMethod.GET)
+	public @ResponseBody List<Course> getCourseByIstituto(
+			@PathVariable String istitutoId,
+			@PathVariable String schoolYear,			
+			HttpServletRequest request) throws Exception {
+		List<Course> result = dataManager.getCourseByInstitute(istitutoId, schoolYear);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("getCourseByInstitute[%s]: %s - %s - %s", "tenant", 
+					istitutoId, schoolYear, result.size()));
+		}
+		return result;
+	}
 		
 //	@RequestMapping(value = "/api/tu/course/{courseId}/classroom", method = RequestMethod.GET)
 //	public @ResponseBody List<String> getClassroomByTeachingUnit(
