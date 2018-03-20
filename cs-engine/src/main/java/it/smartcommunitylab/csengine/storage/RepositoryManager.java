@@ -450,6 +450,11 @@ public class RepositoryManager {
 				dateFrom, dateTo, pageable);
 		return result;
 	}
+	
+	public Page<Registration> fetchRegistrations(Pageable pageable) {
+		Page<Registration> result = registrationRepository.findAll(pageable);
+		return result;
+	}
 
 	public Institute addInstitute(Institute institute) {
 		Date now = new Date();

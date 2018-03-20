@@ -29,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -231,6 +232,16 @@ public class TeachingUnitController extends AuthController {
 				dateFrom, dateTo, pageable);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getRegistrationByTeachingUnit[%s]: %s", "tenant", result.size()));
+		}
+		return result;
+	}
+	
+	@RequestMapping(value = "/api/registrations", method = RequestMethod.GET)
+	public @ResponseBody Page<Registration> getAllRegistration(@ApiParam Pageable pageable) {
+		
+		Page<Registration> result = dataManager.fetchRegistrations(pageable);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("getAllRegistrations: %s", result.getNumberOfElements()));
 		}
 		return result;
 	}
