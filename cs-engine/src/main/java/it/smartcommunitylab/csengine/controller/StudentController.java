@@ -103,15 +103,15 @@ public class StudentController extends AuthController {
 	}
 	
 	@RequestMapping(value = "/api/student/cf/{cf}", method = RequestMethod.GET)
-	public @ResponseBody Student getStudentByCF(@PathVariable String cf,
-			HttpServletRequest request) throws Exception {
-//		if (!validateAuthorizationByStudentId(cf, "Student", 
-//				Const.AUTH_ACTION_READ, request)) {
-//			throw new UnauthorizedException("Unauthorized Exception: token not valid");
-//		}
+	public @ResponseBody Student getStudentByCF(@PathVariable String cf, HttpServletRequest request) throws Exception {
+		// if (!validateAuthorizationByStudentId(cf, "Student",
+		// Const.AUTH_ACTION_READ, request)) {
+		// throw new UnauthorizedException("Unauthorized Exception: token not
+		// valid");
+		// }
 		Student result = dataManager.getStudentByCF(cf);
 		result.setImageUrl(documentManager.getPhotoSignedUrl(result.getId()));
-		if(logger.isInfoEnabled()) {
+		if (logger.isInfoEnabled()) {
 			logger.info(String.format("getStudentByCF[%s]: %s", "tenant", result.getId()));
 		}
 		return result;

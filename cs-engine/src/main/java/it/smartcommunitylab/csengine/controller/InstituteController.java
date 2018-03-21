@@ -42,7 +42,7 @@ public class InstituteController {
 	@RequestMapping(value = "/api/institute", method = RequestMethod.GET)
 	public @ResponseBody List<Institute> getInstitutes(HttpServletRequest request) throws Exception {
 		List<Institute> result = dataManager.getInstitute();
-		if(logger.isInfoEnabled()) {
+		if (logger.isInfoEnabled()) {
 			logger.info(String.format("getInstitutes[%s]: %s", "tenant", result.size()));
 		}
 		return result;

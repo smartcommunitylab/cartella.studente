@@ -79,14 +79,12 @@ public class TeachingUnitController extends AuthController {
 	}
 	
 	@RequestMapping(value = "/api/istituto/{istitutoId}/year/{schoolYear}/course", method = RequestMethod.GET)
-	public @ResponseBody List<Course> getCourseByIstituto(
-			@PathVariable String istitutoId,
-			@PathVariable String schoolYear,			
-			HttpServletRequest request) throws Exception {
+	public @ResponseBody List<Course> getCourseByIstituto(@PathVariable String istitutoId,
+			@PathVariable String schoolYear, HttpServletRequest request) throws Exception {
 		List<Course> result = dataManager.getCourseByInstitute(istitutoId, schoolYear);
-		if(logger.isInfoEnabled()) {
-			logger.info(String.format("getCourseByInstitute[%s]: %s - %s - %s", "tenant", 
-					istitutoId, schoolYear, result.size()));
+		if (logger.isInfoEnabled()) {
+			logger.info(String.format("getCourseByInstitute[%s]: %s - %s - %s", "tenant", istitutoId, schoolYear,
+					result.size()));
 		}
 		return result;
 	}
