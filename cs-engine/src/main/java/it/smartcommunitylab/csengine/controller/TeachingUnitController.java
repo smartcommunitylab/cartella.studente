@@ -72,7 +72,7 @@ public class TeachingUnitController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		List<Course> result = dataManager.getCourseByTeachingUnit(teachingUnitId, schoolYear);
 		if(logger.isInfoEnabled()) {
-			logger.info(String.format("getCourseByInstitute[%s]: %s - %s - %s", "tenant", 
+			logger.info(String.format("getCourseByTeachingUnit[%s]: %s - %s - %s", "tenant", 
 					teachingUnitId, schoolYear, result.size()));
 		}
 		return result;
