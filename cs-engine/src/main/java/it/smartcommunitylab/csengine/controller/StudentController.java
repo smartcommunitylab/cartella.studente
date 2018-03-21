@@ -1,34 +1,5 @@
 package it.smartcommunitylab.csengine.controller;
 
-import fr.opensagres.xdocreport.document.IXDocReport;
-import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
-import fr.opensagres.xdocreport.template.IContext;
-import fr.opensagres.xdocreport.template.TemplateEngineKind;
-import io.swagger.annotations.ApiParam;
-import it.smartcommunitylab.aac.authorization.beans.AccountAttributeDTO;
-import it.smartcommunitylab.aac.authorization.beans.AuthorizationDTO;
-import it.smartcommunitylab.aac.authorization.beans.AuthorizationUserDTO;
-import it.smartcommunitylab.aac.authorization.beans.RequestedAuthorizationDTO;
-import it.smartcommunitylab.csengine.common.Const;
-import it.smartcommunitylab.csengine.common.Utils;
-import it.smartcommunitylab.csengine.cv.CVTransformer;
-import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
-import it.smartcommunitylab.csengine.exception.StorageException;
-import it.smartcommunitylab.csengine.exception.UnauthorizedException;
-import it.smartcommunitylab.csengine.model.CV;
-import it.smartcommunitylab.csengine.model.CertificationRequest;
-import it.smartcommunitylab.csengine.model.Document;
-import it.smartcommunitylab.csengine.model.Experience;
-import it.smartcommunitylab.csengine.model.Registration;
-import it.smartcommunitylab.csengine.model.Student;
-import it.smartcommunitylab.csengine.model.StudentAuth;
-import it.smartcommunitylab.csengine.model.StudentExperience;
-import it.smartcommunitylab.csengine.model.TeachingUnit;
-import it.smartcommunitylab.csengine.storage.DocumentManager;
-import it.smartcommunitylab.csengine.storage.RepositoryManager;
-import it.smartcommunitylab.csengine.ui.AuthorizationByCF;
-import it.smartcommunitylab.csengine.ui.StudentRegistration;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -67,6 +38,35 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.multipart.MultipartFile;
 
+import fr.opensagres.xdocreport.document.IXDocReport;
+import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
+import fr.opensagres.xdocreport.template.IContext;
+import fr.opensagres.xdocreport.template.TemplateEngineKind;
+import io.swagger.annotations.ApiParam;
+import it.smartcommunitylab.aac.authorization.beans.AccountAttributeDTO;
+import it.smartcommunitylab.aac.authorization.beans.AuthorizationDTO;
+import it.smartcommunitylab.aac.authorization.beans.AuthorizationUserDTO;
+import it.smartcommunitylab.aac.authorization.beans.RequestedAuthorizationDTO;
+import it.smartcommunitylab.csengine.common.Const;
+import it.smartcommunitylab.csengine.common.Utils;
+import it.smartcommunitylab.csengine.cv.CVTransformer;
+import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
+import it.smartcommunitylab.csengine.exception.StorageException;
+import it.smartcommunitylab.csengine.exception.UnauthorizedException;
+import it.smartcommunitylab.csengine.model.CV;
+import it.smartcommunitylab.csengine.model.CertificationRequest;
+import it.smartcommunitylab.csengine.model.Document;
+import it.smartcommunitylab.csengine.model.Experience;
+import it.smartcommunitylab.csengine.model.Registration;
+import it.smartcommunitylab.csengine.model.Student;
+import it.smartcommunitylab.csengine.model.StudentAuth;
+import it.smartcommunitylab.csengine.model.StudentExperience;
+import it.smartcommunitylab.csengine.model.TeachingUnit;
+import it.smartcommunitylab.csengine.storage.DocumentManager;
+import it.smartcommunitylab.csengine.storage.RepositoryManager;
+import it.smartcommunitylab.csengine.ui.AuthorizationByCF;
+import it.smartcommunitylab.csengine.ui.StudentRegistration;
+
 @Controller
 public class StudentController extends AuthController {
 	private static final transient Logger logger = LoggerFactory.getLogger(StudentController.class);
@@ -103,17 +103,27 @@ public class StudentController extends AuthController {
 	}
 	
 	@RequestMapping(value = "/api/student/cf/{cf}", method = RequestMethod.GET)
-	public @ResponseBody Student getStudentByCF(@PathVariable String cf, HttpServletRequest request) throws Exception {
+	public @ResponseBody Student getStudentByCF(@PathVariable String cf,
+			@RequestParam(required = false) Boolean foto,
+			HttpServletRequest request) throws Exception {
 		// if (!validateAuthorizationByStudentId(cf, "Student",
 		// Const.AUTH_ACTION_READ, request)) {
 		// throw new UnauthorizedException("Unauthorized Exception: token not
 		// valid");
 		// }
 		Student result = dataManager.getStudentByCF(cf);
-		result.setImageUrl(documentManager.getPhotoSignedUrl(result.getId()));
+		if (foto) {
+			try {
+				result.setImageUrl(documentManager.getPhotoSignedUrl(result.getId()));
+			} catch (Exception e) {
+				result.setImageUrl(null);
+			}
+		}
+
 		if (logger.isInfoEnabled()) {
 			logger.info(String.format("getStudentByCF[%s]: %s", "tenant", result.getId()));
 		}
+
 		return result;
 	}
 	
