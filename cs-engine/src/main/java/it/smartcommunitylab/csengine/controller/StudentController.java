@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -57,6 +58,7 @@ import it.smartcommunitylab.csengine.model.CV;
 import it.smartcommunitylab.csengine.model.CertificationRequest;
 import it.smartcommunitylab.csengine.model.Document;
 import it.smartcommunitylab.csengine.model.Experience;
+import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentAuth;
@@ -666,6 +668,17 @@ public class StudentController extends AuthController {
 		dataManager.removeStudentAuth(authId);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("deleteAuthorization[%s]: %s - %s", "tenant", studentId, authId));
+		}
+		return result;
+	}
+	
+	
+	@RequestMapping(value = "/api/students", method = RequestMethod.GET)
+	public @ResponseBody Page<Student> getAllStudents(@ApiParam Pageable pageable) {
+		
+		Page<Student> result = dataManager.fetchStudents(pageable);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("getAllStudents: %s", result.getNumberOfElements()));
 		}
 		return result;
 	}
