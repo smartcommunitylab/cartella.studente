@@ -461,6 +461,11 @@ public class RepositoryManager {
 		return result;
 	}
 	
+	public Page<Institute> fetchInstitutes(Pageable pageable) {
+		Page<Institute> result = instituteRepository.findAll(pageable);
+		return result;
+	}
+	
 	public Institute addInstitute(Institute institute) {
 		Date now = new Date();
 		institute.setCreationDate(now);
@@ -798,5 +803,7 @@ public class RepositoryManager {
 			stats.getValues().add(keyValue);
 		}
 	}
+
+	
 
 }

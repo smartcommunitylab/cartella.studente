@@ -5,6 +5,7 @@ import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
 import it.smartcommunitylab.csengine.exception.UnauthorizedException;
 import it.smartcommunitylab.csengine.model.Institute;
+import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.storage.DocumentManager;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
 
@@ -17,6 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,6 +27,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import io.swagger.annotations.ApiParam;
 
 @Controller
 public class InstituteController {
@@ -44,6 +49,16 @@ public class InstituteController {
 		List<Institute> result = dataManager.getInstitute();
 		if (logger.isInfoEnabled()) {
 			logger.info(String.format("getInstitutes[%s]: %s", "tenant", result.size()));
+		}
+		return result;
+	}
+	
+	@RequestMapping(value = "/api/institutes", method = RequestMethod.GET)
+	public @ResponseBody Page<Institute> getAllInstitutes(@ApiParam Pageable pageable) {
+		
+		Page<Institute> result = dataManager.fetchInstitutes(pageable);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("getAllInstitutes: %s", result.getNumberOfElements()));
 		}
 		return result;
 	}
