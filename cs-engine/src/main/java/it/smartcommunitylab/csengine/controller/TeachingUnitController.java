@@ -244,6 +244,16 @@ public class TeachingUnitController extends AuthController {
 		return result;
 	}
 	
+	@RequestMapping(value = "/api/courses", method = RequestMethod.GET)
+	public @ResponseBody Page<Course> getAllCourses(@ApiParam Pageable pageable) {
+		
+		Page<Course> result = dataManager.fetchCourses(pageable);
+		if(logger.isInfoEnabled()) {
+			logger.info(String.format("getAllRegistrations: %s", result.getNumberOfElements()));
+		}
+		return result;
+	}
+	
 	@RequestMapping(value = "/api/tu/{teachingUnitId}/year/{schoolYear}/is/experience", method = RequestMethod.POST)
 	public @ResponseBody Experience addIsExperience(
 			@PathVariable String teachingUnitId,

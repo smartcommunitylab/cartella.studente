@@ -465,6 +465,11 @@ public class RepositoryManager {
 		Page<Institute> result = instituteRepository.findAll(pageable);
 		return result;
 	}
+
+	public Page<Course> fetchCourses(Pageable pageable) {
+		Page<Course> result = courseRepository.findAll(pageable);
+		return result;
+	}
 	
 	public Institute addInstitute(Institute institute) {
 		Date now = new Date();
