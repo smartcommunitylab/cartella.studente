@@ -2,102 +2,149 @@ package it.smartcommunitylab.csengine.extsource.infotn;
 
 public class Unita {
 	private String origin;
-	private String extid;
-	private String datefrom;
-	private String dateto;
-	private String origin_institute;
-	private String extid_institute;
-	private String name;
-	private String description;
-	private String address;
-	private String ordinescuola;
-	private String tiposcuola;
-	private String indirizzodidattico;
-	private String mgindirizzodidattico;
-	private String tipoorario;
-	
+	private String extId;
+	private String dateFrom;
+	private String dateTo;
+	private Institute instituteRef;
+	private TeachingUnit teachingUnit;
+
 	public String getOrigin() {
 		return origin;
 	}
+
 	public void setOrigin(String origin) {
 		this.origin = origin;
 	}
-	public String getExtid() {
-		return extid;
+
+	public String getExtId() {
+		return extId;
 	}
-	public void setExtid(String extid) {
-		this.extid = extid;
+
+	public void setExtId(String extId) {
+		this.extId = extId;
 	}
-	public String getDatefrom() {
-		return datefrom;
+
+	public String getDateFrom() {
+		return dateFrom;
 	}
-	public void setDatefrom(String datefrom) {
-		this.datefrom = datefrom;
+
+	public void setDateFrom(String dateFrom) {
+		this.dateFrom = dateFrom;
 	}
-	public String getOrigin_institute() {
-		return origin_institute;
+
+	public String getDateTo() {
+		return dateTo;
 	}
-	public void setOrigin_institute(String origin_institute) {
-		this.origin_institute = origin_institute;
+
+	public void setDateTo(String dateTo) {
+		this.dateTo = dateTo;
 	}
-	public String getExtid_institute() {
-		return extid_institute;
+
+	public Institute getInstituteRef() {
+		return instituteRef;
 	}
-	public void setExtid_institute(String extid_institute) {
-		this.extid_institute = extid_institute;
+
+	public void setInstituteRef(Institute instituteRef) {
+		this.instituteRef = instituteRef;
 	}
-	public String getName() {
-		return name;
+
+	public TeachingUnit getTeachingUnit() {
+		return teachingUnit;
 	}
-	public void setName(String name) {
-		this.name = name;
+
+	public void setTeachingUnit(TeachingUnit teachingUnit) {
+		this.teachingUnit = teachingUnit;
 	}
-	public String getDescription() {
-		return description;
+
+}
+
+class Institute {
+
+	private String extId;
+	private String origin;
+
+	public String getExtId() {
+		return extId;
 	}
-	public void setDescription(String description) {
-		this.description = description;
+
+	public void setExtId(String extId) {
+		this.extId = extId;
 	}
+
+	public String getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(String origin) {
+		this.origin = origin;
+	}
+
+}
+
+class TeachingUnit {
+
+	private String address;
+	private String mgIndirizzoDidattico;
+	private String ordineScuola;
+	private String tipoOrari;
+	private String tipoScuola;
+	private String name;
+	private String description;
+
 	public String getAddress() {
 		return address;
 	}
+
 	public void setAddress(String address) {
 		this.address = address;
 	}
-	public String getOrdinescuola() {
-		return ordinescuola;
+
+	public String getMgIndirizzoDidattico() {
+		return mgIndirizzoDidattico;
 	}
-	public void setOrdinescuola(String ordinescuola) {
-		this.ordinescuola = ordinescuola;
+
+	public void setMgIndirizzoDidattico(String mgIndirizzoDidattico) {
+		this.mgIndirizzoDidattico = mgIndirizzoDidattico;
 	}
-	public String getTipoorario() {
-		return tipoorario;
+
+	public String getOrdineScuola() {
+		return ordineScuola;
 	}
-	public void setTipoorario(String tipoorario) {
-		this.tipoorario = tipoorario;
+
+	public void setOrdineScuola(String ordineScuola) {
+		this.ordineScuola = ordineScuola;
 	}
-	public String getDateto() {
-		return dateto;
+
+	public String getTipoOrari() {
+		return tipoOrari;
 	}
-	public void setDateto(String dateto) {
-		this.dateto = dateto;
+
+	public void setTipoOrari(String tipoOrari) {
+		this.tipoOrari = tipoOrari;
 	}
-	public String getTiposcuola() {
-		return tiposcuola;
+
+	public String getTipoScuola() {
+		return tipoScuola;
 	}
-	public void setTiposcuola(String tiposcuola) {
-		this.tiposcuola = tiposcuola;
+
+	public void setTipoScuola(String tipoScuola) {
+		this.tipoScuola = tipoScuola;
 	}
-	public String getIndirizzodidattico() {
-		return indirizzodidattico;
+
+	public String getName() {
+		return name;
 	}
-	public void setIndirizzodidattico(String indirizzodidattico) {
-		this.indirizzodidattico = indirizzodidattico;
+
+	public void setName(String name) {
+		this.name = name;
 	}
-	public String getMgindirizzodidattico() {
-		return mgindirizzodidattico;
+
+	public String getDescription() {
+		return description;
 	}
-	public void setMgindirizzodidattico(String mgindirizzodidattico) {
-		this.mgindirizzodidattico = mgindirizzodidattico;
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
+
 }
