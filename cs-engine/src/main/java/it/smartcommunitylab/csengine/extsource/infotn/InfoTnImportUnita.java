@@ -187,6 +187,8 @@ public class InfoTnImportUnita {
 		result.setOrigin(unita.getOrigin());
 		result.setExtId(unita.getExtId());
 		result.setId(Utils.getUUID());
+		result.setName(unita.getTeachingUnit().getName());
+		result.setDescription(unita.getTeachingUnit().getDescription());
 		result.setAddress(unita.getTeachingUnit().getAddress());
 		Map<String, Typology> classifications = new HashMap<String, Typology>();
 		if (Utils.isNotEmpty(unita.getTeachingUnit().getOrdineScuola())) {
