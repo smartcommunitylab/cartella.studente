@@ -49,7 +49,8 @@ public class InfoTnImportUnita {
 	@Autowired
 	MetaInfoRepository metaInfoRepository;
 
-	@Scheduled(cron = "0 45 23 * * ?")
+//	Order 2.
+	@Scheduled(cron = "0 20 23 * * ?")
 	public String importUnitaFromRESTAPI() throws Exception {
 		logger.info("start importUnitaFromRESTAPI");
 		int total = 0;

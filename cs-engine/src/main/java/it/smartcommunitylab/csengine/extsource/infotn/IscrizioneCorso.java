@@ -2,81 +2,111 @@ package it.smartcommunitylab.csengine.extsource.infotn;
 
 public class IscrizioneCorso {
 	private String origin;
-	private String extid;
-	private String origin_student;
-	private String extid_studente;
-	private String schoolyear;
-	private String datefrom;
-	private String dateto;
-	private String classroom;
-	private String origin_course;
-	private String extid_course;
-	private String result;
-	
+	private String extId;
+	private CourseRef courseRef;
+	private StudentRef student;
+
 	public String getOrigin() {
 		return origin;
 	}
+
 	public void setOrigin(String origin) {
 		this.origin = origin;
 	}
-	public String getExtid() {
-		return extid;
+
+	public String getExtId() {
+		return extId;
 	}
-	public void setExtid(String extid) {
-		this.extid = extid;
+
+	public void setExtId(String extId) {
+		this.extId = extId;
 	}
-	public String getOrigin_student() {
-		return origin_student;
+
+	public CourseRef getCourseRef() {
+		return courseRef;
 	}
-	public void setOrigin_student(String origin_student) {
-		this.origin_student = origin_student;
+
+	public void setCourseRef(CourseRef courseRef) {
+		this.courseRef = courseRef;
 	}
-	public String getExtid_studente() {
-		return extid_studente;
+
+	public StudentRef getStudent() {
+		return student;
 	}
-	public void setExtid_studente(String extid_studente) {
-		this.extid_studente = extid_studente;
+
+	public void setStudent(StudentRef student) {
+		this.student = student;
 	}
-	public String getSchoolyear() {
-		return schoolyear;
+
+}
+
+class CourseRef {
+	private String extId;
+	private String origin;
+
+	public String getExtId() {
+		return extId;
 	}
-	public void setSchoolyear(String schoolyear) {
-		this.schoolyear = schoolyear;
+
+	public void setExtId(String extId) {
+		this.extId = extId;
 	}
-	public String getDatefrom() {
-		return datefrom;
+
+	public String getOrigin() {
+		return origin;
 	}
-	public void setDatefrom(String datefrom) {
-		this.datefrom = datefrom;
+
+	public void setOrigin(String origin) {
+		this.origin = origin;
 	}
-	public String getDateto() {
-		return dateto;
+
+}
+
+class StudentRef {
+	private String extId;
+	private String origin;
+	private String classRoom;
+	private String dateFrom;
+	private String dateTo;
+
+	public String getExtId() {
+		return extId;
 	}
-	public void setDateto(String dateto) {
-		this.dateto = dateto;
+
+	public void setExtId(String extId) {
+		this.extId = extId;
 	}
-	public String getClassroom() {
-		return classroom;
+
+	public String getOrigin() {
+		return origin;
 	}
-	public void setClassroom(String classroom) {
-		this.classroom = classroom;
+
+	public void setOrigin(String origin) {
+		this.origin = origin;
 	}
-	public String getOrigin_course() {
-		return origin_course;
+
+	public String getClassRoom() {
+		return classRoom;
 	}
-	public void setOrigin_course(String origin_course) {
-		this.origin_course = origin_course;
+
+	public void setClassRoom(String classRoom) {
+		this.classRoom = classRoom;
 	}
-	public String getExtid_course() {
-		return extid_course;
+
+	public String getDateFrom() {
+		return dateFrom;
 	}
-	public void setExtid_course(String extid_course) {
-		this.extid_course = extid_course;
+
+	public void setDateFrom(String dateFrom) {
+		this.dateFrom = dateFrom;
 	}
-	public String getResult() {
-		return result;
+
+	public String getDateTo() {
+		return dateTo;
 	}
-	public void setResult(String result) {
-		this.result = result;
+
+	public void setDateTo(String dateTo) {
+		this.dateTo = dateTo;
 	}
+
 }

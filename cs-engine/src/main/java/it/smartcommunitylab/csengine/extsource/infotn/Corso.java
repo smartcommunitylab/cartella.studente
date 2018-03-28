@@ -2,73 +2,74 @@ package it.smartcommunitylab.csengine.extsource.infotn;
 
 public class Corso {
 	private String origin;
-	private String extid;
-	private String origin_institute;
-	private String extid_institute;
-	private String origin_teachingunit;
-	private String extid_teachingunit;
-	private String schoolyear;
-	private String datefrom;
-	private String dateto;
+	private String extId;
 	private String course;
-	
+	private String dateFrom;
+	private String dateTo;
+	private Institute instituteRef;
+	private String schoolYear;
+	private TeachingUnit teachingUnitRef;
+
+	public String getExtId() {
+		return extId;
+	}
+
+	public void setExtId(String extId) {
+		this.extId = extId;
+	}
+
+	public String getDateFrom() {
+		return dateFrom;
+	}
+
+	public void setDateFrom(String dateFrom) {
+		this.dateFrom = dateFrom;
+	}
+
+	public String getDateTo() {
+		return dateTo;
+	}
+
+	public void setDateTo(String dateTo) {
+		this.dateTo = dateTo;
+	}
+
+	public Institute getInstituteRef() {
+		return instituteRef;
+	}
+
+	public void setInstituteRef(Institute instituteRef) {
+		this.instituteRef = instituteRef;
+	}
+
+	public TeachingUnit getTeachingUnitRef() {
+		return teachingUnitRef;
+	}
+
+	public void setTeachingUnitRef(TeachingUnit teachingUnitRef) {
+		this.teachingUnitRef = teachingUnitRef;
+	}
+
 	public String getOrigin() {
 		return origin;
 	}
+
 	public void setOrigin(String origin) {
 		this.origin = origin;
 	}
-	public String getExtid() {
-		return extid;
+
+	public String getSchoolYear() {
+		return schoolYear;
 	}
-	public void setExtid(String extid) {
-		this.extid = extid;
+
+	public void setSchoolYear(String schoolYear) {
+		this.schoolYear = schoolYear;
 	}
-	public String getOrigin_institute() {
-		return origin_institute;
-	}
-	public void setOrigin_institute(String origin_institute) {
-		this.origin_institute = origin_institute;
-	}
-	public String getExtid_institute() {
-		return extid_institute;
-	}
-	public void setExtid_institute(String extid_institute) {
-		this.extid_institute = extid_institute;
-	}
-	public String getOrigin_teachingunit() {
-		return origin_teachingunit;
-	}
-	public void setOrigin_teachingunit(String origin_teachingunit) {
-		this.origin_teachingunit = origin_teachingunit;
-	}
-	public String getExtid_teachingunit() {
-		return extid_teachingunit;
-	}
-	public void setExtid_teachingunit(String extid_teachingunit) {
-		this.extid_teachingunit = extid_teachingunit;
-	}
-	public String getSchoolyear() {
-		return schoolyear;
-	}
-	public void setSchoolyear(String schoolyear) {
-		this.schoolyear = schoolyear;
-	}
-	public String getDatefrom() {
-		return datefrom;
-	}
-	public void setDatefrom(String datefrom) {
-		this.datefrom = datefrom;
-	}
-	public String getDateto() {
-		return dateto;
-	}
-	public void setDateto(String dateto) {
-		this.dateto = dateto;
-	}
+
 	public String getCourse() {
 		return course;
 	}
+
 	public void setCourse(String course) {
 		this.course = course;
 	}

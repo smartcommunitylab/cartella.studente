@@ -1,5 +1,9 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,11 +39,12 @@ public class InfoTnImportIstituzioni {
 
 	@Autowired
 	InstituteRepository instituteRepository;
-	
+
 	@Autowired
 	MetaInfoRepository metaInfoRepository;
 
-	@Scheduled(cron = "0 40 23 * * ?")
+//	 Order 1.
+	@Scheduled(cron = "0 15 23 * * ?")
 	public String importIstituzioniFromRESTAPI() throws Exception {
 		logger.info("start importIstituzioniFromRESTAPI");
 		int total = 0;
@@ -91,6 +96,14 @@ public class InfoTnImportIstituzioni {
 			metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
 			metaInfo.setTotalRead(total);
 			metaInfo.setTotalStore(stored);
+
+			Map<String, String> schoolYears = new HashMap<String, String>();
+			for (int i = 1999; i <= Calendar.getInstance().get(Calendar.YEAR); i++) {
+				int nextYear = i + 1;
+				String schoolYear = i + "/" + String.valueOf(nextYear).substring(2);
+				schoolYears.put(String.valueOf(i), schoolYear);
+				metaInfo.setSchoolYears(schoolYears);
+			}
 			metaInfoRepository.save(metaInfo);
 
 		}

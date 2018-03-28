@@ -88,7 +88,7 @@ public class InfoTnController {
 	
 	@RequestMapping(value = "/extsource/infotn/corsi/empty", method = RequestMethod.GET)
 	public @ResponseBody String importCorsiFromEmpty() throws Exception {
-		return importCorsi.importCorsiFromEmpty();
+		return importCorsi.importCorsiFromRESTAPI();
 	}
 	
 	@RequestMapping(value = "/extsource/infotn/studenti/empty", method = RequestMethod.GET)
@@ -103,7 +103,7 @@ public class InfoTnController {
 	
 	@RequestMapping(value = "/extsource/infotn/iscrizionecorsi/empty", method = RequestMethod.GET)
 	public @ResponseBody String importIscrizioneCorsiFromEmpty() throws Exception {
-		return importIscrizioneCorsi.importIscrizioneCorsiFromEmpty();
+		return importIscrizioneCorsi.importIscrizioneCorsiFromRESTAPI();
 	}
 	
 	@RequestMapping(value = "/extsource/infotn/esami/empty", method = RequestMethod.GET)

@@ -1,12 +1,9 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
-import java.io.FileReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -23,18 +20,12 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import it.smartcommunitylab.aac.authorization.beans.AccountAttributeDTO;
-import it.smartcommunitylab.aac.authorization.beans.AuthorizationDTO;
-import it.smartcommunitylab.aac.authorization.beans.AuthorizationUserDTO;
-import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.HTTPUtils;
 import it.smartcommunitylab.csengine.common.Utils;
-import it.smartcommunitylab.csengine.model.Consent;
 import it.smartcommunitylab.csengine.model.MetaInfo;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.security.AuthorizationManager;
 import it.smartcommunitylab.csengine.storage.MetaInfoRepository;
-import it.smartcommunitylab.csengine.storage.RepositoryManager;
 import it.smartcommunitylab.csengine.storage.StudentRepository;
 
 @Component
@@ -61,14 +52,10 @@ public class InfoTnImportStudenti {
 	private String infoTNAPIUrl;
 
 	private String metaInfoName = "Studenti";
-	
-	private String schoolYear = "2017/18";
+	private String metaInfoIstituzioni = "Istituzioni";
 
 	@Autowired
 	StudentRepository studentRepository;
-
-	@Autowired
-	private RepositoryManager dataManager;
 
 	@Autowired
 	AuthorizationManager authorizationManager;
@@ -79,25 +66,58 @@ public class InfoTnImportStudenti {
 	SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ITALY);
 	SimpleDateFormat sdfStandard = new SimpleDateFormat("dd/MM/yyyy");
 
-	@Scheduled(cron = "0 56 10 * * ?")
+//	Order 4.
+	@Scheduled(cron = "0 59 23 * * ?")
 	public String importStudentiFromRESTAPI() throws Exception {
-		logger.info("start importStudentiFromRESTAPI");
+		logger.info("start import procedure for students");
+		MetaInfo metaInfoCorsi = metaInfoRepository.findOne(metaInfoIstituzioni);
+		if (metaInfoCorsi != null) {
+			Map<String, String> schoolYears = metaInfoCorsi.getSchoolYears();
+			// read registered time stamp.
+			MetaInfo metaInfo = metaInfoRepository.findOne(metaInfoName);
+			if (metaInfo != null) {
+				// get currentYear.
+				int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+				int nextYear = currentYear + 1;
+				String schoolYear = currentYear + "/" + String.valueOf(nextYear).substring(2);
+				String url = infoTNAPIUrl + "/studenti?schoolYear=" + schoolYear + "&timestamp="
+						+ metaInfo.getEpocTimestamp();
+				try {
+
+					importStudentiUsingRESTAPI(url, schoolYear, metaInfo);
+					return metaInfo.getTotalStore() + "/" + metaInfo.getTotalRead();
+
+				} catch (Exception e) {
+					return e.getMessage();
+				}
+
+			} else {
+				metaInfo = new MetaInfo();
+				metaInfo.setName(metaInfoName);
+				try {
+
+					for (Map.Entry<String, String> entry : schoolYears.entrySet()) {
+						String url = infoTNAPIUrl + "/studenti?schoolYear=" + entry.getValue();
+						importStudentiUsingRESTAPI(url, entry.getValue(), metaInfo);
+					}
+					return (metaInfo.getTotalStore() + "/" + metaInfo.getTotalRead());
+
+				} catch (Exception e) {
+					return e.getMessage();
+				}
+			}
+		} else {
+			return "Run /istituti import first.";
+		}
+	}
+
+	private void importStudentiUsingRESTAPI(String url, String schoolYear, MetaInfo metaInfo) throws Exception {
+
+		logger.info("start importStudentiUsingRESTAPI for year " + schoolYear);
 		int total = 0;
 		int stored = 0;
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-		String url;
-
-		// read registered time stamp.
-		MetaInfo metaInfo = metaInfoRepository.findOne(metaInfoName);
-		if (metaInfo != null) {
-			url = infoTNAPIUrl + "/studenti?schoolYear=" + schoolYear + "&timestamp=" + metaInfo.getEpocTimestamp();
-		} else {
-			metaInfo = new MetaInfo();
-			metaInfo.setName(metaInfoName);
-			url = infoTNAPIUrl + "/studenti?schoolYear=" + schoolYear;
-		}
-
 		// call api.
 		String response = HTTPUtils.get(url, null, null, null);
 		if (response != null && !response.isEmpty()) {
@@ -108,7 +128,7 @@ public class InfoTnImportStudenti {
 			current = jp.nextToken();
 			if (current != JsonToken.START_ARRAY) {
 				logger.error("Error: root should be array: quiting.");
-				return "Error: root should be array: quiting.";
+				throw new Exception("Error: root should be array: quiting.");
 			}
 			while (jp.nextToken() != JsonToken.END_ARRAY) {
 				total += 1;
@@ -128,130 +148,52 @@ public class InfoTnImportStudenti {
 					student = studentDb;
 				}
 				// save consent
-				Consent consent = dataManager.getConsentByStudent(student.getId());
-				if (consent == null) {
-					consent = new Consent();
-					consent.setStudentId(student.getId());
-					consent.setSubject(student.getCf());
-					consent.setAuthorized(Boolean.FALSE);
-					dataManager.addConsent(consent);
-					// set autorizhation
-					AccountAttributeDTO account = new AccountAttributeDTO();
-					account.setAccountName(profileAccount);
-					account.setAttributeName(profileAttribute);
-					account.setAttributeValue(student.getCf());
-					AuthorizationUserDTO user = new AuthorizationUserDTO();
-					user.setAccountAttribute(account);
-					user.setType(userType);
-					List<String> actions = new ArrayList<String>();
-					actions.add(Const.AUTH_ACTION_ADD);
-					actions.add(Const.AUTH_ACTION_DELETE);
-					actions.add(Const.AUTH_ACTION_READ);
-					actions.add(Const.AUTH_ACTION_UPDATE);
-					Map<String, String> attributes = new HashMap<String, String>();
-					attributes.put("student-studentId", student.getId());
-					AuthorizationDTO authorization = authorizationManager.getNewAuthorization(user, user, actions,
-							"student", attributes);
-					try {
-						authorizationManager.insertAuthorization(authorization);
-					} catch (Exception e) {
-						logger.warn(String.format("Error creating authorization: %s - %s - %s", studente.getOrigin(),
-								studente.getExtId(), e.getMessage()));
-					}
-				}
+				// Consent consent =
+				// dataManager.getConsentByStudent(student.getId());
+				// if (consent == null) {
+				// consent = new Consent();
+				// consent.setStudentId(student.getId());
+				// consent.setSubject(student.getCf());
+				// consent.setAuthorized(Boolean.FALSE);
+				// dataManager.addConsent(consent);
+				// // set autorizhation
+				// AccountAttributeDTO account = new AccountAttributeDTO();
+				// account.setAccountName(profileAccount);
+				// account.setAttributeName(profileAttribute);
+				// account.setAttributeValue(student.getCf());
+				// AuthorizationUserDTO user = new AuthorizationUserDTO();
+				// user.setAccountAttribute(account);
+				// user.setType(userType);
+				// List<String> actions = new ArrayList<String>();
+				// actions.add(Const.AUTH_ACTION_ADD);
+				// actions.add(Const.AUTH_ACTION_DELETE);
+				// actions.add(Const.AUTH_ACTION_READ);
+				// actions.add(Const.AUTH_ACTION_UPDATE);
+				// Map<String, String> attributes = new HashMap<String,
+				// String>();
+				// attributes.put("student-studentId", student.getId());
+				// AuthorizationDTO authorization =
+				// authorizationManager.getNewAuthorization(user, user, actions,
+				// "student", attributes);
+				// try {
+				// authorizationManager.insertAuthorization(authorization);
+				// } catch (Exception e) {
+				// logger.warn(String.format("Error creating authorization: %s -
+				// %s - %s", studente.getOrigin(),
+				// studente.getExtId(), e.getMessage()));
+				// }
+				// }
 			}
 			// update time stamp (if all works fine).
 			metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
+			total = metaInfo.getTotalRead() + total;
 			metaInfo.setTotalRead(total);
+			stored = metaInfo.getTotalStore() + stored;
 			metaInfo.setTotalStore(stored);
 			metaInfoRepository.save(metaInfo);
 		}
-		
-		return stored + "/" + total;
-	}
 
-//	public String importStudentiFromEmpty() throws Exception {
-//		logger.info("start importStudentiFromEmpty");
-//		int total = 0;
-//		int stored = 0;
-//		FileReader fileReader = new FileReader(sourceFolder + "FBKstudenti v.02.json");
-//		ObjectMapper objectMapper = new ObjectMapper();
-//		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-//		JsonFactory jsonFactory = new JsonFactory();
-//		jsonFactory.setCodec(objectMapper);
-//		JsonParser jp = jsonFactory.createParser(fileReader);
-//		JsonToken current;
-//		current = jp.nextToken();
-//		if (current != JsonToken.START_OBJECT) {
-//			logger.error("Error: root should be object: quiting.");
-//			return "Error: root should be object: quiting.";
-//		}
-//		while (jp.nextToken() != JsonToken.END_OBJECT) {
-//			String fieldName = jp.getCurrentName();
-//			current = jp.nextToken();
-//			if (fieldName.equals("items")) {
-//				if (current == JsonToken.START_ARRAY) {
-//					while (jp.nextToken() != JsonToken.END_ARRAY) {
-//						total += 1;
-//						Studente studente = jp.readValueAs(Studente.class);
-//						logger.info("converting " + studente.getExtid());
-//						Student student = null;
-//						Student studentDb = studentRepository.findByExtId(studente.getOrigin(), studente.getExtid());
-//						if (studentDb == null) {
-//							student = convertToStudent(studente);
-//							studentRepository.save(student);
-//							stored += 1;
-//							logger.info(String.format("Save Student: %s - %s - %s", studente.getOrigin(),
-//									studente.getExtid(), student.getId()));
-//						} else {
-//							logger.warn(String.format("Student already exists: %s - %s", studente.getOrigin(),
-//									studente.getExtid()));
-//							student = studentDb;
-//						}
-//						// save consent
-//						Consent consent = dataManager.getConsentByStudent(student.getId());
-//						if (consent == null) {
-//							consent = new Consent();
-//							consent.setStudentId(student.getId());
-//							consent.setSubject(student.getCf());
-//							consent.setAuthorized(Boolean.FALSE);
-//							dataManager.addConsent(consent);
-//							// set autorizhation
-//							AccountAttributeDTO account = new AccountAttributeDTO();
-//							account.setAccountName(profileAccount);
-//							account.setAttributeName(profileAttribute);
-//							account.setAttributeValue(student.getCf());
-//							AuthorizationUserDTO user = new AuthorizationUserDTO();
-//							user.setAccountAttribute(account);
-//							user.setType(userType);
-//							List<String> actions = new ArrayList<String>();
-//							actions.add(Const.AUTH_ACTION_ADD);
-//							actions.add(Const.AUTH_ACTION_DELETE);
-//							actions.add(Const.AUTH_ACTION_READ);
-//							actions.add(Const.AUTH_ACTION_UPDATE);
-//							Map<String, String> attributes = new HashMap<String, String>();
-//							attributes.put("student-studentId", student.getId());
-//							AuthorizationDTO authorization = authorizationManager.getNewAuthorization(user, user,
-//									actions, "student", attributes);
-//							try {
-//								authorizationManager.insertAuthorization(authorization);
-//							} catch (Exception e) {
-//								logger.warn(String.format("Error creating authorization: %s - %s - %s",
-//										studente.getOrigin(), studente.getExtid(), e.getMessage()));
-//							}
-//						}
-//					}
-//				} else {
-//					logger.warn("Error: records should be an array: skipping.");
-//					jp.skipChildren();
-//				}
-//			} else {
-//				logger.warn("Unprocessed property: " + fieldName);
-//				jp.skipChildren();
-//			}
-//		}
-//		return stored + "/" + total;
-//	}
+	}
 
 	private Student convertToStudent(Studente studente) throws ParseException {
 		Student result = new Student();
@@ -261,7 +203,7 @@ public class InfoTnImportStudenti {
 		result.setCf(studente.getCf());
 		result.setName(studente.getName());
 		result.setSurname(studente.getSurname());
-		//result.setBirthdate(getBirthdate(studente.getBirthdate()));
+		// result.setBirthdate(getBirthdate(studente.getBirthdate()));
 		result.setBirthdate(studente.getBirthdate());
 		result.setAddress(getAddress(studente));
 		result.setPhone(studente.getPhone());
@@ -285,4 +227,95 @@ public class InfoTnImportStudenti {
 		String result = sdfStandard.format(date);
 		return result;
 	}
+	
+	// public String importStudentiFromEmpty() throws Exception {
+	// logger.info("start importStudentiFromEmpty");
+	// int total = 0;
+	// int stored = 0;
+	// FileReader fileReader = new FileReader(sourceFolder + "FBKstudenti
+	// v.02.json");
+	// ObjectMapper objectMapper = new ObjectMapper();
+	// objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
+	// false);
+	// JsonFactory jsonFactory = new JsonFactory();
+	// jsonFactory.setCodec(objectMapper);
+	// JsonParser jp = jsonFactory.createParser(fileReader);
+	// JsonToken current;
+	// current = jp.nextToken();
+	// if (current != JsonToken.START_OBJECT) {
+	// logger.error("Error: root should be object: quiting.");
+	// return "Error: root should be object: quiting.";
+	// }
+	// while (jp.nextToken() != JsonToken.END_OBJECT) {
+	// String fieldName = jp.getCurrentName();
+	// current = jp.nextToken();
+	// if (fieldName.equals("items")) {
+	// if (current == JsonToken.START_ARRAY) {
+	// while (jp.nextToken() != JsonToken.END_ARRAY) {
+	// total += 1;
+	// Studente studente = jp.readValueAs(Studente.class);
+	// logger.info("converting " + studente.getExtid());
+	// Student student = null;
+	// Student studentDb = studentRepository.findByExtId(studente.getOrigin(),
+	// studente.getExtid());
+	// if (studentDb == null) {
+	// student = convertToStudent(studente);
+	// studentRepository.save(student);
+	// stored += 1;
+	// logger.info(String.format("Save Student: %s - %s - %s",
+	// studente.getOrigin(),
+	// studente.getExtid(), student.getId()));
+	// } else {
+	// logger.warn(String.format("Student already exists: %s - %s",
+	// studente.getOrigin(),
+	// studente.getExtid()));
+	// student = studentDb;
+	// }
+	// // save consent
+	// Consent consent = dataManager.getConsentByStudent(student.getId());
+	// if (consent == null) {
+	// consent = new Consent();
+	// consent.setStudentId(student.getId());
+	// consent.setSubject(student.getCf());
+	// consent.setAuthorized(Boolean.FALSE);
+	// dataManager.addConsent(consent);
+	// // set autorizhation
+	// AccountAttributeDTO account = new AccountAttributeDTO();
+	// account.setAccountName(profileAccount);
+	// account.setAttributeName(profileAttribute);
+	// account.setAttributeValue(student.getCf());
+	// AuthorizationUserDTO user = new AuthorizationUserDTO();
+	// user.setAccountAttribute(account);
+	// user.setType(userType);
+	// List<String> actions = new ArrayList<String>();
+	// actions.add(Const.AUTH_ACTION_ADD);
+	// actions.add(Const.AUTH_ACTION_DELETE);
+	// actions.add(Const.AUTH_ACTION_READ);
+	// actions.add(Const.AUTH_ACTION_UPDATE);
+	// Map<String, String> attributes = new HashMap<String, String>();
+	// attributes.put("student-studentId", student.getId());
+	// AuthorizationDTO authorization =
+	// authorizationManager.getNewAuthorization(user, user,
+	// actions, "student", attributes);
+	// try {
+	// authorizationManager.insertAuthorization(authorization);
+	// } catch (Exception e) {
+	// logger.warn(String.format("Error creating authorization: %s - %s - %s",
+	// studente.getOrigin(), studente.getExtid(), e.getMessage()));
+	// }
+	// }
+	// }
+	// } else {
+	// logger.warn("Error: records should be an array: skipping.");
+	// jp.skipChildren();
+	// }
+	// } else {
+	// logger.warn("Unprocessed property: " + fieldName);
+	// jp.skipChildren();
+	// }
+	// }
+	// return stored + "/" + total;
+	// }
+
+	
 }
