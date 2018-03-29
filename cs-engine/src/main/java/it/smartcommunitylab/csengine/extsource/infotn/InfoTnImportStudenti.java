@@ -2,8 +2,11 @@ package it.smartcommunitylab.csengine.extsource.infotn;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -20,12 +23,18 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import it.smartcommunitylab.aac.authorization.beans.AccountAttributeDTO;
+import it.smartcommunitylab.aac.authorization.beans.AuthorizationDTO;
+import it.smartcommunitylab.aac.authorization.beans.AuthorizationUserDTO;
+import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.HTTPUtils;
 import it.smartcommunitylab.csengine.common.Utils;
+import it.smartcommunitylab.csengine.model.Consent;
 import it.smartcommunitylab.csengine.model.MetaInfo;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.security.AuthorizationManager;
 import it.smartcommunitylab.csengine.storage.MetaInfoRepository;
+import it.smartcommunitylab.csengine.storage.RepositoryManager;
 import it.smartcommunitylab.csengine.storage.StudentRepository;
 
 @Component
@@ -58,6 +67,9 @@ public class InfoTnImportStudenti {
 	StudentRepository studentRepository;
 
 	@Autowired
+	private RepositoryManager dataManager;
+
+	@Autowired
 	AuthorizationManager authorizationManager;
 
 	@Autowired
@@ -66,7 +78,7 @@ public class InfoTnImportStudenti {
 	SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ITALY);
 	SimpleDateFormat sdfStandard = new SimpleDateFormat("dd/MM/yyyy");
 
-//	Order 4.
+	// Order 4.
 	@Scheduled(cron = "0 59 23 * * ?")
 	public String importStudentiFromRESTAPI() throws Exception {
 		logger.info("start import procedure for students");
@@ -148,41 +160,37 @@ public class InfoTnImportStudenti {
 					student = studentDb;
 				}
 				// save consent
-				// Consent consent =
-				// dataManager.getConsentByStudent(student.getId());
-				// if (consent == null) {
-				// consent = new Consent();
-				// consent.setStudentId(student.getId());
-				// consent.setSubject(student.getCf());
-				// consent.setAuthorized(Boolean.FALSE);
-				// dataManager.addConsent(consent);
-				// // set autorizhation
-				// AccountAttributeDTO account = new AccountAttributeDTO();
-				// account.setAccountName(profileAccount);
-				// account.setAttributeName(profileAttribute);
-				// account.setAttributeValue(student.getCf());
-				// AuthorizationUserDTO user = new AuthorizationUserDTO();
-				// user.setAccountAttribute(account);
-				// user.setType(userType);
-				// List<String> actions = new ArrayList<String>();
-				// actions.add(Const.AUTH_ACTION_ADD);
-				// actions.add(Const.AUTH_ACTION_DELETE);
-				// actions.add(Const.AUTH_ACTION_READ);
-				// actions.add(Const.AUTH_ACTION_UPDATE);
-				// Map<String, String> attributes = new HashMap<String,
-				// String>();
-				// attributes.put("student-studentId", student.getId());
-				// AuthorizationDTO authorization =
-				// authorizationManager.getNewAuthorization(user, user, actions,
-				// "student", attributes);
-				// try {
-				// authorizationManager.insertAuthorization(authorization);
-				// } catch (Exception e) {
-				// logger.warn(String.format("Error creating authorization: %s -
-				// %s - %s", studente.getOrigin(),
-				// studente.getExtId(), e.getMessage()));
-				// }
-				// }
+				Consent consent = dataManager.getConsentByStudent(student.getId());
+				if (consent == null) {
+					consent = new Consent();
+					consent.setStudentId(student.getId());
+					consent.setSubject(student.getCf());
+					consent.setAuthorized(Boolean.FALSE);
+					dataManager.addConsent(consent);
+					// set autorizhation
+					AccountAttributeDTO account = new AccountAttributeDTO();
+					account.setAccountName(profileAccount);
+					account.setAttributeName(profileAttribute);
+					account.setAttributeValue(student.getCf());
+					AuthorizationUserDTO user = new AuthorizationUserDTO();
+					user.setAccountAttribute(account);
+					user.setType(userType);
+					List<String> actions = new ArrayList<String>();
+					actions.add(Const.AUTH_ACTION_ADD);
+					actions.add(Const.AUTH_ACTION_DELETE);
+					actions.add(Const.AUTH_ACTION_READ);
+					actions.add(Const.AUTH_ACTION_UPDATE);
+					Map<String, String> attributes = new HashMap<String, String>();
+					attributes.put("student-studentId", student.getId());
+					AuthorizationDTO authorization = authorizationManager.getNewAuthorization(user, user, actions,
+							"student", attributes);
+					try {
+						authorizationManager.insertAuthorization(authorization);
+					} catch (Exception e) {
+						logger.warn(String.format("Error creating authorization: %s -%s - %s", studente.getOrigin(),
+								studente.getExtId(), e.getMessage()));
+					}
+				}
 			}
 			// update time stamp (if all works fine).
 			metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
@@ -227,7 +235,7 @@ public class InfoTnImportStudenti {
 		String result = sdfStandard.format(date);
 		return result;
 	}
-	
+
 	// public String importStudentiFromEmpty() throws Exception {
 	// logger.info("start importStudentiFromEmpty");
 	// int total = 0;
@@ -317,5 +325,4 @@ public class InfoTnImportStudenti {
 	// return stored + "/" + total;
 	// }
 
-	
 }

@@ -175,7 +175,9 @@ public class InfoTnImportIscrizioneCorsi {
 
 			// update time stamp (if all works fine).
 			metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
+			total = metaInfo.getTotalRead() + total;
 			metaInfo.setTotalRead(total);
+			stored = metaInfo.getTotalStore() + stored;
 			metaInfo.setTotalStore(stored);
 			metaInfoRepository.save(metaInfo);
 
