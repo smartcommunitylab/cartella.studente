@@ -64,6 +64,7 @@ public class InfoTnImportIstituzioni {
 		// courses.
 		importCorsi.importCorsiFromRESTAPI();
 		// student.
+		importStudenti.importStudentiFromRESTAPI();
 		// registration courses.
 		importIscrizioneCorsi.importIscrizioneCorsiFromRESTAPI();
 			
