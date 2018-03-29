@@ -68,22 +68,22 @@ public class InfoTnImportIscrizioneCorsi {
 	@Autowired
 	MetaInfoRepository metaInfoRepository;
 
-	SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ITALY);
+	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
 
 //	Order 5.
 	@Scheduled(cron = "0 45 01 * * ?")
 	public String importIscrizioneCorsiFromRESTAPI() throws Exception {
 		logger.info("start importIscrizioneCorsiFromRESTAPI");
-		MetaInfo metaInfoCorsi = metaInfoRepository.findOne(metaInfoIstituzioni);
-		if (metaInfoCorsi != null) {
-			Map<String, String> schoolYears = metaInfoCorsi.getSchoolYears();
+		MetaInfo metaInfoIst = metaInfoRepository.findOne(metaInfoIstituzioni);
+		if (metaInfoIst != null) {
+			Map<String, String> schoolYears = metaInfoIst.getSchoolYears();
 			// read registered time stamp.
 			MetaInfo metaInfo = metaInfoRepository.findOne(metaInfoName);
 			if (metaInfo != null) {
 				// get currentYear.
 				int currentYear = Calendar.getInstance().get(Calendar.YEAR);
 				int nextYear = currentYear + 1;
-				String schoolYear = currentYear + "/" + String.valueOf(nextYear).substring(2);
+				String schoolYear = currentYear + "/" + String.valueOf(nextYear).substring(2);				
 				String url = infoTNAPIUrl + "/iscrizioni?schoolYear=" + schoolYear + "&timestamp="
 						+ metaInfo.getEpocTimestamp();
 				try {
@@ -111,7 +111,7 @@ public class InfoTnImportIscrizioneCorsi {
 				}
 			}
 		} else {
-			return "Run /corsi import first.";
+			return "Run /istituto import first.";
 		}
 	}
 

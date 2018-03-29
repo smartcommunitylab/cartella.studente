@@ -82,9 +82,9 @@ public class InfoTnImportStudenti {
 	@Scheduled(cron = "0 59 23 * * ?")
 	public String importStudentiFromRESTAPI() throws Exception {
 		logger.info("start import procedure for students");
-		MetaInfo metaInfoCorsi = metaInfoRepository.findOne(metaInfoIstituzioni);
-		if (metaInfoCorsi != null) {
-			Map<String, String> schoolYears = metaInfoCorsi.getSchoolYears();
+		MetaInfo metaInfoIst = metaInfoRepository.findOne(metaInfoIstituzioni);
+		if (metaInfoIst != null) {
+			Map<String, String> schoolYears = metaInfoIst.getSchoolYears();
 			// read registered time stamp.
 			MetaInfo metaInfo = metaInfoRepository.findOne(metaInfoName);
 			if (metaInfo != null) {

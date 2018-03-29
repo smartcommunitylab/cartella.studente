@@ -76,6 +76,13 @@ public class InfoTnController {
 	@Autowired
 	InfoTnUpdateUnita updateUnita;
 	
+	
+	@RequestMapping(value = "/extsource/infotn/import/all/empty", method = RequestMethod.GET)
+	public @ResponseBody String importAllFromEmpty() throws Exception {
+		return importIstituzioni.importAll();
+	}
+	
+	
 	@RequestMapping(value = "/extsource/infotn/istituzioni/empty", method = RequestMethod.GET)
 	public @ResponseBody String importIstituzioniFromEmpty() throws Exception {
 		return importIstituzioni.importIstituzioniFromRESTAPI();

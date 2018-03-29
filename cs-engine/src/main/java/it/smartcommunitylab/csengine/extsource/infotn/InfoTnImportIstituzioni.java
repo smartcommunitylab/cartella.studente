@@ -38,11 +38,38 @@ public class InfoTnImportIstituzioni {
 	private String metaInfoName = "Istituzioni";
 
 	@Autowired
-	InstituteRepository instituteRepository;
+	private InstituteRepository instituteRepository;
 
 	@Autowired
-	MetaInfoRepository metaInfoRepository;
+	private MetaInfoRepository metaInfoRepository;
+	
+	@Autowired
+	private InfoTnImportUnita importUnita;
+	
+	@Autowired
+	private InfoTnImportCorsi importCorsi;
+	
+	@Autowired
+	private InfoTnImportStudenti importStudenti;
+	
+	@Autowired
+	private InfoTnImportIscrizioneCorsi importIscrizioneCorsi;
 
+	@Scheduled(cron = "0 58 23 * * ?")
+	public String importAll() throws Exception {
+		// institute.
+		importIstituzioniFromRESTAPI();
+		// teaching unit.
+		importUnita.importUnitaFromRESTAPI();
+		// courses.
+		importCorsi.importCorsiFromRESTAPI();
+		// student.
+		// registration courses.
+		importIscrizioneCorsi.importIscrizioneCorsiFromRESTAPI();
+			
+		return "ok";
+	}
+	
 //	 Order 1.
 	@Scheduled(cron = "0 15 23 * * ?")
 	public String importIstituzioniFromRESTAPI() throws Exception {
@@ -97,6 +124,7 @@ public class InfoTnImportIstituzioni {
 			metaInfo.setTotalRead(total);
 			metaInfo.setTotalStore(stored);
 
+			// save school years for import purpose, used as parameter in REST APIs.
 			Map<String, String> schoolYears = new HashMap<String, String>();
 			for (int i = 1999; i <= Calendar.getInstance().get(Calendar.YEAR); i++) {
 				int nextYear = i + 1;
