@@ -150,13 +150,16 @@ public class InfoTnImportIscrizioneCorsi {
 					logger.warn(String.format("Student not found: %s", iscrizione.getStudent().getExtId()));
 					continue;
 				}
+				// this is formative id, we need to get the actual courseId and then call API to fetch name.
 				Course course = courseRepository.findByExtId(iscrizione.getCourseRef().getOrigin(),
 						iscrizione.getCourseRef().getExtId());
 				if (course == null) {
 					logger.warn(String.format("Course not found: %s", iscrizione.getCourseRef().getExtId()));
 					continue;
 				}
+				// TU must be present within response.
 				TeachingUnit teachingUnit = teachingUnitRepository.findOne(course.getTeachingUnitId());
+				// Institute must be present within response.
 				Institute institute = instituteRepository.findOne(course.getInstituteId());
 				Registration registration = convertToRegistration(iscrizione, schoolYear);
 				registration.setInstituteId(institute.getId());
@@ -175,9 +178,9 @@ public class InfoTnImportIscrizioneCorsi {
 
 			// update time stamp (if all works fine).
 			metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
-			total = metaInfo.getTotalRead() + total;
+//			total = metaInfo.getTotalRead() + total;
 			metaInfo.setTotalRead(total);
-			stored = metaInfo.getTotalStore() + stored;
+//			stored = metaInfo.getTotalStore() + stored;
 			metaInfo.setTotalStore(stored);
 			metaInfoRepository.save(metaInfo);
 

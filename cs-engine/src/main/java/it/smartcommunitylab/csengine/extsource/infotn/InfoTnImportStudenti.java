@@ -194,9 +194,9 @@ public class InfoTnImportStudenti {
 			}
 			// update time stamp (if all works fine).
 			metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
-			total = metaInfo.getTotalRead() + total;
+//			total = metaInfo.getTotalRead() + total;
 			metaInfo.setTotalRead(total);
-			stored = metaInfo.getTotalStore() + stored;
+//			stored = metaInfo.getTotalStore() + stored;
 			metaInfo.setTotalStore(stored);
 			metaInfoRepository.save(metaInfo);
 		}

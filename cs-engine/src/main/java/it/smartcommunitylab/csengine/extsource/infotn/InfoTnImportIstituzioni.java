@@ -34,6 +34,9 @@ public class InfoTnImportIstituzioni {
 
 	@Value("${infotn.api.url}")
 	private String infoTNAPIUrl;
+	
+	@Value("${infotn.starting.year}")
+	private int startingYear;
 
 	private String metaInfoName = "Istituzioni";
 
@@ -127,12 +130,15 @@ public class InfoTnImportIstituzioni {
 
 			// save school years for import purpose, used as parameter in REST APIs.
 			Map<String, String> schoolYears = new HashMap<String, String>();
-			for (int i = 2016; i < Calendar.getInstance().get(Calendar.YEAR); i++) {
+			if (startingYear < 0) {
+				startingYear = 2016; //default year in case missing in configuration.
+			}
+			for (int i = startingYear; i < Calendar.getInstance().get(Calendar.YEAR); i++) {
 				int nextYear = i + 1;
 				String schoolYear = i + "/" + String.valueOf(nextYear).substring(2);
 				schoolYears.put(String.valueOf(i), schoolYear);
-				metaInfo.setSchoolYears(schoolYears);
 			}
+			metaInfo.setSchoolYears(schoolYears);
 			metaInfoRepository.save(metaInfo);
 
 		}
