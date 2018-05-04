@@ -1,8 +1,8 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
 public class IscrizioneCorso {
-	private String origin;
 	private String extId;
+	private String origin;
 	private CourseRef courseRef;
 	private InstituteRef instituteRef;
 	private TeachingUnitRef teachingUnitRef;

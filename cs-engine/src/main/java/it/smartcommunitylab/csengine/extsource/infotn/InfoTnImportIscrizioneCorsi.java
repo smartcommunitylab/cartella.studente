@@ -22,11 +22,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.smartcommunitylab.csengine.common.HTTPUtils;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.model.Course;
+import it.smartcommunitylab.csengine.model.CourseMetaInfo;
 import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.MetaInfo;
 import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.TeachingUnit;
+import it.smartcommunitylab.csengine.storage.CourseMetaInfoRepository;
 import it.smartcommunitylab.csengine.storage.CourseRepository;
 import it.smartcommunitylab.csengine.storage.InstituteRepository;
 import it.smartcommunitylab.csengine.storage.MetaInfoRepository;
@@ -44,10 +46,10 @@ public class InfoTnImportIscrizioneCorsi {
 
 	@Value("${infotn.api.url}")
 	private String infoTNAPIUrl;
-	
+
 	@Value("${infotn.api.user}")
 	private String user;
-	
+
 	@Value("${infotn.api.pass}")
 	private String password;
 
@@ -74,9 +76,12 @@ public class InfoTnImportIscrizioneCorsi {
 	@Autowired
 	MetaInfoRepository metaInfoRepository;
 
+	@Autowired
+	CourseMetaInfoRepository courseMetaInfoRepository;
+
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
 
-//	Order 5.
+	// Order 5.
 	@Scheduled(cron = "0 45 01 * * ?")
 	public String importIscrizioneCorsiFromRESTAPI() throws Exception {
 		logger.info("start importIscrizioneCorsiFromRESTAPI");
@@ -89,14 +94,14 @@ public class InfoTnImportIscrizioneCorsi {
 				// get currentYear.
 				int currentYear = Calendar.getInstance().get(Calendar.YEAR);
 				int nextYear = currentYear + 1;
-				String schoolYear = currentYear + "/" + String.valueOf(nextYear).substring(2);				
+				String schoolYear = currentYear + "/" + String.valueOf(nextYear).substring(2);
 				String url = infoTNAPIUrl + "/iscrizioni?schoolYear=" + schoolYear + "&timestamp="
 						+ metaInfo.getEpocTimestamp();
 				try {
 
 					importIscirzioneCorsiUsingRESTAPI(url, schoolYear, metaInfo);
 					return metaInfo.getTotalStore() + "/" + metaInfo.getTotalRead();
-				
+
 				} catch (Exception e) {
 					return e.getMessage();
 				}
@@ -105,13 +110,13 @@ public class InfoTnImportIscrizioneCorsi {
 				metaInfo = new MetaInfo();
 				metaInfo.setName(metaInfoName);
 				try {
-				
+
 					for (Map.Entry<String, String> entry : schoolYears.entrySet()) {
 						String url = infoTNAPIUrl + "/iscrizioni?schoolYear=" + entry.getValue();
 						importIscirzioneCorsiUsingRESTAPI(url, entry.getValue(), metaInfo);
 					}
 					return (metaInfo.getTotalStore() + "/" + metaInfo.getTotalRead());
-				
+
 				} catch (Exception e) {
 					return e.getMessage();
 				}
@@ -150,30 +155,41 @@ public class InfoTnImportIscrizioneCorsi {
 							iscrizione.getExtId()));
 					continue;
 				}
+				CourseMetaInfo courseMetaInfoDb = courseMetaInfoRepository
+						.findByExtId(iscrizione.getCourseRef().getOrigin(), iscrizione.getCourseRef().getExtId());
+				if (courseMetaInfoDb == null) {
+					logger.warn(String.format("CourseMetaInfo not found: %s - %s",
+							iscrizione.getCourseRef().getOrigin(), iscrizione.getCourseRef().getExtId()));
+					continue;
+				}
+				Institute instituteDb = instituteRepository.findByExtId(iscrizione.getInstituteRef().getOrigin(),
+						iscrizione.getInstituteRef().getExtId());
+				if (instituteDb == null) {
+					logger.warn(String.format("Institute not found: %s - %s", iscrizione.getInstituteRef().getOrigin(),
+							iscrizione.getInstituteRef().getExtId()));
+					continue;
+				}
+				TeachingUnit teachingUnitDb = teachingUnitRepository.findByExtId(
+						iscrizione.getTeachingUnitRef().getOrigin(), iscrizione.getTeachingUnitRef().getExtId());
+				if (teachingUnitDb == null) {
+					logger.warn(String.format("TeachingUnit not found: %s - %s",
+							iscrizione.getTeachingUnitRef().getOrigin(), iscrizione.getTeachingUnitRef().getExtId()));
+					continue;
+				}
 				Student student = studentRepository.findByExtId(iscrizione.getStudent().getOrigin(),
 						iscrizione.getStudent().getExtId());
 				if (student == null) {
 					logger.warn(String.format("Student not found: %s", iscrizione.getStudent().getExtId()));
 					continue;
 				}
-				// this is formative id, we need to get the actual courseId and then call API to fetch name.
-				Course course = courseRepository.findByExtId(iscrizione.getCourseRef().getOrigin(),
-						iscrizione.getCourseRef().getExtId());
-				if (course == null) {
-					logger.warn(String.format("Course not found: %s", iscrizione.getCourseRef().getExtId()));
-					continue;
-				}
-				// TU must be present within response.
-				TeachingUnit teachingUnit = teachingUnitRepository.findOne(course.getTeachingUnitId());
-				// Institute must be present within response.
-				Institute institute = instituteRepository.findOne(course.getInstituteId());
+
 				Registration registration = convertToRegistration(iscrizione, schoolYear);
-				registration.setInstituteId(institute.getId());
-				registration.setInstitute(institute);
-				registration.setTeachingUnitId(teachingUnit.getId());
-				registration.setTeachingUnit(teachingUnit);
-				registration.setCourseId(course.getId());
-				registration.setCourse(course.getCourse());
+				registration.setInstituteId(instituteDb.getId());
+				registration.setInstitute(instituteDb);
+				registration.setTeachingUnitId(teachingUnitDb.getId());
+				registration.setTeachingUnit(teachingUnitDb);
+				registration.setCourseId(courseMetaInfoDb.getId());
+				registration.setCourse(courseMetaInfoDb.getCourse());
 				registration.setStudentId(student.getId());
 				registration.setStudent(student);
 				registrationRepository.save(registration);
@@ -184,9 +200,9 @@ public class InfoTnImportIscrizioneCorsi {
 
 			// update time stamp (if all works fine).
 			metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
-//			total = metaInfo.getTotalRead() + total;
+			// total = metaInfo.getTotalRead() + total;
 			metaInfo.setTotalRead(total);
-//			stored = metaInfo.getTotalStore() + stored;
+			// stored = metaInfo.getTotalStore() + stored;
 			metaInfo.setTotalStore(stored);
 			metaInfoRepository.save(metaInfo);
 
@@ -194,7 +210,8 @@ public class InfoTnImportIscrizioneCorsi {
 
 	}
 
-	private Registration convertToRegistration(IscrizioneCorso iscrizioneCorso, String schoolYear) throws ParseException {
+	private Registration convertToRegistration(IscrizioneCorso iscrizioneCorso, String schoolYear)
+			throws ParseException {
 		Registration result = new Registration();
 		result.setOrigin(iscrizioneCorso.getOrigin());
 		result.setExtId(iscrizioneCorso.getExtId());
