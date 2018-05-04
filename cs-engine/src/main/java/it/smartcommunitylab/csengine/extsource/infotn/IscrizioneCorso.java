@@ -4,6 +4,8 @@ public class IscrizioneCorso {
 	private String origin;
 	private String extId;
 	private CourseRef courseRef;
+	private InstituteRef instituteRef;
+	private TeachingUnitRef teachingUnitRef;
 	private StudentRef student;
 
 	public String getOrigin() {
@@ -36,6 +38,66 @@ public class IscrizioneCorso {
 
 	public void setStudent(StudentRef student) {
 		this.student = student;
+	}
+
+	public InstituteRef getInstituteRef() {
+		return instituteRef;
+	}
+
+	public void setInstituteRef(InstituteRef instituteRef) {
+		this.instituteRef = instituteRef;
+	}
+
+	public TeachingUnitRef getTeachingUnitRef() {
+		return teachingUnitRef;
+	}
+
+	public void setTeachingUnitRef(TeachingUnitRef teachingUnitRef) {
+		this.teachingUnitRef = teachingUnitRef;
+	}
+
+}
+
+class InstituteRef {
+	private String extId;
+	private String origin;
+
+	public String getExtId() {
+		return extId;
+	}
+
+	public void setExtId(String extId) {
+		this.extId = extId;
+	}
+
+	public String getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(String origin) {
+		this.origin = origin;
+	}
+
+}
+
+class TeachingUnitRef {
+	private String extId;
+	private String origin;
+
+	public String getExtId() {
+		return extId;
+	}
+
+	public void setExtId(String extId) {
+		this.extId = extId;
+	}
+
+	public String getOrigin() {
+		return origin;
+	}
+
+	public void setOrigin(String origin) {
+		this.origin = origin;
 	}
 
 }

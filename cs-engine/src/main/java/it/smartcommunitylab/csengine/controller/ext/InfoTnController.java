@@ -11,6 +11,7 @@ import it.smartcommunitylab.csengine.exception.UnauthorizedException;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportAziende;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportCertificazioni;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportCorsi;
+import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportCourseMetaInfo;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportEsami;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportIscrizioneCorsi;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportIscrizioneEsami;
@@ -76,6 +77,8 @@ public class InfoTnController {
 	@Autowired
 	InfoTnUpdateUnita updateUnita;
 	
+	@Autowired
+	InfoTnImportCourseMetaInfo importCourseMetaInfo;	
 	
 	@RequestMapping(value = "/extsource/infotn/import/all/empty", method = RequestMethod.GET)
 	public @ResponseBody String importAllFromEmpty() throws Exception {
@@ -93,6 +96,11 @@ public class InfoTnController {
 		return importUnita.importUnitaFromRESTAPI();
 	}
 	
+	@RequestMapping(value = "/extsource/infotn/course/meta/info/empty", method = RequestMethod.GET)
+	public @ResponseBody String importCousreMetaInfo() throws Exception {
+		return importCourseMetaInfo.importCourseMetaInfoFromRESTAPI();
+	}
+		
 	@RequestMapping(value = "/extsource/infotn/corsi/empty", method = RequestMethod.GET)
 	public @ResponseBody String importCorsiFromEmpty() throws Exception {
 		return importCorsi.importCorsiFromRESTAPI();

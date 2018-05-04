@@ -37,6 +37,12 @@ public class InfoTnImportIstituzioni {
 	
 	@Value("${infotn.starting.year}")
 	private int startingYear;
+	
+	@Value("${infotn.api.user}")
+	private String user;
+	
+	@Value("${infotn.api.pass}")
+	private String password;
 
 	private String metaInfoName = "Istituzioni";
 
@@ -57,6 +63,9 @@ public class InfoTnImportIstituzioni {
 	
 	@Autowired
 	private InfoTnImportIscrizioneCorsi importIscrizioneCorsi;
+	
+	@Autowired
+	private InfoTnImportCourseMetaInfo importCourseMetaInfo;
 
 	@Scheduled(cron = "0 58 23 * * ?")
 	public String importAll() throws Exception {
@@ -64,12 +73,14 @@ public class InfoTnImportIstituzioni {
 		importIstituzioniFromRESTAPI();
 		// teaching unit.
 		importUnita.importUnitaFromRESTAPI();
+		// course meta info.
+		importCourseMetaInfo.importCourseMetaInfoFromRESTAPI();
 		// courses.
 		importCorsi.importCorsiFromRESTAPI();
 		// student.
-		importStudenti.importStudentiFromRESTAPI();
+//		importStudenti.importStudentiFromRESTAPI();
 		// registration courses.
-		importIscrizioneCorsi.importIscrizioneCorsiFromRESTAPI();
+//		importIscrizioneCorsi.importIscrizioneCorsiFromRESTAPI();
 			
 		return "ok";
 	}
@@ -94,7 +105,7 @@ public class InfoTnImportIstituzioni {
 			url = infoTNAPIUrl + "/istituti";
 		}
 		// call api.
-		String response = HTTPUtils.get(url, null, null, null);
+		String response = HTTPUtils.get(url, null, user, password);
 		if (response != null && !response.isEmpty()) {
 			JsonFactory jsonFactory = new JsonFactory();
 			jsonFactory.setCodec(objectMapper);

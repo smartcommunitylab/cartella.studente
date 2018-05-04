@@ -54,7 +54,14 @@ public class HTTPUtils {
 				conn = (HttpURLConnection) new URL(loc).openConnection();
 				conn.setRequestProperty("Accept", "application/json");
 				conn.setRequestProperty("Content-Type", "application/json");
-
+				
+				if (Utils.isNotEmpty(basicAuthUser) && Utils.isNotEmpty(basicAuthPassowrd)) {
+					String authString = basicAuthUser + ":" + basicAuthPassowrd;
+					byte[] authEncBytes = Base64.encodeBase64(authString.getBytes());
+					String authStringEnc = new String(authEncBytes);
+					conn.setRequestProperty("Authorization", "Basic " + authStringEnc);
+				}
+				
 				if (conn.getResponseCode() != 500) { // 500 = fail
 					if (conn.getResponseCode() >= 300 && conn.getResponseCode() <= 307
 							&& conn.getResponseCode() != 306) {

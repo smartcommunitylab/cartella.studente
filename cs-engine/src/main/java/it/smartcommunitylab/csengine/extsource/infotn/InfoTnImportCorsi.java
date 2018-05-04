@@ -42,6 +42,12 @@ public class InfoTnImportCorsi {
 	@Value("${infotn.api.url}")
 	private String infoTNAPIUrl;
 
+	@Value("${infotn.api.user}")
+	private String user;
+	
+	@Value("${infotn.api.pass}")
+	private String password;
+	
 	private String metaInfoName = "Corsi";
 	private String metaInfoIstituzioni = "Istituzioni";
 
@@ -112,7 +118,7 @@ public class InfoTnImportCorsi {
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		// call api.
-		String response = HTTPUtils.get(url, null, null, null);
+		String response = HTTPUtils.get(url, null, user, password);
 		if (response != null && !response.isEmpty()) {
 			JsonFactory jsonFactory = new JsonFactory();
 			jsonFactory.setCodec(objectMapper);

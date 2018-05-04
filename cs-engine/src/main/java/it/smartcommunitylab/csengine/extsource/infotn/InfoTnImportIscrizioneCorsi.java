@@ -44,6 +44,12 @@ public class InfoTnImportIscrizioneCorsi {
 
 	@Value("${infotn.api.url}")
 	private String infoTNAPIUrl;
+	
+	@Value("${infotn.api.user}")
+	private String user;
+	
+	@Value("${infotn.api.pass}")
+	private String password;
 
 	private String metaInfoName = "IscrizioneCorsi";
 	private String metaInfoIstituzioni = "Istituzioni";
@@ -122,7 +128,7 @@ public class InfoTnImportIscrizioneCorsi {
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		// call api.
-		String response = HTTPUtils.get(url, null, null, null);
+		String response = HTTPUtils.get(url, null, user, password);
 		if (response != null && !response.isEmpty()) {
 			JsonFactory jsonFactory = new JsonFactory();
 			jsonFactory.setCodec(objectMapper);
@@ -140,7 +146,7 @@ public class InfoTnImportIscrizioneCorsi {
 				Registration registrationDb = registrationRepository.findByExtId(iscrizione.getOrigin(),
 						iscrizione.getExtId());
 				if (registrationDb != null) {
-					logger.warn(String.format("Student already exists: %s - %s", iscrizione.getOrigin(),
+					logger.warn(String.format("Registration already exists: %s - %s", iscrizione.getOrigin(),
 							iscrizione.getExtId()));
 					continue;
 				}

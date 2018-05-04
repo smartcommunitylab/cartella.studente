@@ -37,6 +37,12 @@ public class InfoTnImportUnita {
 
 	@Value("${infotn.api.url}")
 	private String infoTNAPIUrl;
+	
+	@Value("${infotn.api.user}")
+	private String user;
+	
+	@Value("${infotn.api.pass}")
+	private String password;
 
 	private String metaInfoName = "Unita";
 
@@ -71,7 +77,7 @@ public class InfoTnImportUnita {
 
 		}
 		// call api.
-		String response = HTTPUtils.get(url, null, null, null);
+		String response = HTTPUtils.get(url, null, user, password);
 		if (response != null && !response.isEmpty()) {
 			JsonFactory jsonFactory = new JsonFactory();
 			jsonFactory.setCodec(objectMapper);
