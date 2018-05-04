@@ -1,6 +1,6 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
-public class CourseMetaInfo {
+public class CorsoMetaInfo {
 
 	private String extId;
 	private String origin;

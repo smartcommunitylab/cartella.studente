@@ -1,5 +1,7 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
+import java.text.ParseException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.smartcommunitylab.csengine.common.HTTPUtils;
+import it.smartcommunitylab.csengine.common.Utils;
+import it.smartcommunitylab.csengine.model.Course;
+import it.smartcommunitylab.csengine.model.CourseMetaInfo;
 import it.smartcommunitylab.csengine.storage.CourseMetaInfoRepository;
 
 @Component
@@ -60,7 +65,7 @@ public class InfoTnImportCourseMetaInfo {
 
 			}
 			while (jp.nextToken() != JsonToken.END_ARRAY) {
-				CourseMetaInfo temp = jp.readValueAs(CourseMetaInfo.class);
+				CorsoMetaInfo temp = jp.readValueAs(CorsoMetaInfo.class);
 				logger.info("processing " + temp.getExtId());
 				CourseMetaInfo courseMetaInfo = courseMetaInfoRepository.findByExtId(temp.getOrigin(), temp.getExtId());
 				if (courseMetaInfo != null) {
@@ -68,7 +73,8 @@ public class InfoTnImportCourseMetaInfo {
 							courseMetaInfo.getExtId()));
 					continue;
 				}
-				courseMetaInfoRepository.save(temp);
+				CourseMetaInfo tobeSaved = convertToCourse(temp);
+				courseMetaInfoRepository.save(tobeSaved);
 				stored += 1;
 
 			}
@@ -76,6 +82,15 @@ public class InfoTnImportCourseMetaInfo {
 
 		return "stored (" + stored + ")";
 
+	}
+	
+	private CourseMetaInfo convertToCourse(CorsoMetaInfo corso) throws ParseException {
+		CourseMetaInfo result = new CourseMetaInfo();
+		result.setOrigin(corso.getOrigin());
+		result.setExtId(corso.getExtId());
+		result.setCourse(corso.getCourse());
+		result.setId(Utils.getUUID());
+		return result;
 	}
 
 }

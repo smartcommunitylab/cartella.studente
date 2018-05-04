@@ -23,9 +23,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.smartcommunitylab.csengine.common.HTTPUtils;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.model.Course;
+import it.smartcommunitylab.csengine.model.CourseMetaInfo;
 import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.MetaInfo;
 import it.smartcommunitylab.csengine.model.TeachingUnit;
+import it.smartcommunitylab.csengine.storage.CourseMetaInfoRepository;
 import it.smartcommunitylab.csengine.storage.CourseRepository;
 import it.smartcommunitylab.csengine.storage.InstituteRepository;
 import it.smartcommunitylab.csengine.storage.MetaInfoRepository;
@@ -62,6 +64,9 @@ public class InfoTnImportCorsi {
 
 	@Autowired
 	MetaInfoRepository metaInfoRepository;
+	
+	@Autowired
+	CourseMetaInfoRepository courseMetaInfoRepository;
 
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
 
@@ -79,7 +84,7 @@ public class InfoTnImportCorsi {
 				int currentYear = Calendar.getInstance().get(Calendar.YEAR);
 				int nextYear = currentYear + 1;
 				String schoolYear = currentYear + "/" + String.valueOf(nextYear).substring(2);
-				String url = infoTNAPIUrl + "/corsi?schoolYear=" + schoolYear + "&timestamp="
+				String url = infoTNAPIUrl + "/offerte?schoolYear=" + schoolYear + "&timestamp="
 						+ metaInfo.getEpocTimestamp();
 				try {
 
@@ -96,7 +101,7 @@ public class InfoTnImportCorsi {
 				try {
 
 					for (Map.Entry<String, String> entry : schoolYears.entrySet()) {
-						String url = infoTNAPIUrl + "/corsi?schoolYear=" + entry.getValue();
+						String url = infoTNAPIUrl + "/offerte?schoolYear=" + entry.getValue();
 						importCorsiUsingRESTAPI(url, entry.getValue(), metaInfo);
 					}
 					return (metaInfo.getTotalStore() + "/" + metaInfo.getTotalRead());
@@ -134,9 +139,10 @@ public class InfoTnImportCorsi {
 				total += 1;
 				Corso corso = jp.readValueAs(Corso.class);
 				logger.info("converting " + corso.getExtId());
+				// check from corso meta info repository and take the name
 				Course courseDb = courseRepository.findByExtId(corso.getOrigin(), corso.getExtId());
 				if (courseDb != null) {
-					logger.warn(String.format("Course already exists: %s - %s", corso.getOrigin(), corso.getExtId()));
+					logger.warn(String.format("Course(Offerte) already exists: %s - %s", corso.getOrigin(), corso.getExtId()));
 					continue;
 				}
 				Institute instituteDb = instituteRepository.findByExtId(corso.getInstituteRef().getOrigin(),
@@ -153,14 +159,22 @@ public class InfoTnImportCorsi {
 							corso.getTeachingUnitRef().getExtId()));
 					continue;
 				}
+				CourseMetaInfo courseMetaInfoDb = courseMetaInfoRepository.findByExtId(corso.getCorsoRef().getOrigin(), corso.getCorsoRef().getExtId());
+				if (courseMetaInfoDb == null) {
+					logger.warn(String.format("CourseMetaInfo not found: %s - %s", corso.getCorsoRef().getOrigin(),
+							corso.getCorsoRef().getExtId()));
+					continue;
+				}
+				
 				try {
 					Course course = convertToCourse(corso);
 					course.setInstituteId(instituteDb.getId());
 					course.setTeachingUnitId(teachingUnitDb.getId());
 					course.setTeachingUnit(teachingUnitDb.getName());
+					course.setCousreMetaInfoId(courseMetaInfoDb.getId());
 					courseRepository.save(course);
 					stored += 1;
-					logger.info(String.format("Save Course: %s - %s - %s", corso.getOrigin(), corso.getExtId(),
+					logger.info(String.format("Save Course(Offerte): %s - %s - %s", corso.getOrigin(), corso.getExtId(),
 							course.getId()));
 				} catch (ParseException e) {
 					logger.warn("Parse error:" + e.getMessage());

@@ -1,11 +1,12 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
 public class Corso {
-	private String origin;
 	private String extId;
+	private String origin;
 	private String course;
 	private String dateFrom;
 	private String dateTo;
+	private CourseRef corsoRef;
 	private Institute instituteRef;
 	private String schoolYear;
 	private TeachingUnit teachingUnitRef;
@@ -73,4 +74,13 @@ public class Corso {
 	public void setCourse(String course) {
 		this.course = course;
 	}
+
+	public CourseRef getCorsoRef() {
+		return corsoRef;
+	}
+
+	public void setCorsoRef(CourseRef corsoRef) {
+		this.corsoRef = corsoRef;
+	}
+
 }
