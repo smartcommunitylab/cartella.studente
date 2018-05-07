@@ -166,37 +166,37 @@ public class InfoTnImportStudenti {
 					student = studentDb;
 				}
 				// save consent
-//				Consent consent = dataManager.getConsentByStudent(student.getId());
-//				if (consent == null) {
-//					consent = new Consent();
-//					consent.setStudentId(student.getId());
-//					consent.setSubject(student.getCf());
-//					consent.setAuthorized(Boolean.FALSE);
-//					dataManager.addConsent(consent);
-//					// set autorizhation
-//					AccountAttributeDTO account = new AccountAttributeDTO();
-//					account.setAccountName(profileAccount);
-//					account.setAttributeName(profileAttribute);
-//					account.setAttributeValue(student.getCf());
-//					AuthorizationUserDTO user = new AuthorizationUserDTO();
-//					user.setAccountAttribute(account);
-//					user.setType(userType);
-//					List<String> actions = new ArrayList<String>();
-//					actions.add(Const.AUTH_ACTION_ADD);
-//					actions.add(Const.AUTH_ACTION_DELETE);
-//					actions.add(Const.AUTH_ACTION_READ);
-//					actions.add(Const.AUTH_ACTION_UPDATE);
-//					Map<String, String> attributes = new HashMap<String, String>();
-//					attributes.put("student-studentId", student.getId());
-//					AuthorizationDTO authorization = authorizationManager.getNewAuthorization(user, user, actions,
-//							"student", attributes);
-//					try {
-//						authorizationManager.insertAuthorization(authorization);
-//					} catch (Exception e) {
-//						logger.warn(String.format("Error creating authorization: %s -%s - %s", studente.getOrigin(),
-//								studente.getExtId(), e.getMessage()));
-//					}
-//				}
+				Consent consent = dataManager.getConsentByStudent(student.getId());
+				if (consent == null) {
+					consent = new Consent();
+					consent.setStudentId(student.getId());
+					consent.setSubject(student.getCf());
+					consent.setAuthorized(Boolean.FALSE);
+					dataManager.addConsent(consent);
+					// set autorizhation
+					AccountAttributeDTO account = new AccountAttributeDTO();
+					account.setAccountName(profileAccount);
+					account.setAttributeName(profileAttribute);
+					account.setAttributeValue(student.getCf());
+					AuthorizationUserDTO user = new AuthorizationUserDTO();
+					user.setAccountAttribute(account);
+					user.setType(userType);
+					List<String> actions = new ArrayList<String>();
+					actions.add(Const.AUTH_ACTION_ADD);
+					actions.add(Const.AUTH_ACTION_DELETE);
+					actions.add(Const.AUTH_ACTION_READ);
+					actions.add(Const.AUTH_ACTION_UPDATE);
+					Map<String, String> attributes = new HashMap<String, String>();
+					attributes.put("student-studentId", student.getId());
+					AuthorizationDTO authorization = authorizationManager.getNewAuthorization(user, user, actions,
+							"student", attributes);
+					try {
+						authorizationManager.insertAuthorization(authorization);
+					} catch (Exception e) {
+						logger.warn(String.format("Error creating authorization: %s -%s - %s", studente.getOrigin(),
+								studente.getExtId(), e.getMessage()));
+					}
+				}
 			}
 			// update time stamp (if all works fine).
 			metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
