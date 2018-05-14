@@ -9,6 +9,7 @@ import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
 import it.smartcommunitylab.csengine.exception.UnauthorizedException;
 import it.smartcommunitylab.csengine.model.Course;
+import it.smartcommunitylab.csengine.model.CourseMetaInfo;
 import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.model.Student;
@@ -250,6 +251,16 @@ public class TeachingUnitController extends AuthController {
 		Page<Course> result = dataManager.fetchCourses(pageable);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getAllCourses: %s", result.getNumberOfElements()));
+		}
+		return result;
+	}
+	
+	@RequestMapping(value = "/api/courses/meta/info", method = RequestMethod.GET)
+	public @ResponseBody Page<CourseMetaInfo> getAllCoursesMetaInfo(@ApiParam Pageable pageable) {
+
+		Page<CourseMetaInfo> result = dataManager.fetchCoursesMetaInfo(pageable);
+		if (logger.isInfoEnabled()) {
+			logger.info(String.format("getAllCoursesMetaInfo: %s", result.getNumberOfElements()));
 		}
 		return result;
 	}

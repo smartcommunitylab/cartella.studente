@@ -8,6 +8,7 @@ import it.smartcommunitylab.csengine.model.CV;
 import it.smartcommunitylab.csengine.model.CertificationRequest;
 import it.smartcommunitylab.csengine.model.Consent;
 import it.smartcommunitylab.csengine.model.Course;
+import it.smartcommunitylab.csengine.model.CourseMetaInfo;
 import it.smartcommunitylab.csengine.model.Document;
 import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.Institute;
@@ -63,6 +64,9 @@ public class RepositoryManager {
 	
 	@Autowired
 	private CourseRepository courseRepository;
+	
+	@Autowired
+	private CourseMetaInfoRepository courseMetaInfoRepo;
 	
 	@Autowired
 	private ConsentRepository consentRepository;
@@ -468,6 +472,11 @@ public class RepositoryManager {
 
 	public Page<Course> fetchCourses(Pageable pageable) {
 		Page<Course> result = courseRepository.findAll(pageable);
+		return result;
+	}
+	
+	public Page<CourseMetaInfo> fetchCoursesMetaInfo(Pageable pageable) {
+		Page<CourseMetaInfo> result = courseMetaInfoRepo.findAll(pageable);
 		return result;
 	}
 	
