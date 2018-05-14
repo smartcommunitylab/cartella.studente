@@ -171,7 +171,7 @@ public class InfoTnImportCorsi {
 					course.setInstituteId(instituteDb.getId());
 					course.setTeachingUnitId(teachingUnitDb.getId());
 					course.setTeachingUnit(teachingUnitDb.getName());
-					course.setCousreMetaInfoId(courseMetaInfoDb.getId());
+					course.setCourseMetaInfoId(courseMetaInfoDb.getId());
 					courseRepository.save(course);
 					stored += 1;
 					logger.info(String.format("Save Course(Offerte): %s - %s - %s", corso.getOrigin(), corso.getExtId(),

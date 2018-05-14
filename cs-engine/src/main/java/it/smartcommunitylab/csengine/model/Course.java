@@ -9,7 +9,7 @@ public class Course extends BaseObject {
 	private Date dateFrom;
 	private Date dateTo;
 	private String course;
-	private String cousreMetaInfoId;
+	private String courseMetaInfoId;
 	private String teachingUnit;
 
 	public String getSchoolYear() {
@@ -68,12 +68,12 @@ public class Course extends BaseObject {
 		this.instituteId = instituteId;
 	}
 
-	public String getCousreMetaInfoId() {
-		return cousreMetaInfoId;
+	public String getCourseMetaInfoId() {
+		return courseMetaInfoId;
 	}
 
-	public void setCousreMetaInfoId(String cousreMetaInfoId) {
-		this.cousreMetaInfoId = cousreMetaInfoId;
+	public void setCourseMetaInfoId(String courseMetaInfoId) {
+		this.courseMetaInfoId = courseMetaInfoId;
 	}
 
 }
