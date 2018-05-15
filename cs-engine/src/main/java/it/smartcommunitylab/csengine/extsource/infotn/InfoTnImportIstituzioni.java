@@ -142,9 +142,9 @@ public class InfoTnImportIstituzioni {
 			// save school years for import purpose, used as parameter in REST APIs.
 			Map<String, String> schoolYears = new HashMap<String, String>();
 			if (startingYear < 0) {
-				startingYear = 2016; //default year in case missing in configuration.
+				startingYear = 2017; //default year in case missing in configuration.
 			}
-			for (int i = startingYear; i <= Calendar.getInstance().get(Calendar.YEAR); i++) {
+			for (int i = startingYear; i < Calendar.getInstance().get(Calendar.YEAR); i++) {
 				int nextYear = i + 1;
 				String schoolYear = i + "/" + String.valueOf(nextYear).substring(2);
 				schoolYears.put(String.valueOf(i), schoolYear);
