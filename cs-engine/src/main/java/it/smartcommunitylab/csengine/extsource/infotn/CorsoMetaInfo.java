@@ -5,6 +5,7 @@ public class CorsoMetaInfo {
 	private String extId;
 	private String origin;
 	private String course;
+	private String codMiur;
 
 	public String getExtId() {
 		return extId;
@@ -28,6 +29,14 @@ public class CorsoMetaInfo {
 
 	public void setCourse(String course) {
 		this.course = course;
+	}
+
+	public String getCodMiur() {
+		return codMiur;
+	}
+
+	public void setCodMiur(String codMiur) {
+		this.codMiur = codMiur;
 	}
 
 }

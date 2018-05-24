@@ -90,6 +90,9 @@ public class InfoTnImportCourseMetaInfo {
 		result.setExtId(corso.getExtId());
 		result.setCourse(corso.getCourse());
 		result.setId(Utils.getUUID());
+		if (corso.getCodMiur() != null)
+			result.setCodMiur(corso.getCodMiur());
+		
 		return result;
 	}
 
