@@ -66,6 +66,12 @@ public class InfoTnImportIstituzioni {
 	
 	@Autowired
 	private InfoTnImportCourseMetaInfo importCourseMetaInfo;
+	
+	@Autowired
+	InfoTnImportStage importStage;
+	
+	@Autowired
+	InfoTnImportIscrizioneStage importIscrizioneStage;
 
 	@Scheduled(cron = "0 58 23 * * ?")
 	public String importAll() throws Exception {
@@ -81,6 +87,9 @@ public class InfoTnImportIstituzioni {
 		importStudenti.importStudentiFromRESTAPI();
 		// registration courses.
 		importIscrizioneCorsi.importIscrizioneCorsiFromRESTAPI();
+		// stage.
+		importStage.importStageFromRESTAPI();
+		importIscrizioneStage.importPartecipazioneStageFromRESTAPI();
 			
 		return "ok";
 	}

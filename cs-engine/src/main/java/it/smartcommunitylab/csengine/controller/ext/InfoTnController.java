@@ -133,12 +133,12 @@ public class InfoTnController {
 	
 	@RequestMapping(value = "/extsource/infotn/stage/empty", method = RequestMethod.GET)
 	public @ResponseBody String importStageFromEmpty() throws Exception {
-		return importStage.importStageFromEmpty();
+		return importStage.importStageFromRESTAPI();
 	}
 	
 	@RequestMapping(value = "/extsource/infotn/iscrizionestage/empty", method = RequestMethod.GET)
 	public @ResponseBody String importIscrizioneStageFromEmpty() throws Exception {
-		return importIscrizioneStage.importIscrizioneStageFromEmpty();
+		return importIscrizioneStage.importPartecipazioneStageFromRESTAPI();
 	}
 	
 	@RequestMapping(value = "/extsource/infotn/certificazioni/empty", method = RequestMethod.GET)

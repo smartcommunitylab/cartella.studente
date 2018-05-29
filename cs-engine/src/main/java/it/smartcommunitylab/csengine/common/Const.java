@@ -50,4 +50,6 @@ public class Const {
 	public static final String ATTR_CERTIFIER = "certifier";
 	public static final String ATTR_LANG = "lang";
 	public static final String ATTR_LEVEL = "level";
+	public static final String COURSE_REF_ORIGIN = "cousre_ref_origin";
+	public static final String COURSE_REF_EXTID = "cousre_ref_extId";
 }
