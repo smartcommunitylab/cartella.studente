@@ -123,12 +123,12 @@ public class InfoTnController {
 	
 	@RequestMapping(value = "/extsource/infotn/esami/empty", method = RequestMethod.GET)
 	public @ResponseBody String importEsamiFromEmpty() throws Exception {
-		return importEsami.importEsamiFromEmpty();
+		return importEsami.importEsamiFromRESTAPI();
 	}
 	
 	@RequestMapping(value = "/extsource/infotn/iscrizioneesami/empty", method = RequestMethod.GET)
 	public @ResponseBody String importIscrizioneEsamiFromEmpty() throws Exception {
-		return importIscrizioneEsami.importIscrizioneEsamiFromEmpty();
+		return importIscrizioneEsami.importIscrizioneEsamiFromRESTAPI();
 	}
 	
 	@RequestMapping(value = "/extsource/infotn/stage/empty", method = RequestMethod.GET)

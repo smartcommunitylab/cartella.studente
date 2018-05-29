@@ -1,6 +1,6 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
-public class StudentStage {
+public class StageStudent {
 	private String extId;
 	private String origin;
 	private String contact;

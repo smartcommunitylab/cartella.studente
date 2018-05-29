@@ -4,7 +4,7 @@ public class IscrizioneStage {
 	private String extId;
 	private String origin;
 	private Stage stageRef;
-	private StudentStage student;
+	private StageStudent student;
 
 	// private String origin_course;
 	// private String extid_course;
@@ -37,11 +37,11 @@ public class IscrizioneStage {
 		this.stageRef = stageRef;
 	}
 
-	public StudentStage getStudent() {
+	public StageStudent getStudent() {
 		return student;
 	}
 
-	public void setStudent(StudentStage student) {
+	public void setStudent(StageStudent student) {
 		this.student = student;
 	}
 

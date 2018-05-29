@@ -171,7 +171,7 @@ public class InfoTnImportIscrizioneStage {
 						+ metaInfo.getEpocTimestamp();
 				try {
 
-					importIscirzioneCorsiUsingRESTAPI(url, schoolYear, metaInfo);
+					importPartecipazioneStageUsingRESTAPI(url, schoolYear, metaInfo);
 					return metaInfo.getTotalStore() + "/" + metaInfo.getTotalRead();
 
 				} catch (Exception e) {
@@ -185,7 +185,7 @@ public class InfoTnImportIscrizioneStage {
 
 					for (Map.Entry<String, String> entry : schoolYears.entrySet()) {
 						String url = infoTNAPIUrl + "/partecipazionestage?schoolYear=" + entry.getValue();
-						importIscirzioneCorsiUsingRESTAPI(url, entry.getValue(), metaInfo);
+						importPartecipazioneStageUsingRESTAPI(url, entry.getValue(), metaInfo);
 					}
 					return (metaInfo.getTotalStore() + "/" + metaInfo.getTotalRead());
 
@@ -198,7 +198,7 @@ public class InfoTnImportIscrizioneStage {
 		}
 	}
 
-	private void importIscirzioneCorsiUsingRESTAPI(String url, String schoolYear, MetaInfo metaInfo) throws Exception {
+	private void importPartecipazioneStageUsingRESTAPI(String url, String schoolYear, MetaInfo metaInfo) throws Exception {
 		logger.info("start importIscirzioneStageUsingRESTAPI for year " + schoolYear);
 		int total = 0;
 		int stored = 0;
