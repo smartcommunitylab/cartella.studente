@@ -148,7 +148,7 @@ public class InfoTnController {
 	
 	@RequestMapping(value = "/extsource/infotn/mobilita/empty", method = RequestMethod.GET)
 	public @ResponseBody String importMobilitaFromEmpty() throws Exception {
-		return importMobilita.importMobilitaFromEmpty();
+		return importMobilita.importIscrizioneMobilitaFromRESTAPI();
 	}
 	
 	@RequestMapping(value = "/extsource/infotn/unita/update/clasification", method = RequestMethod.GET)
