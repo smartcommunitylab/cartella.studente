@@ -71,7 +71,7 @@ public class InfoTnImportCorsi {
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
 
 //	order 3
-	@Scheduled(cron = "0 30 23 * * ?")
+//	@Scheduled(cron = "0 30 23 * * ?")
 	public String importCorsiFromRESTAPI() throws Exception {
 		logger.info("start import procedure for courses");
 		MetaInfo metaInfoIst = metaInfoRepository.findOne(metaInfoIstituzioni);

@@ -56,6 +56,9 @@ public class InfoTnImportIstituzioni {
 	private InfoTnImportUnita importUnita;
 	
 	@Autowired
+	InfoTnUpdateUnita updateUnita;
+		
+	@Autowired
 	private InfoTnImportCorsi importCorsi;
 	
 	@Autowired
@@ -65,11 +68,11 @@ public class InfoTnImportIstituzioni {
 	private InfoTnImportIscrizioneCorsi importIscrizioneCorsi;
 	
 	@Autowired
-	private InfoTnImportCourseMetaInfo importCourseMetaInfo;
-	
-	@Autowired
 	InfoTnImportStage importStage;
 	
+	@Autowired
+	private InfoTnImportCourseMetaInfo importCourseMetaInfo;
+		
 	@Autowired
 	InfoTnImportIscrizioneStage importIscrizioneStage;
 
@@ -79,6 +82,7 @@ public class InfoTnImportIstituzioni {
 		importIstituzioniFromRESTAPI();
 		// teaching unit.
 		importUnita.importUnitaFromRESTAPI();
+		updateUnita.upateUnitaClassificazione();
 		// course meta info.
 		importCourseMetaInfo.importCourseMetaInfoFromRESTAPI();
 		// courses.
@@ -95,7 +99,7 @@ public class InfoTnImportIstituzioni {
 	}
 	
 //	 Order 1.
-	@Scheduled(cron = "0 15 23 * * ?")
+//	@Scheduled(cron = "0 15 23 * * ?")
 	public String importIstituzioniFromRESTAPI() throws Exception {
 		logger.info("start importIstituzioniFromRESTAPI");
 		int total = 0;

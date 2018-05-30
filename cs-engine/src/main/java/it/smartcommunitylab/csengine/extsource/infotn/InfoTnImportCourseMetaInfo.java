@@ -43,7 +43,7 @@ public class InfoTnImportCourseMetaInfo {
 	CourseMetaInfoRepository courseMetaInfoRepository;
 
 	// Order 2.
-	@Scheduled(cron = "0 20 23 * * ?")
+//	@Scheduled(cron = "0 20 23 * * ?")
 	public String importCourseMetaInfoFromRESTAPI() throws Exception {
 		logger.info("start importCourseMetaInfoFromRESTAPI");
 		ObjectMapper objectMapper = new ObjectMapper();

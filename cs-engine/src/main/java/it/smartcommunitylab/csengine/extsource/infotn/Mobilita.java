@@ -3,7 +3,7 @@ package it.smartcommunitylab.csengine.extsource.infotn;
 public class Mobilita {
 	private String extId;
 	private String origin;
-	private Company companyRef;
+	private CompanyRef companyRef;
 	private String contact;
 	private CourseRef courseRef;
 	private String dateFrom;
@@ -23,11 +23,11 @@ public class Mobilita {
 		this.extId = extId;
 	}
 
-	public Company getCompanyRef() {
+	public CompanyRef getCompanyRef() {
 		return companyRef;
 	}
 
-	public void setCompanyRef(Company companyRef) {
+	public void setCompanyRef(CompanyRef companyRef) {
 		this.companyRef = companyRef;
 	}
 

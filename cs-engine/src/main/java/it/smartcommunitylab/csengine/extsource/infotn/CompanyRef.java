@@ -1,6 +1,6 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
-public class Company {
+public class CompanyRef {
 
 	private String extId;
 	private String origin;

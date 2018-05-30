@@ -143,7 +143,7 @@ public class InfoTnController {
 	
 	@RequestMapping(value = "/extsource/infotn/certificazioni/empty", method = RequestMethod.GET)
 	public @ResponseBody String importCertificazioniFromEmpty() throws Exception {
-		return importCertificazioni.importCertificazioniFromEmpty();
+		return importCertificazioni.importIscrizioneCertificazioneFromRESTAPI();
 	}
 	
 	@RequestMapping(value = "/extsource/infotn/mobilita/empty", method = RequestMethod.GET)

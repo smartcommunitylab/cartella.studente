@@ -121,7 +121,7 @@ public class InfoTnImportEsami {
 	// return stored + "/" + total;
 	// }
 
-	@Scheduled(cron = "0 30 23 * * ?")
+//	@Scheduled(cron = "0 30 23 * * ?")
 	public String importEsamiFromRESTAPI() throws Exception {
 		logger.info("start import procedure for courses");
 		MetaInfo metaInfoIst = metaInfoRepository.findOne(metaInfoIstituzioni);

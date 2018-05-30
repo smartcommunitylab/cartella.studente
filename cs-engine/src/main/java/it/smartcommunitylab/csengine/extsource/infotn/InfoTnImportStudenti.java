@@ -85,7 +85,7 @@ public class InfoTnImportStudenti {
 	SimpleDateFormat sdfStandard = new SimpleDateFormat("dd/MM/yyyy");
 
 	// Order 4.
-	@Scheduled(cron = "0 59 23 * * ?")
+//	@Scheduled(cron = "0 59 23 * * ?")
 	public String importStudentiFromRESTAPI() throws Exception {
 		logger.info("start import procedure for students");
 		MetaInfo metaInfoIst = metaInfoRepository.findOne(metaInfoIstituzioni);

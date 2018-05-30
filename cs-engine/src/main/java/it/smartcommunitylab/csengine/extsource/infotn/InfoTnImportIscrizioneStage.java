@@ -154,7 +154,7 @@ public class InfoTnImportIscrizioneStage {
 	// return stored + "/" + total;
 	// }
 
-	@Scheduled(cron = "0 45 01 * * ?")
+//	@Scheduled(cron = "0 45 01 * * ?")
 	public String importPartecipazioneStageFromRESTAPI() throws Exception {
 		logger.info("start importIscrizioneStageFromRESTAPI");
 		MetaInfo metaInfoIst = metaInfoRepository.findOne(metaInfoIstituzioni);

@@ -3,7 +3,7 @@ package it.smartcommunitylab.csengine.extsource.infotn;
 public class Stage {
 	private String extId;
 	private String origin;
-	private Company companyRef;
+	private CompanyRef companyRef;
 	private Corso courseRef;
 	private String dateFrom;
 	private String dateTo;
@@ -108,11 +108,11 @@ public class Stage {
 		this.title = title;
 	}
 
-	public Company getCompanyRef() {
+	public CompanyRef getCompanyRef() {
 		return companyRef;
 	}
 
-	public void setCompanyRef(Company companyRef) {
+	public void setCompanyRef(CompanyRef companyRef) {
 		this.companyRef = companyRef;
 	}
 
