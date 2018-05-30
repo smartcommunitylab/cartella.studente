@@ -39,7 +39,7 @@
   </ion-grid>
   <ion-list *ngIf="(mobilities && mobilities.length>0)">
     <ion-card *ngFor="let mobility of mobilities| experiencefilter:filter:'title'; let i = index">
-      <mobility-panel [mobility]="mobility" [index]="i" (onDeleted)="onDeleted($event)"></mobility-panel>
+      <mobility-panel [mobility]="mobility" [index]="i" (onDeleted)="onDeleted($event)" (onUpdated)="onUpdated()"></mobility-panel>
     </ion-card>
   </ion-list>
   <ion-card class="eperience-empty-list-label" *ngIf="(mobility && mobilities.length==0)">
