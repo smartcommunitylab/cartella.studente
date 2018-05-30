@@ -1,6 +1,5 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
-import java.io.FileReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -142,7 +141,6 @@ public class InfoTnImportCertificazioni {
 	// return stored + "/" + total;
 	// }
 
-	// @Scheduled(cron = "0 45 01 * * ?")
 	public String importIscrizioneCertificazioneFromRESTAPI() throws Exception {
 		logger.info("start importIscrizioneCertificazioneFromRESTAPI");
 		MetaInfo metaInfoIst = metaInfoRepository.findOne(metaInfoIstituzioni);

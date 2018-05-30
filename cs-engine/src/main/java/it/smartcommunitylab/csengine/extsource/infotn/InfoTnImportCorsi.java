@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -46,10 +45,10 @@ public class InfoTnImportCorsi {
 
 	@Value("${infotn.api.user}")
 	private String user;
-	
+
 	@Value("${infotn.api.pass}")
 	private String password;
-	
+
 	private String metaInfoName = "Corsi";
 	private String metaInfoIstituzioni = "Istituzioni";
 
@@ -64,14 +63,12 @@ public class InfoTnImportCorsi {
 
 	@Autowired
 	MetaInfoRepository metaInfoRepository;
-	
+
 	@Autowired
 	CourseMetaInfoRepository courseMetaInfoRepository;
 
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
 
-//	order 3
-//	@Scheduled(cron = "0 30 23 * * ?")
 	public String importCorsiFromRESTAPI() throws Exception {
 		logger.info("start import procedure for courses");
 		MetaInfo metaInfoIst = metaInfoRepository.findOne(metaInfoIstituzioni);
@@ -142,7 +139,8 @@ public class InfoTnImportCorsi {
 				// check from corso meta info repository and take the name
 				Course courseDb = courseRepository.findByExtId(corso.getOrigin(), corso.getExtId());
 				if (courseDb != null) {
-					logger.warn(String.format("Course(Offerte) already exists: %s - %s", corso.getOrigin(), corso.getExtId()));
+					logger.warn(String.format("Course(Offerte) already exists: %s - %s", corso.getOrigin(),
+							corso.getExtId()));
 					continue;
 				}
 				Institute instituteDb = instituteRepository.findByExtId(corso.getInstituteRef().getOrigin(),
@@ -159,13 +157,14 @@ public class InfoTnImportCorsi {
 							corso.getTeachingUnitRef().getExtId()));
 					continue;
 				}
-				CourseMetaInfo courseMetaInfoDb = courseMetaInfoRepository.findByExtId(corso.getCorsoRef().getOrigin(), corso.getCorsoRef().getExtId());
+				CourseMetaInfo courseMetaInfoDb = courseMetaInfoRepository.findByExtId(corso.getCorsoRef().getOrigin(),
+						corso.getCorsoRef().getExtId());
 				if (courseMetaInfoDb == null) {
 					logger.warn(String.format("CourseMetaInfo not found: %s - %s", corso.getCorsoRef().getOrigin(),
 							corso.getCorsoRef().getExtId()));
 					continue;
 				}
-				
+
 				try {
 					Course course = convertToCourse(corso);
 					course.setInstituteId(instituteDb.getId());
@@ -188,7 +187,7 @@ public class InfoTnImportCorsi {
 			metaInfo.setTotalStore(stored);
 			metaInfoRepository.save(metaInfo);
 		}
-		
+
 	}
 
 	private Course convertToCourse(Corso corso) throws ParseException {

@@ -9,7 +9,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -154,7 +153,6 @@ public class InfoTnImportIscrizioneStage {
 	// return stored + "/" + total;
 	// }
 
-//	@Scheduled(cron = "0 45 01 * * ?")
 	public String importPartecipazioneStageFromRESTAPI() throws Exception {
 		logger.info("start importIscrizioneStageFromRESTAPI");
 		MetaInfo metaInfoIst = metaInfoRepository.findOne(metaInfoIstituzioni);
@@ -198,7 +196,8 @@ public class InfoTnImportIscrizioneStage {
 		}
 	}
 
-	private void importPartecipazioneStageUsingRESTAPI(String url, String schoolYear, MetaInfo metaInfo) throws Exception {
+	private void importPartecipazioneStageUsingRESTAPI(String url, String schoolYear, MetaInfo metaInfo)
+			throws Exception {
 		logger.info("start importIscirzioneStageUsingRESTAPI for year " + schoolYear);
 		int total = 0;
 		int stored = 0;

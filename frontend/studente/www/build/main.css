@@ -24313,6 +24313,11 @@ ion-navbar.toolbar {
   }
 }
 
+date-picker.ion-page.show-page {
+  overflow-y: auto;
+  background: white;
+}
+
 .navigation-button-bar {
   color: #406584;
   font-size: 20px;
@@ -24441,19 +24446,25 @@ ion-navbar.toolbar {
   font-size: 40px;
 }
 
-.stage-filter {
+page-add-certification {
   width: 100%;
   display: -webkit-inline-flex;
   display: -ms-inline-flexbox;
   display: inline-flex;
 }
 
-.stage-filter input {
+page-add-certification input {
   min-width: 50%;
 }
 
-.stage-filter .filter-search-icon {
+page-add-certification .filter-search-icon {
   font-size: 40px;
+}
+
+page-add-certification ion-select {
+  max-width: -webkit-fit-content;
+  max-width: -moz-fit-content;
+  max-width: fit-content;
 }
 
 .stage-filter {
@@ -24559,6 +24570,10 @@ ion-navbar.toolbar {
   transition: all 0.5s ease-in-out;
 }
 
+.button-credits:hover {
+  opacity: 0.7;
+}
+
 .button-home:hover {
   opacity: 0.7;
 }
@@ -24569,6 +24584,109 @@ ion-navbar.toolbar {
 
 .button-profile:hover {
   opacity: 0.7;
+}
+
+credits h2 {
+  text-align: center;
+  font-weight: bold;
+}
+
+credits p {
+  text-align: justify;
+}
+
+credits .img {
+  text-align: center;
+}
+
+page-curriculum ion-header ion-navbar ion-title toolbar-title-md {
+  padding: 00px;
+  font-size: 2rem;
+  font-weight: 500;
+  color: #424242;
+}
+
+page-curriculum ion-header ion-navbar ion-title ion-row {
+  text-align: left;
+}
+
+page-curriculum ion-header ion-navbar ion-title ion-row img {
+  height: 50px;
+  padding: 2px;
+}
+
+page-curriculum ion-content button {
+  float: right;
+  background-color: green;
+  color: white;
+  font-size: 16px;
+}
+
+page-curriculum .toolbar-title-md {
+  padding: 00px;
+  font-size: 2rem;
+  font-weight: 500;
+  color: #424242;
+}
+
+page-curriculum .div {
+  margin-top: 20px;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+}
+
+page-curriculum .anagrafic-part {
+  background-color: lightgrey;
+}
+
+page-curriculum .heading-bold {
+  font-weight: bold;
+}
+
+page-curriculum .heading-italic {
+  font-style: italic;
+}
+
+page-curriculum .link {
+  color: cadetblue;
+  position: absolute;
+  right: 0px;
+}
+
+page-curriculum .left {
+  text-align: left;
+  padding: 00px;
+}
+
+page-curriculum .div-checkbox {
+  position: absolute;
+  right: 5px;
+}
+
+page-curriculum .checkbox-md.checkbox-icon {
+  border-color: cadetblue;
+  background-color: white;
+}
+
+page-curriculum .checkbox-md.checkbox-checked {
+  border-color: cadetblue;
+  background-color: cadetblue;
+}
+
+page-curriculum .key {
+  color: gray;
+}
+
+page-curriculum .div-select-all {
+  position: absolute;
+  right: 40px;
+  color: cadetblue;
+  top: 20px;
+}
+
+page-curriculum .div-select-all-checkbox {
+  position: absolute;
+  top: 34px;
+  right: 20px;
 }
 
 .row-add-stage {
@@ -24790,6 +24908,36 @@ page-home .home-title-label.experience-title {
   opacity: 0.7;
 }
 
+.line {
+  width: auto;
+  border-bottom: 1px solid lightgrey;
+  color: grey;
+}
+
+page-login .img {
+  text-align: center;
+}
+
+page-login .text {
+  color: black;
+}
+
+page-login .footer {
+  white-space: nowrap;
+}
+
+page-login .footer a {
+  color: grey;
+  text-decoration: none;
+}
+
+page-login .inner {
+  max-width: 978px;
+  max-height: 1007px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
 .row-add-mobility {
   height: 44px;
   position: relative;
@@ -24804,39 +24952,44 @@ page-home .home-title-label.experience-title {
   border: 1px solid #039be5;
 }
 
-.profile-page .profile-title-label {
+page-activities .profile-title-label {
   color: #406584;
   font-size: 20px;
 }
 
-.profile-page .profile-field {
+page-activities .profile-field {
   font-weight: bold;
 }
 
-.profile-page .profile-img {
+page-activities .profile-img {
   width: 100px;
   height: 100px;
   background-position: center center;
   background-repeat: no-repeat;
 }
 
-.profile-page .profile-input {
+page-activities .profile-input {
   display: -webkit-inline-flex;
   display: -ms-inline-flexbox;
   display: inline-flex;
   width: 60%;
 }
 
-.profile-page .social-buttons {
+page-activities .social-buttons {
   display: -webkit-inline-flex;
   display: -ms-inline-flexbox;
   display: inline-flex;
 }
 
-.profile-page .social-buttons .social-button {
+page-activities .social-buttons .social-button {
   color: #406584;
   font-size: 20px;
   margin: 4px;
+}
+
+page-activities .span-input {
+  display: inline-block;
+  width: 70px;
 }
 
 .row-add-stage {
@@ -24847,4 +25000,131 @@ page-home .home-title-label.experience-title {
 .row-add-stage .button-add-stage {
   position: absolute;
   right: 5px;
+}
+
+terms div {
+  padding: 5px;
+  text-align: justify;
+}
+
+terms h1 {
+  color: #214F9C;
+}
+
+terms h2 {
+  color: #214F9C;
+}
+
+terms h3 {
+  color: #214F9C;
+}
+
+terms div.help_title {
+  /*font-size: 20px;*/
+  font-weight: bold;
+  margin-bottom: 1em;
+  margin-left: 5%;
+  /*margin-top: 1em;*/
+  /*margin-top:60px;*/
+  text-align: center;
+  width: 90%;
+}
+
+terms div.start_title {
+  font-size: 45px;
+  font-weight: bold;
+  margin-left: 5%;
+  margin-top: 2em;
+  text-align: center;
+  width: 90%;
+}
+
+terms div.start_subtitle {
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 1.8em;
+  margin-left: 5%;
+  margin-top: 2em;
+  text-align: center;
+  width: 90%;
+}
+
+terms div.tips {
+  line-height: 24px;
+  margin-bottom: 1em;
+  margin-left: 5%;
+  text-align: center;
+  width: 90%;
+}
+
+terms div.tool_title {
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+terms div.tool_desc {
+  font-size: 13px;
+  line-height: 18px;
+}
+
+terms div.help_icon {
+  float: left;
+  width: 20%;
+  text-align: center;
+}
+
+terms div.help_text {
+  float: left;
+  width: 77%;
+}
+
+terms div.policy_text.policy_text {
+  float: left;
+  width: 98%;
+}
+
+terms div.policy_text.policy_text p {
+  margin-bottom: 10px;
+  text-align: justify;
+}
+
+terms div.policy_text.policy_text ul li {
+  font-size: 13px;
+  margin-bottom: 5px;
+}
+
+terms .button {
+  border-color: #b2b2b2;
+  background-color: #f8f8f8;
+  color: #444;
+  position: relative;
+  display: inline-block;
+  margin: 0;
+  padding: 0 12px;
+  min-width: 52px;
+  min-height: 47px;
+  border-width: 1px;
+  border-style: solid;
+  border-radius: 2px;
+  vertical-align: top;
+  text-align: center;
+  text-overflow: ellipsis;
+  font-size: 16px;
+  line-height: 42px;
+  cursor: pointer;
+}
+
+terms .button:after {
+  position: absolute;
+  top: -6px;
+  right: -6px;
+  bottom: -6px;
+  left: -6px;
+  content: ' ';
+}
+
+terms .button.button-calm {
+  border-color: #0a9ec7;
+  background-color: #11c1f3;
+  color: #fff;
 }

@@ -7,7 +7,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -37,10 +36,10 @@ public class InfoTnImportUnita {
 
 	@Value("${infotn.api.url}")
 	private String infoTNAPIUrl;
-	
+
 	@Value("${infotn.api.user}")
 	private String user;
-	
+
 	@Value("${infotn.api.pass}")
 	private String password;
 
@@ -55,8 +54,6 @@ public class InfoTnImportUnita {
 	@Autowired
 	MetaInfoRepository metaInfoRepository;
 
-//	Order 2.
-//	@Scheduled(cron = "0 20 23 * * ?")
 	public String importUnitaFromRESTAPI() throws Exception {
 		logger.info("start importUnitaFromRESTAPI");
 		int total = 0;

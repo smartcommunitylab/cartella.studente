@@ -39,7 +39,7 @@
   </ion-grid>
   <ion-list *ngIf="(stages && stages.length>0)">
     <ion-card *ngFor="let stage of stages| experiencefilter:filter:'title'; let i = index">
-      <stage-panel [stage]="stage" [index]="i" (onDeleted)="onDeleted($event)"></stage-panel>
+      <stage-panel [stage]="stage" [index]="i" (onDeleted)="onDeleted($event)" (onUpdated)="onUpdated()" ></stage-panel>
     </ion-card>
   </ion-list>
   <ion-card class="eperience-empty-list-label" *ngIf="(stages && stages.length==0)">

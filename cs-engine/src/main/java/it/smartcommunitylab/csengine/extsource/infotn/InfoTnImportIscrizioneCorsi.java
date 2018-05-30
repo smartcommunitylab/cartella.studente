@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -21,7 +20,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.smartcommunitylab.csengine.common.HTTPUtils;
 import it.smartcommunitylab.csengine.common.Utils;
-import it.smartcommunitylab.csengine.model.Course;
 import it.smartcommunitylab.csengine.model.CourseMetaInfo;
 import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.MetaInfo;
@@ -81,8 +79,6 @@ public class InfoTnImportIscrizioneCorsi {
 
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
 
-	// Order 5.
-	@Scheduled(cron = "0 45 01 * * ?")
 	public String importIscrizioneCorsiFromRESTAPI() throws Exception {
 		logger.info("start importIscrizioneCorsiFromRESTAPI");
 		MetaInfo metaInfoIst = metaInfoRepository.findOne(metaInfoIstituzioni);

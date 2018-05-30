@@ -8,7 +8,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -34,13 +33,13 @@ public class InfoTnImportIstituzioni {
 
 	@Value("${infotn.api.url}")
 	private String infoTNAPIUrl;
-	
+
 	@Value("${infotn.starting.year}")
 	private int startingYear;
-	
+
 	@Value("${infotn.api.user}")
 	private String user;
-	
+
 	@Value("${infotn.api.pass}")
 	private String password;
 
@@ -51,38 +50,55 @@ public class InfoTnImportIstituzioni {
 
 	@Autowired
 	private MetaInfoRepository metaInfoRepository;
-	
+
 	@Autowired
 	private InfoTnImportUnita importUnita;
-	
+
 	@Autowired
-	InfoTnUpdateUnita updateUnita;
-		
+	private InfoTnUpdateUnita updateUnita;
+
+	@Autowired
+	private InfoTnImportAziende importAziende;
+
 	@Autowired
 	private InfoTnImportCorsi importCorsi;
-	
+
 	@Autowired
 	private InfoTnImportStudenti importStudenti;
-	
+
 	@Autowired
 	private InfoTnImportIscrizioneCorsi importIscrizioneCorsi;
-	
+
 	@Autowired
-	InfoTnImportStage importStage;
-	
+	private InfoTnImportStage importStage;
+
+	@Autowired
+	private InfoTnImportIscrizioneStage importIscrizioneStage;
+
+	@Autowired
+	private InfoTnImportCertificazioni importCertificazioni;
+
+	@Autowired
+	private InfoTnImportMobilita importMobilita;
+
+	@Autowired
+	private InfoTnImportEsami importEsami;
+
+	@Autowired
+	private InfoTnImportIscrizioneEsami importIscrizioneEsami;
+
 	@Autowired
 	private InfoTnImportCourseMetaInfo importCourseMetaInfo;
-		
-	@Autowired
-	InfoTnImportIscrizioneStage importIscrizioneStage;
 
-	@Scheduled(cron = "0 58 23 * * ?")
+//	@Scheduled(cron = "0 58 23 * * ?")
 	public String importAll() throws Exception {
 		// institute.
 		importIstituzioniFromRESTAPI();
 		// teaching unit.
 		importUnita.importUnitaFromRESTAPI();
 		updateUnita.upateUnitaClassificazione();
+		// azienda
+		importAziende.importAziendaFromRESTAPI();
 		// course meta info.
 		importCourseMetaInfo.importCourseMetaInfoFromRESTAPI();
 		// courses.
@@ -94,12 +110,17 @@ public class InfoTnImportIstituzioni {
 		// stage.
 		importStage.importStageFromRESTAPI();
 		importIscrizioneStage.importPartecipazioneStageFromRESTAPI();
-			
+		// esami.
+		importEsami.importEsamiFromRESTAPI();
+		importIscrizioneEsami.importIscrizioneEsamiFromRESTAPI();
+		// mobilita.
+		importMobilita.importIscrizioneMobilitaFromRESTAPI();
+		// certificazione.
+		importCertificazioni.importIscrizioneCertificazioneFromRESTAPI();
+
 		return "ok";
 	}
-	
-//	 Order 1.
-//	@Scheduled(cron = "0 15 23 * * ?")
+
 	public String importIstituzioniFromRESTAPI() throws Exception {
 		logger.info("start importIstituzioniFromRESTAPI");
 		int total = 0;
@@ -152,10 +173,12 @@ public class InfoTnImportIstituzioni {
 			metaInfo.setTotalRead(total);
 			metaInfo.setTotalStore(stored);
 
-			// save school years for import purpose, used as parameter in REST APIs.
+			// save school years for import purpose, used as parameter in REST
+			// APIs.
 			Map<String, String> schoolYears = new HashMap<String, String>();
 			if (startingYear < 0) {
-				startingYear = 2017; //default year in case missing in configuration.
+				startingYear = 2017; // default year in case missing in
+										// configuration.
 			}
 			for (int i = startingYear; i < Calendar.getInstance().get(Calendar.YEAR); i++) {
 				int nextYear = i + 1;

@@ -19,6 +19,7 @@ export class StagePanel implements OnInit {
   @Input() stage: StudentExperience;
   @Input() index: number;
   @Output() onDeleted = new EventEmitter<string>();
+  @Output() onUpdated = new EventEmitter<string>();
   documentInstitutional = false;
   loader = null;
   uploader: FileUploader = new FileUploader({});
@@ -47,6 +48,12 @@ export class StagePanel implements OnInit {
         window.open(url, '_blank');
       });
     });
+  }
+
+  deleteDocument(document) {
+      this.userService.deleteDocumentInPromise(document.experienceId, document.storageId).then(document => {
+        this.onUpdated.emit();
+      });    
   }
 
   toggle() {
@@ -100,8 +107,8 @@ export class StagePanel implements OnInit {
   uploadDocument(item): Promise<void> {
     return new Promise<void>((resolve, reject) => {
 
-      this.userService.createDocument(this.stage.experience).then(experienceId => {
-        this.webAPIConnectorService.uploadDocument(this.uploader, this.userService.getUserId(), experienceId, item);
+      this.userService.createDocument(this.stage.experience).then(document => {
+        this.webAPIConnectorService.uploadDocument(this.uploader, this.userService.getUserId(), document.experienceId, item, document.storageId);
         resolve();
       })
     })
@@ -110,6 +117,8 @@ export class StagePanel implements OnInit {
   saveCertification(): void {
     this.showSpinner();
     this.uploadDocument(this.uploader.queue[0]).then((document) => {
+      this.onUpdated.emit();
+      
     })
   }
   deleteStage(): void {

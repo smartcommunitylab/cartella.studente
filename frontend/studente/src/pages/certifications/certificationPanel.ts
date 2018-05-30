@@ -127,8 +127,8 @@ export class CertificationPanel implements OnInit {
   uploadDocument(item): Promise<void> {
     return new Promise<void>((resolve, reject) => {
 
-      this.userService.createDocument(this.certification).then(experienceId => {
-        this.webAPIConnectorService.uploadDocument(this.uploader, this.userService.getUserId(), experienceId, item);
+      this.userService.createDocument(this.certification.experience).then(document => {
+        this.webAPIConnectorService.uploadDocument(this.uploader, this.userService.getUserId(), document.experienceId, item, document.storageId);
         resolve();
       })
     })

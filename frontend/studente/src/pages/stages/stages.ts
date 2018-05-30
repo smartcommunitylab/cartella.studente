@@ -29,6 +29,10 @@ export class StagesPage {
     }
   }
 
+  onUpdated() {
+    this.ionViewWillEnter();
+  }
+
   ionViewWillEnter() {
     let loader = this.loading.create({
       content: this.translate.instant('loading'),

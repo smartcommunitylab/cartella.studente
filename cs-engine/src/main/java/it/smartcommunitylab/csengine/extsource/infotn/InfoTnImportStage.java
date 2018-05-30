@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -124,8 +123,6 @@ public class InfoTnImportStage {
 	// return stored + "/" + total;
 	// }
 
-	// Order 5.
-//	@Scheduled(cron = "0 45 01 * * ?")
 	public String importStageFromRESTAPI() throws Exception {
 		logger.info("start importIscrizioneCorsiFromRESTAPI");
 		MetaInfo metaInfoIst = metaInfoRepository.findOne(metaInfoIstituzioni);
@@ -198,7 +195,9 @@ public class InfoTnImportStage {
 							String.format("Experience already exists: %s - %s", stage.getOrigin(), stage.getExtId()));
 					continue;
 				}
-				// Institute institute = instituteRepository.findByExtId(stage.getOrigin(), stage.getExtid_institute());
+				// Institute institute =
+				// instituteRepository.findByExtId(stage.getOrigin(),
+				// stage.getExtid_institute());
 				Certifier certifier = certifierRepository.findByExtId(stage.getCompanyRef().getOrigin(),
 						stage.getCompanyRef().getExtId());
 				Experience experience = convertToExperience(stage, null, certifier, schoolYear);

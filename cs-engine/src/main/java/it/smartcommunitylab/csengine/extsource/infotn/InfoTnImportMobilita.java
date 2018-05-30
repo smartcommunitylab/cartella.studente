@@ -10,7 +10,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -140,7 +139,6 @@ public class InfoTnImportMobilita {
 	// return stored + "/" + total;
 	// }
 
-//	@Scheduled(cron = "0 45 01 * * ?")
 	public String importIscrizioneMobilitaFromRESTAPI() throws Exception {
 		logger.info("start importIscrizioneMobilitaFromRESTAPI");
 		MetaInfo metaInfoIst = metaInfoRepository.findOne(metaInfoIstituzioni);
@@ -219,7 +217,8 @@ public class InfoTnImportMobilita {
 							mob.getExtId()));
 					continue;
 				}
-				Student student = studentRepository.findByExtId(mob.getStudentRef().getOrigin(), mob.getStudentRef().getExtId());
+				Student student = studentRepository.findByExtId(mob.getStudentRef().getOrigin(),
+						mob.getStudentRef().getExtId());
 				if (student == null) {
 					logger.warn(String.format("Student not found: %s - %s", mob.getStudentRef().getOrigin(),
 							mob.getStudentRef().getExtId()));
@@ -261,7 +260,7 @@ public class InfoTnImportMobilita {
 		result.getAttributes().put(Const.ATTR_TYPE, mob.getType());
 		result.getAttributes().put(Const.ATTR_TITLE, mob.getDescription());
 		result.getAttributes().put(Const.ATTR_LOCATION, mob.getLocation());
-//		result.getAttributes().put(Const.ATTR_LANG, mob.getLanguage());
+		// result.getAttributes().put(Const.ATTR_LANG, mob.getLanguage());
 		return result;
 	}
 

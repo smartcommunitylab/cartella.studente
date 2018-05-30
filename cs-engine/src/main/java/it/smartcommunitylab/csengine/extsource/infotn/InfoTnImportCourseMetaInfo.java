@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonFactory;
@@ -17,7 +16,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.smartcommunitylab.csengine.common.HTTPUtils;
 import it.smartcommunitylab.csengine.common.Utils;
-import it.smartcommunitylab.csengine.model.Course;
 import it.smartcommunitylab.csengine.model.CourseMetaInfo;
 import it.smartcommunitylab.csengine.storage.CourseMetaInfoRepository;
 
@@ -42,8 +40,6 @@ public class InfoTnImportCourseMetaInfo {
 	@Autowired
 	CourseMetaInfoRepository courseMetaInfoRepository;
 
-	// Order 2.
-//	@Scheduled(cron = "0 20 23 * * ?")
 	public String importCourseMetaInfoFromRESTAPI() throws Exception {
 		logger.info("start importCourseMetaInfoFromRESTAPI");
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -83,7 +79,7 @@ public class InfoTnImportCourseMetaInfo {
 		return "stored (" + stored + ")";
 
 	}
-	
+
 	private CourseMetaInfo convertToCourse(CorsoMetaInfo corso) throws ParseException {
 		CourseMetaInfo result = new CourseMetaInfo();
 		result.setOrigin(corso.getOrigin());
@@ -92,7 +88,7 @@ public class InfoTnImportCourseMetaInfo {
 		result.setId(Utils.getUUID());
 		if (corso.getCodMiur() != null)
 			result.setCodMiur(corso.getCodMiur());
-		
+
 		return result;
 	}
 
