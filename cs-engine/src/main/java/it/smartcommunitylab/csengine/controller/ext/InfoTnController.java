@@ -10,8 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -33,6 +35,7 @@ import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportStage;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportStudenti;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportUnita;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnUpdateUnita;
+import it.smartcommunitylab.csengine.model.StudentAuth;
 
 @Controller
 public class InfoTnController {
@@ -153,6 +156,18 @@ public class InfoTnController {
 	@RequestMapping(value = "/extsource/infotn/unita/update/clasification", method = RequestMethod.GET)
 	public @ResponseBody String upateUnitaClassificazione() throws Exception {
 		return updateUnita.upateUnitaClassificazione();
+	}
+	
+	@RequestMapping(value = "/extsource/infotn/iscrizionecorsi/year", method = RequestMethod.GET)
+	public @ResponseBody void importIscrizioneCorsiForYear(@RequestParam String schoolYear) throws Exception {
+		importCorsi.importCorsiForYear(schoolYear);
+		importIscrizioneCorsi.importIscrizioneCorsiForYear(schoolYear);
+	}
+	
+	@RequestMapping(value = "/extsource/infotn/addStudentConsent/cf/{authCf}", method = RequestMethod.POST)
+	public @ResponseBody void addStudentConsent(@PathVariable String authCf, HttpServletRequest request)
+			throws Exception {
+		importStudenti.addConsent(authCf);
 	}
 
 	@ExceptionHandler({ EntityNotFoundException.class, StorageException.class })

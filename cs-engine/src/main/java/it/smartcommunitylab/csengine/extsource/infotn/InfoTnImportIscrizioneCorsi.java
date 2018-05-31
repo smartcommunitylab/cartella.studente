@@ -194,13 +194,15 @@ public class InfoTnImportIscrizioneCorsi {
 						iscrizione.getExtId(), registration.getId()));
 			}
 
-			// update time stamp (if all works fine).
-			metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
-			// total = metaInfo.getTotalRead() + total;
-			metaInfo.setTotalRead(total);
-			// stored = metaInfo.getTotalStore() + stored;
-			metaInfo.setTotalStore(stored);
-			metaInfoRepository.save(metaInfo);
+			if (metaInfo != null) {
+				// update time stamp (if all works fine).
+				metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
+				// total = metaInfo.getTotalRead() + total;
+				metaInfo.setTotalRead(total);
+				// stored = metaInfo.getTotalStore() + stored;
+				metaInfo.setTotalStore(stored);
+				metaInfoRepository.save(metaInfo);
+			}
 
 		}
 
@@ -221,6 +223,11 @@ public class InfoTnImportIscrizioneCorsi {
 
 	private String getSchoolYear(String annoScolastico) {
 		return annoScolastico.replace("/", "-");
+	}
+
+	public void importIscrizioneCorsiForYear(String schoolYear) throws Exception {
+		String url = infoTNAPIUrl + "/iscrizioni?schoolYear=" + schoolYear;
+		importIscirzioneCorsiUsingRESTAPI(url, schoolYear, null);
 	}
 
 	// public String importIscrizioneCorsiFromEmpty() throws Exception {

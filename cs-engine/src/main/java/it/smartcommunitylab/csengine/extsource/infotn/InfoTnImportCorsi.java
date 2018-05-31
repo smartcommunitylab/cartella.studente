@@ -179,13 +179,16 @@ public class InfoTnImportCorsi {
 					logger.warn("Parse error:" + e.getMessage());
 				}
 			}
-			// update time stamp (if all works fine).
-			metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
-			total = metaInfo.getTotalRead() + total;
-			metaInfo.setTotalRead(total);
-			stored = metaInfo.getTotalStore() + stored;
-			metaInfo.setTotalStore(stored);
-			metaInfoRepository.save(metaInfo);
+			if (metaInfo != null) {
+				// update time stamp (if all works fine).
+				metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
+				total = metaInfo.getTotalRead() + total;
+				metaInfo.setTotalRead(total);
+				stored = metaInfo.getTotalStore() + stored;
+				metaInfo.setTotalStore(stored);
+				metaInfoRepository.save(metaInfo);	
+			}
+			
 		}
 
 	}
@@ -214,6 +217,11 @@ public class InfoTnImportCorsi {
 
 	private String getSchoolYear(String annoScolastico) {
 		return annoScolastico.replace("/", "-");
+	}
+
+	public void importCorsiForYear(String schoolYear) throws Exception {
+		String url = infoTNAPIUrl + "/offerte?schoolYear=" + schoolYear;
+		importCorsiUsingRESTAPI(url, schoolYear, null);
 	}
 
 	// public String importCorsiFromEmpty() throws Exception {

@@ -254,8 +254,8 @@ public class InfoTnImportCertificazioni {
 		result.setExtId(cert.getExtId());
 		result.setId(Utils.getUUID());
 		result.setType(Const.EXP_TYPE_CERT);
-		result.getAttributes().put(Const.ATTR_DATEFROM, sdf.parse(cert.getDateFrom()).getTime());
-		result.getAttributes().put(Const.ATTR_DATETO, sdf.parse(cert.getDateTo()).getTime());
+//		result.getAttributes().put(Const.ATTR_DATEFROM, sdf.parse(cert.getDateFrom()).getTime());
+//		result.getAttributes().put(Const.ATTR_DATETO, sdf.parse(cert.getDateTo()).getTime());
 		result.getAttributes().put(Const.ATTR_EDUCATIONAL, Boolean.TRUE);
 		result.getAttributes().put(Const.ATTR_INSTITUTIONAL, Boolean.TRUE);
 		result.getAttributes().put(Const.ATTR_CERTIFIED, Boolean.TRUE);
