@@ -45,6 +45,11 @@ export class CertificationsPage {
       }
     }
   }
+
+  onUpdated() {
+    this.ionViewDidEnter();
+  }
+
   //loaded when it is showed
   ionViewDidEnter() {
     let loader = this.loading.create({

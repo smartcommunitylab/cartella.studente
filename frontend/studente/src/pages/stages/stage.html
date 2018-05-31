@@ -39,7 +39,7 @@
         </ion-item>
       </ion-col>
       <ion-col col-3>
-        <ion-item>
+        <ion-item *ngIf="stage.experience.attributes.institutional">
             <ion-icon name="md-trash" (click)="deleteDocument(doc)"></ion-icon>
         </ion-item>
       </ion-col>

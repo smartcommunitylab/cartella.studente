@@ -21,6 +21,7 @@ export class CertificationPanel implements OnInit {
   @Input() certification: StudentExperience;
   @Input() index: number;
   @Output() onDeleted = new EventEmitter<string>();
+  @Output() onUpdated = new EventEmitter<string>();
   documentInstitutional = false;
   loader = null;
   uploader: FileUploader = new FileUploader({});
@@ -63,6 +64,12 @@ export class CertificationPanel implements OnInit {
        });
     });    
   }
+
+  deleteDocument(document) {
+    this.userService.deleteDocumentInPromise(document.experienceId, document.storageId).then(document => {
+      this.onUpdated.emit();
+    });    
+}
 
   toggle() {
     this.index = this.index == 0 ? -1 : 0;
