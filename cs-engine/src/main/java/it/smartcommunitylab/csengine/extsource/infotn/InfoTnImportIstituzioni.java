@@ -96,7 +96,6 @@ public class InfoTnImportIstituzioni {
 		importIstituzioniFromRESTAPI();
 		// teaching unit.
 		importUnita.importUnitaFromRESTAPI();
-		updateUnita.upateUnitaClassificazione();
 		// azienda
 		importAziende.importAziendaFromRESTAPI();
 		// course meta info.

@@ -121,7 +121,7 @@ public class InfoTnImportEsami {
 	// }
 
 	public String importEsamiFromRESTAPI() throws Exception {
-		logger.info("start import procedure for courses");
+		logger.info("start importEsamiFromRESTAPI");
 		MetaInfo metaInfoIst = metaInfoRepository.findOne(metaInfoIstituzioni);
 		if (metaInfoIst != null) {
 			Map<String, String> schoolYears = metaInfoIst.getSchoolYears();

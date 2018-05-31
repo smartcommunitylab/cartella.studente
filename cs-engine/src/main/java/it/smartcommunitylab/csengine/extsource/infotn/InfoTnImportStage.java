@@ -124,7 +124,7 @@ public class InfoTnImportStage {
 	// }
 
 	public String importStageFromRESTAPI() throws Exception {
-		logger.info("start importIscrizioneCorsiFromRESTAPI");
+		logger.info("start importIscrizioneStageFromRESTAPI");
 		MetaInfo metaInfoIst = metaInfoRepository.findOne(metaInfoIstituzioni);
 		if (metaInfoIst != null) {
 			Map<String, String> schoolYears = metaInfoIst.getSchoolYears();
