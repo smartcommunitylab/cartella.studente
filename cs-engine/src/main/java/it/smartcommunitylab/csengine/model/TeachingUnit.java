@@ -12,6 +12,7 @@ public class TeachingUnit extends BaseObject {
 	private String email;
 	private String pec;
 	private Double[] geocode;
+	private int geocodeAccuracy; // 0 = imported, 1 = geocoding, 2 = istat
 	private String instituteId;
 	private Map<String, Typology> classifications = new HashMap<String, Typology>();
 	private String codiceIstat;
@@ -63,6 +64,12 @@ public class TeachingUnit extends BaseObject {
 	}
 	public void setGeocode(Double[] geocode) {
 		this.geocode = geocode;
+	}
+	public int getGeocodeAccuracy() {
+		return geocodeAccuracy;
+	}
+	public void setGeocodeAccuracy(int geocodeAccuracy) {
+		this.geocodeAccuracy = geocodeAccuracy;
 	}
 	public String getInstituteId() {
 		return instituteId;

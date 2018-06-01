@@ -16,16 +16,6 @@
 
 package it.smartcommunitylab.csengine.config;
 
-import it.smartcommunitylab.csengine.common.Const;
-import it.smartcommunitylab.csengine.cv.CVTransformer;
-import it.smartcommunitylab.csengine.model.Experience;
-import it.smartcommunitylab.csengine.model.Institute;
-import it.smartcommunitylab.csengine.model.Registration;
-import it.smartcommunitylab.csengine.model.StudentExperience;
-import it.smartcommunitylab.csengine.security.AuthorizationManager;
-import it.smartcommunitylab.csengine.storage.DocumentManager;
-import it.smartcommunitylab.csengine.storage.RepositoryManager;
-
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -48,6 +38,18 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import com.mongodb.MongoException;
+
+import it.smartcommunitylab.csengine.common.Const;
+import it.smartcommunitylab.csengine.cv.CVTransformer;
+import it.smartcommunitylab.csengine.model.Experience;
+import it.smartcommunitylab.csengine.model.Institute;
+import it.smartcommunitylab.csengine.model.Registration;
+import it.smartcommunitylab.csengine.model.StudentExperience;
+import it.smartcommunitylab.csengine.model.TeachingUnit;
+import it.smartcommunitylab.csengine.security.AuthorizationManager;
+import it.smartcommunitylab.csengine.storage.DocumentManager;
+import it.smartcommunitylab.csengine.storage.RepositoryManager;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.service.ApiInfo;
 import springfox.documentation.service.ApiKey;
@@ -58,8 +60,6 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spi.service.contexts.SecurityContext;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
-
-import com.mongodb.MongoException;
 
 @Configuration
 @EnableAsync
@@ -113,6 +113,7 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 		mongoTemplate.indexOps(Registration.class).ensureIndex(new Index().on("teachingUnitId", Direction.ASC));
 		mongoTemplate.indexOps(Registration.class).ensureIndex(new Index().on("schoolYear", Direction.ASC));
 		mongoTemplate.indexOps(Institute.class).ensureIndex(new GeospatialIndex("geocode"));
+		mongoTemplate.indexOps(TeachingUnit.class).ensureIndex(new GeospatialIndex("geocode"));
 		TextIndexDefinition textIndex = new TextIndexDefinitionBuilder()
 	  .onField("type")
 	  .onField("attributes." + Const.ATTR_TITLE)
