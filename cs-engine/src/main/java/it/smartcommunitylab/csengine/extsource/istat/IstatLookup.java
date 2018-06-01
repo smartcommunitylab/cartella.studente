@@ -9,14 +9,22 @@ import javax.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Charsets;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.HashBiMap;
+import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import com.google.common.io.Resources;
+import com.google.maps.GeoApiContext;
+import com.google.maps.GeocodingApi;
+import com.google.maps.model.GeocodingResult;
+import com.google.maps.model.LatLng;
 
 import it.smartcommunitylab.csengine.model.TeachingUnit;
 import it.smartcommunitylab.csengine.storage.TeachingUnitRepository;
@@ -25,21 +33,50 @@ import it.smartcommunitylab.csengine.storage.TeachingUnitRepository;
 public class IstatLookup {
 	
 	private static final transient Logger logger = LoggerFactory.getLogger(IstatLookup.class);
+	
+	private static final String ISTAT_PREFIX = "022";
+	private final static int EARTH_RADIUS = 6371; // Earth radius in km.
 
+	@Autowired
+	@Value("${google.api.key}")
+	private String apiKey;	
+	
+	
 	@Autowired
 	private TeachingUnitRepository repository;
 
 	private HashBiMap<String, String> istatMap;
 	
-	private ObjectMapper mapper = new ObjectMapper();
+	private Map<String, TownIstat> townIstatMap;
+	
+	GeoApiContext context;
+	
+	private ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
 	@PostConstruct
 	public void init() {
+		context = new GeoApiContext();
+		context.setApiKey(apiKey);
+		
 		try {
 		Map istat = mapper.readValue(Resources.toString(Resources.getResource("istat.json"), Charsets.UTF_8), Map.class);
 
 		istatMap = HashBiMap.create();
 		istatMap.putAll(istat);
+		
+		townIstatMap = Maps.newTreeMap();
+		
+		List<TownIstat> towns = mapper.readValue(Resources.toString(Resources.getResource("towns.json"), Charsets.UTF_8), new TypeReference<List<TownIstat>>() {
+		});		
+		towns.stream().forEach(x -> {
+			Double coords[] = new Double[2];
+			coords[0] = x.getLon();
+			coords[1] = x.getLat();
+			x.setCoords(coords);
+			townIstatMap.put(padIstat(x.getIstat()), x);
+		});
+		
+		
 		} catch (Exception e) {
 			logger.error("Error importing istat codes", e);
 		}
@@ -55,11 +92,16 @@ public class IstatLookup {
 			String istat = findIstatByTeachingUnitAddress(address);
 			if (istat != null) {
 				tu.setCodiceIstat(istat);
-				repository.save(tu);
+				
+				TownIstat ti = townIstatMap.get(istat);
+				
+				geocode(tu, ti);
 				found++;
 			}
 		}
 
+		repository.save(list);
+	
 		return found + "/" + list.size();
 	}
 
@@ -96,4 +138,74 @@ public class IstatLookup {
 		}
 		
 	}
+	
+	private void geocode(TeachingUnit tu, TownIstat ti) throws Exception {
+		if (tu.getGeocode() != null) {
+			return;
+		}
+		
+		String address = tu.getName() + " " + tu.getAddress();
+
+		Double coords[] = ti.getCoords();
+		int accuracy = 2;
+		
+		try {
+			GeocodingResult[] results = GeocodingApi.geocode(context, address).region("IT").await();
+
+			GeocodingResult bestResult = null;
+			long minD = Long.MAX_VALUE;
+			if (results != null) {
+				for (GeocodingResult result : results) {
+					LatLng location = result.geometry.location;
+					long d = (long) (1000 * harvesineDistance(location.lat, location.lng, ti.getCoords()[1], ti.getCoords()[0]));
+
+					if (d < minD) {
+						minD = d;
+						bestResult = result;
+					}
+				}
+			}
+			
+			if (bestResult != null) {
+				LatLng location = bestResult.geometry.location;
+
+				long d = (long)(1000 *harvesineDistance(location.lat, location.lng, ti.getCoords()[1], ti.getCoords()[0]));
+				
+				if (d <= 20000) {
+					coords = new Double[] { location.lng, location.lat};
+					accuracy = 1;
+				}
+			} else {
+			}
+		} catch (Exception e) {
+			logger.error("Error geocoding: " + address, e);
+		}
+		
+		tu.setGeocode(coords);
+		tu.setGeocodeAccuracy(accuracy);
+		
+	}	
+	
+	
+	private static String padIstat(String istat) {
+		return ISTAT_PREFIX + String.format("%03d", Integer.parseInt(istat));
+	}	
+	
+	public static double harvesineDistance(double lat1, double lon1, double lat2, double lon2) {
+		lat1 = Math.toRadians(lat1);
+		lon1 = Math.toRadians(lon1);
+		lat2 = Math.toRadians(lat2);
+		lon2 = Math.toRadians(lon2);
+
+		double dlon = lon2 - lon1;
+		double dlat = lat2 - lat1;
+
+		double a = Math.pow((Math.sin(dlat / 2)), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(dlon / 2), 2);
+
+		double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+		return EARTH_RADIUS * c;
+	}	
+	
+	
 }
