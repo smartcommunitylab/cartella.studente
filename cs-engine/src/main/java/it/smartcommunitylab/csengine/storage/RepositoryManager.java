@@ -1,5 +1,7 @@
 package it.smartcommunitylab.csengine.storage;
 
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -19,9 +21,13 @@ import org.springframework.data.geo.Distance;
 import org.springframework.data.geo.Metrics;
 import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
@@ -54,6 +60,7 @@ import it.smartcommunitylab.csengine.model.statistics.Organization;
 import it.smartcommunitylab.csengine.model.statistics.POI;
 import it.smartcommunitylab.csengine.model.statistics.Provider;
 import it.smartcommunitylab.csengine.model.statistics.SchoolRegistration;
+import it.smartcommunitylab.csengine.model.statistics.Stage;
 import it.smartcommunitylab.csengine.model.statistics.StudentProfile;
 import it.smartcommunitylab.csengine.model.stats.KeyValue;
 import it.smartcommunitylab.csengine.model.stats.RegistrationStats;
@@ -820,7 +827,7 @@ public class RepositoryManager {
 	public List<POI> findTeachingUnit(String ordine, String tipologia, Double coords[], Double radius) {
 		Criteria criteria = new Criteria();
 		if (ordine != null) {
-			criteria = criteria.and("classifications." + Const.TYPOLOGY_QNAME_ORDINE + ".name").regex(ordine.toLowerCase().trim(), "i");
+			criteria = criteria.and("classifications." + Const.TYPOLOGY_QNAME_ORDINE + ".name").regex("[.]*" + ordine.toLowerCase().trim() + "[.]*", "i");
 		}
 		if (tipologia != null) {
 			criteria = criteria.and("classifications." + Const.TYPOLOGY_QNAME_TIPOLOGIA + ".name").regex(tipologia.toLowerCase().trim(), "i");
@@ -855,7 +862,28 @@ public class RepositoryManager {
 		poi.setLocation(location);
 		poi.setSource("");
 		
+		fillTeachingUnitPOIMetadata(tu, poi);
+		
 		return poi;
+	}
+	
+	private void fillTeachingUnitPOIMetadata(TeachingUnit tu, POI poi) {
+		Criteria criteria = new Criteria("teachingUnitId").is(tu.getId());
+		Query query = new Query(criteria);
+		query.fields().include("id");
+
+//		List<String> cIds = mongoTemplate.find(query, Registration.class).stream().map(x -> x.getId()).collect(Collectors.toList());
+
+		Aggregation aggr = newAggregation(match(criteria), group("schoolYear").count().as("total"), project("total").and("schoolYear").previousOperation(), sort(Sort.Direction.DESC, "total"));
+		
+		AggregationResults<Map> groupResults = mongoTemplate.aggregate(aggr, Registration.class, Map.class);
+		Map result = groupResults.getMappedResults().stream().collect(Collectors.toMap(x -> (String)x.get("schoolYear"), x -> x.get("total")));
+
+		if (!result.isEmpty()) {
+			poi.getMetadata().put("schoolYears", result);
+		}
+		poi.getMetadata().put("ordine", tu.getClassifications().get("ORDINE").getName());
+		poi.getMetadata().put("tipologia", tu.getClassifications().get("TIPOLOGIA").getName());
 	}
 	
 	public List<Course> findCourses(String tuId, String schoolYear) {
@@ -1002,6 +1030,13 @@ public class RepositoryManager {
 		profile.setName(student.getName());
 		profile.setSurname(student.getSurname());
 		profile.setBirthdate(student.getBirthdate());
+		
+		List<StudentExperience> experiences = studentExperienceRepository.findByStudentId(studentId);
+		
+		ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		List<Stage> stages = experiences.stream().filter(x -> "STAGE".equals(x.getExperience().getType())).map(x -> mapper.convertValue(x.getExperience().getAttributes(), Stage.class)).collect(Collectors.toList());
+		
+		profile.setStages(stages);
 		
 		return profile;
 	}
