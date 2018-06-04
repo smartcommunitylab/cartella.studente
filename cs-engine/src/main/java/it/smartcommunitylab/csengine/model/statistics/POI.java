@@ -1,8 +1,10 @@
 package it.smartcommunitylab.csengine.model.statistics;
 
 import java.util.List;
+import java.util.Map;
 
 import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
 
 public class POI {
 	
@@ -23,6 +25,8 @@ public class POI {
 	private String source;
 
 	private List<String> refSeeAlso = Lists.newArrayList();
+	
+	private Map<String, Object> metadata = Maps.newTreeMap();
 
 	public Address getAddress() {
 		return this.address;
@@ -94,6 +98,14 @@ public class POI {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public Map<String, Object> getMetadata() {
+		return metadata;
+	}
+
+	public void setMetadata(Map<String, Object> metadata) {
+		this.metadata = metadata;
 	}
 
 }
