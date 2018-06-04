@@ -20,7 +20,7 @@ public class StatisticsController {
 	@Autowired
 	private RepositoryManager dataManager;
 	
-	@GetMapping("/api/statistics/institutes")
+	@GetMapping("/api/statistics/teachingUnits")
 	public List<POI> getInstitute(@RequestParam(required=false) String ordine, @RequestParam(required=false) String tipologia, @RequestParam(required=false) Double[] coordinates, @RequestParam(required=false) Double radius) throws Exception {
 		List<POI> result = dataManager.findTeachingUnit(ordine, tipologia, coordinates, radius);
 		return result;
