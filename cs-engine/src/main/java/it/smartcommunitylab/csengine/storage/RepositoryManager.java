@@ -54,6 +54,7 @@ import it.smartcommunitylab.csengine.model.StudentExperience;
 import it.smartcommunitylab.csengine.model.TeachingUnit;
 import it.smartcommunitylab.csengine.model.Typology;
 import it.smartcommunitylab.csengine.model.statistics.Address;
+import it.smartcommunitylab.csengine.model.statistics.CourseData;
 import it.smartcommunitylab.csengine.model.statistics.KPI;
 import it.smartcommunitylab.csengine.model.statistics.Location;
 import it.smartcommunitylab.csengine.model.statistics.Organization;
@@ -824,7 +825,7 @@ public class RepositoryManager {
 	
 	// Cedus4School
 	
-	public List<POI> findTeachingUnit(String ordine, String tipologia, Double coords[], Double radius) {
+	public List<POI> findTeachingUnits(String ordine, String tipologia, Double coords[], Double radius, String schoolYear) {
 		Criteria criteria = new Criteria();
 		if (ordine != null) {
 			criteria = criteria.and("classifications." + Const.TYPOLOGY_QNAME_ORDINE + ".name").regex("[.]*" + ordine.toLowerCase().trim() + "[.]*", "i");
@@ -840,10 +841,51 @@ public class RepositoryManager {
 		
 		List<TeachingUnit> tus = mongoTemplate.find(query, TeachingUnit.class);
 		
-		return tus.stream().map(x -> TeachingUnitToPOI(x)).collect(Collectors.toList());
+		List<POI> res = tus.stream().map(x -> teachingUnitToPOI(x)).collect(Collectors.toList());
+		
+		if (schoolYear != null && !schoolYear.isEmpty()) {
+			res.removeIf(x -> !x.getMetadata().containsKey("schoolYears") || !((Map)x.getMetadata().get("schoolYears")).containsKey(schoolYear));
+		}
+		
+		return res;
 	}	
 	
-	private POI TeachingUnitToPOI(TeachingUnit tu) {
+	public List<POI> findInstitutes(String ordine, String tipologia, Double coords[], Double radius, String schoolYear) {
+		Criteria criteria = new Criteria();
+		if (ordine != null) {
+			criteria = criteria.and("classifications." + Const.TYPOLOGY_QNAME_ORDINE + ".name").regex("[.]*" + ordine.toLowerCase().trim() + "[.]*", "i");
+		}
+		if (tipologia != null) {
+			criteria = criteria.and("classifications." + Const.TYPOLOGY_QNAME_TIPOLOGIA + ".name").regex(tipologia.toLowerCase().trim(), "i");
+		}		
+		
+		
+		Query query = new Query(criteria);
+		query.fields().include("instituteId");
+		
+		List<TeachingUnit> tus = mongoTemplate.find(query, TeachingUnit.class);
+		
+		List<String> institutesIds = tus.stream().map(x -> x.getInstituteId()).collect(Collectors.toList());
+		
+		criteria = new Criteria("_id").in(institutesIds);
+		if (coords != null && radius != null) {
+			criteria = criteria.and("geocode").withinSphere(new Circle(new Point(coords[1], coords[0]), new Distance(radius, Metrics.KILOMETERS)));
+		}
+		
+		query = new Query(criteria);
+		
+		List<Institute> ins = mongoTemplate.find(query, Institute.class);
+		
+		List<POI> res = ins.stream().map(x -> instituteToPOI(x)).collect(Collectors.toList());
+		
+		if (schoolYear != null && !schoolYear.isEmpty()) {
+			res.removeIf(x -> !x.getMetadata().containsKey("schoolYears") || !((Map)x.getMetadata().get("schoolYears")).containsKey(schoolYear));
+		}
+		
+		return res;
+	}		
+	
+	private POI teachingUnitToPOI(TeachingUnit tu) {
 		POI poi = new POI();
 		
 //		poi.setId("TeachingUnit-" + tu.getExtId());
@@ -867,6 +909,30 @@ public class RepositoryManager {
 		return poi;
 	}
 	
+	private POI instituteToPOI(Institute is) {
+		POI poi = new POI();
+		
+//		poi.setId("TeachingUnit-" + tu.getExtId());
+		poi.setId(is.getId());
+		poi.setName(is.getName());
+		poi.setDescription(is.getDescription());
+		Address address = new Address();
+		address.setAddressCountry("IT");
+		address.setAddressLocality(is.getAddress());
+		poi.setAddress(address);
+		Location location = new Location();
+		location.setType("Point");
+		if (is.getGeocode() != null) {
+			location.setCoordinates(new Double[] {is.getGeocode()[1], is.getGeocode()[0]});
+		}
+		poi.setLocation(location);
+		poi.setSource("");
+		
+		fillInstitutePOIMetadata(is, poi);
+		
+		return poi;
+	}	
+	
 	private void fillTeachingUnitPOIMetadata(TeachingUnit tu, POI poi) {
 		Criteria criteria = new Criteria("teachingUnitId").is(tu.getId());
 		Query query = new Query(criteria);
@@ -886,31 +952,64 @@ public class RepositoryManager {
 		poi.getMetadata().put("tipologia", tu.getClassifications().get("TIPOLOGIA").getName());
 	}
 	
-	public List<Course> findCourses(String tuId, String schoolYear) {
+	private void fillInstitutePOIMetadata(Institute tu, POI poi) {
+		Criteria criteria = new Criteria("instituteId").is(tu.getId());
+		Query query = new Query(criteria);
+		query.fields().include("id");
+
+		Aggregation aggr = newAggregation(match(criteria), group("schoolYear").count().as("total"), project("total").and("schoolYear").previousOperation(), sort(Sort.Direction.DESC, "total"));
+		
+		AggregationResults<Map> groupResults = mongoTemplate.aggregate(aggr, Registration.class, Map.class);
+		Map result = groupResults.getMappedResults().stream().collect(Collectors.toMap(x -> (String)x.get("schoolYear"), x -> x.get("total")));
+
+		if (!result.isEmpty()) {
+			poi.getMetadata().put("schoolYears", result);
+		}
+	}	
+	
+	public List<CourseData> findCourses(String tuId, String insId, String schoolYear) {
 		Criteria criteria = new Criteria();
 		if (tuId != null) {
 			criteria = criteria.and("teachingUnitId").is(tuId);
 		}
+		if (insId != null) {
+			criteria = criteria.and("instituteId").is(insId);
+		}		
 		if (schoolYear != null) {
 			criteria = criteria.and("schoolYear").is(schoolYear);
 		}		
 		
-		Query query = new Query(criteria);
+		Aggregation aggr = newAggregation(match(criteria), lookup("courseMetaInfo", "courseMetaInfoId", "_id", "metainfo"));
 		
-		return mongoTemplate.find(query, Course.class);
+		AggregationResults<Map> groupResults = mongoTemplate.aggregate(aggr, Course.class, Map.class);
+		
+		ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		
+		List<CourseData> res = groupResults.getMappedResults().stream().map(x -> {
+			CourseData cd = mapper.convertValue(x, CourseData.class);
+			CourseMetaInfo cmi = (CourseMetaInfo)((List)x.get("metainfo")).get(0);
+			cd.setId((String)x.get("_id"));
+			if (cmi != null) {
+				cd.setMiurCode(cmi.getCodMiur());
+			}
+			return cd;
+		}).collect(Collectors.toList());
+		
+		return res;
 	}	
 	
 	
-	public List<KPI> getInstituteKPIs(String tuId, String schoolYear) {
+	public List<KPI> getInstituteKPIs(String insId, String schoolYear) {
 		List<KPI> results = Lists.newArrayList();
 
 		int year = Calendar.getInstance().get(Calendar.YEAR);
 
-		Criteria criteria = new Criteria("teachingUnitId").is(tuId).and("schoolYear").is(schoolYear);
+		Criteria criteria = new Criteria("instituteId").is(insId).and("schoolYear").is(schoolYear);
 		Query query = new Query(criteria);
 		query.fields().include("student").include("courseId");
 
-		TeachingUnit tu = teachingUnitRepository.findOne(tuId);
+//		TeachingUnit tu = teachingUnitRepository.findOne(tuId);
+		Institute ins = instituteRepository.findOne(insId);
 		
 		// List<Student> students = mongoTemplate.find(query, Registration.class).stream().map(x -> x.getStudent()).collect(Collectors.toList());
 
@@ -946,15 +1045,13 @@ public class RepositoryManager {
 				ages.put(age, ages.getOrDefault(age, 0) + 1);
 			}
 			
-			results.addAll(buildCourseKPI(tu, coursesMap.get(courseId), schoolYear, nF, nM, ages));
+			results.addAll(buildCourseKPI(ins, coursesMap.get(courseId), schoolYear, nF, nM, ages));
 		}
-
-		System.err.println("");
 
 		return results;
 	}
 	
-	private List<KPI> buildCourseKPI(TeachingUnit institute, CourseMetaInfo course, String schoolYear, int nF, int nM, Map<Integer, Integer> ages) {
+	private List<KPI> buildCourseKPI(Institute institute, CourseMetaInfo course, String schoolYear, int nF, int nM, Map<Integer, Integer> ages) {
 		List<KPI> results = Lists.newArrayList();
 		
 		KPI kpiF = new KPI();
