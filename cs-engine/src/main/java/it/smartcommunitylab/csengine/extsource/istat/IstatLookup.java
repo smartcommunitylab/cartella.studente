@@ -26,7 +26,11 @@ import com.google.maps.GeocodingApi;
 import com.google.maps.model.GeocodingResult;
 import com.google.maps.model.LatLng;
 
+import it.smartcommunitylab.csengine.model.Certifier;
+import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.TeachingUnit;
+import it.smartcommunitylab.csengine.storage.CertifierRepository;
+import it.smartcommunitylab.csengine.storage.InstituteRepository;
 import it.smartcommunitylab.csengine.storage.TeachingUnitRepository;
 
 @Component
@@ -43,8 +47,14 @@ public class IstatLookup {
 	
 	
 	@Autowired
-	private TeachingUnitRepository repository;
+	private TeachingUnitRepository teachingUnitRepository;
 
+	@Autowired
+	private InstituteRepository instituteRepository;	
+	
+	@Autowired
+	private CertifierRepository certifierRepository;	
+	
 	private HashBiMap<String, String> istatMap;
 	
 	private Map<String, TownIstat> townIstatMap;
@@ -84,12 +94,12 @@ public class IstatLookup {
 	
 	public String addIstatCodeToTeachingUnits() throws Exception {
 
-		List<TeachingUnit> list = repository.findAll();
+		List<TeachingUnit> list = teachingUnitRepository.findAll();
 
 		int found = 0;
 		for (TeachingUnit tu : list) {
 			String address = tu.getAddress();
-			String istat = findIstatByTeachingUnitAddress(address);
+			String istat = findIstatByAddress(address);
 			if (istat != null) {
 				tu.setCodiceIstat(istat);
 				
@@ -100,12 +110,49 @@ public class IstatLookup {
 			}
 		}
 
-		repository.save(list);
+		teachingUnitRepository.save(list);
 	
 		return found + "/" + list.size();
 	}
 
-	private String findIstatByTeachingUnitAddress(String address) {
+	public String geocodeCertifier() throws Exception {
+
+		List<Certifier> list = certifierRepository.findAll();
+
+		int found = 0;
+		for (Certifier cer : list) {
+			geocode(cer);
+		}
+
+		certifierRepository.save(list);
+	
+		return "" + list.size();
+	}	
+	
+	public String addIstatCodeToInstitutes() throws Exception {
+
+		List<Institute> list = instituteRepository.findAll();
+
+		int found = 0;
+		for (Institute is : list) {
+			String address = is.getAddress();
+			String istat = findIstatByAddress(address);
+			if (istat != null) {
+				is.setCodiceIstat(istat);
+				
+				TownIstat ti = townIstatMap.get(istat);
+				
+				geocode(is, ti);
+				found++;
+			}
+		}
+
+		instituteRepository.save(list);
+	
+		return found + "/" + list.size();
+	}	
+	
+	private String findIstatByAddress(String address) {
 		try {
 		Multimap<Integer, String> sorted = ArrayListMultimap.create();
 
@@ -185,6 +232,77 @@ public class IstatLookup {
 		tu.setGeocodeAccuracy(accuracy);
 		
 	}	
+	
+	private void geocode(Institute is, TownIstat ti) throws Exception {
+		if (is.getGeocode() != null) {
+			return;
+		}
+		
+		String address = is.getName() + " " + is.getAddress();
+
+		Double coords[] = ti.getCoords();
+		int accuracy = 2;
+		
+		try {
+			GeocodingResult[] results = GeocodingApi.geocode(context, address).region("IT").await();
+
+			GeocodingResult bestResult = null;
+			long minD = Long.MAX_VALUE;
+			if (results != null) {
+				for (GeocodingResult result : results) {
+					LatLng location = result.geometry.location;
+					long d = (long) (1000 * harvesineDistance(location.lat, location.lng, ti.getCoords()[1], ti.getCoords()[0]));
+
+					if (d < minD) {
+						minD = d;
+						bestResult = result;
+					}
+				}
+			}
+			
+			if (bestResult != null) {
+				LatLng location = bestResult.geometry.location;
+
+				long d = (long)(1000 *harvesineDistance(location.lat, location.lng, ti.getCoords()[1], ti.getCoords()[0]));
+				
+				if (d <= 20000) {
+					coords = new Double[] { location.lng, location.lat};
+					accuracy = 1;
+				}
+			} else {
+			}
+		} catch (Exception e) {
+			logger.error("Error geocoding: " + address, e);
+		}
+		
+		is.setGeocode(coords);
+		is.setGeocodeAccuracy(accuracy);
+		
+	}		
+	
+	private void geocode(Certifier cer) throws Exception {
+		if (cer.getGeocode() != null) {
+			return;
+		}
+		
+		String address = cer.getName() + " " + cer.getAddress();
+
+		Double coords[] = null;
+		
+		try {
+			GeocodingResult[] results = GeocodingApi.geocode(context, address).region("IT").await();
+			
+			if (results != null) {
+			LatLng location = results[0].geometry.location;
+
+			coords = new Double[] { location.lng, location.lat};
+			}
+		} catch (Exception e) {
+			logger.error("Error geocoding: " + address, e);
+		}
+		
+		cer.setGeocode(coords);
+	}		
 	
 	
 	private static String padIstat(String istat) {
