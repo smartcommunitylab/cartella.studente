@@ -11,6 +11,7 @@ public class StudentProfile {
 	private String birthdate;
 	
 	private List<SchoolRegistration> registrations = Lists.newArrayList();
+	private List<Stage> stages = Lists.newArrayList();
 
 	public String getName() {
 		return name;
@@ -42,6 +43,14 @@ public class StudentProfile {
 
 	public void setRegistrations(List<SchoolRegistration> registrations) {
 		this.registrations = registrations;
+	}
+
+	public List<Stage> getStages() {
+		return stages;
+	}
+
+	public void setStages(List<Stage> stages) {
+		this.stages = stages;
 	}
 
 }
