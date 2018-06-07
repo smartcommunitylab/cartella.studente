@@ -2,10 +2,10 @@ package it.smartcommunitylab.csengine.storage;
 
 import java.util.List;
 
-import it.smartcommunitylab.csengine.model.StudentExperience;
-
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
+
+import it.smartcommunitylab.csengine.model.StudentExperience;
 
 public interface StudentExperienceRepository extends 
 	MongoRepository<StudentExperience, String>, 
@@ -25,5 +25,7 @@ public interface StudentExperienceRepository extends
 	
 	@Query(value="{origin:?0, extId:?1}")
 	StudentExperience findByExtId(String origin, String extId);
+	
+	List<StudentExperience> findByStudentId(String studentId);
 	
 }
