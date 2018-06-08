@@ -16,7 +16,10 @@ public class DataCompletionController {
 
 	@RequestMapping(value = "/extsource/istituzioni/update/istat", method = RequestMethod.GET)
 	public @ResponseBody String importIstituzioniFromEmpty() throws Exception {
-		return istatLookup.addIstatCodeToTeachingUnits();
+		String r1 = istatLookup.addIstatCodeToTeachingUnits();
+		String r2 = istatLookup.addIstatCodeToInstitutes();
+//		String r3 = istatLookup.geocodeCertifier();
+		return r1 + "," + r2;
 	}	
 	
 }
