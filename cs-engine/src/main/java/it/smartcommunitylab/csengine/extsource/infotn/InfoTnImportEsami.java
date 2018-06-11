@@ -132,7 +132,7 @@ public class InfoTnImportEsami {
 				int currentYear = Calendar.getInstance().get(Calendar.YEAR);
 				int nextYear = currentYear + 1;
 				String schoolYear = currentYear + "/" + String.valueOf(nextYear).substring(2);
-				String url = infoTNAPIUrl + "/offerte?schoolYear=" + schoolYear + "&timestamp="
+				String url = infoTNAPIUrl + "/esami?schoolYear=" + schoolYear + "&timestamp="
 						+ metaInfo.getEpocTimestamp();
 				try {
 
@@ -149,7 +149,7 @@ public class InfoTnImportEsami {
 				try {
 
 					for (Map.Entry<String, String> entry : schoolYears.entrySet()) {
-						String url = infoTNAPIUrl + "/offerte?schoolYear=" + entry.getValue();
+						String url = infoTNAPIUrl + "/esami?schoolYear=" + entry.getValue();
 						importEsamiUsingRESTAPI(url, entry.getValue(), metaInfo);
 					}
 					return (metaInfo.getTotalStore() + "/" + metaInfo.getTotalRead());
