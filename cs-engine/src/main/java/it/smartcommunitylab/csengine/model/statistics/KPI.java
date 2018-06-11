@@ -3,6 +3,7 @@ package it.smartcommunitylab.csengine.model.statistics;
 import java.util.Date;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.google.common.collect.Lists;
 
 public class KPI {
@@ -30,6 +31,7 @@ public class KPI {
 
 	private String calculationFrequency;
 
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss.SSSZ", timezone = JsonFormat.DEFAULT_TIMEZONE)
 	private Date dateModified;
 
 	private String dateNextCalculation;

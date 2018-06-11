@@ -1089,6 +1089,8 @@ public class RepositoryManager {
 			x.setOrganization(org);
 			x.setProvider(prov);
 			x.setAddress(addr);
+			x.setCalculationFrequency("hourly");
+			x.setDateModified(new Date());
 			x.setId(institute.getId() + "-" + course.getId() + x.getId());
 		});
 		
