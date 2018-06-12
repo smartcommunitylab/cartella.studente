@@ -18,6 +18,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.smartcommunitylab.csengine.common.HTTPUtils;
+import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.model.MetaInfo;
 import it.smartcommunitylab.csengine.model.ProfessoriClassi;
 import it.smartcommunitylab.csengine.storage.InstituteRepository;
@@ -129,14 +130,12 @@ public class InfoTnImportProfessoriClassi {
 					continue;
 				}
 				logger.info("converting " + professoriClassiExt.getExtId());
-				// format.
-				professoriClassiExt.setDatefrom(professoriClassiExt.getDatefrom().replace("/", "-"));
-				professoriClassiExt.setDateto(professoriClassiExt.getDateto().replace("/", "-"));
-				professoriClassiExt.setSchoolyear(professoriClassiExt.getSchoolyear().replace("/", "-"));
-				professoriClassiRepository.save(professoriClassiExt);
+
+				ProfessoriClassi profClassi = convertToLocalProfessorClassBean(professoriClassiExt);
+				professoriClassiRepository.save(profClassi);
 				stored += 1;
-				logger.info(String.format("Save ProfessoriClassi: %s - %s - %s", professoriClassiExt.getOrigin(),
-						professoriClassiExt.getExtId(), professoriClassiExt.getId()));
+				logger.info(String.format("Save ProfessoriClassi: %s - %s - %s", profClassi.getOrigin(),
+						profClassi.getExtId(), profClassi.getId()));
 			}
 			// update time stamp (if all works fine).
 			metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
@@ -146,6 +145,20 @@ public class InfoTnImportProfessoriClassi {
 			metaInfo.setTotalStore(stored);
 			metaInfoRepository.save(metaInfo);
 		}
+	}
+
+	private ProfessoriClassi convertToLocalProfessorClassBean(ProfessoriClassi professorClassExt) {
+		ProfessoriClassi result = new ProfessoriClassi();
+		result.setId(Utils.getUUID());
+		result.setClassroom(professorClassExt.getClassroom());
+		result.setCourse(professorClassExt.getCourse());
+		result.setDatefrom(professorClassExt.getDatefrom().replace("/", "-"));
+		result.setDateto(professorClassExt.getDateto().replace("/", "-"));
+		result.setSchoolyear(professorClassExt.getSchoolyear().replace("/", "-"));
+		result.setTeacher(professorClassExt.getTeacher());
+		result.setOrigin(professorClassExt.getOrigin());
+		result.setExtId(professorClassExt.getExtId());
+		return result;
 	}
 
 }

@@ -13,6 +13,8 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import it.smartcommunitylab.csengine.common.HTTPUtils;
+import it.smartcommunitylab.csengine.common.Utils;
+import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.MetaInfo;
 import it.smartcommunitylab.csengine.model.Professor;
 import it.smartcommunitylab.csengine.storage.MetaInfoRepository;
@@ -85,7 +87,8 @@ public class InfoTnImportProfessori {
 					continue;
 				}
 				logger.info("converting " + professorExt.getExtId());
-				professoriRepository.save(professorExt);
+				Professor professor = convertToProfessor(professorExt);
+				professoriRepository.save(professor);
 				stored += 1;
 				logger.info(String.format("Save Professori: %s - %s - %s", professorExt.getOrigin(),
 						professorExt.getExtId(), professorExt.getId()));
@@ -99,6 +102,19 @@ public class InfoTnImportProfessori {
 		}
 
 		return stored + "/" + total + "(" + metaInfo.getEpocTimestamp() + ")";
+	}
+
+	private Professor convertToProfessor(Professor professorExt) {
+		Professor result = new Professor();
+		result.setId(Utils.getUUID());
+		result.setCf(professorExt.getCf());
+		if (professorExt.getEmail() != null && !professorExt.getEmail().isEmpty())
+			result.setEmail(professorExt.getEmail().trim());
+		result.setName(professorExt.getName());
+		result.setSurname(professorExt.getSurname());
+		result.setOrigin(professorExt.getOrigin());
+		result.setExtId(professorExt.getExtId());
+		return result;
 	}
 
 }

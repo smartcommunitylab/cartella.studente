@@ -31,6 +31,8 @@ import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportIscrizioneEsam
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportIscrizioneStage;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportIstituzioni;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportMobilita;
+import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportProfessori;
+import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportProfessoriClassi;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportStage;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportStudenti;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportUnita;
@@ -82,6 +84,12 @@ public class InfoTnController {
 
 	@Autowired
 	InfoTnImportCourseMetaInfo importCourseMetaInfo;
+	
+	@Autowired
+	InfoTnImportProfessori importProfessori;
+	
+	@Autowired
+	InfoTnImportProfessoriClassi importProfessoriClassi;
 
 	@RequestMapping(value = "/extsource/infotn/import/all/empty", method = RequestMethod.GET)
 	public @ResponseBody String importAllFromEmpty() throws Exception {
@@ -168,6 +176,16 @@ public class InfoTnController {
 	public @ResponseBody void addStudentConsent(@PathVariable String authCf, HttpServletRequest request)
 			throws Exception {
 		importStudenti.addConsent(authCf);
+	}
+	
+	@RequestMapping(value = "/extsource/infotn/professori/empty", method = RequestMethod.GET)
+	public @ResponseBody String importProfessoriFromEmpty() throws Exception {
+		return importProfessori.importProfessoriFromRESTAPI();
+	}
+	
+	@RequestMapping(value = "/extsource/infotn/professoriclassi/empty", method = RequestMethod.GET)
+	public @ResponseBody String importProfessoriClassiFromEmpty() throws Exception {
+		return importProfessoriClassi.importProfessoriClassiFromRESTAPI();
 	}
 
 	@ExceptionHandler({ EntityNotFoundException.class, StorageException.class })
