@@ -47,6 +47,8 @@ import it.smartcommunitylab.csengine.model.Document;
 import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.PersonInCharge;
+import it.smartcommunitylab.csengine.model.Professor;
+import it.smartcommunitylab.csengine.model.ProfessoriClassi;
 import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentAuth;
@@ -110,7 +112,13 @@ public class RepositoryManager {
 	private StudentAuthRepository studentAuthRepository;
 
 	@Autowired
-	CertifierRepository certifierRepository;
+	private CertifierRepository certifierRepository;
+	
+	@Autowired
+	private ProfessoriRepository professoriRepository;
+	
+	@Autowired
+	private ProfessoriClassiRepository professoriClassiRepository;
 
 	private MongoTemplate mongoTemplate;
 	private String defaultLang;
@@ -1207,6 +1215,16 @@ public class RepositoryManager {
 
 	public Page<Certifier> fetchCertifier(Pageable pageable) {
 		Page<Certifier> result = certifierRepository.findAll(pageable);
+		return result;
+	}
+
+	public Page<Professor> fetchProfessori(Pageable pageable) {
+		Page<Professor> result = professoriRepository.findAll(pageable);
+		return result;
+	}
+
+	public Page<ProfessoriClassi> fetchProfessoriClassi(Pageable pageable) {
+		Page<ProfessoriClassi> result = professoriClassiRepository.findAll(pageable);
 		return result;
 	}
 

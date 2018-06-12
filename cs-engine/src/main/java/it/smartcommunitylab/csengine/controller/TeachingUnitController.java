@@ -8,9 +8,12 @@ import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
 import it.smartcommunitylab.csengine.exception.UnauthorizedException;
+import it.smartcommunitylab.csengine.model.Certifier;
 import it.smartcommunitylab.csengine.model.Course;
 import it.smartcommunitylab.csengine.model.CourseMetaInfo;
 import it.smartcommunitylab.csengine.model.Experience;
+import it.smartcommunitylab.csengine.model.Professor;
+import it.smartcommunitylab.csengine.model.ProfessoriClassi;
 import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentExperience;
@@ -380,6 +383,26 @@ public class TeachingUnitController extends AuthController {
 		}
 		return result;		
 	}
+	
+	@RequestMapping(value = "/api/professori", method = RequestMethod.GET)
+	public @ResponseBody Page<Professor> getAllProfessori(@ApiParam Pageable pageable) {
+
+		Page<Professor> result = dataManager.fetchProfessori(pageable);
+		if (logger.isInfoEnabled()) {
+			logger.info(String.format("getAllProfessori: %s", result.getNumberOfElements()));
+		}
+		return result;
+	}
+	
+	@RequestMapping(value = "/api/professoriclassi", method = RequestMethod.GET)
+	public @ResponseBody Page<ProfessoriClassi> getAllProfessoriclassi(@ApiParam Pageable pageable) {
+
+		Page<ProfessoriClassi> result = dataManager.fetchProfessoriClassi(pageable);
+		if (logger.isInfoEnabled()) {
+			logger.info(String.format("getAllProfessoriclassi: %s", result.getNumberOfElements()));
+		}
+		return result;
+	}	
 		
 	private StudentExtended convertStudentExperience(List<StudentExperience> studentExperienceList) {
 		StudentExtended result = new StudentExtended();
