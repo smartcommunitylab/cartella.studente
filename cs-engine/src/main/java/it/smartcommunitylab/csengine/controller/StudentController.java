@@ -58,7 +58,6 @@ import it.smartcommunitylab.csengine.model.CV;
 import it.smartcommunitylab.csengine.model.CertificationRequest;
 import it.smartcommunitylab.csengine.model.Document;
 import it.smartcommunitylab.csengine.model.Experience;
-import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentAuth;
@@ -108,11 +107,10 @@ public class StudentController extends AuthController {
 	public @ResponseBody Student getStudentByCF(@PathVariable String cf,
 			@RequestParam(required = false) Boolean foto,
 			HttpServletRequest request) throws Exception {
-		// if (!validateAuthorizationByStudentId(cf, "Student",
-		// Const.AUTH_ACTION_READ, request)) {
-		// throw new UnauthorizedException("Unauthorized Exception: token not
-		// valid");
-		// }
+		 if (!validateAuthorizationByStudentId(cf, "Student",
+		 Const.AUTH_ACTION_READ, request)) {
+		 throw new UnauthorizedException("Unauthorized Exception: token not valid");
+		 }
 		Student result = dataManager.getStudentByCF(cf);
 		if (foto) {
 			try {
