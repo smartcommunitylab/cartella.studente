@@ -20,6 +20,8 @@ public class KPI {
 	private Organization organization;
 
 	private Provider provider;
+	
+	private Product product;
 
 	private int kpiValue;
 
@@ -156,5 +158,13 @@ public class KPI {
 
 	public void setType(String type) {
 		this.type = type;
+	}
+
+	public Product getProduct() {
+		return product;
+	}
+
+	public void setProduct(Product product) {
+		this.product = product;
 	}
 }
