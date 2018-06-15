@@ -61,6 +61,7 @@ import it.smartcommunitylab.csengine.model.statistics.KPI;
 import it.smartcommunitylab.csengine.model.statistics.Location;
 import it.smartcommunitylab.csengine.model.statistics.Organization;
 import it.smartcommunitylab.csengine.model.statistics.POI;
+import it.smartcommunitylab.csengine.model.statistics.Product;
 import it.smartcommunitylab.csengine.model.statistics.Provider;
 import it.smartcommunitylab.csengine.model.statistics.SchoolRegistration;
 import it.smartcommunitylab.csengine.model.statistics.Stage;
@@ -1066,35 +1067,40 @@ public class RepositoryManager {
 		kpiF.setId("-F");
 		kpiF.setKpiValue(nF);
 		kpiF.setName("Female students");
-		kpiF.setDescription("Number of female students for " + course.getCourse() + ", year " + schoolYear);
+		kpiF.setDescription("Number of female students for institute " + institute.getName() + ", course " + course.getCourse() + ((schoolYear != null) ? (", schoolyear " + schoolYear) : ""));
 		results.add(kpiF);
 		
 		KPI kpiM = new KPI();
 		kpiM.setId("-M");
 		kpiM.setKpiValue(nM);
 		kpiM.setName("Male students");
-		kpiM.setDescription("Number of male students for " + course.getCourse() + ", year " + schoolYear);
+		kpiM.setDescription("Number of male students for institute " + institute.getName() + ", course " + course.getCourse() + ((schoolYear != null) ? (", schoolyear " + schoolYear) : ""));
 		results.add(kpiM);
 		
 		for (Integer age: ages.keySet()) {
 			KPI kpiA = new KPI();
 			kpiA.setId("-A" + age);
 			kpiA.setName("Students of age " + age);
-			kpiA.setDescription("Number of students of age " + age + " for " + course.getCourse() + ", year " + schoolYear);
+			kpiA.setDescription("Number of students of age " + age + "  for institute " + institute.getName() + ", course " + course.getCourse() + ((schoolYear != null) ? (", schoolyear " + schoolYear) : ""));
 			kpiA.setKpiValue(ages.get(age));
 			results.add(kpiA);
 		}
 		
 		Organization org = new Organization();
+		org.setIdentifier(institute.getId());
 		org.setName(institute.getName());
+		Product prod = new Product();
+		prod.setIdentifier(course.getId());
+		prod.setName(course.getCourse());
 		Provider prov = new Provider();
-		prov.setName("FBK - InfoTN");
+		prov.setName("FBK");
 		Address addr = new Address();
 		addr.setAddressCountry("IT");
 		addr.setAddressLocality(institute.getAddress());
 		results.forEach(x -> {
 			x.getCategory().add("quantitative");
 			x.setOrganization(org);
+			x.setProduct(prod);
 			x.setProvider(prov);
 			x.setAddress(addr);
 			x.setCalculationFrequency("hourly");
@@ -1107,15 +1113,15 @@ public class RepositoryManager {
 	
 
 	
-	public StudentProfile getStudentProfile(String studentId) throws EntityNotFoundException {
-		Student student = studentRepository.findOne(studentId);
+	public StudentProfile getStudentProfile(String cf) throws EntityNotFoundException {
+		Student student = studentRepository.findByCF(cf);
 		if(student == null) {
 			throw new EntityNotFoundException("entity not found: Student");
 		}
 		
 		StudentProfile profile = new StudentProfile();
 		
-		List<Registration> registrations = registrationRepository.findByStudent(studentId);
+		List<Registration> registrations = registrationRepository.findByStudent(student.getId());
 		for (Registration registration: registrations) {
 			SchoolRegistration sr = new SchoolRegistration();
 			sr.setYear(registration.getSchoolYear());
@@ -1138,7 +1144,7 @@ public class RepositoryManager {
 		profile.setSurname(student.getSurname());
 		profile.setBirthdate(student.getBirthdate());
 		
-		List<StudentExperience> experiences = studentExperienceRepository.findByStudentId(studentId);
+		List<StudentExperience> experiences = studentExperienceRepository.findByStudentId(student.getId());
 		
 		ObjectMapper mapper = new ObjectMapper().configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		List<Stage> stages = experiences.stream().filter(x -> "STAGE".equals(x.getExperience().getType())).map(x -> mapper.convertValue(x.getExperience().getAttributes(), Stage.class)).collect(Collectors.toList());
