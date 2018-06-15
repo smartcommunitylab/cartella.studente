@@ -43,6 +43,13 @@ public class StatisticsController {
 		List<KPI> result = dataManager.getInstituteKPIs(instituteId, schoolYear);
 		return result;
 	}	
+
+	@GetMapping("/api/statistics/profile/student")
+	public StudentProfile geStudenttProfile() throws Exception {
+		StudentProfile result = dataManager.getStudentProfile("RSSMRA99T25L378F");
+		return result;
+	}		
+	 
 	
 //	@GetMapping("/api/statistics/student")
 //	public StudentProfile getStudentProfile(@RequestParam(required=false) String studentId) throws Exception {

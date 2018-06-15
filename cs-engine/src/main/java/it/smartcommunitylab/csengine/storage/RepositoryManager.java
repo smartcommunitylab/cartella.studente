@@ -1140,9 +1140,12 @@ public class RepositoryManager {
 		};
 		
 		
+		profile.setId(student.getId());
 		profile.setName(student.getName());
 		profile.setSurname(student.getSurname());
 		profile.setBirthdate(student.getBirthdate());
+		profile.setCf(student.getCf());
+		profile.setAddress(student.getAddress());
 		
 		List<StudentExperience> experiences = studentExperienceRepository.findByStudentId(student.getId());
 		

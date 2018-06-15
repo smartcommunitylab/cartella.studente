@@ -6,12 +6,23 @@ import com.google.common.collect.Lists;
 
 public class StudentProfile {
 
+	private String id;
 	private String name;
 	private String surname;
 	private String birthdate;
+	private String cf;
+	private String address;
 	
 	private List<SchoolRegistration> registrations = Lists.newArrayList();
 	private List<Stage> stages = Lists.newArrayList();
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	public String getName() {
 		return name;
@@ -35,6 +46,22 @@ public class StudentProfile {
 
 	public void setBirthdate(String birthdate) {
 		this.birthdate = birthdate;
+	}
+
+	public String getCf() {
+		return cf;
+	}
+
+	public void setCf(String cf) {
+		this.cf = cf;
+	}
+
+	public String getAddress() {
+		return address;
+	}
+
+	public void setAddress(String address) {
+		this.address = address;
 	}
 
 	public List<SchoolRegistration> getRegistrations() {
