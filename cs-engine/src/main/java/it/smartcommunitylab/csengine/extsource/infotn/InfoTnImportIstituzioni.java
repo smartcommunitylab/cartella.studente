@@ -50,85 +50,9 @@ public class InfoTnImportIstituzioni {
 
 	@Autowired
 	private MetaInfoRepository metaInfoRepository;
-
-	@Autowired
-	private InfoTnImportUnita importUnita;
-
-	@Autowired
-	private InfoTnUpdateUnita updateUnita;
-
-	@Autowired
-	private InfoTnImportAziende importAziende;
-
-	@Autowired
-	private InfoTnImportCorsi importCorsi;
-
-	@Autowired
-	private InfoTnImportStudenti importStudenti;
-
-	@Autowired
-	private InfoTnImportIscrizioneCorsi importIscrizioneCorsi;
-
-	@Autowired
-	private InfoTnImportStage importStage;
-
-	@Autowired
-	private InfoTnImportIscrizioneStage importIscrizioneStage;
-
-	@Autowired
-	private InfoTnImportCertificazioni importCertificazioni;
-
-	@Autowired
-	private InfoTnImportMobilita importMobilita;
-
-	@Autowired
-	private InfoTnImportEsami importEsami;
-
-	@Autowired
-	private InfoTnImportIscrizioneEsami importIscrizioneEsami;
-
-	@Autowired
-	private InfoTnImportCourseMetaInfo importCourseMetaInfo;
 	
 	@Autowired
-	private InfoTnImportProfessori importProfessori;
-	
-	@Autowired
-	private InfoTnImportProfessoriClassi importProfessoriClassi;
-
-//	@Scheduled(cron = "0 58 23 * * ?")
-	public String importAll() throws Exception {
-		// institute.
-		importIstituzioniFromRESTAPI();
-		// teaching unit.
-		importUnita.importUnitaFromRESTAPI();
-		// azienda
-		importAziende.importAziendaFromRESTAPI();
-		// course meta info.
-		importCourseMetaInfo.importCourseMetaInfoFromRESTAPI();
-		// courses.
-		importCorsi.importCorsiFromRESTAPI();
-		// student.
-		importStudenti.importStudentiFromRESTAPI();
-		// registration courses.
-		importIscrizioneCorsi.importIscrizioneCorsiFromRESTAPI();
-		// stage.
-		importStage.importStageFromRESTAPI();
-		importIscrizioneStage.importPartecipazioneStageFromRESTAPI();
-		// esami.
-		importEsami.importEsamiFromRESTAPI();
-		importIscrizioneEsami.importIscrizioneEsamiFromRESTAPI();
-		// mobilita.
-		importMobilita.importIscrizioneMobilitaFromRESTAPI();
-		// certificazione.
-		importCertificazioni.importIscrizioneCertificazioneFromRESTAPI();
-		// professori.
-		importProfessori.importProfessoriFromRESTAPI();
-		// professoriClassi.
-		importProfessoriClassi.importProfessoriClassiFromRESTAPI();
-
-		return "ok";
-	}
+	private InfoTnSchools infoTnSchools;
 
 	public String importIstituzioniFromRESTAPI() throws Exception {
 		logger.info("start importIstituzioniFromRESTAPI");
@@ -202,61 +126,6 @@ public class InfoTnImportIstituzioni {
 		return stored + "/" + total + "(" + metaInfo.getEpocTimestamp() + ")";
 	}
 
-	// public String importIstituzioniFromEmpty() throws Exception {
-	// logger.info("start importIstituzioniFromEmpty");
-	// int total = 0;
-	// int stored = 0;
-	// FileReader fileReader = new FileReader(sourceFolder + "FBK_Istituzioni
-	// v.01.json");
-	// ObjectMapper objectMapper = new ObjectMapper();
-	// objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-	// false);
-	// JsonFactory jsonFactory = new JsonFactory();
-	// jsonFactory.setCodec(objectMapper);
-	// JsonParser jp = jsonFactory.createParser(fileReader);
-	// JsonToken current;
-	// current = jp.nextToken();
-	// if (current != JsonToken.START_OBJECT) {
-	// logger.error("Error: root should be object: quiting.");
-	// return "Error: root should be object: quiting.";
-	// }
-	// while (jp.nextToken() != JsonToken.END_OBJECT) {
-	// String fieldName = jp.getCurrentName();
-	// current = jp.nextToken();
-	// if (fieldName.equals("items")) {
-	// if (current == JsonToken.START_ARRAY) {
-	// while (jp.nextToken() != JsonToken.END_ARRAY) {
-	// total += 1;
-	// Istituzione istituzione = jp.readValueAs(Istituzione.class);
-	// logger.info("converting " + istituzione.getExtId());
-	// Institute instituteDb =
-	// instituteRepository.findByExtId(istituzione.getOrigin(),
-	// istituzione.getExtId());
-	// if (instituteDb != null) {
-	// logger.warn(String.format("Institute already exists: %s - %s",
-	// istituzione.getOrigin(),
-	// istituzione.getExtId()));
-	// continue;
-	// }
-	// Institute institute = convertToInstitute(istituzione);
-	// instituteRepository.save(institute);
-	// stored += 1;
-	// logger.info(String.format("Save Institute: %s - %s - %s",
-	// istituzione.getOrigin(),
-	// istituzione.getExtId(), institute.getId()));
-	// }
-	// } else {
-	// logger.warn("Error: records should be an array: skipping.");
-	// jp.skipChildren();
-	// }
-	// } else {
-	// logger.warn("Unprocessed property: " + fieldName);
-	// jp.skipChildren();
-	// }
-	// }
-	// return stored + "/" + total;
-	// }
-
 	private Institute convertToInstitute(Istituzione istituzione) {
 		Institute result = new Institute();
 		result.setOrigin(istituzione.getOrigin());
@@ -268,6 +137,19 @@ public class InfoTnImportIstituzioni {
 		result.setPhone(istituzione.getPhone());
 		result.setPec(istituzione.getPec());
 		result.setEmail(istituzione.getEmail());
+		
+		Scuola scuola = infoTnSchools.getScuola(istituzione.getExtId());
+		if(scuola != null) {
+			Double[] geocode = new Double[2];
+			try {
+				geocode[0] = Double.valueOf(scuola.getLongitude());
+				geocode[1] = Double.valueOf(scuola.getLatitude());
+				result.setGeocode(geocode);
+			} catch (Exception e) {
+				logger.warn("error converting geocode:" + e.getMessage());
+			}
+		}
+		
 		return result;
 	}
 

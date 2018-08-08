@@ -54,6 +54,9 @@ public class InfoTnImportUnita {
 	@Autowired
 	MetaInfoRepository metaInfoRepository;
 
+	@Autowired
+	private InfoTnSchools infoTnSchools;
+	
 	public String importUnitaFromRESTAPI() throws Exception {
 		logger.info("start importUnitaFromRESTAPI");
 		int total = 0;
@@ -90,6 +93,9 @@ public class InfoTnImportUnita {
 				total += 1;
 				Unita unita = jp.readValueAs(Unita.class);
 				logger.info("converting " + unita.getExtId());
+				if(Utils.isNotEmpty(unita.getDateTo())) {
+					logger.warn(String.format("TU with date to: %s - %s", unita.getExtId(), unita.getDateTo()));
+				}
 				TeachingUnit teachingUnitDb = teachingUnitRepository.findByExtId(unita.getOrigin(), unita.getExtId());
 				if (teachingUnitDb != null) {
 					logger.warn(String.format("TU already exists: %s - %s", unita.getOrigin(), unita.getExtId()));
@@ -120,71 +126,7 @@ public class InfoTnImportUnita {
 		}
 
 		return stored + "/" + total + "(" + metaInfo.getEpocTimestamp() + ")";
-
 	}
-
-	// public String importUnitaFromEmpty() throws Exception {
-	// logger.info("start importUnitaFromEmpty");
-	// int total = 0;
-	// int stored = 0;
-	// FileReader fileReader = new FileReader(sourceFolder + "FBK_Unità
-	// Scolastiche v02.json");
-	// ObjectMapper objectMapper = new ObjectMapper();
-	// objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-	// false);
-	// JsonFactory jsonFactory = new JsonFactory();
-	// jsonFactory.setCodec(objectMapper);
-	// JsonParser jp = jsonFactory.createParser(fileReader);
-	// JsonToken current;
-	// current = jp.nextToken();
-	// if (current != JsonToken.START_OBJECT) {
-	// logger.error("Error: root should be object: quiting.");
-	// return "Error: root should be object: quiting.";
-	// }
-	// while (jp.nextToken() != JsonToken.END_OBJECT) {
-	// String fieldName = jp.getCurrentName();
-	// current = jp.nextToken();
-	// if (fieldName.equals("items")) {
-	// if (current == JsonToken.START_ARRAY) {
-	// while (jp.nextToken() != JsonToken.END_ARRAY) {
-	// total += 1;
-	// Unita unita = jp.readValueAs(Unita.class);
-	// logger.info("converting " + unita.getExtid());
-	// TeachingUnit teachingUnitDb =
-	// teachingUnitRepository.findByExtId(unita.getOrigin(),
-	// unita.getExtid());
-	// if(teachingUnitDb != null) {
-	// logger.warn(String.format("TU already exists: %s - %s",
-	// unita.getOrigin(), unita.getExtid()));
-	// continue;
-	// }
-	// Institute instituteDb =
-	// instituteRepository.findByExtId(unita.getOrigin_institute(),
-	// unita.getExtid_institute());
-	// if(instituteDb == null) {
-	// logger.warn(String.format("Institute not found: %s - %s",
-	// unita.getOrigin_institute(), unita.getExtid_institute()));
-	// continue;
-	// }
-	// TeachingUnit teachingUnit = convertToTeachingUnit(unita);
-	// teachingUnit.setInstituteId(instituteDb.getId());
-	// teachingUnitRepository.save(teachingUnit);
-	// stored += 1;
-	// logger.info(String.format("Save TeachingUnit: %s - %s - %s",
-	// unita.getOrigin(),
-	// unita.getExtid(), teachingUnit.getId()));
-	// }
-	// } else {
-	// logger.warn("Error: records should be an array: skipping.");
-	// jp.skipChildren();
-	// }
-	// } else {
-	// logger.warn("Unprocessed property: " + fieldName);
-	// jp.skipChildren();
-	// }
-	// }
-	// return stored + "/" + total;
-	// }
 
 	private TeachingUnit convertToTeachingUnit(Unita unita) {
 		TeachingUnit result = new TeachingUnit();
@@ -216,6 +158,19 @@ public class InfoTnImportUnita {
 		if (classifications.size() > 0) {
 			result.setClassifications(classifications);
 		}
+		
+		Scuola scuola = infoTnSchools.getScuola(unita.getExtId());
+		if(scuola != null) {
+			Double[] geocode = new Double[2];
+			try {
+				geocode[0] = Double.valueOf(scuola.getLongitude());
+				geocode[1] = Double.valueOf(scuola.getLatitude());
+				result.setGeocode(geocode);
+			} catch (Exception e) {
+				logger.warn("error converting geocode:" + e.getMessage());
+			}
+		}
+		
 		return result;
 	}
 }

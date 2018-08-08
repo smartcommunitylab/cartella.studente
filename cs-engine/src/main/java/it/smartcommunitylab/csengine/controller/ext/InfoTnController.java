@@ -36,8 +36,8 @@ import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportProfessoriClas
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportStage;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportStudenti;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportUnita;
+import it.smartcommunitylab.csengine.extsource.infotn.InfoTnScheduledTask;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnUpdateUnita;
-import it.smartcommunitylab.csengine.model.StudentAuth;
 
 @Controller
 public class InfoTnController {
@@ -90,10 +90,13 @@ public class InfoTnController {
 	
 	@Autowired
 	InfoTnImportProfessoriClassi importProfessoriClassi;
+	
+	@Autowired
+	private InfoTnScheduledTask infoTnScheduledTask;
 
 	@RequestMapping(value = "/extsource/infotn/import/all/empty", method = RequestMethod.GET)
 	public @ResponseBody String importAllFromEmpty() throws Exception {
-		return importIstituzioni.importAll();
+		return infoTnScheduledTask.importAll();
 	}
 
 	@RequestMapping(value = "/extsource/infotn/istituzioni/empty", method = RequestMethod.GET)
