@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -21,30 +20,29 @@ import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
 import it.smartcommunitylab.csengine.exception.UnauthorizedException;
+import it.smartcommunitylab.csengine.extsource.infotn.APIUpdateManager;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportAziende;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportCertificazioni;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportCorsi;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportCourseMetaInfo;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportEsami;
+import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportInstitute;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportIscrizioneCorsi;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportIscrizioneEsami;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportIscrizioneStage;
-import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportIstituzioni;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportMobilita;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportProfessori;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportProfessoriClassi;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportStage;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportStudenti;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportUnita;
-import it.smartcommunitylab.csengine.extsource.infotn.InfoTnScheduledTask;
-import it.smartcommunitylab.csengine.extsource.infotn.InfoTnUpdateUnita;
 
 @Controller
 public class InfoTnController {
 	private static final transient Logger logger = LoggerFactory.getLogger(InfoTnController.class);
 
 	@Autowired
-	InfoTnImportIstituzioni importIstituzioni;
+	InfoTnImportInstitute importIstituzioni;
 
 	@Autowired
 	InfoTnImportUnita importUnita;
@@ -80,9 +78,6 @@ public class InfoTnController {
 	InfoTnImportMobilita importMobilita;
 
 	@Autowired
-	InfoTnUpdateUnita updateUnita;
-
-	@Autowired
 	InfoTnImportCourseMetaInfo importCourseMetaInfo;
 	
 	@Autowired
@@ -92,11 +87,11 @@ public class InfoTnController {
 	InfoTnImportProfessoriClassi importProfessoriClassi;
 	
 	@Autowired
-	private InfoTnScheduledTask infoTnScheduledTask;
+	private APIUpdateManager apiUpdateManager;
 
 	@RequestMapping(value = "/extsource/infotn/import/all/empty", method = RequestMethod.GET)
 	public @ResponseBody String importAllFromEmpty() throws Exception {
-		return infoTnScheduledTask.importAll();
+		return apiUpdateManager.importAll();
 	}
 
 	@RequestMapping(value = "/extsource/infotn/istituzioni/empty", method = RequestMethod.GET)
@@ -164,16 +159,16 @@ public class InfoTnController {
 		return importMobilita.importIscrizioneMobilitaFromRESTAPI();
 	}
 
-	@RequestMapping(value = "/extsource/infotn/unita/update/clasification", method = RequestMethod.GET)
-	public @ResponseBody String upateUnitaClassificazione() throws Exception {
-		return updateUnita.upateUnitaClassificazione();
-	}
+//	@RequestMapping(value = "/extsource/infotn/unita/update/clasification", method = RequestMethod.GET)
+//	public @ResponseBody String upateUnitaClassificazione() throws Exception {
+//		return updateUnita.upateUnitaClassificazione();
+//	}
 	
-	@RequestMapping(value = "/extsource/infotn/iscrizionecorsi/year", method = RequestMethod.GET)
-	public @ResponseBody void importIscrizioneCorsiForYear(@RequestParam String schoolYear) throws Exception {
-		importCorsi.importCorsiForYear(schoolYear);
-		importIscrizioneCorsi.importIscrizioneCorsiForYear(schoolYear);
-	}
+//	@RequestMapping(value = "/extsource/infotn/iscrizionecorsi/year", method = RequestMethod.GET)
+//	public @ResponseBody void importIscrizioneCorsiForYear(@RequestParam String schoolYear) throws Exception {
+//		importCorsi.importCorsiForYear(schoolYear);
+//		importIscrizioneCorsi.importIscrizioneCorsiForYear(schoolYear);
+//	}
 	
 	@RequestMapping(value = "/extsource/infotn/addStudentConsent/cf/{authCf}", method = RequestMethod.POST)
 	public @ResponseBody void addStudentConsent(@PathVariable String authCf, HttpServletRequest request)

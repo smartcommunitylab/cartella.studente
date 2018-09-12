@@ -1,12 +1,14 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -14,38 +16,60 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.HTTPUtils;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.model.CourseMetaInfo;
+import it.smartcommunitylab.csengine.model.MetaInfo;
+import it.smartcommunitylab.csengine.model.ScheduleUpdate;
 import it.smartcommunitylab.csengine.storage.CourseMetaInfoRepository;
 
-@Component
+@Service
 public class InfoTnImportCourseMetaInfo {
 
 	private static final transient Logger logger = LoggerFactory.getLogger(InfoTnImportCourseMetaInfo.class);
 
-	@Autowired
 	@Value("${infotn.source.folder}")
 	private String sourceFolder;
-
 	@Value("${infotn.api.url}")
 	private String infoTNAPIUrl;
-
 	@Value("${infotn.api.user}")
 	private String user;
-
 	@Value("${infotn.api.pass}")
 	private String password;
 
+	private String apiKey = Const.API_COURSE_METAINFO_KEY;
+
+	@Autowired
+	private APIUpdateManager apiUpdateManager;
 	@Autowired
 	CourseMetaInfoRepository courseMetaInfoRepository;
 
-	public String importCourseMetaInfoFromRESTAPI() throws Exception {
+	public void initCourseMetaInfo(ScheduleUpdate scheduleUpdate) throws Exception {
+		logger.info("start initCourseMetaInfo");
+		List<MetaInfo> metaInfosCourseMetaInfo = scheduleUpdate.getUpdateMap().get(apiKey);
+
+		if (metaInfosCourseMetaInfo == null) {
+			metaInfosCourseMetaInfo = new ArrayList<MetaInfo>();
+		}
+
+		MetaInfo metaInfo = new MetaInfo();
+		metaInfo.setName(apiKey);
+		updateCourseMetaInfo(metaInfo);
+		
+		metaInfosCourseMetaInfo.add(metaInfo);
+		scheduleUpdate.getUpdateMap().put(apiKey, metaInfosCourseMetaInfo);
+
+	}
+
+	public void updateCourseMetaInfo(MetaInfo metaInfo) throws Exception {
 		logger.info("start importCourseMetaInfoFromRESTAPI");
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
 		String url = infoTNAPIUrl + "/corsi";
 		int stored = 0;
+		int total = 0;
 
 		// call api.
 		String response = HTTPUtils.get(url, null, user, password);
@@ -57,10 +81,9 @@ public class InfoTnImportCourseMetaInfo {
 			current = jp.nextToken();
 			if (current != JsonToken.START_ARRAY) {
 				logger.error("Error: root should be array: quiting.");
-				return "Error: root should be array: quiting.";
-
 			}
 			while (jp.nextToken() != JsonToken.END_ARRAY) {
+				total += 1;
 				CorsoMetaInfo temp = jp.readValueAs(CorsoMetaInfo.class);
 				logger.info("processing " + temp.getExtId());
 				CourseMetaInfo courseMetaInfo = courseMetaInfoRepository.findByExtId(temp.getOrigin(), temp.getExtId());
@@ -74,9 +97,12 @@ public class InfoTnImportCourseMetaInfo {
 				stored += 1;
 
 			}
-		}
 
-		return "stored (" + stored + ")";
+			// update time stamp (if all works fine).
+			metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
+			metaInfo.setTotalRead(total);
+			metaInfo.setTotalStore(stored);
+		}
 
 	}
 
@@ -90,6 +116,24 @@ public class InfoTnImportCourseMetaInfo {
 			result.setCodMiur(corso.getCodMiur());
 
 		return result;
+	}
+
+	public String importCourseMetaInfoFromRESTAPI() {
+		try {
+			List<MetaInfo> savedMetaInfoList = apiUpdateManager.fetchMetaInfoForAPI(apiKey);
+			for (MetaInfo metaInfo : savedMetaInfoList) {
+				if (!metaInfo.isBlocked()) {
+					updateCourseMetaInfo(metaInfo);
+				}
+			}
+			apiUpdateManager.saveMetaInfoList(apiKey, savedMetaInfoList);
+			return "OK";
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			return e.getMessage();
+		}
+
 	}
 
 }

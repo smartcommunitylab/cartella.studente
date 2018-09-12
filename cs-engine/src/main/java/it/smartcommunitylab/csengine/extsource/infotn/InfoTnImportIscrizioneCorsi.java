@@ -2,15 +2,16 @@ package it.smartcommunitylab.csengine.extsource.infotn;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -18,116 +19,96 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.HTTPUtils;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.model.CourseMetaInfo;
 import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.MetaInfo;
 import it.smartcommunitylab.csengine.model.Registration;
+import it.smartcommunitylab.csengine.model.ScheduleUpdate;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.TeachingUnit;
 import it.smartcommunitylab.csengine.storage.CourseMetaInfoRepository;
 import it.smartcommunitylab.csengine.storage.CourseRepository;
 import it.smartcommunitylab.csengine.storage.InstituteRepository;
-import it.smartcommunitylab.csengine.storage.MetaInfoRepository;
 import it.smartcommunitylab.csengine.storage.RegistrationRepository;
+import it.smartcommunitylab.csengine.storage.ScheduleUpdateRepository;
 import it.smartcommunitylab.csengine.storage.StudentRepository;
 import it.smartcommunitylab.csengine.storage.TeachingUnitRepository;
 
-@Component
+@Service
 public class InfoTnImportIscrizioneCorsi {
 	private static final transient Logger logger = LoggerFactory.getLogger(InfoTnImportIscrizioneCorsi.class);
 
-	@Autowired
 	@Value("${infotn.source.folder}")
 	private String sourceFolder;
-
+	@Value("${infotn.starting.year}")
+	private int startingYear;
 	@Value("${infotn.api.url}")
 	private String infoTNAPIUrl;
-
 	@Value("${infotn.api.user}")
 	private String user;
-
 	@Value("${infotn.api.pass}")
 	private String password;
 
-	private String metaInfoName = "IscrizioneCorsi";
-	private String metaInfoIstituzioni = "Istituzioni";
+	private String apiKey = Const.API_ISCRIZIONI_CORSI_KEY;
 
-	boolean importAll = false;
-
+	@Autowired
+	private APIUpdateManager apiUpdateManager;
 	@Autowired
 	StudentRepository studentRepository;
-
 	@Autowired
 	CourseRepository courseRepository;
-
 	@Autowired
 	RegistrationRepository registrationRepository;
-
 	@Autowired
 	InstituteRepository instituteRepository;
-
 	@Autowired
 	TeachingUnitRepository teachingUnitRepository;
-
 	@Autowired
-	MetaInfoRepository metaInfoRepository;
-
+	ScheduleUpdateRepository metaInfoRepository;
 	@Autowired
 	CourseMetaInfoRepository courseMetaInfoRepository;
 
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
 
-	public String importIscrizioneCorsiFromRESTAPI() throws Exception {
-		logger.info("start importIscrizioneCorsiFromRESTAPI");
-		MetaInfo metaInfoIst = metaInfoRepository.findOne(metaInfoIstituzioni);
-		if (metaInfoIst != null) {
-			Map<String, String> schoolYears = metaInfoIst.getSchoolYears();
-			// read registered time stamp.
-			MetaInfo metaInfo = metaInfoRepository.findOne(metaInfoName);
-			if (metaInfo != null) {
-				// get currentYear.
-				int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-				int nextYear = currentYear + 1;
-				String schoolYear = currentYear + "/" + String.valueOf(nextYear).substring(2);
-				String url = infoTNAPIUrl + "/iscrizioni?schoolYear=" + schoolYear + "&timestamp="
-						+ metaInfo.getEpocTimestamp();
-				try {
+	public void initIscrCorsi(ScheduleUpdate scheduleUpdate) throws Exception {
+		logger.info("start initIscrCorsi");
+		List<MetaInfo> metaInfosIscrCorsi = scheduleUpdate.getUpdateMap().get(apiKey);
 
-					importIscirzioneCorsiUsingRESTAPI(url, schoolYear, metaInfo);
-					return metaInfo.getTotalStore() + "/" + metaInfo.getTotalRead();
-
-				} catch (Exception e) {
-					return e.getMessage();
-				}
-
-			} else {
-				metaInfo = new MetaInfo();
-				metaInfo.setName(metaInfoName);
-				try {
-
-					for (Map.Entry<String, String> entry : schoolYears.entrySet()) {
-						String url = infoTNAPIUrl + "/iscrizioni?schoolYear=" + entry.getValue();
-						importIscirzioneCorsiUsingRESTAPI(url, entry.getValue(), metaInfo);
-					}
-					return (metaInfo.getTotalStore() + "/" + metaInfo.getTotalRead());
-
-				} catch (Exception e) {
-					return e.getMessage();
-				}
-			}
-		} else {
-			return "Run /istituto import first.";
+		if (metaInfosIscrCorsi == null) {
+			metaInfosIscrCorsi = new ArrayList<MetaInfo>();
 		}
+		for (int i = startingYear; i <= Calendar.getInstance().get(Calendar.YEAR); i++) {
+			MetaInfo metaInfo = new MetaInfo();
+			metaInfo.setName(apiKey);
+			metaInfo.setSchoolYear(i);
+			updateIscirzioneCorsi(metaInfo);
+			metaInfosIscrCorsi.add(metaInfo);
+		}
+		scheduleUpdate.getUpdateMap().put(apiKey, metaInfosIscrCorsi);
+
 	}
 
-	private void importIscirzioneCorsiUsingRESTAPI(String url, String schoolYear, MetaInfo metaInfo) throws Exception {
-		logger.info("start importIscirzioneCorsiUsingRESTAPI for year " + schoolYear);
+	private void updateIscirzioneCorsi(MetaInfo metaInfo) throws Exception {
+
 		int total = 0;
 		int stored = 0;
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		String url;
+		int nextYear = metaInfo.getSchoolYear() + 1;
+		String schoolYear = metaInfo.getSchoolYear() + "/" + String.valueOf(nextYear).substring(2);
+
+		// read epoc timestamp from db(if exist)
+		if (metaInfo.getEpocTimestamp() > 0) {
+			url = infoTNAPIUrl + "/iscrizioni?schoolYear=" + schoolYear + "&timestamp=" + metaInfo.getEpocTimestamp();
+		} else {
+			url = infoTNAPIUrl + "/iscrizioni?schoolYear=" + schoolYear;
+		}
+		logger.info("start importIscirzioneCorsiUsingRESTAPI for year " + schoolYear);
+
 		// call api.
 		String response = HTTPUtils.get(url, null, user, password);
 		if (response != null && !response.isEmpty()) {
@@ -194,15 +175,10 @@ public class InfoTnImportIscrizioneCorsi {
 						iscrizione.getExtId(), registration.getId()));
 			}
 
-			if (metaInfo != null) {
-				// update time stamp (if all works fine).
-				metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
-				// total = metaInfo.getTotalRead() + total;
-				metaInfo.setTotalRead(total);
-				// stored = metaInfo.getTotalStore() + stored;
-				metaInfo.setTotalStore(stored);
-				metaInfoRepository.save(metaInfo);
-			}
+			// update time stamp (if all works fine).
+			metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
+			metaInfo.setTotalRead(total);
+			metaInfo.setTotalStore(stored);
 
 		}
 
@@ -225,9 +201,21 @@ public class InfoTnImportIscrizioneCorsi {
 		return annoScolastico.replace("/", "-");
 	}
 
-	public void importIscrizioneCorsiForYear(String schoolYear) throws Exception {
-		String url = infoTNAPIUrl + "/iscrizioni?schoolYear=" + schoolYear;
-		importIscirzioneCorsiUsingRESTAPI(url, schoolYear, null);
+	public String importIscrizioneCorsiFromRESTAPI() {
+		try {
+			List<MetaInfo> savedMetaInfoList = apiUpdateManager.fetchMetaInfoForAPI(apiKey);
+			for (MetaInfo metaInfo : savedMetaInfoList) {
+				if (!metaInfo.isBlocked()) {
+					updateIscirzioneCorsi(metaInfo);
+				}
+			}
+			apiUpdateManager.saveMetaInfoList(apiKey, savedMetaInfoList);
+			return "OK";
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			return e.getMessage();
+		}		
 	}
 
 	// public String importIscrizioneCorsiFromEmpty() throws Exception {

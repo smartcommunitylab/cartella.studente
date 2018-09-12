@@ -1,10 +1,13 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -12,15 +15,16 @@ import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.HTTPUtils;
 import it.smartcommunitylab.csengine.common.Utils;
-import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.MetaInfo;
 import it.smartcommunitylab.csengine.model.Professor;
-import it.smartcommunitylab.csengine.storage.MetaInfoRepository;
+import it.smartcommunitylab.csengine.model.ScheduleUpdate;
 import it.smartcommunitylab.csengine.storage.ProfessoriRepository;
+import it.smartcommunitylab.csengine.storage.ScheduleUpdateRepository;
 
-@Component
+@Service
 public class InfoTnImportProfessori {
 
 	private static final transient Logger logger = LoggerFactory.getLogger(InfoTnImportProfessori.class);
@@ -38,15 +42,34 @@ public class InfoTnImportProfessori {
 	@Value("${infotn.api.pass}")
 	private String password;
 
-	private String metaInfoName = "Professori";
-
+	private String apiKey = Const.API_PROFESSORI_KEY;
+	
+	@Autowired
+	private APIUpdateManager apiUpdateManager;
 	@Autowired
 	private ProfessoriRepository professoriRepository;
 
 	@Autowired
-	MetaInfoRepository metaInfoRepository;
+	ScheduleUpdateRepository metaInfoRepository;
 
-	public String importProfessoriFromRESTAPI() throws Exception {
+	public void initProfessori(ScheduleUpdate scheduleUpdate) throws Exception {
+		logger.info("start initProfessori");
+		List<MetaInfo> metaInfosProfessori = scheduleUpdate.getUpdateMap().get(apiKey);
+
+		if (metaInfosProfessori == null) {
+			metaInfosProfessori = new ArrayList<MetaInfo>();
+		}
+
+		MetaInfo metaInfo = new MetaInfo();
+		metaInfo.setName(apiKey);
+		updateProfessori(metaInfo);
+
+		metaInfosProfessori.add(metaInfo);
+		scheduleUpdate.getUpdateMap().put(apiKey, metaInfosProfessori);
+
+	}
+
+	public void updateProfessori(MetaInfo metaInfo) throws Exception {
 		logger.info("start importProfessoriFromRESTAPI");
 		int total = 0;
 		int stored = 0;
@@ -54,15 +77,12 @@ public class InfoTnImportProfessori {
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		String url;
 
-		// read epoc timestamp from db(if exist)
-		MetaInfo metaInfo = metaInfoRepository.findOne(metaInfoName);
-		if (metaInfo != null) {
+		if (metaInfo.getEpocTimestamp() > 0) {
 			url = infoTNAPIUrl + "/professori?timestamp=" + metaInfo.getEpocTimestamp();
 		} else {
-			metaInfo = new MetaInfo();
-			metaInfo.setName(metaInfoName);
 			url = infoTNAPIUrl + "/professori";
 		}
+
 		// call api.
 		String response = HTTPUtils.get(url, null, user, password);
 		if (response != null && !response.isEmpty()) {
@@ -73,7 +93,6 @@ public class InfoTnImportProfessori {
 			current = jp.nextToken();
 			if (current != JsonToken.START_ARRAY) {
 				logger.error("Error: root should be array: quiting.");
-				return "Error: root should be array: quiting.";
 			}
 
 			while (jp.nextToken() != JsonToken.END_ARRAY) {
@@ -93,15 +112,14 @@ public class InfoTnImportProfessori {
 				logger.info(String.format("Save Professori: %s - %s - %s", professorExt.getOrigin(),
 						professorExt.getExtId(), professorExt.getId()));
 			}
+
 			// update time stamp (if all works fine).
 			metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
 			metaInfo.setTotalRead(total);
 			metaInfo.setTotalStore(stored);
-			metaInfoRepository.save(metaInfo);
 
 		}
 
-		return stored + "/" + total + "(" + metaInfo.getEpocTimestamp() + ")";
 	}
 
 	private Professor convertToProfessor(Professor professorExt) {
@@ -115,6 +133,24 @@ public class InfoTnImportProfessori {
 		result.setOrigin(professorExt.getOrigin());
 		result.setExtId(professorExt.getExtId());
 		return result;
+	}
+
+	public String importProfessoriFromRESTAPI() {
+		try {
+			List<MetaInfo> savedMetaInfoList = apiUpdateManager.fetchMetaInfoForAPI(apiKey);
+			for (MetaInfo metaInfo : savedMetaInfoList) {
+				if (!metaInfo.isBlocked()) {
+					updateProfessori(metaInfo);
+				}
+			}
+			apiUpdateManager.saveMetaInfoList(apiKey, savedMetaInfoList);
+			return "OK";
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			return e.getMessage();
+		}
+		
 	}
 
 }

@@ -52,4 +52,22 @@ public class Const {
 	public static final String ATTR_LEVEL = "level";
 	public static final String COURSE_REF_ORIGIN = "cousre_ref_origin";
 	public static final String COURSE_REF_EXTID = "cousre_ref_extId";
+	
+	public static final String API_ISTITUTI_KEY = "istituti";
+	public static final String API_TEACHING_UNIT_KEY = "unita";
+	public static final String API_AZIENDA_KEY = "azienda";
+	public static final String API_COURSE_METAINFO_KEY = "courseMetaInfo";
+	public static final String API_PROFESSORI_KEY = "professori";
+	public static final String API_CORSI_KEY = "corsi";
+	public static final String API_STUDENTI_KEY = "studenti";
+	public static final String API_ISCRIZIONI_CORSI_KEY = "registrazioni";
+	public static final String API_STAGE_KEY = "stage";
+	public static final String API_PARTICIPAZIONI_STAGE_KEY = "partecipazioneStage";
+	public static final String API_ESAMI_KEY = "esami";
+	public static final String API_ISCRIZIONI_ESAMI_KEY = "iscrizioneEsami";
+	public static final String API_MOBILITA_KEY = "mobilita";
+	public static final String API_CERTIFICATIONE_KEY = "certificazione";
+	public static final String API_PROFESSORI_CLASSI_KEY = "professoriClassi";
+	
+	
 }

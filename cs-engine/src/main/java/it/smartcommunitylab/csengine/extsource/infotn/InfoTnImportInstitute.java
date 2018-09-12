@@ -3,12 +3,11 @@ package it.smartcommunitylab.csengine.extsource.infotn;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.tomcat.util.bcel.classfile.Constant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -24,19 +23,14 @@ import it.smartcommunitylab.csengine.model.MetaInfo;
 import it.smartcommunitylab.csengine.model.ScheduleUpdate;
 import it.smartcommunitylab.csengine.storage.InstituteRepository;
 
-@Service
-public class InfoTnImportIstituzioni {
-	private static final transient Logger logger = LoggerFactory.getLogger(InfoTnImportIstituzioni.class);
+@Component
+public class InfoTnImportInstitute {
+	private static final transient Logger logger = LoggerFactory.getLogger(InfoTnImportInstitute.class);
 
 	@Autowired
-	private APIUpdateManager apiUpdateManager;
+	@Value("${infotn.source.folder}")
+	private String sourceFolder;
 
-	@Autowired
-	private InstituteRepository instituteRepository;
-
-	@Autowired
-	private InfoTnSchools infoTnSchools;
-	
 	@Value("${infotn.api.url}")
 	private String infoTNAPIUrl;
 
@@ -47,6 +41,15 @@ public class InfoTnImportIstituzioni {
 	private String password;
 
 	private String apiKey = Const.API_ISTITUTI_KEY;
+
+	@Autowired
+	private APIUpdateManager apiUpdateManager;
+
+	@Autowired
+	InstituteRepository instituteRepository;
+
+	@Autowired
+	private InfoTnSchools infoTnSchools;
 
 	public void initIstituzioni(ScheduleUpdate scheduleUpdate) throws Exception {
 
@@ -110,8 +113,8 @@ public class InfoTnImportIstituzioni {
 			}
 			// update time stamp (if all works fine).
 			metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
-			metaInfo.setTotalRead(total);
-			metaInfo.setTotalStore(stored);
+			metaInfo.setTotalRead(metaInfo.getTotalRead() + total);
+			metaInfo.setTotalStore(metaInfo.getTotalStore() + stored);
 
 		}
 
@@ -171,5 +174,4 @@ public class InfoTnImportIstituzioni {
 		}
 
 	}
-
 }

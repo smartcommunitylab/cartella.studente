@@ -1,17 +1,12 @@
 package it.smartcommunitylab.csengine.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import org.springframework.data.annotation.Id;
-
 public class MetaInfo {
-	@Id
 	private String name;
 	private long epocTimestamp;
 	private int totalRead;
 	private int totalStore;
-	private Map<String, String> schoolYears = new HashMap<String, String>();
+	private int schoolYear = -1;
+	private boolean blocked;
 
 	public String getName() {
 		return name;
@@ -45,12 +40,20 @@ public class MetaInfo {
 		this.totalStore = totalStore;
 	}
 
-	public Map<String, String> getSchoolYears() {
-		return schoolYears;
+	public int getSchoolYear() {
+		return schoolYear;
 	}
 
-	public void setSchoolYears(Map<String, String> schoolYears) {
-		this.schoolYears = schoolYears;
+	public void setSchoolYear(int schoolYear) {
+		this.schoolYear = schoolYear;
+	}
+
+	public boolean isBlocked() {
+		return blocked;
+	}
+
+	public void setBlocked(boolean blocked) {
+		this.blocked = blocked;
 	}
 
 }

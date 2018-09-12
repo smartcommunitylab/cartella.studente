@@ -14,7 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -31,109 +31,86 @@ import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.StorageException;
 import it.smartcommunitylab.csengine.model.Consent;
 import it.smartcommunitylab.csengine.model.MetaInfo;
+import it.smartcommunitylab.csengine.model.ScheduleUpdate;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.security.AuthorizationManager;
-import it.smartcommunitylab.csengine.storage.MetaInfoRepository;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
+import it.smartcommunitylab.csengine.storage.ScheduleUpdateRepository;
 import it.smartcommunitylab.csengine.storage.StudentRepository;
 
-@Component
+@Service
 public class InfoTnImportStudenti {
 	private static final transient Logger logger = LoggerFactory.getLogger(InfoTnImportStudenti.class);
 
-	@Autowired
 	@Value("${infotn.source.folder}")
 	private String sourceFolder;
-
-	@Autowired
+	@Value("${infotn.starting.year}")
+	private int startingYear;
 	@Value("${profile.account}")
 	private String profileAccount;
-
-	@Autowired
 	@Value("${profile.attribute}")
 	private String profileAttribute;
-
-	@Autowired
 	@Value("${authorization.userType}")
 	private String userType;
-
 	@Value("${infotn.api.url}")
 	private String infoTNAPIUrl;
-
 	@Value("${infotn.api.user}")
 	private String user;
-
 	@Value("${infotn.api.pass}")
 	private String password;
 
-	private String metaInfoName = "Studenti";
-	private String metaInfoIstituzioni = "Istituzioni";
+	private String apiKey = Const.API_STUDENTI_KEY;
 
+	@Autowired
+	private APIUpdateManager apiUpdateManager;
 	@Autowired
 	StudentRepository studentRepository;
-
 	@Autowired
 	private RepositoryManager dataManager;
-
 	@Autowired
 	AuthorizationManager authorizationManager;
-
 	@Autowired
-	MetaInfoRepository metaInfoRepository;
+	ScheduleUpdateRepository metaInfoRepository;
 
 	SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ITALY);
 	SimpleDateFormat sdfStandard = new SimpleDateFormat("dd/MM/yyyy");
 
-	public String importStudentiFromRESTAPI() throws Exception {
-		logger.info("start import procedure for students");
-		MetaInfo metaInfoIst = metaInfoRepository.findOne(metaInfoIstituzioni);
-		if (metaInfoIst != null) {
-			Map<String, String> schoolYears = metaInfoIst.getSchoolYears();
-			// read registered time stamp.
-			MetaInfo metaInfo = metaInfoRepository.findOne(metaInfoName);
-			if (metaInfo != null) {
-				// get currentYear.
-				int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-				int nextYear = currentYear + 1;
-				String schoolYear = currentYear + "/" + String.valueOf(nextYear).substring(2);
-				String url = infoTNAPIUrl + "/studenti?schoolYear=" + schoolYear + "&timestamp="
-						+ metaInfo.getEpocTimestamp();
-				try {
+	public void initStudenti(ScheduleUpdate scheduleUpdate) throws Exception {
+		logger.info("start initStudenti");
+		List<MetaInfo> metaInfosStudenti = scheduleUpdate.getUpdateMap().get(apiKey);
 
-					importStudentiUsingRESTAPI(url, schoolYear, metaInfo);
-					return metaInfo.getTotalStore() + "/" + metaInfo.getTotalRead();
-
-				} catch (Exception e) {
-					return e.getMessage();
-				}
-
-			} else {
-				metaInfo = new MetaInfo();
-				metaInfo.setName(metaInfoName);
-				try {
-
-					for (Map.Entry<String, String> entry : schoolYears.entrySet()) {
-						String url = infoTNAPIUrl + "/studenti?schoolYear=" + entry.getValue();
-						importStudentiUsingRESTAPI(url, entry.getValue(), metaInfo);
-					}
-					return (metaInfo.getTotalStore() + "/" + metaInfo.getTotalRead());
-
-				} catch (Exception e) {
-					return e.getMessage();
-				}
-			}
-		} else {
-			return "Run /istituti import first.";
+		if (metaInfosStudenti == null) {
+			metaInfosStudenti = new ArrayList<MetaInfo>();
 		}
+		for (int i = startingYear; i <= Calendar.getInstance().get(Calendar.YEAR); i++) {
+			MetaInfo metaInfo = new MetaInfo();
+			metaInfo.setName(apiKey);
+			metaInfo.setSchoolYear(i);
+			updateStudenti(metaInfo);
+			metaInfosStudenti.add(metaInfo);
+		}
+		scheduleUpdate.getUpdateMap().put(apiKey, metaInfosStudenti);
+
 	}
 
-	private void importStudentiUsingRESTAPI(String url, String schoolYear, MetaInfo metaInfo) throws Exception {
+	private void updateStudenti(MetaInfo metaInfo) throws Exception {
 
-		logger.info("start importStudentiUsingRESTAPI for year " + schoolYear);
 		int total = 0;
 		int stored = 0;
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		String url;
+		int nextYear = metaInfo.getSchoolYear() + 1;
+		String year = metaInfo.getSchoolYear() + "/" + String.valueOf(nextYear).substring(2);
+
+		// read epoc timestamp from db(if exist)
+		if (metaInfo.getEpocTimestamp() > 0) {
+			url = infoTNAPIUrl + "/studenti?schoolYear=" + year + "&timestamp=" + metaInfo.getEpocTimestamp();
+		} else {
+			url = infoTNAPIUrl + "/studenti?schoolYear=" + year;
+		}
+		logger.info("start importStudentiUsingRESTAPI for year " + year);
+
 		// call api.
 		String response = HTTPUtils.get(url, null, user, password);
 		if (response != null && !response.isEmpty()) {
@@ -164,45 +141,46 @@ public class InfoTnImportStudenti {
 					student = studentDb;
 				}
 				// save consent
-//				Consent consent = dataManager.getConsentByStudent(student.getId());
-//				if (consent == null) {
-//					consent = new Consent();
-//					consent.setStudentId(student.getId());
-//					consent.setSubject(student.getCf());
-//					consent.setAuthorized(Boolean.FALSE);
-//					dataManager.addConsent(consent);
-//					// set autorizhation
-//					AccountAttributeDTO account = new AccountAttributeDTO();
-//					account.setAccountName(profileAccount);
-//					account.setAttributeName(profileAttribute);
-//					account.setAttributeValue(student.getCf());
-//					AuthorizationUserDTO user = new AuthorizationUserDTO();
-//					user.setAccountAttribute(account);
-//					user.setType(userType);
-//					List<String> actions = new ArrayList<String>();
-//					actions.add(Const.AUTH_ACTION_ADD);
-//					actions.add(Const.AUTH_ACTION_DELETE);
-//					actions.add(Const.AUTH_ACTION_READ);
-//					actions.add(Const.AUTH_ACTION_UPDATE);
-//					Map<String, String> attributes = new HashMap<String, String>();
-//					attributes.put("student-studentId", student.getId());
-//					AuthorizationDTO authorization = authorizationManager.getNewAuthorization(user, user, actions,
-//							"student", attributes);
-//					try {
-//						authorizationManager.insertAuthorization(authorization);
-//					} catch (Exception e) {
-//						logger.warn(String.format("Error creating authorization: %s -%s - %s", studente.getOrigin(),
-//								studente.getExtId(), e.getMessage()));
-//					}
-//				}
+				// Consent consent =
+				// dataManager.getConsentByStudent(student.getId());
+				// if (consent == null) {
+				// consent = new Consent();
+				// consent.setStudentId(student.getId());
+				// consent.setSubject(student.getCf());
+				// consent.setAuthorized(Boolean.FALSE);
+				// dataManager.addConsent(consent);
+				// // set autorizhation
+				// AccountAttributeDTO account = new AccountAttributeDTO();
+				// account.setAccountName(profileAccount);
+				// account.setAttributeName(profileAttribute);
+				// account.setAttributeValue(student.getCf());
+				// AuthorizationUserDTO user = new AuthorizationUserDTO();
+				// user.setAccountAttribute(account);
+				// user.setType(userType);
+				// List<String> actions = new ArrayList<String>();
+				// actions.add(Const.AUTH_ACTION_ADD);
+				// actions.add(Const.AUTH_ACTION_DELETE);
+				// actions.add(Const.AUTH_ACTION_READ);
+				// actions.add(Const.AUTH_ACTION_UPDATE);
+				// Map<String, String> attributes = new HashMap<String,
+				// String>();
+				// attributes.put("student-studentId", student.getId());
+				// AuthorizationDTO authorization =
+				// authorizationManager.getNewAuthorization(user, user, actions,
+				// "student", attributes);
+				// try {
+				// authorizationManager.insertAuthorization(authorization);
+				// } catch (Exception e) {
+				// logger.warn(String.format("Error creating authorization: %s
+				// -%s - %s", studente.getOrigin(),
+				// studente.getExtId(), e.getMessage()));
+				// }
+				// }
 			}
 			// update time stamp (if all works fine).
 			metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
-			// total = metaInfo.getTotalRead() + total;
 			metaInfo.setTotalRead(total);
-			// stored = metaInfo.getTotalStore() + stored;
 			metaInfo.setTotalStore(stored);
-			metaInfoRepository.save(metaInfo);
 		}
 
 	}
@@ -239,7 +217,7 @@ public class InfoTnImportStudenti {
 		String result = sdfStandard.format(date);
 		return result;
 	}
-	
+
 	public void addConsent(String cf) throws StorageException {
 
 		Student studentDb = studentRepository.findByCF(cf);
@@ -274,6 +252,24 @@ public class InfoTnImportStudenti {
 						studentDb.getExtId(), e.getMessage()));
 			}
 		}
+	}
+
+	public String importStudentiFromRESTAPI() {
+		try {
+			List<MetaInfo> savedMetaInfoList = apiUpdateManager.fetchMetaInfoForAPI(apiKey);
+			for (MetaInfo metaInfo : savedMetaInfoList) {
+				if (!metaInfo.isBlocked()) {
+					updateStudenti(metaInfo);
+				}
+			}
+			apiUpdateManager.saveMetaInfoList(apiKey, savedMetaInfoList);
+			return "OK";
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			return e.getMessage();
+		}
+
 	}
 
 	// public String importStudentiFromEmpty() throws Exception {

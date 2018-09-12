@@ -2,15 +2,16 @@ package it.smartcommunitylab.csengine.extsource.infotn;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -24,152 +25,74 @@ import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.MetaInfo;
+import it.smartcommunitylab.csengine.model.ScheduleUpdate;
 import it.smartcommunitylab.csengine.storage.ExperienceRepository;
 import it.smartcommunitylab.csengine.storage.InstituteRepository;
-import it.smartcommunitylab.csengine.storage.MetaInfoRepository;
+import it.smartcommunitylab.csengine.storage.ScheduleUpdateRepository;
 
-@Component
+@Service
 public class InfoTnImportEsami {
 	private static final transient Logger logger = LoggerFactory.getLogger(InfoTnImportEsami.class);
 
-	@Autowired
 	@Value("${infotn.source.folder}")
 	private String sourceFolder;
-
+	@Value("${infotn.starting.year}")
+	private int startingYear;
 	@Value("${infotn.api.url}")
 	private String infoTNAPIUrl;
-
 	@Value("${infotn.api.user}")
 	private String user;
-
 	@Value("${infotn.api.pass}")
 	private String password;
 
-	private String metaInfoName = "Esami";
-	private String metaInfoIstituzioni = "Istituzioni";
+	private String apiKey = Const.API_ESAMI_KEY;
 
+	@Autowired
+	private APIUpdateManager apiUpdateManager;
 	@Autowired
 	ExperienceRepository experienceRepository;
-
 	@Autowired
 	InstituteRepository instituteRepository;
-
 	@Autowired
-	MetaInfoRepository metaInfoRepository;
-
+	ScheduleUpdateRepository metaInfoRepository;
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
 
-	// public String importEsamiFromEmpty() throws Exception {
-	// logger.info("start importEsamiFromEmpty");
-	// int total = 0;
-	// int stored = 0;
-	// FileReader fileReader = new FileReader(sourceFolder + "FBK_Sessioni esame
-	// tutte v.01.json");
-	// ObjectMapper objectMapper = new ObjectMapper();
-	// objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
-	// false);
-	// JsonFactory jsonFactory = new JsonFactory();
-	// jsonFactory.setCodec(objectMapper);
-	// JsonParser jp = jsonFactory.createParser(fileReader);
-	// JsonToken current;
-	// current = jp.nextToken();
-	// if (current != JsonToken.START_OBJECT) {
-	// logger.error("Error: root should be object: quiting.");
-	// return "Error: root should be object: quiting.";
-	// }
-	// while (jp.nextToken() != JsonToken.END_OBJECT) {
-	// String fieldName = jp.getCurrentName();
-	// current = jp.nextToken();
-	// if (fieldName.equals("items")) {
-	// if (current == JsonToken.START_ARRAY) {
-	// while (jp.nextToken() != JsonToken.END_ARRAY) {
-	// total += 1;
-	// Esame esame = jp.readValueAs(Esame.class);
-	// logger.info("converting " + esame.getExtid());
-	// Experience experienceDb =
-	// experienceRepository.findByExtId(esame.getOrigin(), esame.getExtid());
-	// if (experienceDb != null) {
-	// logger.warn(String.format("Experience already exists: %s - %s",
-	// esame.getOrigin(),
-	// esame.getExtid()));
-	// continue;
-	// }
-	// Experience experience = convertToExperience(esame);
-	// Institute institute =
-	// instituteRepository.findByExtId(esame.getOrigin_institute(),
-	// esame.getExtid_institute());
-	// if (institute != null) {
-	// experience.getAttributes().put(Const.ATTR_INSTITUTEID,
-	// institute.getId());
-	// }
-	// experienceRepository.save(experience);
-	// stored += 1;
-	// logger.info(String.format("Save Esame: %s - %s - %s", esame.getOrigin(),
-	// esame.getExtid(),
-	// experience.getId()));
-	// }
-	// } else {
-	// logger.warn("Error: records should be an array: skipping.");
-	// jp.skipChildren();
-	// }
-	// } else {
-	// logger.warn("Unprocessed property: " + fieldName);
-	// jp.skipChildren();
-	// }
-	// }
-	// return stored + "/" + total;
-	// }
+	public void initEsami(ScheduleUpdate scheduleUpdate) throws Exception {
+		logger.info("start initEsami");
+		List<MetaInfo> metaInfosEsami = scheduleUpdate.getUpdateMap().get(apiKey);
 
-	public String importEsamiFromRESTAPI() throws Exception {
-		logger.info("start importEsamiFromRESTAPI");
-		MetaInfo metaInfoIst = metaInfoRepository.findOne(metaInfoIstituzioni);
-		if (metaInfoIst != null) {
-			Map<String, String> schoolYears = metaInfoIst.getSchoolYears();
-			// read registered time stamp.
-			MetaInfo metaInfo = metaInfoRepository.findOne(metaInfoName);
-			if (metaInfo != null) {
-				// get currentYear.
-				int currentYear = Calendar.getInstance().get(Calendar.YEAR);
-				int nextYear = currentYear + 1;
-				String schoolYear = currentYear + "/" + String.valueOf(nextYear).substring(2);
-				String url = infoTNAPIUrl + "/esami?schoolYear=" + schoolYear + "&timestamp="
-						+ metaInfo.getEpocTimestamp();
-				try {
-
-					importEsamiUsingRESTAPI(url, schoolYear, metaInfo);
-					return metaInfo.getTotalStore() + "/" + metaInfo.getTotalRead();
-
-				} catch (Exception e) {
-					return e.getMessage();
-				}
-
-			} else {
-				metaInfo = new MetaInfo();
-				metaInfo.setName(metaInfoName);
-				try {
-
-					for (Map.Entry<String, String> entry : schoolYears.entrySet()) {
-						String url = infoTNAPIUrl + "/esami?schoolYear=" + entry.getValue();
-						importEsamiUsingRESTAPI(url, entry.getValue(), metaInfo);
-					}
-					return (metaInfo.getTotalStore() + "/" + metaInfo.getTotalRead());
-
-				} catch (Exception e) {
-					return e.getMessage();
-				}
-			}
-		} else {
-			return "Run /istituti import first.";
+		if (metaInfosEsami == null) {
+			metaInfosEsami = new ArrayList<MetaInfo>();
 		}
+		for (int i = startingYear; i <= Calendar.getInstance().get(Calendar.YEAR); i++) {
+			MetaInfo metaInfo = new MetaInfo();
+			metaInfo.setName(apiKey);
+			metaInfo.setSchoolYear(i);
+			updateEsami(metaInfo);
+			metaInfosEsami.add(metaInfo);
+		}
+		scheduleUpdate.getUpdateMap().put(apiKey, metaInfosEsami);
 
 	}
 
-	private void importEsamiUsingRESTAPI(String url, String schoolYear, MetaInfo metaInfo) throws Exception {
-		logger.info("start importCorsiUsingRESTAPI for year " + schoolYear);
+	private void updateEsami(MetaInfo metaInfo) throws Exception {
+
 		int total = 0;
 		int stored = 0;
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		String url;
+		int nextYear = metaInfo.getSchoolYear() + 1;
+		String schoolYear = metaInfo.getSchoolYear() + "/" + String.valueOf(nextYear).substring(2);
+
+		// read epoc timestamp from db(if exist)
+		if (metaInfo.getEpocTimestamp() > 0) {
+			url = infoTNAPIUrl + "/esami?schoolYear=" + schoolYear + "&timestamp=" + metaInfo.getEpocTimestamp();
+		} else {
+			url = infoTNAPIUrl + "/esami?schoolYear=" + schoolYear;
+		}
+		logger.info("start importEsamiFromRESTAPI");
+
 		// call api.
 		String response = HTTPUtils.get(url, null, user, password);
 		if (response != null && !response.isEmpty()) {
@@ -206,11 +129,8 @@ public class InfoTnImportEsami {
 			}
 			// update time stamp (if all works fine).
 			metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
-			total = metaInfo.getTotalRead() + total;
 			metaInfo.setTotalRead(total);
-			stored = metaInfo.getTotalStore() + stored;
 			metaInfo.setTotalStore(stored);
-			metaInfoRepository.save(metaInfo);
 		}
 
 	}
@@ -235,4 +155,82 @@ public class InfoTnImportEsami {
 		return annoScolastico.replace("/", "-");
 	}
 
+	public String importEsamiFromRESTAPI() {
+		try {
+			List<MetaInfo> savedMetaInfoList = apiUpdateManager.fetchMetaInfoForAPI(apiKey);
+			for (MetaInfo metaInfo : savedMetaInfoList) {
+				if (!metaInfo.isBlocked()) {
+					updateEsami(metaInfo);
+				}
+			}
+			apiUpdateManager.saveMetaInfoList(apiKey, savedMetaInfoList);
+			return "OK";
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			return e.getMessage();
+		}
+	}
+
 }
+
+// public String importEsamiFromEmpty() throws Exception {
+// logger.info("start importEsamiFromEmpty");
+// int total = 0;
+// int stored = 0;
+// FileReader fileReader = new FileReader(sourceFolder + "FBK_Sessioni esame
+// tutte v.01.json");
+// ObjectMapper objectMapper = new ObjectMapper();
+// objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES,
+// false);
+// JsonFactory jsonFactory = new JsonFactory();
+// jsonFactory.setCodec(objectMapper);
+// JsonParser jp = jsonFactory.createParser(fileReader);
+// JsonToken current;
+// current = jp.nextToken();
+// if (current != JsonToken.START_OBJECT) {
+// logger.error("Error: root should be object: quiting.");
+// return "Error: root should be object: quiting.";
+// }
+// while (jp.nextToken() != JsonToken.END_OBJECT) {
+// String fieldName = jp.getCurrentName();
+// current = jp.nextToken();
+// if (fieldName.equals("items")) {
+// if (current == JsonToken.START_ARRAY) {
+// while (jp.nextToken() != JsonToken.END_ARRAY) {
+// total += 1;
+// Esame esame = jp.readValueAs(Esame.class);
+// logger.info("converting " + esame.getExtid());
+// Experience experienceDb =
+// experienceRepository.findByExtId(esame.getOrigin(), esame.getExtid());
+// if (experienceDb != null) {
+// logger.warn(String.format("Experience already exists: %s - %s",
+// esame.getOrigin(),
+// esame.getExtid()));
+// continue;
+// }
+// Experience experience = convertToExperience(esame);
+// Institute institute =
+// instituteRepository.findByExtId(esame.getOrigin_institute(),
+// esame.getExtid_institute());
+// if (institute != null) {
+// experience.getAttributes().put(Const.ATTR_INSTITUTEID,
+// institute.getId());
+// }
+// experienceRepository.save(experience);
+// stored += 1;
+// logger.info(String.format("Save Esame: %s - %s - %s", esame.getOrigin(),
+// esame.getExtid(),
+// experience.getId()));
+// }
+// } else {
+// logger.warn("Error: records should be an array: skipping.");
+// jp.skipChildren();
+// }
+// } else {
+// logger.warn("Unprocessed property: " + fieldName);
+// jp.skipChildren();
+// }
+// }
+// return stored + "/" + total;
+// }

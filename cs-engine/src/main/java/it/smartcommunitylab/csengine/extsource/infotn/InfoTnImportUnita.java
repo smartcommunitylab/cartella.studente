@@ -1,13 +1,15 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonFactory;
 import com.fasterxml.jackson.core.JsonParser;
@@ -20,13 +22,14 @@ import it.smartcommunitylab.csengine.common.HTTPUtils;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.MetaInfo;
+import it.smartcommunitylab.csengine.model.ScheduleUpdate;
 import it.smartcommunitylab.csengine.model.TeachingUnit;
 import it.smartcommunitylab.csengine.model.Typology;
 import it.smartcommunitylab.csengine.storage.InstituteRepository;
-import it.smartcommunitylab.csengine.storage.MetaInfoRepository;
+import it.smartcommunitylab.csengine.storage.ScheduleUpdateRepository;
 import it.smartcommunitylab.csengine.storage.TeachingUnitRepository;
 
-@Component
+@Service
 public class InfoTnImportUnita {
 	private static final transient Logger logger = LoggerFactory.getLogger(InfoTnImportUnita.class);
 
@@ -43,7 +46,10 @@ public class InfoTnImportUnita {
 	@Value("${infotn.api.pass}")
 	private String password;
 
-	private String metaInfoName = "Unita";
+	private String apiKey = Const.API_TEACHING_UNIT_KEY;
+
+	@Autowired
+	private APIUpdateManager apiUpdateManager;
 
 	@Autowired
 	InstituteRepository instituteRepository;
@@ -52,30 +58,43 @@ public class InfoTnImportUnita {
 	TeachingUnitRepository teachingUnitRepository;
 
 	@Autowired
-	MetaInfoRepository metaInfoRepository;
+	ScheduleUpdateRepository metaInfoRepository;
 
 	@Autowired
 	private InfoTnSchools infoTnSchools;
-	
-	public String importUnitaFromRESTAPI() throws Exception {
+
+	public void initUnita(ScheduleUpdate scheduleUpdate) throws Exception {
+
 		logger.info("start importUnitaFromRESTAPI");
-		int total = 0;
-		int stored = 0;
+		List<MetaInfo> metaInfosUnita = scheduleUpdate.getUpdateMap().get(apiKey);
+
+		if (metaInfosUnita == null) {
+			metaInfosUnita = new ArrayList<MetaInfo>();
+		}
+
+		MetaInfo metaInfo = new MetaInfo();
+		metaInfo.setName(apiKey);
+		updateUnita(metaInfo);
+		
+		metaInfosUnita.add(metaInfo);
+		scheduleUpdate.getUpdateMap().put(apiKey, metaInfosUnita);
+
+	}
+
+	public void updateUnita(MetaInfo metaInfo) throws Exception {
+
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 		String url;
+		int total = 0;
+		int stored = 0;
 
-		// read epoc timestamp from db(if exist)
-		MetaInfo metaInfo = metaInfoRepository.findOne(metaInfoName);
-		if (metaInfo != null) {
+		if (metaInfo.getEpocTimestamp() > 0) {
 			url = infoTNAPIUrl + "/unita?timestamp=" + metaInfo.getEpocTimestamp();
-
 		} else {
-			metaInfo = new MetaInfo();
-			metaInfo.setName(metaInfoName);
 			url = infoTNAPIUrl + "/unita";
-
 		}
+
 		// call api.
 		String response = HTTPUtils.get(url, null, user, password);
 		if (response != null && !response.isEmpty()) {
@@ -86,14 +105,12 @@ public class InfoTnImportUnita {
 			current = jp.nextToken();
 			if (current != JsonToken.START_ARRAY) {
 				logger.error("Error: root should be array: quiting.");
-				return "Error: root should be array: quiting.";
-
 			}
 			while (jp.nextToken() != JsonToken.END_ARRAY) {
 				total += 1;
 				Unita unita = jp.readValueAs(Unita.class);
 				logger.info("converting " + unita.getExtId());
-				if(Utils.isNotEmpty(unita.getDateTo())) {
+				if (Utils.isNotEmpty(unita.getDateTo())) {
 					logger.warn(String.format("TU with date to: %s - %s", unita.getExtId(), unita.getDateTo()));
 				}
 				TeachingUnit teachingUnitDb = teachingUnitRepository.findByExtId(unita.getOrigin(), unita.getExtId());
@@ -121,11 +138,8 @@ public class InfoTnImportUnita {
 			metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
 			metaInfo.setTotalRead(total);
 			metaInfo.setTotalStore(stored);
-			metaInfoRepository.save(metaInfo);
-
 		}
 
-		return stored + "/" + total + "(" + metaInfo.getEpocTimestamp() + ")";
 	}
 
 	private TeachingUnit convertToTeachingUnit(Unita unita) {
@@ -158,9 +172,9 @@ public class InfoTnImportUnita {
 		if (classifications.size() > 0) {
 			result.setClassifications(classifications);
 		}
-		
+
 		Scuola scuola = infoTnSchools.getScuola(unita.getExtId());
-		if(scuola != null) {
+		if (scuola != null) {
 			Double[] geocode = new Double[2];
 			try {
 				geocode[0] = Double.valueOf(scuola.getLongitude());
@@ -170,7 +184,33 @@ public class InfoTnImportUnita {
 				logger.warn("error converting geocode:" + e.getMessage());
 			}
 		}
-		
+
 		return result;
+	}
+
+	public String importUnitaFromRESTAPI() {
+		// chedere a APIUpdateManager i propri metadati
+		// - scorrere i metadati
+		// - se blocked è false:
+		// - se richiesto setta schoolYear =
+		// "duedigit(MetaInfo.schoolYear)/duedigit((MetaInfo.schoolYear + 1))"
+		// // here i need to put year4d/year2d
+		// - se richiesto e se epocTimestamp > 0 usare epocTimestamp
+		// - invoca API
+		// - aggiorna epocTimestamp di MetaInfo (metodo in APIUpdateManager)
+		try {
+			List<MetaInfo> savedMetaInfoList = apiUpdateManager.fetchMetaInfoForAPI(apiKey);
+			for (MetaInfo metaInfo : savedMetaInfoList) {
+				if (!metaInfo.isBlocked()) {
+					updateUnita(metaInfo);
+				}
+			}
+			apiUpdateManager.saveMetaInfoList(apiKey, savedMetaInfoList);
+			return "OK";
+
+		} catch (Exception e) {
+			logger.error(e.getMessage());
+			return e.getMessage();
+		}
 	}
 }
