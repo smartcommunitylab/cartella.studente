@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -672,9 +673,15 @@ public class StudentController extends AuthController {
 	
 	
 	@RequestMapping(value = "/api/students", method = RequestMethod.GET)
-	public @ResponseBody Page<Student> getAllStudents(@ApiParam Pageable pageable) {
+	public @ResponseBody Page<Student> getAllStudents(@ApiParam Pageable pageable, @RequestParam(required=false) Long timestamp) {
 		
-		Page<Student> result = dataManager.fetchStudents(pageable);
+		Page<Student> result;
+		if (timestamp != null) {
+			result = dataManager.fetchStudentsAfterTimestamp(pageable, timestamp);
+		} else {
+			result = dataManager.fetchStudents(pageable);	
+		}
+		
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getAllStudents: %s", result.getNumberOfElements()));
 		}

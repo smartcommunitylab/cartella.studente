@@ -1,13 +1,14 @@
 package it.smartcommunitylab.csengine.storage;
 
+import java.util.Date;
 import java.util.List;
-
-import it.smartcommunitylab.csengine.model.Registration;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
+
+import it.smartcommunitylab.csengine.model.Registration;
 
 public interface RegistrationRepository extends MongoRepository<Registration, String>,
 	RegistrationRepositoryCustom {
@@ -26,5 +27,8 @@ public interface RegistrationRepository extends MongoRepository<Registration, St
 	
 	@Query(value="{origin:?0, extId:?1}")
 	Registration findByExtId(String origin, String extId);
+	
+	@Query("{'creationDate': {$gte: ?0}}")
+	Page<Registration> fetchAllAfterTime(Date  date, Pageable pageable);
 
 }

@@ -1,6 +1,7 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -124,6 +125,9 @@ public class InfoTnImportProfessori {
 
 	private Professor convertToProfessor(Professor professorExt) {
 		Professor result = new Professor();
+		Date now = new Date();
+		result.setCreationDate(now);
+		result.setLastUpdate(now);
 		result.setId(Utils.getUUID());
 		result.setCf(professorExt.getCf());
 		if (professorExt.getEmail() != null && !professorExt.getEmail().isEmpty())

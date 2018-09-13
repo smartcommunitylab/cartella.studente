@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -137,6 +138,9 @@ public class InfoTnImportEsami {
 
 	private Experience convertToExperience(Esame esame, String schoolYear) throws ParseException {
 		Experience result = new Experience();
+		Date now = new Date();
+		result.setCreationDate(now);
+		result.setLastUpdate(now);
 		result.setOrigin(esame.getOrigin());
 		result.setExtId(esame.getExtId());
 		result.setId(Utils.getUUID());

@@ -3,6 +3,7 @@ package it.smartcommunitylab.csengine.extsource.infotn;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -154,6 +155,9 @@ public class InfoTnImportIscrizioneEsami {
 	private StudentExperience convertToExperience(IscrizioneEsame iscrizione, Experience experience, Student student)
 			throws ParseException {
 		StudentExperience result = new StudentExperience();
+		Date now = new Date();
+		result.setCreationDate(now);
+		result.setLastUpdate(now);
 		result.setOrigin(iscrizione.getOrigin());
 		result.setExtId(iscrizione.getExtId());
 		result.setId(Utils.getUUID());

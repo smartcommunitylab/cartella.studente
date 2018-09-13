@@ -3,6 +3,7 @@ package it.smartcommunitylab.csengine.extsource.infotn;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -133,6 +134,9 @@ public class InfoTnImportProfessoriClassi {
 
 	private ProfessoriClassi convertToLocalProfessorClassBean(ProfessoriClassi professorClassExt) {
 		ProfessoriClassi result = new ProfessoriClassi();
+		Date now = new Date();
+		result.setCreationDate(now);
+		result.setLastUpdate(now);
 		result.setId(Utils.getUUID());
 		result.setClassroom(professorClassExt.getClassroom());
 		result.setCourse(professorClassExt.getCourse());

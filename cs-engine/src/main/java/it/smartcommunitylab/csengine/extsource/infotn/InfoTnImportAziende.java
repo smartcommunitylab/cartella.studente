@@ -1,6 +1,7 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -128,6 +129,9 @@ public class InfoTnImportAziende {
 		result.setAddress(azienda.getAddress());
 		result.setPhone(azienda.getPhone());
 		result.setEmail(azienda.getEmail());
+		Date now = new Date();
+		result.setCreationDate(now);
+		result.setLastUpdate(now);
 		return result;
 	}
 

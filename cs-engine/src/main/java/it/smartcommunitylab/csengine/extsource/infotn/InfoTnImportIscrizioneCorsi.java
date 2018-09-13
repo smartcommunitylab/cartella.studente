@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -187,6 +188,9 @@ public class InfoTnImportIscrizioneCorsi {
 	private Registration convertToRegistration(IscrizioneCorso iscrizioneCorso, String schoolYear)
 			throws ParseException {
 		Registration result = new Registration();
+		Date now = new Date();
+		result.setCreationDate(now);
+		result.setLastUpdate(now);
 		result.setOrigin(iscrizioneCorso.getOrigin());
 		result.setExtId(iscrizioneCorso.getExtId());
 		result.setId(Utils.getUUID());

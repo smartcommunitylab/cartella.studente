@@ -25,6 +25,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -54,15 +55,21 @@ public class InstituteController {
 	}
 	
 	@RequestMapping(value = "/api/institutes", method = RequestMethod.GET)
-	public @ResponseBody Page<Institute> getAllInstitutes(@ApiParam Pageable pageable) {
-		
-		Page<Institute> result = dataManager.fetchInstitutes(pageable);
-		if(logger.isInfoEnabled()) {
+	public @ResponseBody Page<Institute> getAllInstitutes(@ApiParam Pageable pageable,
+			@RequestParam(required = false) Long timestamp) {
+		Page<Institute> result;
+		if (timestamp != null) {
+			result = dataManager.fetchInstituteAfterTimestamp(pageable, timestamp);
+		} else {
+			result = dataManager.fetchInstitutes(pageable);
+		}
+
+		if (logger.isInfoEnabled()) {
 			logger.info(String.format("getAllInstitutes: %s", result.getNumberOfElements()));
 		}
 		return result;
 	}
-	
+
 	@ExceptionHandler({EntityNotFoundException.class, StorageException.class})
 	@ResponseStatus(value=HttpStatus.BAD_REQUEST)
 	@ResponseBody

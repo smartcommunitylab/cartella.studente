@@ -1,6 +1,7 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -184,6 +185,10 @@ public class InfoTnImportUnita {
 				logger.warn("error converting geocode:" + e.getMessage());
 			}
 		}
+		
+		Date now = new Date();
+		result.setCreationDate(now);
+		result.setLastUpdate(now);
 
 		return result;
 	}

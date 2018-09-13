@@ -1,6 +1,7 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.apache.tomcat.util.bcel.classfile.Constant;
@@ -128,6 +129,9 @@ public class InfoTnImportIstituzioni {
 		result.setPhone(istituzione.getPhone());
 		result.setPec(istituzione.getPec());
 		result.setEmail(istituzione.getEmail());
+		Date now = new Date();
+		result.setCreationDate(now);
+		result.setLastUpdate(now);
 
 		Scuola scuola = infoTnSchools.getScuola(istituzione.getExtId());
 		if (scuola != null) {

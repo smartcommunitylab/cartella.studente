@@ -174,6 +174,9 @@ public class InfoTnImportCorsi {
 
 	private Course convertToCourse(Corso corso) throws ParseException {
 		Course result = new Course();
+		Date now = new Date();
+		result.setCreationDate(now);
+		result.setLastUpdate(now);
 		result.setOrigin(corso.getOrigin());
 		result.setExtId(corso.getExtId());
 		result.setId(Utils.getUUID());

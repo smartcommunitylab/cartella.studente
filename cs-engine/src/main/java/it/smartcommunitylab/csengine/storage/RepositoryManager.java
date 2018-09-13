@@ -497,9 +497,19 @@ public class RepositoryManager {
 		Page<Registration> result = registrationRepository.findAll(pageable);
 		return result;
 	}
+	
+	public Page<Registration> fetchRegistrationsAfterTimestamp(Pageable pageable, Long timestamp) {
+		Page<Registration> result = registrationRepository.fetchAllAfterTime(new Date(timestamp), pageable);
+		return result;
+	}
 
 	public Page<Student> fetchStudents(Pageable pageable) {
 		Page<Student> result = studentRepository.findAll(pageable);
+		return result;
+	}
+	
+	public Page<Student> fetchStudentsAfterTimestamp(Pageable pageable, Long timestamp) {
+		Page<Student> result = studentRepository.fetchAllAfterTime(new Date(timestamp), pageable);
 		return result;
 	}
 
@@ -507,14 +517,59 @@ public class RepositoryManager {
 		Page<Institute> result = instituteRepository.findAll(pageable);
 		return result;
 	}
+	
+	public Page<Institute> fetchInstituteAfterTimestamp(Pageable pageable, Long timestamp) {
+		Page<Institute> result = instituteRepository.fetchAllAfterTime(new Date(timestamp), pageable);
+		return result;
+	}
 
+	public Page<Certifier> fetchCertifier(Pageable pageable) {
+		Page<Certifier> result = certifierRepository.findAll(pageable);
+		return result;
+	}
+	
+	public Page<Certifier> fetchCertifierAfterTimestamp(Pageable pageable, Long timestamp) {
+		Page<Certifier> result = certifierRepository.fetchAllAfterTime(new Date(timestamp), pageable);
+		return result;
+	}
+	
+	public Page<CourseMetaInfo> fetchCoursesMetaInfo(Pageable pageable) {
+		Page<CourseMetaInfo> result = courseMetaInfoRepo.findAll(pageable);
+		return result;
+	}
+	
+	public Page<CourseMetaInfo> fetchCourseMetaInfoAfterTimestamp(Pageable pageable, Long timestamp) {
+		Page<CourseMetaInfo> result = courseMetaInfoRepo.fetchAllAfterTime(new Date(timestamp), pageable);
+		return result;
+	}
+	
 	public Page<Course> fetchCourses(Pageable pageable) {
 		Page<Course> result = courseRepository.findAll(pageable);
 		return result;
 	}
+	
+	public Page<Course> fetchCourseAfterTimestamp(Pageable pageable, Long timestamp) {
+		Page<Course> result = courseRepository.fetchAllAfterTime(new Date(timestamp), pageable);
+		return result;
+	}
 
-	public Page<CourseMetaInfo> fetchCoursesMetaInfo(Pageable pageable) {
-		Page<CourseMetaInfo> result = courseMetaInfoRepo.findAll(pageable);
+	public Page<Professor> fetchProfessori(Pageable pageable) {
+		Page<Professor> result = professoriRepository.findAll(pageable);
+		return result;
+	}
+	
+	public Page<Professor> fetchProfessorAfterTimestamp(Pageable pageable, Long timestamp) {
+		Page<Professor> result = professoriRepository.fetchAllAfterTime(new Date(timestamp), pageable);
+		return result;
+	}
+
+	public Page<ProfessoriClassi> fetchProfessoriClassi(Pageable pageable) {
+		Page<ProfessoriClassi> result = professoriClassiRepository.findAll(pageable);
+		return result;
+	}
+	
+	public Page<ProfessoriClassi> fetchProfessoriClassiAfterTimestamp(Pageable pageable, Long timestamp) {
+		Page<ProfessoriClassi> result = professoriClassiRepository.fetchAllAfterTime(new Date(timestamp), pageable);
 		return result;
 	}
 
@@ -1220,21 +1275,6 @@ public class RepositoryManager {
 			keyValue.setValue(1);
 			stats.getValues().add(keyValue);
 		}
-	}
-
-	public Page<Certifier> fetchCertifier(Pageable pageable) {
-		Page<Certifier> result = certifierRepository.findAll(pageable);
-		return result;
-	}
-
-	public Page<Professor> fetchProfessori(Pageable pageable) {
-		Page<Professor> result = professoriRepository.findAll(pageable);
-		return result;
-	}
-
-	public Page<ProfessoriClassi> fetchProfessoriClassi(Pageable pageable) {
-		Page<ProfessoriClassi> result = professoriClassiRepository.findAll(pageable);
-		return result;
 	}
 
 }

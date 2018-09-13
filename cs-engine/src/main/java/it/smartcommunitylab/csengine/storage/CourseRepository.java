@@ -2,8 +2,11 @@ package it.smartcommunitylab.csengine.storage;
 
 import it.smartcommunitylab.csengine.model.Course;
 
+import java.util.Date;
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -19,4 +22,7 @@ public interface CourseRepository extends MongoRepository<Course, String> {
 	
 	@Query(value="{origin:?0, extId:?1}")
 	Course findByExtId(String origin, String extId);
+
+	@Query("{'creationDate': {$gte: ?0}}")
+	Page<Course> fetchAllAfterTime(Date date, Pageable pageable);
 }

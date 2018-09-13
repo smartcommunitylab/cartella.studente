@@ -187,6 +187,9 @@ public class InfoTnImportStudenti {
 
 	private Student convertToStudent(Studente studente) throws ParseException {
 		Student result = new Student();
+		Date now = new Date();
+		result.setCreationDate(now);
+		result.setLastUpdate(now);
 		result.setOrigin(studente.getOrigin());
 		result.setExtId(studente.getExtId());
 		result.setId(Utils.getUUID());

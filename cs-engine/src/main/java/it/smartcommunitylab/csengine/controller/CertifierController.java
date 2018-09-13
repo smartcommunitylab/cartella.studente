@@ -55,9 +55,14 @@ public class CertifierController extends AuthController {
 	private DocumentManager documentManager;
 
 	@RequestMapping(value = "/api/aziende", method = RequestMethod.GET)
-	public @ResponseBody Page<Certifier> getAllAziende(@ApiParam Pageable pageable) {
+	public @ResponseBody Page<Certifier> getAllAziende(@ApiParam Pageable pageable, @RequestParam(required = false) Long timestamp) {
 
-		Page<Certifier> result = dataManager.fetchCertifier(pageable);
+		Page<Certifier> result;
+		if (timestamp != null) {
+			result = dataManager.fetchCertifierAfterTimestamp(pageable, timestamp);
+		} else {
+			result = dataManager.fetchCertifier(pageable);
+		}
 		if (logger.isInfoEnabled()) {
 			logger.info(String.format("getAllAziende: %s", result.getNumberOfElements()));
 		}

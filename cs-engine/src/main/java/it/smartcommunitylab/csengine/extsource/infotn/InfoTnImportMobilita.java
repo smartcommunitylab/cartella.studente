@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -157,6 +158,9 @@ public class InfoTnImportMobilita {
 
 	private Experience convertToExperience(Mobilita mob) throws ParseException {
 		Experience result = new Experience();
+		Date now = new Date();
+		result.setCreationDate(now);
+		result.setLastUpdate(now);
 		result.setOrigin(mob.getOrigin());
 		result.setExtId(mob.getExtId());
 		result.setId(Utils.getUUID());

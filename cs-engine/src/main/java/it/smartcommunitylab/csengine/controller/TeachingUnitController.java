@@ -239,9 +239,14 @@ public class TeachingUnitController extends AuthController {
 	}
 	
 	@RequestMapping(value = "/api/registrations", method = RequestMethod.GET)
-	public @ResponseBody Page<Registration> getAllRegistration(@ApiParam Pageable pageable) {
+	public @ResponseBody Page<Registration> getAllRegistration(@ApiParam Pageable pageable, @RequestParam(required=false) Long timestamp) {
+		Page<Registration> result;
+		if (timestamp != null) {
+			result = dataManager.fetchRegistrationsAfterTimestamp(pageable, timestamp);
+		} else {
+			result = dataManager.fetchRegistrations(pageable);	
+		}
 		
-		Page<Registration> result = dataManager.fetchRegistrations(pageable);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getAllRegistrations: %s", result.getNumberOfElements()));
 		}
@@ -249,9 +254,14 @@ public class TeachingUnitController extends AuthController {
 	}
 	
 	@RequestMapping(value = "/api/courses", method = RequestMethod.GET)
-	public @ResponseBody Page<Course> getAllCourses(@ApiParam Pageable pageable) {
+	public @ResponseBody Page<Course> getAllCourses(@ApiParam Pageable pageable, @RequestParam(required=false) Long timestamp) {
 		
-		Page<Course> result = dataManager.fetchCourses(pageable);
+		Page<Course> result;
+		if (timestamp != null) {
+			result = dataManager.fetchCourseAfterTimestamp(pageable, timestamp);
+		} else {
+			result = dataManager.fetchCourses(pageable);
+		}
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getAllCourses: %s", result.getNumberOfElements()));
 		}
@@ -259,9 +269,14 @@ public class TeachingUnitController extends AuthController {
 	}
 	
 	@RequestMapping(value = "/api/courses/meta/info", method = RequestMethod.GET)
-	public @ResponseBody Page<CourseMetaInfo> getAllCoursesMetaInfo(@ApiParam Pageable pageable) {
+	public @ResponseBody Page<CourseMetaInfo> getAllCoursesMetaInfo(@ApiParam Pageable pageable, @RequestParam(required=false) Long timestamp) {
 
-		Page<CourseMetaInfo> result = dataManager.fetchCoursesMetaInfo(pageable);
+		Page<CourseMetaInfo> result;
+		if (timestamp != null) {
+			result = dataManager.fetchCourseMetaInfoAfterTimestamp(pageable, timestamp);
+		} else {
+			result = dataManager.fetchCoursesMetaInfo(pageable);
+		}
 		if (logger.isInfoEnabled()) {
 			logger.info(String.format("getAllCoursesMetaInfo: %s", result.getNumberOfElements()));
 		}

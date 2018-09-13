@@ -3,6 +3,7 @@ package it.smartcommunitylab.csengine.extsource.infotn;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -170,6 +171,9 @@ public class InfoTnImportIscrizioneStage {
 	private StudentExperience convertToExperience(IscrizioneStage iscrizione, Experience experience, Student student,
 			Course course) {
 		StudentExperience result = new StudentExperience();
+		Date now = new Date();
+		result.setCreationDate(now);
+		result.setLastUpdate(now);
 		result.setOrigin(iscrizione.getOrigin());
 		result.setExtId(iscrizione.getExtId());
 		result.setId(Utils.getUUID());

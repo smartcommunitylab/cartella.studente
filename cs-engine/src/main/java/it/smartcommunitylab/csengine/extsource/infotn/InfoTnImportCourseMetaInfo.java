@@ -2,6 +2,7 @@ package it.smartcommunitylab.csengine.extsource.infotn;
 
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -108,6 +109,9 @@ public class InfoTnImportCourseMetaInfo {
 
 	private CourseMetaInfo convertToCourse(CorsoMetaInfo corso) throws ParseException {
 		CourseMetaInfo result = new CourseMetaInfo();
+		Date now = new Date();
+		result.setCreationDate(now);
+		result.setLastUpdate(now);
 		result.setOrigin(corso.getOrigin());
 		result.setExtId(corso.getExtId());
 		result.setCourse(corso.getCourse());
