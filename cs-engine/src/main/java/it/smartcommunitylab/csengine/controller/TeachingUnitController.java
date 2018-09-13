@@ -400,9 +400,14 @@ public class TeachingUnitController extends AuthController {
 	}
 	
 	@RequestMapping(value = "/api/professori", method = RequestMethod.GET)
-	public @ResponseBody Page<Professor> getAllProfessori(@ApiParam Pageable pageable) {
+	public @ResponseBody Page<Professor> getAllProfessori(@ApiParam Pageable pageable, @RequestParam(required=false) Long timestamp) {
 
-		Page<Professor> result = dataManager.fetchProfessori(pageable);
+		Page<Professor> result;
+		if (timestamp != null) {
+			result = dataManager.fetchProfessorAfterTimestamp(pageable, timestamp);
+		} else {
+			result = dataManager.fetchProfessori(pageable);
+		}
 		if (logger.isInfoEnabled()) {
 			logger.info(String.format("getAllProfessori: %s", result.getNumberOfElements()));
 		}
@@ -410,9 +415,14 @@ public class TeachingUnitController extends AuthController {
 	}
 	
 	@RequestMapping(value = "/api/professoriclassi", method = RequestMethod.GET)
-	public @ResponseBody Page<ProfessoriClassi> getAllProfessoriclassi(@ApiParam Pageable pageable) {
+	public @ResponseBody Page<ProfessoriClassi> getAllProfessoriclassi(@ApiParam Pageable pageable, @RequestParam(required=false) Long timestamp) {
 
-		Page<ProfessoriClassi> result = dataManager.fetchProfessoriClassi(pageable);
+		Page<ProfessoriClassi> result;
+		if (timestamp != null) {
+			result = dataManager.fetchProfessoriClassiAfterTimestamp(pageable, timestamp);
+		} else {
+			result = dataManager.fetchProfessoriClassi(pageable);
+		}
 		if (logger.isInfoEnabled()) {
 			logger.info(String.format("getAllProfessoriclassi: %s", result.getNumberOfElements()));
 		}
