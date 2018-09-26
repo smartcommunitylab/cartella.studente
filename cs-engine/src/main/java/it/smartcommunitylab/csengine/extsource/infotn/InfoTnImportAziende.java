@@ -96,6 +96,10 @@ public class InfoTnImportAziende {
 				total += 1;
 				Azienda azienda = jp.readValueAs(Azienda.class);
 				logger.info("converting " + azienda.getExtId());
+				if (Utils.isEmpty(azienda.getPartita_iva())) {
+					logger.warn("Certifier without piva");
+					continue;
+				}
 				Certifier certifierDb = certifierRepository.findByExtId(azienda.getOrigin(), azienda.getExtId());
 				if (certifierDb != null) {
 					logger.warn(String.format("Certifier already exists: %s - %s", azienda.getOrigin(),
