@@ -61,7 +61,7 @@ public class APIUpdateManager {
 	@Autowired
 	private InfoTnImportProfessoriClassi importInfoTnProfesoriClassi;
 
-	@PostConstruct
+//	@PostConstruct
 	public void verifica() {
 		// se c'è un oggetto ScheduledUpdate non fa nulla
 		if (scheduleUpdateRepository.count() < 1) {
@@ -130,6 +130,7 @@ public class APIUpdateManager {
 
 	// @Scheduled(cron = "0 58 23 * * ?")
 	public String importAll() throws Exception {
+		verifica();
 		if (logger.isInfoEnabled()) {
 			logger.info("start InfoTnScheduledTask.importAll");
 		}
