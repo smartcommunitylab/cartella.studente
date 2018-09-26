@@ -16,7 +16,7 @@ public class Certificazione {
 	private StudentRef studentRef;
 	private String title;
 	private String type;
-	private String date_certificate;
+	private String dateCertification;
 	private String language;
 	private String judgmentmax;
 
@@ -28,12 +28,12 @@ public class Certificazione {
 		this.origin = origin;
 	}
 
-	public String getDate_certificate() {
-		return date_certificate;
+	public String getDateCertification() {
+		return dateCertification;
 	}
 
-	public void setDate_certificate(String date_certificate) {
-		this.date_certificate = date_certificate;
+	public void setDateCertification(String dateCertification) {
+		this.dateCertification = dateCertification;
 	}
 
 	public String getTitle() {
