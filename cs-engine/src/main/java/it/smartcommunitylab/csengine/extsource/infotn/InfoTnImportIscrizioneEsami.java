@@ -1,8 +1,6 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -23,7 +21,6 @@ import it.smartcommunitylab.csengine.common.HTTPUtils;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.MetaInfo;
-import it.smartcommunitylab.csengine.model.ScheduleUpdate;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentExperience;
 import it.smartcommunitylab.csengine.storage.ExperienceRepository;
@@ -61,24 +58,6 @@ public class InfoTnImportIscrizioneEsami {
 	StudentRepository studentRepository;
 	@Autowired
 	ScheduleUpdateRepository metaInfoRepository;
-
-	public void initIscrzEsami(ScheduleUpdate scheduleUpdate) throws Exception {
-		logger.info("start initIscrzEsami");
-		List<MetaInfo> metaInfosIscrizioniEsami = scheduleUpdate.getUpdateMap().get(apiKey);
-
-		if (metaInfosIscrizioniEsami == null) {
-			metaInfosIscrizioniEsami = new ArrayList<MetaInfo>();
-		}
-		for (int i = startingYear; i <= Calendar.getInstance().get(Calendar.YEAR); i++) {
-			MetaInfo metaInfo = new MetaInfo();
-			metaInfo.setName(apiKey);
-			metaInfo.setSchoolYear(i);
-			updateIscrizioneEsami(metaInfo);
-			metaInfosIscrizioniEsami.add(metaInfo);
-		}
-		scheduleUpdate.getUpdateMap().put(apiKey, metaInfosIscrizioniEsami);
-
-	}
 
 	private void updateIscrizioneEsami(MetaInfo metaInfo) throws Exception {
 
@@ -204,12 +183,20 @@ public class InfoTnImportIscrizioneEsami {
 	public String importIscrizioneEsamiFromRESTAPI() {
 		try {
 			List<MetaInfo> savedMetaInfoList = apiUpdateManager.fetchMetaInfoForAPI(apiKey);
+
+			if (savedMetaInfoList == null || savedMetaInfoList.isEmpty()) {
+				// call generic method to create metaInfos (apiKey, year?)
+				savedMetaInfoList = apiUpdateManager.createMetaInfoForAPI(apiKey, true);
+			}
+
 			for (MetaInfo metaInfo : savedMetaInfoList) {
 				if (!metaInfo.isBlocked()) {
 					updateIscrizioneEsami(metaInfo);
 				}
 			}
+
 			apiUpdateManager.saveMetaInfoList(apiKey, savedMetaInfoList);
+
 			return "OK";
 
 		} catch (Exception e) {

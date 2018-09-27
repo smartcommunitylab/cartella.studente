@@ -1,7 +1,6 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -22,7 +21,6 @@ import it.smartcommunitylab.csengine.common.HTTPUtils;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.model.CourseMetaInfo;
 import it.smartcommunitylab.csengine.model.MetaInfo;
-import it.smartcommunitylab.csengine.model.ScheduleUpdate;
 import it.smartcommunitylab.csengine.storage.CourseMetaInfoRepository;
 
 @Service
@@ -45,23 +43,6 @@ public class InfoTnImportCourseMetaInfo {
 	private APIUpdateManager apiUpdateManager;
 	@Autowired
 	CourseMetaInfoRepository courseMetaInfoRepository;
-
-	public void initCourseMetaInfo(ScheduleUpdate scheduleUpdate) throws Exception {
-		logger.info("start initCourseMetaInfo");
-		List<MetaInfo> metaInfosCourseMetaInfo = scheduleUpdate.getUpdateMap().get(apiKey);
-
-		if (metaInfosCourseMetaInfo == null) {
-			metaInfosCourseMetaInfo = new ArrayList<MetaInfo>();
-		}
-
-		MetaInfo metaInfo = new MetaInfo();
-		metaInfo.setName(apiKey);
-		updateCourseMetaInfo(metaInfo);
-		
-		metaInfosCourseMetaInfo.add(metaInfo);
-		scheduleUpdate.getUpdateMap().put(apiKey, metaInfosCourseMetaInfo);
-
-	}
 
 	public void updateCourseMetaInfo(MetaInfo metaInfo) throws Exception {
 		logger.info("start importCourseMetaInfoFromRESTAPI");
@@ -125,12 +106,20 @@ public class InfoTnImportCourseMetaInfo {
 	public String importCourseMetaInfoFromRESTAPI() {
 		try {
 			List<MetaInfo> savedMetaInfoList = apiUpdateManager.fetchMetaInfoForAPI(apiKey);
+
+			if (savedMetaInfoList == null || savedMetaInfoList.isEmpty()) {
+				// call generic method to create metaInfos (apiKey, year?)
+				savedMetaInfoList = apiUpdateManager.createMetaInfoForAPI(apiKey, false);
+			}
+
 			for (MetaInfo metaInfo : savedMetaInfoList) {
 				if (!metaInfo.isBlocked()) {
 					updateCourseMetaInfo(metaInfo);
 				}
 			}
+
 			apiUpdateManager.saveMetaInfoList(apiKey, savedMetaInfoList);
+
 			return "OK";
 
 		} catch (Exception e) {

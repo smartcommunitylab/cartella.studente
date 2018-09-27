@@ -1,8 +1,6 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -25,7 +23,6 @@ import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.model.Course;
 import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.MetaInfo;
-import it.smartcommunitylab.csengine.model.ScheduleUpdate;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentExperience;
 import it.smartcommunitylab.csengine.storage.CertifierRepository;
@@ -72,24 +69,6 @@ public class InfoTnImportIscrizioneStage {
 	ScheduleUpdateRepository metaInfoRepository;
 
 	SimpleDateFormat sdf = new SimpleDateFormat("dd-MMM-yy", Locale.ITALY);
-
-	public void initIscrStage(ScheduleUpdate scheduleUpdate) throws Exception {
-		logger.info("start initIscrStage");
-		List<MetaInfo> metaInfosIscrizioneStage = scheduleUpdate.getUpdateMap().get(apiKey);
-
-		if (metaInfosIscrizioneStage == null) {
-			metaInfosIscrizioneStage = new ArrayList<MetaInfo>();
-		}
-		for (int i = startingYear; i <= Calendar.getInstance().get(Calendar.YEAR); i++) {
-			MetaInfo metaInfo = new MetaInfo();
-			metaInfo.setName(apiKey);
-			metaInfo.setSchoolYear(i);
-			updateIscirzioneStage(metaInfo);
-			metaInfosIscrizioneStage.add(metaInfo);
-		}
-		scheduleUpdate.getUpdateMap().put(apiKey, metaInfosIscrizioneStage);
-
-	}
 
 	private void updateIscirzioneStage(MetaInfo metaInfo) throws Exception {
 
@@ -194,12 +173,20 @@ public class InfoTnImportIscrizioneStage {
 	public String importPartecipazioneStageFromRESTAPI() {
 		try {
 			List<MetaInfo> savedMetaInfoList = apiUpdateManager.fetchMetaInfoForAPI(apiKey);
+
+			if (savedMetaInfoList == null || savedMetaInfoList.isEmpty()) {
+				// call generic method to create metaInfos (apiKey, year?)
+				savedMetaInfoList = apiUpdateManager.createMetaInfoForAPI(apiKey, true);
+			}
+
 			for (MetaInfo metaInfo : savedMetaInfoList) {
 				if (!metaInfo.isBlocked()) {
 					updateIscirzioneStage(metaInfo);
 				}
 			}
+
 			apiUpdateManager.saveMetaInfoList(apiKey, savedMetaInfoList);
+
 			return "OK";
 
 		} catch (Exception e) {

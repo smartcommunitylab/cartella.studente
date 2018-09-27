@@ -64,24 +64,6 @@ public class InfoTnImportUnita {
 	@Autowired
 	private InfoTnSchools infoTnSchools;
 
-	public void initUnita(ScheduleUpdate scheduleUpdate) throws Exception {
-
-		logger.info("start importUnitaFromRESTAPI");
-		List<MetaInfo> metaInfosUnita = scheduleUpdate.getUpdateMap().get(apiKey);
-
-		if (metaInfosUnita == null) {
-			metaInfosUnita = new ArrayList<MetaInfo>();
-		}
-
-		MetaInfo metaInfo = new MetaInfo();
-		metaInfo.setName(apiKey);
-		updateUnita(metaInfo);
-		
-		metaInfosUnita.add(metaInfo);
-		scheduleUpdate.getUpdateMap().put(apiKey, metaInfosUnita);
-
-	}
-
 	public void updateUnita(MetaInfo metaInfo) throws Exception {
 
 		ObjectMapper objectMapper = new ObjectMapper();
@@ -194,23 +176,23 @@ public class InfoTnImportUnita {
 	}
 
 	public String importUnitaFromRESTAPI() {
-		// chedere a APIUpdateManager i propri metadati
-		// - scorrere i metadati
-		// - se blocked è false:
-		// - se richiesto setta schoolYear =
-		// "duedigit(MetaInfo.schoolYear)/duedigit((MetaInfo.schoolYear + 1))"
-		// // here i need to put year4d/year2d
-		// - se richiesto e se epocTimestamp > 0 usare epocTimestamp
-		// - invoca API
-		// - aggiorna epocTimestamp di MetaInfo (metodo in APIUpdateManager)
+	
 		try {
 			List<MetaInfo> savedMetaInfoList = apiUpdateManager.fetchMetaInfoForAPI(apiKey);
+			
+			if (savedMetaInfoList == null || savedMetaInfoList.isEmpty()) {
+				// call generic method to create metaInfos (apiKey, year?)
+				savedMetaInfoList = apiUpdateManager.createMetaInfoForAPI(apiKey, false);
+			}
+			
 			for (MetaInfo metaInfo : savedMetaInfoList) {
 				if (!metaInfo.isBlocked()) {
 					updateUnita(metaInfo);
 				}
 			}
+			
 			apiUpdateManager.saveMetaInfoList(apiKey, savedMetaInfoList);
+			
 			return "OK";
 
 		} catch (Exception e) {

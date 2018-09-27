@@ -2,7 +2,6 @@ package it.smartcommunitylab.csengine.extsource.infotn;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +26,6 @@ import it.smartcommunitylab.csengine.model.Course;
 import it.smartcommunitylab.csengine.model.CourseMetaInfo;
 import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.MetaInfo;
-import it.smartcommunitylab.csengine.model.ScheduleUpdate;
 import it.smartcommunitylab.csengine.model.TeachingUnit;
 import it.smartcommunitylab.csengine.storage.CourseMetaInfoRepository;
 import it.smartcommunitylab.csengine.storage.CourseRepository;
@@ -67,24 +65,6 @@ public class InfoTnImportCorsi {
 	CourseMetaInfoRepository courseMetaInfoRepository;
 
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
-
-	public void initCorsi(ScheduleUpdate scheduleUpdate) throws Exception {
-		logger.info("start initCorsi");
-		List<MetaInfo> metaInfosAziende = scheduleUpdate.getUpdateMap().get(apiKey);
-
-		if (metaInfosAziende == null) {
-			metaInfosAziende = new ArrayList<MetaInfo>();
-		}
-		for (int i = startingYear; i <= Calendar.getInstance().get(Calendar.YEAR); i++) {
-			MetaInfo metaInfo = new MetaInfo();
-			metaInfo.setName(apiKey);
-			metaInfo.setSchoolYear(i);
-			updateCorsi(metaInfo);
-			metaInfosAziende.add(metaInfo);
-		}
-		scheduleUpdate.getUpdateMap().put(apiKey, metaInfosAziende);
-
-	}
 
 	private void updateCorsi(MetaInfo metaInfo) throws Exception {
 		int total = 0;
@@ -213,12 +193,20 @@ public class InfoTnImportCorsi {
 		// - aggiorna epocTimestamp di MetaInfo (metodo in APIUpdateManager)
 		try {
 			List<MetaInfo> savedMetaInfoList = apiUpdateManager.fetchMetaInfoForAPI(apiKey);
+
+			if (savedMetaInfoList == null || savedMetaInfoList.isEmpty()) {
+				// call generic method to create metaInfos (apiKey, year?)
+				savedMetaInfoList = apiUpdateManager.createMetaInfoForAPI(apiKey, true);
+			}
+
 			for (MetaInfo metaInfo : savedMetaInfoList) {
 				if (!metaInfo.isBlocked()) {
 					updateCorsi(metaInfo);
 				}
 			}
+
 			apiUpdateManager.saveMetaInfoList(apiKey, savedMetaInfoList);
+
 			return "OK";
 
 		} catch (Exception e) {

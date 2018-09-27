@@ -1,10 +1,8 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.tomcat.util.bcel.classfile.Constant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +20,6 @@ import it.smartcommunitylab.csengine.common.HTTPUtils;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.MetaInfo;
-import it.smartcommunitylab.csengine.model.ScheduleUpdate;
 import it.smartcommunitylab.csengine.storage.InstituteRepository;
 
 @Service
@@ -37,7 +34,7 @@ public class InfoTnImportIstituzioni {
 
 	@Autowired
 	private InfoTnSchools infoTnSchools;
-	
+
 	@Value("${infotn.api.url}")
 	private String infoTNAPIUrl;
 
@@ -48,23 +45,6 @@ public class InfoTnImportIstituzioni {
 	private String password;
 
 	private String apiKey = Const.API_ISTITUTI_KEY;
-
-	public void initIstituzioni(ScheduleUpdate scheduleUpdate) throws Exception {
-
-		logger.info("start importIstituzioniFromRESTAPI");
-		List<MetaInfo> metaInfosIstituzioni = scheduleUpdate.getUpdateMap().get(apiKey);
-
-		if (metaInfosIstituzioni == null) {
-			metaInfosIstituzioni = new ArrayList<MetaInfo>();
-		}
-
-		MetaInfo metaInfo = new MetaInfo();
-		metaInfo.setName(apiKey);
-		updateIstitute(metaInfo);
-		
-		metaInfosIstituzioni.add(metaInfo);
-		scheduleUpdate.getUpdateMap().put(apiKey, metaInfosIstituzioni);
-	}
 
 	private void updateIstitute(MetaInfo metaInfo) throws Exception {
 
@@ -160,14 +140,20 @@ public class InfoTnImportIstituzioni {
 		// - aggiorna epocTimestamp di MetaInfo (metodo in APIUpdateManager)
 		try {
 			List<MetaInfo> savedMetaInfoList = apiUpdateManager.fetchMetaInfoForAPI(apiKey);
+
+			if (savedMetaInfoList == null || savedMetaInfoList.isEmpty()) {
+				// call generic method to create metaInfos (apiKey, year?)
+				savedMetaInfoList = apiUpdateManager.createMetaInfoForAPI(apiKey, false);
+			}
+
 			for (MetaInfo metaInfo : savedMetaInfoList) {
 				if (!metaInfo.isBlocked()) {
 					updateIstitute(metaInfo);
 				}
 			}
+
 			apiUpdateManager.saveMetaInfoList(apiKey, savedMetaInfoList);
 			return "OK";
-
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());

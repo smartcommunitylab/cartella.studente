@@ -159,12 +159,20 @@ public class InfoTnImportInstitute {
 		// - aggiorna epocTimestamp di MetaInfo (metodo in APIUpdateManager)
 		try {
 			List<MetaInfo> savedMetaInfoList = apiUpdateManager.fetchMetaInfoForAPI(apiKey);
+			
+			if (savedMetaInfoList == null || savedMetaInfoList.isEmpty()) {
+				// call generic method to create metaInfos (apiKey, year?)
+				savedMetaInfoList = apiUpdateManager.createMetaInfoForAPI(apiKey, false);
+			}
+			
 			for (MetaInfo metaInfo : savedMetaInfoList) {
 				if (!metaInfo.isBlocked()) {
 					updateIstitute(metaInfo);
 				}
 			}
+			
 			apiUpdateManager.saveMetaInfoList(apiKey, savedMetaInfoList);
+			
 			return "OK";
 
 

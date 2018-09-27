@@ -2,8 +2,6 @@ package it.smartcommunitylab.csengine.extsource.infotn;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -27,7 +25,6 @@ import it.smartcommunitylab.csengine.model.CourseMetaInfo;
 import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.MetaInfo;
 import it.smartcommunitylab.csengine.model.Registration;
-import it.smartcommunitylab.csengine.model.ScheduleUpdate;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.TeachingUnit;
 import it.smartcommunitylab.csengine.storage.CourseMetaInfoRepository;
@@ -73,24 +70,6 @@ public class InfoTnImportIscrizioneCorsi {
 	CourseMetaInfoRepository courseMetaInfoRepository;
 
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
-
-	public void initIscrCorsi(ScheduleUpdate scheduleUpdate) throws Exception {
-		logger.info("start initIscrCorsi");
-		List<MetaInfo> metaInfosIscrCorsi = scheduleUpdate.getUpdateMap().get(apiKey);
-
-		if (metaInfosIscrCorsi == null) {
-			metaInfosIscrCorsi = new ArrayList<MetaInfo>();
-		}
-		for (int i = startingYear; i <= Calendar.getInstance().get(Calendar.YEAR); i++) {
-			MetaInfo metaInfo = new MetaInfo();
-			metaInfo.setName(apiKey);
-			metaInfo.setSchoolYear(i);
-			updateIscirzioneCorsi(metaInfo);
-			metaInfosIscrCorsi.add(metaInfo);
-		}
-		scheduleUpdate.getUpdateMap().put(apiKey, metaInfosIscrCorsi);
-
-	}
 
 	private void updateIscirzioneCorsi(MetaInfo metaInfo) throws Exception {
 
@@ -208,18 +187,26 @@ public class InfoTnImportIscrizioneCorsi {
 	public String importIscrizioneCorsiFromRESTAPI() {
 		try {
 			List<MetaInfo> savedMetaInfoList = apiUpdateManager.fetchMetaInfoForAPI(apiKey);
+
+			if (savedMetaInfoList == null || savedMetaInfoList.isEmpty()) {
+				// call generic method to create metaInfos (apiKey, year?)
+				savedMetaInfoList = apiUpdateManager.createMetaInfoForAPI(apiKey, true);
+			}
+
 			for (MetaInfo metaInfo : savedMetaInfoList) {
 				if (!metaInfo.isBlocked()) {
 					updateIscirzioneCorsi(metaInfo);
 				}
 			}
+
 			apiUpdateManager.saveMetaInfoList(apiKey, savedMetaInfoList);
+
 			return "OK";
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return e.getMessage();
-		}		
+		}
 	}
 
 	// public String importIscrizioneCorsiFromEmpty() throws Exception {

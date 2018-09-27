@@ -1,6 +1,5 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,7 +20,6 @@ import it.smartcommunitylab.csengine.common.HTTPUtils;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.model.Certifier;
 import it.smartcommunitylab.csengine.model.MetaInfo;
-import it.smartcommunitylab.csengine.model.ScheduleUpdate;
 import it.smartcommunitylab.csengine.storage.CertifierRepository;
 import it.smartcommunitylab.csengine.storage.ScheduleUpdateRepository;
 
@@ -46,24 +44,6 @@ public class InfoTnImportAziende {
 	CertifierRepository certifierRepository;
 	@Autowired
 	ScheduleUpdateRepository metaInfoRepository;
-
-	public void initAziende(ScheduleUpdate scheduleUpdate) throws Exception {
-
-		logger.info("start initAziende");
-		List<MetaInfo> metaInfosAziende = scheduleUpdate.getUpdateMap().get(apiKey);
-
-		if (metaInfosAziende == null) {
-			metaInfosAziende = new ArrayList<MetaInfo>();
-		}
-
-		MetaInfo metaInfo = new MetaInfo();
-		metaInfo.setName(apiKey);
-		updateAzienda(metaInfo);
-
-		metaInfosAziende.add(metaInfo);
-		scheduleUpdate.getUpdateMap().put(apiKey, metaInfosAziende);
-
-	}
 
 	public void updateAzienda(MetaInfo metaInfo) throws Exception {
 		logger.info("start importAziendaFromRESTAPI");
@@ -95,11 +75,13 @@ public class InfoTnImportAziende {
 			while (jp.nextToken() != JsonToken.END_ARRAY) {
 				total += 1;
 				Azienda azienda = jp.readValueAs(Azienda.class);
-				logger.info("converting " + azienda.getExtId());
+				
 				if (Utils.isEmpty(azienda.getPartita_iva())) {
 					logger.warn("Certifier without piva");
 					continue;
 				}
+				
+				logger.info("converting " + azienda.getExtId());
 				Certifier certifierDb = certifierRepository.findByExtId(azienda.getOrigin(), azienda.getExtId());
 				if (certifierDb != null) {
 					logger.warn(String.format("Certifier already exists: %s - %s", azienda.getOrigin(),
@@ -142,12 +124,20 @@ public class InfoTnImportAziende {
 	public String importAziendaFromRESTAPI() {
 		try {
 			List<MetaInfo> savedMetaInfoList = apiUpdateManager.fetchMetaInfoForAPI(apiKey);
+
+			if (savedMetaInfoList == null || savedMetaInfoList.isEmpty()) {
+				// call generic method to create metaInfos (apiKey, year?)
+				savedMetaInfoList = apiUpdateManager.createMetaInfoForAPI(apiKey, false);
+			}
+
 			for (MetaInfo metaInfo : savedMetaInfoList) {
 				if (!metaInfo.isBlocked()) {
 					updateAzienda(metaInfo);
 				}
 			}
+
 			apiUpdateManager.saveMetaInfoList(apiKey, savedMetaInfoList);
+
 			return "OK";
 
 		} catch (Exception e) {

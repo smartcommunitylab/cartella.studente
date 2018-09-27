@@ -2,8 +2,6 @@ package it.smartcommunitylab.csengine.extsource.infotn;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -25,7 +23,6 @@ import it.smartcommunitylab.csengine.common.HTTPUtils;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.model.Experience;
 import it.smartcommunitylab.csengine.model.MetaInfo;
-import it.smartcommunitylab.csengine.model.ScheduleUpdate;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentExperience;
 import it.smartcommunitylab.csengine.storage.ExperienceRepository;
@@ -65,24 +62,6 @@ public class InfoTnImportMobilita {
 	ScheduleUpdateRepository metaInfoRepository;
 
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
-
-	public void initIscrzMobilita(ScheduleUpdate scheduleUpdate) throws Exception {
-		logger.info("start initIscrzMobilita");
-		List<MetaInfo> metaInfosMobilita = scheduleUpdate.getUpdateMap().get(apiKey);
-
-		if (metaInfosMobilita == null) {
-			metaInfosMobilita = new ArrayList<MetaInfo>();
-		}
-		for (int i = startingYear; i <= Calendar.getInstance().get(Calendar.YEAR); i++) {
-			MetaInfo metaInfo = new MetaInfo();
-			metaInfo.setName(apiKey);
-			metaInfo.setSchoolYear(i);
-			updateIscrizioneMobilita(metaInfo);
-			metaInfosMobilita.add(metaInfo);
-		}
-		scheduleUpdate.getUpdateMap().put(apiKey, metaInfosMobilita);
-
-	}
 
 	private void updateIscrizioneMobilita(MetaInfo metaInfo) throws Exception {
 
@@ -193,12 +172,20 @@ public class InfoTnImportMobilita {
 	public String importIscrizioneMobilitaFromRESTAPI() {
 		try {
 			List<MetaInfo> savedMetaInfoList = apiUpdateManager.fetchMetaInfoForAPI(apiKey);
+
+			if (savedMetaInfoList == null || savedMetaInfoList.isEmpty()) {
+				// call generic method to create metaInfos (apiKey, year?)
+				savedMetaInfoList = apiUpdateManager.createMetaInfoForAPI(apiKey, true);
+			}
+
 			for (MetaInfo metaInfo : savedMetaInfoList) {
 				if (!metaInfo.isBlocked()) {
 					updateIscrizioneMobilita(metaInfo);
 				}
 			}
+
 			apiUpdateManager.saveMetaInfoList(apiKey, savedMetaInfoList);
+
 			return "OK";
 
 		} catch (Exception e) {

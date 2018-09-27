@@ -1,6 +1,5 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -21,7 +20,6 @@ import it.smartcommunitylab.csengine.common.HTTPUtils;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.model.MetaInfo;
 import it.smartcommunitylab.csengine.model.Professor;
-import it.smartcommunitylab.csengine.model.ScheduleUpdate;
 import it.smartcommunitylab.csengine.storage.ProfessoriRepository;
 import it.smartcommunitylab.csengine.storage.ScheduleUpdateRepository;
 
@@ -44,7 +42,7 @@ public class InfoTnImportProfessori {
 	private String password;
 
 	private String apiKey = Const.API_PROFESSORI_KEY;
-	
+
 	@Autowired
 	private APIUpdateManager apiUpdateManager;
 	@Autowired
@@ -52,23 +50,6 @@ public class InfoTnImportProfessori {
 
 	@Autowired
 	ScheduleUpdateRepository metaInfoRepository;
-
-	public void initProfessori(ScheduleUpdate scheduleUpdate) throws Exception {
-		logger.info("start initProfessori");
-		List<MetaInfo> metaInfosProfessori = scheduleUpdate.getUpdateMap().get(apiKey);
-
-		if (metaInfosProfessori == null) {
-			metaInfosProfessori = new ArrayList<MetaInfo>();
-		}
-
-		MetaInfo metaInfo = new MetaInfo();
-		metaInfo.setName(apiKey);
-		updateProfessori(metaInfo);
-
-		metaInfosProfessori.add(metaInfo);
-		scheduleUpdate.getUpdateMap().put(apiKey, metaInfosProfessori);
-
-	}
 
 	public void updateProfessori(MetaInfo metaInfo) throws Exception {
 		logger.info("start importProfessoriFromRESTAPI");
@@ -142,19 +123,27 @@ public class InfoTnImportProfessori {
 	public String importProfessoriFromRESTAPI() {
 		try {
 			List<MetaInfo> savedMetaInfoList = apiUpdateManager.fetchMetaInfoForAPI(apiKey);
+
+			if (savedMetaInfoList == null || savedMetaInfoList.isEmpty()) {
+				// call generic method to create metaInfos (apiKey, year?)
+				savedMetaInfoList = apiUpdateManager.createMetaInfoForAPI(apiKey, false);
+			}
+
 			for (MetaInfo metaInfo : savedMetaInfoList) {
 				if (!metaInfo.isBlocked()) {
 					updateProfessori(metaInfo);
 				}
 			}
+
 			apiUpdateManager.saveMetaInfoList(apiKey, savedMetaInfoList);
+
 			return "OK";
 
 		} catch (Exception e) {
 			logger.error(e.getMessage());
 			return e.getMessage();
 		}
-		
+
 	}
 
 }

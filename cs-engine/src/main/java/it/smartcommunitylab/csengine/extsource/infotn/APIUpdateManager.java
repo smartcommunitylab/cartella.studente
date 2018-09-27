@@ -1,5 +1,7 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -27,6 +29,8 @@ public class APIUpdateManager {
 	private String user;
 	@Value("${infotn.api.pass}")
 	private String password;
+	@Value("${infotn.starting.year}")
+	private int startingYear;
 
 	@Autowired
 	private ScheduleUpdateRepository scheduleUpdateRepository;
@@ -61,7 +65,7 @@ public class APIUpdateManager {
 	@Autowired
 	private InfoTnImportProfessoriClassi importInfoTnProfesoriClassi;
 
-//	@PostConstruct
+	@PostConstruct
 	public void verifica() {
 		// se c'è un oggetto ScheduledUpdate non fa nulla
 		if (scheduleUpdateRepository.count() < 1) {
@@ -70,23 +74,6 @@ public class APIUpdateManager {
 			}
 			scheduleUpdate = new ScheduleUpdate();
 			try {
-				// API without schoolYear.
-				importInfoTNIstituzioneManager.initIstituzioni(scheduleUpdate);
-				importInfoTNUnitaManager.initUnita(scheduleUpdate);
-				importInfoTNAziende.initAziende(scheduleUpdate);
-				importInfoTNCourseMetaInfo.initCourseMetaInfo(scheduleUpdate);
-				importInfoTNProfessori.initProfessori(scheduleUpdate);
-				// API with schoolYear.
-				importInfoTNCorsi.initCorsi(scheduleUpdate);
-				importInfoTNStudenti.initStudenti(scheduleUpdate);
-				importInfoTNIscrizioniCorsi.initIscrCorsi(scheduleUpdate);
-				importInfoTnStage.initStage(scheduleUpdate);
-				importInfoTnIscrizioneStage.initIscrStage(scheduleUpdate);
-				importInfoTNEsami.initEsami(scheduleUpdate);
-				importInfoTNIscrizioniEsame.initIscrzEsami(scheduleUpdate);
-				importInfoTNMobilita.initIscrzMobilita(scheduleUpdate);
-				importInfoTnCertificazioni.initIscrzCertficazioni(scheduleUpdate);
-				importInfoTnProfesoriClassi.initProfessoriClassi(scheduleUpdate);
 
 				scheduleUpdateRepository.save(scheduleUpdate);
 
@@ -165,6 +152,33 @@ public class APIUpdateManager {
 		importInfoTnProfesoriClassi.importProfessoriClassiFromRESTAPI();
 
 		return "ok";
+	}
+	
+	public List<MetaInfo> createMetaInfoForAPI(String apiKey, boolean multipleYears) {
+		
+		// init.
+		List<MetaInfo> metaInfos = new ArrayList<MetaInfo>();
+
+		if (multipleYears) {
+
+			for (int i = startingYear; i <= Calendar.getInstance().get(Calendar.YEAR); i++) {
+				MetaInfo metaInfo = new MetaInfo();
+				metaInfo.setName(apiKey);
+				metaInfo.setSchoolYear(i);
+				metaInfos.add(metaInfo);
+			}
+
+		} else {
+
+			MetaInfo metaInfo = new MetaInfo();
+			metaInfo.setName(apiKey);
+			metaInfos.add(metaInfo);
+		}
+
+		scheduleUpdate.getUpdateMap().put(apiKey, metaInfos);
+
+		return metaInfos;
+
 	}
 
 }

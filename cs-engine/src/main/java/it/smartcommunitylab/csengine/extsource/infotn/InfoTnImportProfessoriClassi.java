@@ -1,8 +1,6 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -24,7 +22,6 @@ import it.smartcommunitylab.csengine.common.HTTPUtils;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.model.MetaInfo;
 import it.smartcommunitylab.csengine.model.ProfessoriClassi;
-import it.smartcommunitylab.csengine.model.ScheduleUpdate;
 import it.smartcommunitylab.csengine.storage.InstituteRepository;
 import it.smartcommunitylab.csengine.storage.ProfessoriClassiRepository;
 import it.smartcommunitylab.csengine.storage.ScheduleUpdateRepository;
@@ -56,24 +53,6 @@ public class InfoTnImportProfessoriClassi {
 	ScheduleUpdateRepository metaInfoRepository;
 
 	SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.ITALY);
-
-	public void initProfessoriClassi(ScheduleUpdate scheduleUpdate) throws Exception {
-		logger.info("start initProfessoriClassi");
-		List<MetaInfo> metaInfosProfClassi = scheduleUpdate.getUpdateMap().get(apiKey);
-
-		if (metaInfosProfClassi == null) {
-			metaInfosProfClassi = new ArrayList<MetaInfo>();
-		}
-		for (int i = startingYear; i <= Calendar.getInstance().get(Calendar.YEAR); i++) {
-			MetaInfo metaInfo = new MetaInfo();
-			metaInfo.setName(apiKey);
-			metaInfo.setSchoolYear(i);
-			updateProfessoriClassi(metaInfo);
-			metaInfosProfClassi.add(metaInfo);
-		}
-		scheduleUpdate.getUpdateMap().put(apiKey, metaInfosProfClassi);
-
-	}
 
 	private void updateProfessoriClassi(MetaInfo metaInfo) throws Exception {
 
@@ -152,12 +131,20 @@ public class InfoTnImportProfessoriClassi {
 	public String importProfessoriClassiFromRESTAPI() {
 		try {
 			List<MetaInfo> savedMetaInfoList = apiUpdateManager.fetchMetaInfoForAPI(apiKey);
+
+			if (savedMetaInfoList == null || savedMetaInfoList.isEmpty()) {
+				// call generic method to create metaInfos (apiKey, year?)
+				savedMetaInfoList = apiUpdateManager.createMetaInfoForAPI(apiKey, true);
+			}
+
 			for (MetaInfo metaInfo : savedMetaInfoList) {
 				if (!metaInfo.isBlocked()) {
 					updateProfessoriClassi(metaInfo);
 				}
 			}
+
 			apiUpdateManager.saveMetaInfoList(apiKey, savedMetaInfoList);
+
 			return "OK";
 
 		} catch (Exception e) {
