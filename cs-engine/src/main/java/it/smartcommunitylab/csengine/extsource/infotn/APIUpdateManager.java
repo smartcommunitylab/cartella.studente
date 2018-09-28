@@ -117,7 +117,7 @@ public class APIUpdateManager {
 
 	// @Scheduled(cron = "0 58 23 * * ?")
 	public String importAll() throws Exception {
-		verifica();
+	
 		if (logger.isInfoEnabled()) {
 			logger.info("start InfoTnScheduledTask.importAll");
 		}
