@@ -5,7 +5,11 @@ import it.smartcommunitylab.aac.authorization.beans.AccountAttributeDTO;
 import it.smartcommunitylab.aac.authorization.beans.AuthorizationUserDTO;
 import it.smartcommunitylab.aac.model.AccountProfile;
 import it.smartcommunitylab.csengine.common.Utils;
+import it.smartcommunitylab.csengine.model.User;
 import it.smartcommunitylab.csengine.security.AuthorizationManager;
+import it.smartcommunitylab.csengine.storage.UserRepository;
+
+import java.util.Map;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
@@ -44,6 +48,9 @@ public class AuthController {
 	
 	@Autowired
 	AuthorizationManager authorizationManager;
+	
+	@Autowired
+	UserRepository userRepository;
 
 	private AACProfileService profileConnector;
 
@@ -55,7 +62,23 @@ public class AuthController {
 	protected String getCF(AccountProfile accountProfile) {
 		String result = null;
 		if(accountProfile != null) {
-			result = accountProfile.getAttribute(profileAccount, profileAttribute);
+			if (accountProfile.getAccounts().containsKey("adc")) {
+				result = accountProfile.getAttribute("adc", "pat_attribute_codicefiscale"); 
+			} else {
+				Map<String, String> accountAttributes = null;
+				if (accountProfile.getAccounts().containsKey("google")) {
+					accountAttributes = accountProfile.getAccountAttributes("google");
+				} else if (accountProfile.getAccounts().containsKey("facebook")) {
+					accountAttributes = accountProfile.getAccountAttributes("facebook");
+				} else if (accountProfile.getAccounts().containsKey("internal")) {
+					accountAttributes = accountProfile.getAccountAttributes("internal");
+				}
+				String email = accountAttributes.get("email");
+				User user = userRepository.findByEmail(email);
+				if(user != null) {
+					result = user.getCf();
+				}
+			}
 		}
 		//return result;
 		//TODO TEST
