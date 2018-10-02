@@ -80,9 +80,7 @@ public class AuthController {
 				}
 			}
 		}
-		//return result;
-		//TODO TEST
-		return "ABCDEF12G34H567I";
+		return result;
 	}
 	
 	protected String getSubject(AccountProfile accountProfile) {
@@ -90,9 +88,7 @@ public class AuthController {
 		if(accountProfile != null) {
 			result = accountProfile.getUserId();
 		}
-		//return result;
-		//TODO TEST
-		return "429";
+		return result;
 	}
 	
 	protected AccountProfile getAccoutProfile(HttpServletRequest request) {
