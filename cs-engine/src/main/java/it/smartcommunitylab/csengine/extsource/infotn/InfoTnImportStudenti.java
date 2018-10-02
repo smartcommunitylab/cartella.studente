@@ -202,7 +202,6 @@ public class InfoTnImportStudenti {
 	}
 
 	public void addConsent(String cf) throws StorageException {
-
 		Student studentDb = studentRepository.findByCF(cf);
 		Consent consent = dataManager.getConsentByStudent(studentDb.getId());
 		if (consent == null) {
@@ -211,29 +210,29 @@ public class InfoTnImportStudenti {
 			consent.setSubject(studentDb.getCf());
 			consent.setAuthorized(Boolean.FALSE);
 			dataManager.addConsent(consent);
-			// set autorizhation
-			AccountAttributeDTO account = new AccountAttributeDTO();
-			account.setAccountName(profileAccount);
-			account.setAttributeName(profileAttribute);
-			account.setAttributeValue(studentDb.getCf());
-			AuthorizationUserDTO user = new AuthorizationUserDTO();
-			user.setAccountAttribute(account);
-			user.setType(userType);
-			List<String> actions = new ArrayList<String>();
-			actions.add(Const.AUTH_ACTION_ADD);
-			actions.add(Const.AUTH_ACTION_DELETE);
-			actions.add(Const.AUTH_ACTION_READ);
-			actions.add(Const.AUTH_ACTION_UPDATE);
-			Map<String, String> attributes = new HashMap<String, String>();
-			attributes.put("student-studentId", studentDb.getId());
-			AuthorizationDTO authorization = authorizationManager.getNewAuthorization(user, user, actions, "student",
-					attributes);
-			try {
-				authorizationManager.insertAuthorization(authorization);
-			} catch (Exception e) {
-				logger.warn(String.format("Error creating authorization: %s -%s - %s", studentDb.getOrigin(),
-						studentDb.getExtId(), e.getMessage()));
-			}
+		}
+		// set autorizhation
+		AccountAttributeDTO account = new AccountAttributeDTO();
+		account.setAccountName(profileAccount);
+		account.setAttributeName(profileAttribute);
+		account.setAttributeValue(studentDb.getCf());
+		AuthorizationUserDTO user = new AuthorizationUserDTO();
+		user.setAccountAttribute(account);
+		user.setType(userType);
+		List<String> actions = new ArrayList<String>();
+		actions.add(Const.AUTH_ACTION_ADD);
+		actions.add(Const.AUTH_ACTION_DELETE);
+		actions.add(Const.AUTH_ACTION_READ);
+		actions.add(Const.AUTH_ACTION_UPDATE);
+		Map<String, String> attributes = new HashMap<String, String>();
+		attributes.put("student-studentId", studentDb.getId());
+		AuthorizationDTO authorization = authorizationManager.getNewAuthorization(user, user, actions, "student",
+				attributes);
+		try {
+			authorizationManager.insertAuthorization(authorization);
+		} catch (Exception e) {
+			logger.warn(String.format("Error creating authorization: %s -%s - %s", studentDb.getOrigin(),
+					studentDb.getExtId(), e.getMessage()));
 		}
 	}
 

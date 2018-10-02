@@ -652,6 +652,7 @@ public class RepositoryManager {
 		} else {
 			Date now = new Date();
 			consentDb.setLastUpdate(now);
+			consentDb.setAuthorized(Boolean.TRUE);
 			consentRepository.save(consentDb);
 		}
 		return consentDb;

@@ -533,7 +533,6 @@ export class CurriculumPage implements OnInit {
         });
 
       } else {
-        debugger;
         // create CV.
         this.userService.addUserCV(post).then(addedCV => {
 
@@ -547,7 +546,6 @@ export class CurriculumPage implements OnInit {
 
 
     }).catch(error => {
-      debugger;
       // create CV.
       this.userService.addUserCV(post).then(addedCV => {
         if (addedCV.id) {

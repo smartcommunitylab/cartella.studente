@@ -7,7 +7,7 @@ import {LoginService, LOGIN_STATUS} from '../services/login.service';
 
 import { LoginPage } from '../pages/login/login';
 import { HomePage } from '../pages/home/home';
-import { ConsentPage } from '../pages/consent/consent';
+import { TermsPage } from '../pages/terms/terms';
 
 @Component({
   templateUrl: 'app.html'
@@ -27,11 +27,17 @@ export class MyApp {
         status => {
           switch (status) {
             case LOGIN_STATUS.EXISTING: {
-              this.rootPage = HomePage;
+              // conditional setting of rootpage.
+              login.readConsent().then(consent => {
+                if (!consent.authorized) {
+                  this.rootPage = TermsPage;
+                } else {
+                  this.rootPage = HomePage;
+                } 
+              });
               break;
             } 
             case LOGIN_STATUS.NEW: {
-              //this.rootPage = ConsentPage;
               this.rootPage = HomePage; // Fix for reported issue on 01/12/17
               break;
             }

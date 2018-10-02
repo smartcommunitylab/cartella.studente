@@ -87,11 +87,11 @@ export class LoginService  {
   /**
    * Perform consent operation for the user using the corresponding API method
    */
-  consent(): Promise<boolean> {
+  consent(): Promise<any> {
     // TODO make a call to the consent service
       return new Promise((resolve, reject) => {
-       this.connectorService.consent(this.userService.getUserId(),this.userService.getConsentSubject()).then(result =>{
-         resolve(true);
+       this.connectorService.consent(this.userService.getUserId()).then(result =>{
+         resolve(result);
        }
      ,
      err => {
@@ -100,9 +100,26 @@ export class LoginService  {
        )
      }
      )
-    //return Promise.resolve(true);
   }
-  
+
+  readConsent(): Promise<any> {
+    // TODO make a call to the consent service
+    return new Promise((resolve, reject) => {
+      if (!this.userService.getUserId()) { 
+        console.log("studentId not set");
+      }
+      this.connectorService.readConsent(this.userService.getUserId()).then(result => {
+        resolve(result);
+      }
+        ,
+        err => {
+          resolve(false);
+        }
+      )
+    }
+    )
+  }
+
   /**
    * Return AAC access token if present
    */
