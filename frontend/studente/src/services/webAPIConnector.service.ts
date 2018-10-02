@@ -56,13 +56,15 @@ export class WebAPIConnectorService {
         return this.handleError
       });
   }
-  consent(studentId: string, subject: string): Promise<any> {
+  consent(studentId: string): Promise<any> {
     let url: string = this.getApiUrl() + 'consent/student/' + studentId;
-    // let url: string = this.getApiUrl() + 'consent';
-    return this.http.post(url, {
-      "studentId": studentId,
-      "subject": subject
-    })
+    return this.http.post(url,{})
+      .toPromise()
+      .then(response => response.json())
+  }
+  readConsent(studentId: string): Promise<any> {
+    let url: string = this.getApiUrl() + 'consent/student/' + studentId;
+    return this.http.get(url,{})
       .toPromise()
       .then(response => response.json())
   }
@@ -98,7 +100,7 @@ export class WebAPIConnectorService {
   }
 
   getExperiences(studentId: string, typeExp: string): Promise<any[]> {
-    let url: string = this.getApiUrl() + 'student/' + studentId + '/experience/' + typeExp;
+    let url: string = this.getApiUrl() + 'student/' + studentId + '/experience/' + typeExp + '?page=0&size=50';
 
     return this.http.get(url)
       .toPromise()
