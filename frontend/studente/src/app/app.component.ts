@@ -22,32 +22,34 @@ export class MyApp {
       statusBar.styleDefault();
       splashScreen.hide();
       translate.setDefaultLang('it');
+
+      // this.rootPage = HomePage;
       
-      login.checkLoginStatus().then(
-        status => {
-          switch (status) {
-            case LOGIN_STATUS.EXISTING: {
-              // conditional setting of rootpage.
-              login.readConsent().then(consent => {
-                if (!consent.authorized) {
-                  this.rootPage = TermsPage;
-                } else {
-                  this.rootPage = HomePage;
-                } 
-              });
-              break;
-            } 
-            case LOGIN_STATUS.NEW: {
-              this.rootPage = TermsPage; // Fix for reported issue on 01/12/17
-              break;
-            }
-            default : this.rootPage = LoginPage;
-          }          
-        },
-        error => {
-          // TODO: handle error
-        }
-      );
+      // login.checkLoginStatus().then(
+      //   status => {
+      //     switch (status) {
+      //       case LOGIN_STATUS.EXISTING: {
+      //         // conditional setting of rootpage.
+      //         login.readConsent().then(consent => {
+      //           if (!consent.authorized) {
+      //             this.rootPage = TermsPage;
+      //           } else {
+      //             this.rootPage = HomePage;
+      //           } 
+      //         });
+      //         break;
+      //       } 
+      //       case LOGIN_STATUS.NEW: {
+      //         this.rootPage = TermsPage; // Fix for reported issue on 01/12/17
+      //         break;
+      //       }
+      //       default : this.rootPage = LoginPage;
+      //     }          
+      //   },
+      //   error => {
+      //     // TODO: handle error
+      //   }
+      // );
     });
   }
 }

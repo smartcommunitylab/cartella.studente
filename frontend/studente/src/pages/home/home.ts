@@ -14,8 +14,11 @@ import { CurriculumPage } from '../curriculum/curriculum'
 import { CertificationsPage } from '../certifications/certifications'
 import { UserService } from '../../services/user.service'
 import { TranslateService } from 'ng2-translate';
-import { ConfigService } from '../../services/config.service';
-import { LoginService } from '../../services/login.service'
+import { LOGIN_STATUS, LoginService } from '../../services/login.service';
+import { TermsPage } from '../../pages/terms/terms';
+
+
+declare var window: any;
 
 @Component({
   selector: 'page-home',
@@ -23,10 +26,38 @@ import { LoginService } from '../../services/login.service'
 })
 export class HomePage implements OnInit {
 
+  
   registrations: Registration[] = [];
   experiences: Experience[] = [];
   constructor(public navCtrl: NavController, private userService: UserService, public loading: LoadingController, public translate: TranslateService,
-    private configSrv: ConfigService, private login: LoginService) {
+  private login: LoginService) {
+    
+    
+      login.checkLoginStatus().then(
+        status => {
+          switch (status) {
+            case LOGIN_STATUS.EXISTING: {
+              // conditional setting of rootpage.
+              login.readConsent().then(consent => {
+                if (!consent.authorized) {
+                  this.navCtrl.setRoot(TermsPage);
+                } 
+              });
+              break;
+            } 
+            case LOGIN_STATUS.NEW: {
+              this.navCtrl.setRoot(TermsPage); // Fix for reported issue on 01/12/17
+              break;
+            }
+            default: { 
+              login.login('Studente');
+            }
+          }          
+        },
+        error => {
+          // TODO: handle error
+        }
+      );
   }
   openRegistration(registration: Registration): void {
     this.navCtrl.push(InstitutePage, { paramRegistration: registration })

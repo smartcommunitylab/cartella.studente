@@ -10,7 +10,8 @@ import {TranslateService} from 'ng2-translate';
   templateUrl: 'institute.html'
 })
 export class InstitutePage  {
-  registrations:Registration[]=[];
+    registrations: Registration[] = [];
+    agreegatedRegistrationMap = {};  
   teachingUnit:TeachingUnit=null;
   order=true;
 icon="ios-arrow-down";
@@ -49,11 +50,27 @@ ionViewWillEnter () {
     if (paramRegistration != null) {
         //    this.userService.getUserExams().then(registrations =>{
         this.registrations = paramRegistration.registrations;
+        this.agreegateRegistration(paramRegistration.registrations);
         this.teachingUnit = paramRegistration.teachingUnit;
         loader.dismiss();
     }
  })
 //  })
-}
+    }
+
+    agreegateRegistration(unAgreegated) {
+        for (var r = 0; r < unAgreegated.length; r++) {
+
+                var key = unAgreegated[r].course;
+
+                if (!this.agreegatedRegistrationMap[key]) {
+                    this.agreegatedRegistrationMap[key] = [];
+                }
+
+                this.agreegatedRegistrationMap[key].push(unAgreegated[r]);
+         
+
+        }
+    }
 }
 

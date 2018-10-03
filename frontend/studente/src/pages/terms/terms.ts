@@ -1,9 +1,10 @@
 import { Component } from '@angular/core';
-import {TranslateService} from 'ng2-translate';
-import { Storage } from '@ionic/storage';
-import { Headers, Http } from '@angular/http';
+import { TranslateService} from 'ng2-translate';
+import { Http } from '@angular/http';
 import { NavController, ViewController, AlertController, Platform } from 'ionic-angular';
 import { HomePage } from '../home/home';
+import { LoginService } from '../../services/login.service'
+
 
 @Component({
     selector: 'terms',
@@ -16,17 +17,16 @@ export class TermsPage {
     lbl_terms_of_service: String;
     termsFile: any;
     accepting: Boolean;
-  
-    constructor(private http: Http, public translate: TranslateService, public storage: Storage, public nav: NavController,
+      
+    constructor(private login: LoginService, private http: Http, public translate: TranslateService, public nav: NavController,
         public viewCtrl: ViewController, public alertCtrl: AlertController, public platform: Platform) {
 
         // load html file.
         var url = 'assets/terms/terms.html';
         this.load(url).then(resp => this.termsFile = resp);
-        // set flag (to show accept refuse button)
-        this.readIsPrivacyAccepted().then(flag => {
-            this.accepting = !flag
-        });
+
+        this.accepting = true;
+       
         this.lbl_terms_of_service = translate.instant('lbl_terms_of_service');
 
     }
@@ -43,12 +43,18 @@ export class TermsPage {
 
 
     acceptPrivacy = function () {
-        this.setPrivacyAccepted().then(flag => {
-            this.accepting = flag;
-        });
-        this.goToProposalsList();
+        this.login.consent().then(result => {
+            if (result) {
+                this.accept = result.authorized;
+                this.goToProposalsList();        
+            }
+          },
+            err => {
+        });        
+     
     };
 
+    
     refusePrivacy = function () {
 
         let prompt = this.alertCtrl.create({
@@ -64,13 +70,5 @@ export class TermsPage {
         }, 1800) //close the popup after 1.8 seconds for some reason
 
     };
-
-    readIsPrivacyAccepted(): Promise<String> {
-        return this.storage.get("isPrivacyAccepted").then(flag => { return flag });
-    }
-
-    setPrivacyAccepted(): Promise<String> {
-        return this.storage.set("isPrivacyAccepted", "true").then(flag => { return flag });
-    }
 
 }

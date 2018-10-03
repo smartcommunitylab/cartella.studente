@@ -51,7 +51,7 @@ export class LoginService  {
   }
 
   serverLogout(): void {
-    window.location = this.config.getConfig('aacUrl') + '/logout?target=' + window.location.href;
+    window.location = this.config.getConfig('aacUrl') + '/logout?target=' + this.config.getConfig('redirectUrl') + '/#/login';
   }
 
   /**
