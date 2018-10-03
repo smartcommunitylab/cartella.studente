@@ -38,7 +38,7 @@ export class MyApp {
               break;
             } 
             case LOGIN_STATUS.NEW: {
-              this.rootPage = HomePage; // Fix for reported issue on 01/12/17
+              this.rootPage = TermsPage; // Fix for reported issue on 01/12/17
               break;
             }
             default : this.rootPage = LoginPage;
