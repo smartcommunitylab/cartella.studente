@@ -54,7 +54,7 @@ public class CertifierController extends AuthController {
 	@Autowired
 	private DocumentManager documentManager;
 
-	@RequestMapping(value = "/api/aziende", method = RequestMethod.GET)
+	@RequestMapping(value = "/extsource/aziende", method = RequestMethod.GET)
 	public @ResponseBody Page<Certifier> getAllAziende(@ApiParam Pageable pageable, @RequestParam(required = false) Long timestamp) {
 
 		Page<Certifier> result;

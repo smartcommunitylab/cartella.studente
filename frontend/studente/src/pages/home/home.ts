@@ -30,35 +30,8 @@ export class HomePage implements OnInit {
   registrations: Registration[] = [];
   experiences: Experience[] = [];
   constructor(public navCtrl: NavController, private userService: UserService, public loading: LoadingController, public translate: TranslateService,
-  private login: LoginService) {
-    
-    
-      login.checkLoginStatus().then(
-        status => {
-          switch (status) {
-            case LOGIN_STATUS.EXISTING: {
-              // conditional setting of rootpage.
-              login.readConsent().then(consent => {
-                if (!consent.authorized) {
-                  this.navCtrl.setRoot(TermsPage);
-                } 
-              });
-              break;
-            } 
-            case LOGIN_STATUS.NEW: {
-              this.navCtrl.setRoot(TermsPage); // Fix for reported issue on 01/12/17
-              break;
-            }
-            default: { 
-              login.login('Studente');
-            }
-          }          
-        },
-        error => {
-          // TODO: handle error
-        }
-      );
-  }
+    private login: LoginService) { }
+  
   openRegistration(registration: Registration): void {
     this.navCtrl.push(InstitutePage, { paramRegistration: registration })
   }
@@ -91,14 +64,55 @@ export class HomePage implements OnInit {
     let loader = this.loading.create({
       content: this.translate.instant('loading'),
     });
+
     loader.present().then(() => {
-      this.userService.getUserRegistrations().then(registrations => {
-        this.registrations = registrations
-        loader.dismiss();
-      }).catch((ex) => {
-        console.error('Error fetching users', ex);
-        loader.dismiss();
-      });;
+
+
+      this.login.checkLoginStatus().then(
+        status => {
+          switch (status) {
+            case LOGIN_STATUS.EXISTING: {
+              // conditional setting of rootpage.
+              this.login.readConsent().then(consent => {
+                if (!consent.authorized) {
+                  loader.dismiss();
+                  this.navCtrl.setRoot(TermsPage);
+                } else {
+                  this.userService.getUserRegistrations().then(registrations => {
+                    this.registrations = registrations
+                    loader.dismiss();
+                  }).catch((ex) => {
+                    console.error('Error fetching users', ex);
+                    loader.dismiss();
+                  });                  
+                }
+              });
+              break;
+            } 
+            case LOGIN_STATUS.NEW: {
+              loader.dismiss();
+              this.navCtrl.setRoot(TermsPage); // Fix for reported issue on 01/12/17
+              break;
+            }
+            default: { 
+              this.login.login('Studente');
+            }
+          }          
+        },
+        error => {
+            console.error('Error checking user status', error);
+            loader.dismiss();          
+        }
+      );
+
+
+      // this.userService.getUserRegistrations().then(registrations => {
+      //   this.registrations = registrations
+      //   loader.dismiss();
+      // }).catch((ex) => {
+      //   console.error('Error fetching users', ex);
+      //   loader.dismiss();
+      // });;
     })
   }
 

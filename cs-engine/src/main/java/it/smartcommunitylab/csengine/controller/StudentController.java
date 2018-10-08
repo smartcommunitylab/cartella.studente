@@ -672,7 +672,7 @@ public class StudentController extends AuthController {
 	}
 	
 	
-	@RequestMapping(value = "/api/students", method = RequestMethod.GET)
+	@RequestMapping(value = "/extsource/students", method = RequestMethod.GET)
 	public @ResponseBody Page<Student> getAllStudents(@ApiParam Pageable pageable, @RequestParam(required=false) Long timestamp) {
 		
 		Page<Student> result;

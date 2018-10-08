@@ -238,7 +238,7 @@ public class TeachingUnitController extends AuthController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/api/registrations", method = RequestMethod.GET)
+	@RequestMapping(value = "/extsource/registrations", method = RequestMethod.GET)
 	public @ResponseBody Page<Registration> getAllRegistration(@ApiParam Pageable pageable, @RequestParam(required=false) Long timestamp) {
 		Page<Registration> result;
 		if (timestamp != null) {

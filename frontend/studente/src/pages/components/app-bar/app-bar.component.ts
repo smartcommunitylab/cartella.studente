@@ -20,7 +20,7 @@ export class AppBar {
   }
 
   cedus(): void {
-    var url = 'https://dev.smartcommunitylab.it/cedus/web/student';
+    var url = 'https://dev.smartcommunitylab.it/cedus';
     var params = [
       'height=' + screen.height,
       'width=' + screen.width,
