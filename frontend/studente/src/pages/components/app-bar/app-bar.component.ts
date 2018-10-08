@@ -24,9 +24,9 @@ export class AppBar {
     var params = [
       'height=' + screen.height,
       'width=' + screen.width,
-      'fullscreen=yes' // only works in IE, but here for completeness
+      // 'fullscreen=yes' // only works in IE, but here for completeness
     ].join(',');
-    window.open(url, '_target', params);
+    window.open(url, '_blank', params);
     
   }
 }

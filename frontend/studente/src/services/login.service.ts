@@ -57,7 +57,7 @@ export class LoginService  {
   /**
    * Check status of the login. Return LOGIN_STATUS value
    */
-  checkLoginStatus():Promise<LOGIN_STATUS> {
+  checkLoginStatus(): Promise<LOGIN_STATUS> {
     if (!sessionStorage.access_token) {
       return Promise.resolve(LOGIN_STATUS.NOTSIGNEDIN);
     }
@@ -66,21 +66,22 @@ export class LoginService  {
       // if the service return empty profile, resolve NEW
       // if the service return non-empty profile, resolve EXISTING
       // in case of error resolve NOTSIGNEDIN
-      this.connectorService.getProfile().then(profile =>{
+      this.connectorService.getProfile().then(profile => {
         //check the case
         this.userService.setUserId(profile.studentId);
         this.userService.setConsentSubject(profile.subject);
-        if (profile.authorized){
-           resolve(LOGIN_STATUS.EXISTING);
-        }else {
-           resolve(LOGIN_STATUS.NEW);
+        if (profile.authorized) {
+          resolve(LOGIN_STATUS.EXISTING);
+        } else {
+          resolve(LOGIN_STATUS.NEW);
         }
       },
-      err => {
-        // TODO handle error
-        resolve(LOGIN_STATUS.NOTSIGNEDIN);
-      }); 
-      
+        err => {
+          console.error(err);
+          // TODO handle error
+          resolve(LOGIN_STATUS.NOTSIGNEDIN);
+        });
+
     });
   }
 
@@ -89,23 +90,24 @@ export class LoginService  {
    */
   consent(): Promise<any> {
     // TODO make a call to the consent service
-      return new Promise((resolve, reject) => {
-       this.connectorService.consent(this.userService.getUserId()).then(result =>{
-         resolve(result);
-       }
-     ,
-     err => {
-       resolve(false);
-     }
-       )
-     }
-     )
+    return new Promise((resolve, reject) => {
+      this.connectorService.consent(this.userService.getUserId()).then(result => {
+        resolve(result);
+      }
+        ,
+        err => {
+          console.error(err);
+          resolve(false);
+        }
+      )
+    }
+    )
   }
 
   readConsent(): Promise<any> {
     // TODO make a call to the consent service
     return new Promise((resolve, reject) => {
-      if (!this.userService.getUserId()) { 
+      if (!this.userService.getUserId()) {
         console.log("studentId not set");
       }
       this.connectorService.readConsent(this.userService.getUserId()).then(result => {
@@ -113,6 +115,7 @@ export class LoginService  {
       }
         ,
         err => {
+          console.error(err);
           resolve(false);
         }
       )

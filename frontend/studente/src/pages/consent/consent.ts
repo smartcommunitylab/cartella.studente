@@ -31,8 +31,7 @@ export class ConsentPage implements OnInit {
       }
     },
       err => {
-        // TODO handle error
-        //maybe come back
+        console.error(err)
       });
   }
 

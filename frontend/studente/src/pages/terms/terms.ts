@@ -46,12 +46,13 @@ export class TermsPage {
         this.login.consent().then(result => {
             if (result) {
                 this.accept = result.authorized;
-                this.goToProposalsList();        
+                this.goToProposalsList();
             }
-          },
+        },
             err => {
-        });        
-     
+                console.error(err);
+            });
+
     };
 
     
