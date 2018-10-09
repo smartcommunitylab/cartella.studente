@@ -2,12 +2,15 @@ package it.smartcommunitylab.csengine.controller;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import it.smartcommunitylab.aac.model.AccountProfile;
 import it.smartcommunitylab.csengine.model.statistics.CourseData;
 import it.smartcommunitylab.csengine.model.statistics.KPI;
 import it.smartcommunitylab.csengine.model.statistics.POI;
@@ -15,7 +18,7 @@ import it.smartcommunitylab.csengine.model.statistics.StudentProfile;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
 
 @RestController
-public class StatisticsController {
+public class StatisticsController extends AuthController {
 
 	@Autowired
 	private RepositoryManager dataManager;
@@ -45,8 +48,11 @@ public class StatisticsController {
 	}	
 
 	@GetMapping("/api/statistics/profile/student")
-	public StudentProfile geStudenttProfile() throws Exception {
-		StudentProfile result = dataManager.getStudentProfile("RSSMRA99T25L378F");
+	public StudentProfile geStudenttProfile(HttpServletRequest request) throws Exception {
+		AccountProfile profile = this.getAccoutProfile(request);
+		String cf = this.getCF(profile);
+		
+		StudentProfile result = dataManager.getStudentProfile(cf);
 		return result;
 	}		
 	 
