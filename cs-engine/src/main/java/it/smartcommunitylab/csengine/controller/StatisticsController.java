@@ -50,10 +50,13 @@ public class StatisticsController extends AuthController {
 	@GetMapping("/api/statistics/profile/student")
 	public StudentProfile geStudenttProfile(HttpServletRequest request) throws Exception {
 		AccountProfile profile = this.getAccoutProfile(request);
-		String cf = this.getCF(profile);
 		
-		StudentProfile result = dataManager.getStudentProfile(cf);
-		return result;
+		if (profile != null) {
+			String cf = this.getCF(profile);
+			StudentProfile result = dataManager.getStudentProfile(cf);
+			return result;
+		}
+		return null;
 	}		
 	 
 	
