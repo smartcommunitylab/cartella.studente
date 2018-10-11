@@ -26,10 +26,10 @@ import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportCertificazioni
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportCorsi;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportCourseMetaInfo;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportEsami;
-import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportInstitute;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportIscrizioneCorsi;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportIscrizioneEsami;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportIscrizioneStage;
+import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportIstituzioni;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportMobilita;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportProfessori;
 import it.smartcommunitylab.csengine.extsource.infotn.InfoTnImportProfessoriClassi;
@@ -42,7 +42,7 @@ public class InfoTnController {
 	private static final transient Logger logger = LoggerFactory.getLogger(InfoTnController.class);
 
 	@Autowired
-	InfoTnImportInstitute importIstituzioni;
+	InfoTnImportIstituzioni importIstituzioni;
 
 	@Autowired
 	InfoTnImportUnita importUnita;
