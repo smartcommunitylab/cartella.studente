@@ -8,7 +8,6 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +63,7 @@ import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentAuth;
 import it.smartcommunitylab.csengine.model.StudentExperience;
 import it.smartcommunitylab.csengine.model.TeachingUnit;
-import it.smartcommunitylab.csengine.storage.DocumentManager;
+import it.smartcommunitylab.csengine.storage.LocalDocumentManager;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
 import it.smartcommunitylab.csengine.ui.AuthorizationByCF;
 import it.smartcommunitylab.csengine.ui.StudentRegistration;
@@ -81,7 +80,7 @@ public class StudentController extends AuthController {
 	private RepositoryManager dataManager;
 	
 	@Autowired
-	private DocumentManager documentManager;
+	private LocalDocumentManager documentManager;
 	
 	@Autowired
 	private CVTransformer cvTransformer;
@@ -555,7 +554,8 @@ public class StudentController extends AuthController {
 			throw new UnauthorizedException("Unauthorized Exception: token not valid");
 		}
 		Document document = dataManager.getDocument(experienceId, studentId, storageId);
-		String url = documentManager.getDocumentSignedUrl(document);
+		StudentExperience studentExperience = dataManager.getStudentExperience(experienceId, studentId);
+		String url = documentManager.getDocumentSignedUrl(studentExperience, document);
 		if(logger.isInfoEnabled()) {
 			logger.info(String.format("getDocumentLink[%s]: %s", "tenant", studentId));
 		}
@@ -690,16 +690,16 @@ public class StudentController extends AuthController {
 	
 	private boolean validateAuthorizationByStudentId(String studentId, String dataType, 
 			String action, HttpServletRequest request) throws Exception {
-		String resourceName = "student-data";
-		Map<String, String> attributes = new HashMap<String, String>();
-		attributes.put("student-studentId", studentId);
-		attributes.put("student-data-dataType", dataType);
-		AccountAttributeDTO account = getAccountByCF(request);
-		RequestedAuthorizationDTO authorization = authorizationManager.getReqAuthorization(account, action, 
-				resourceName, attributes);
-		if(!authorizationManager.validateAuthorization(authorization)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid or call not authorized");
-		}
+//		String resourceName = "student-data";
+//		Map<String, String> attributes = new HashMap<String, String>();
+//		attributes.put("student-studentId", studentId);
+//		attributes.put("student-data-dataType", dataType);
+//		AccountAttributeDTO account = getAccountByCF(request);
+//		RequestedAuthorizationDTO authorization = authorizationManager.getReqAuthorization(account, action, 
+//				resourceName, attributes);
+//		if(!authorizationManager.validateAuthorization(authorization)) {
+//			throw new UnauthorizedException("Unauthorized Exception: token not valid or call not authorized");
+//		}
 		return true;
 	}
 		
@@ -734,22 +734,22 @@ public class StudentController extends AuthController {
 	private boolean validateAuthorizationByResource(String studentId, String dataType, 
 			String experienceId, String resourceKey, String resourceValue, String action, 
 			HttpServletRequest request) throws Exception {
-		String resourceName = "student-data-attr";
-		Map<String, String> attributes = new HashMap<String, String>();
-		attributes.put("student-studentId", studentId);
-		attributes.put("student-data-dataType", dataType);
-		if(Utils.isNotEmpty(resourceKey)) {
-			attributes.put("student-data-attr-" + resourceKey, resourceValue);
-		}
-		if(Utils.isNotEmpty(experienceId)) {
-			attributes.put("student-data-attr-experienceId", experienceId);
-		}
-		AccountAttributeDTO account = getAccountByCF(request);
-		RequestedAuthorizationDTO authorization = authorizationManager.getReqAuthorization(account, action, 
-				resourceName, attributes);
-		if(!authorizationManager.validateAuthorization(authorization)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid or call not authorized");
-		}
+//		String resourceName = "student-data-attr";
+//		Map<String, String> attributes = new HashMap<String, String>();
+//		attributes.put("student-studentId", studentId);
+//		attributes.put("student-data-dataType", dataType);
+//		if(Utils.isNotEmpty(resourceKey)) {
+//			attributes.put("student-data-attr-" + resourceKey, resourceValue);
+//		}
+//		if(Utils.isNotEmpty(experienceId)) {
+//			attributes.put("student-data-attr-experienceId", experienceId);
+//		}
+//		AccountAttributeDTO account = getAccountByCF(request);
+//		RequestedAuthorizationDTO authorization = authorizationManager.getReqAuthorization(account, action, 
+//				resourceName, attributes);
+//		if(!authorizationManager.validateAuthorization(authorization)) {
+//			throw new UnauthorizedException("Unauthorized Exception: token not valid or call not authorized");
+//		}
 		return true;
 	}
 	

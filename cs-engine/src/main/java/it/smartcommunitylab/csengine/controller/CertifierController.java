@@ -37,7 +37,7 @@ import it.smartcommunitylab.csengine.model.Certifier;
 import it.smartcommunitylab.csengine.model.Document;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentExperience;
-import it.smartcommunitylab.csengine.storage.DocumentManager;
+import it.smartcommunitylab.csengine.storage.LocalDocumentManager;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
 
 @Controller
@@ -52,7 +52,7 @@ public class CertifierController extends AuthController {
 	private RepositoryManager dataManager;
 
 	@Autowired
-	private DocumentManager documentManager;
+	private LocalDocumentManager documentManager;
 
 	@RequestMapping(value = "/extsource/aziende", method = RequestMethod.GET)
 	public @ResponseBody Page<Certifier> getAllAziende(@ApiParam Pageable pageable, @RequestParam(required = false) Long timestamp) {
