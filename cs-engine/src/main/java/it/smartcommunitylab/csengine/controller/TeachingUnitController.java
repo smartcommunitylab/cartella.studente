@@ -1,28 +1,5 @@
 package it.smartcommunitylab.csengine.controller;
 
-import io.swagger.annotations.ApiParam;
-import it.smartcommunitylab.aac.authorization.beans.AccountAttributeDTO;
-import it.smartcommunitylab.aac.authorization.beans.RequestedAuthorizationDTO;
-import it.smartcommunitylab.csengine.common.Const;
-import it.smartcommunitylab.csengine.common.Utils;
-import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
-import it.smartcommunitylab.csengine.exception.StorageException;
-import it.smartcommunitylab.csengine.exception.UnauthorizedException;
-import it.smartcommunitylab.csengine.model.Certifier;
-import it.smartcommunitylab.csengine.model.Course;
-import it.smartcommunitylab.csengine.model.CourseMetaInfo;
-import it.smartcommunitylab.csengine.model.Experience;
-import it.smartcommunitylab.csengine.model.Professor;
-import it.smartcommunitylab.csengine.model.ProfessoriClassi;
-import it.smartcommunitylab.csengine.model.Registration;
-import it.smartcommunitylab.csengine.model.Student;
-import it.smartcommunitylab.csengine.model.StudentExperience;
-import it.smartcommunitylab.csengine.model.TeachingUnit;
-import it.smartcommunitylab.csengine.storage.DocumentManager;
-import it.smartcommunitylab.csengine.storage.RepositoryManager;
-import it.smartcommunitylab.csengine.ui.ExperienceExtended;
-import it.smartcommunitylab.csengine.ui.StudentExtended;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -46,6 +23,27 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import io.swagger.annotations.ApiParam;
+import it.smartcommunitylab.aac.authorization.beans.AccountAttributeDTO;
+import it.smartcommunitylab.aac.authorization.beans.RequestedAuthorizationDTO;
+import it.smartcommunitylab.csengine.common.Const;
+import it.smartcommunitylab.csengine.common.Utils;
+import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
+import it.smartcommunitylab.csengine.exception.StorageException;
+import it.smartcommunitylab.csengine.exception.UnauthorizedException;
+import it.smartcommunitylab.csengine.model.Course;
+import it.smartcommunitylab.csengine.model.CourseMetaInfo;
+import it.smartcommunitylab.csengine.model.Experience;
+import it.smartcommunitylab.csengine.model.Professor;
+import it.smartcommunitylab.csengine.model.ProfessoriClassi;
+import it.smartcommunitylab.csengine.model.Registration;
+import it.smartcommunitylab.csengine.model.Student;
+import it.smartcommunitylab.csengine.model.StudentExperience;
+import it.smartcommunitylab.csengine.model.TeachingUnit;
+import it.smartcommunitylab.csengine.storage.RepositoryManager;
+import it.smartcommunitylab.csengine.ui.ExperienceExtended;
+import it.smartcommunitylab.csengine.ui.StudentExtended;
+
 @Controller
 public class TeachingUnitController extends AuthController {
 	private static final transient Logger logger = LoggerFactory.getLogger(TeachingUnitController.class);
@@ -53,9 +51,6 @@ public class TeachingUnitController extends AuthController {
 	@Autowired
 	private RepositoryManager dataManager;
 	
-	@Autowired
-	private DocumentManager documentManager;
-		
 	@RequestMapping(value = "/api/tu", method = RequestMethod.GET)
 	public @ResponseBody List<TeachingUnit> getTeachingUnits(
 			@RequestParam(required=false) String ordine,

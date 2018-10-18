@@ -1,14 +1,5 @@
 package it.smartcommunitylab.csengine.controller;
 
-import it.smartcommunitylab.csengine.common.Const;
-import it.smartcommunitylab.csengine.common.Utils;
-import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
-import it.smartcommunitylab.csengine.exception.StorageException;
-import it.smartcommunitylab.csengine.exception.UnauthorizedException;
-import it.smartcommunitylab.csengine.model.stats.RegistrationStats;
-import it.smartcommunitylab.csengine.storage.DocumentManager;
-import it.smartcommunitylab.csengine.storage.RepositoryManager;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -32,15 +23,20 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 
+import it.smartcommunitylab.csengine.common.Const;
+import it.smartcommunitylab.csengine.common.Utils;
+import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
+import it.smartcommunitylab.csengine.exception.StorageException;
+import it.smartcommunitylab.csengine.exception.UnauthorizedException;
+import it.smartcommunitylab.csengine.model.stats.RegistrationStats;
+import it.smartcommunitylab.csengine.storage.RepositoryManager;
+
 @Controller
 public class StatsController extends AuthController {
 	private static final transient Logger logger = LoggerFactory.getLogger(StatsController.class);
 	
 	@Autowired
 	private RepositoryManager dataManager;
-	
-	@Autowired
-	private DocumentManager documentManager;
 	
 	private Cache<String, RegistrationStats> statsCache;
 		

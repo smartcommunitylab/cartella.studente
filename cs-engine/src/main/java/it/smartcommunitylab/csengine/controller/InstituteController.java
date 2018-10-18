@@ -1,14 +1,5 @@
 package it.smartcommunitylab.csengine.controller;
 
-import it.smartcommunitylab.csengine.common.Utils;
-import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
-import it.smartcommunitylab.csengine.exception.StorageException;
-import it.smartcommunitylab.csengine.exception.UnauthorizedException;
-import it.smartcommunitylab.csengine.model.Institute;
-import it.smartcommunitylab.csengine.model.Registration;
-import it.smartcommunitylab.csengine.storage.DocumentManager;
-import it.smartcommunitylab.csengine.storage.RepositoryManager;
-
 import java.util.List;
 import java.util.Map;
 
@@ -30,6 +21,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import io.swagger.annotations.ApiParam;
+import it.smartcommunitylab.csengine.common.Utils;
+import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
+import it.smartcommunitylab.csengine.exception.StorageException;
+import it.smartcommunitylab.csengine.exception.UnauthorizedException;
+import it.smartcommunitylab.csengine.model.Institute;
+import it.smartcommunitylab.csengine.storage.RepositoryManager;
 
 @Controller
 public class InstituteController {
@@ -41,9 +38,6 @@ public class InstituteController {
 	
 	@Autowired
 	private RepositoryManager dataManager;
-	
-	@Autowired
-	private DocumentManager documentManager;
 	
 	@RequestMapping(value = "/api/institute", method = RequestMethod.GET)
 	public @ResponseBody List<Institute> getInstitutes(HttpServletRequest request) throws Exception {

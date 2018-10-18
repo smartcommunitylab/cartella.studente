@@ -1,16 +1,5 @@
 package it.smartcommunitylab.csengine.controller;
 
-import it.smartcommunitylab.csengine.common.Utils;
-import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
-import it.smartcommunitylab.csengine.exception.StorageException;
-import it.smartcommunitylab.csengine.exception.UnauthorizedException;
-import it.smartcommunitylab.csengine.model.Consent;
-import it.smartcommunitylab.csengine.model.PersonInCharge;
-import it.smartcommunitylab.csengine.model.Student;
-import it.smartcommunitylab.csengine.storage.DocumentManager;
-import it.smartcommunitylab.csengine.storage.RepositoryManager;
-import it.smartcommunitylab.csengine.ui.Profile;
-
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,6 +15,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import it.smartcommunitylab.csengine.common.Utils;
+import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
+import it.smartcommunitylab.csengine.exception.StorageException;
+import it.smartcommunitylab.csengine.exception.UnauthorizedException;
+import it.smartcommunitylab.csengine.model.Consent;
+import it.smartcommunitylab.csengine.model.PersonInCharge;
+import it.smartcommunitylab.csengine.model.Student;
+import it.smartcommunitylab.csengine.storage.RepositoryManager;
+import it.smartcommunitylab.csengine.ui.Profile;
 
 @Controller
 public class ProfileController extends AuthController {
@@ -45,9 +44,6 @@ public class ProfileController extends AuthController {
 	
 	@Autowired
 	private RepositoryManager dataManager;
-	
-	@Autowired
-	private DocumentManager documentManager;
 	
 	@RequestMapping(value = "/api/profile", method = RequestMethod.GET)
 	public @ResponseBody Profile getProfileByToken(HttpServletRequest request) throws Exception {
