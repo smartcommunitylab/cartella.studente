@@ -337,6 +337,27 @@ public class RepositoryManager {
 		return document;
 	}
 
+	public StudentExperience getStudentExperience(String id)
+			throws EntityNotFoundException {
+		StudentExperience studentExperience = studentExperienceRepository.findOne(id);
+		if (studentExperience == null) {
+			throw new EntityNotFoundException("experience not found");
+		}
+		
+		return studentExperience;
+	}		
+	
+	public StudentExperience getStudentExperience(String experienceId, String studentId)
+			throws EntityNotFoundException {
+		StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(studentId,
+				experienceId);
+		if (studentExperience == null) {
+			throw new EntityNotFoundException("experience not found");
+		}
+		
+		return studentExperience;
+	}	
+	
 	public Document updateDocumentAttributes(String experienceId, String studentId, String storageId,
 			Map<String, Object> attributes) throws EntityNotFoundException, StorageException {
 		StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(studentId,
@@ -750,7 +771,7 @@ public class RepositoryManager {
 	}
 
 	public Document addFileToDocument(String experienceId, String studentId, String storageId, String contentType,
-			String filename) throws EntityNotFoundException, StorageException {
+			String filename, String url) throws EntityNotFoundException, StorageException {
 		StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(studentId,
 				experienceId);
 		if (studentExperience == null) {
@@ -762,6 +783,7 @@ public class RepositoryManager {
 		}
 		document.setContentType(contentType);
 		document.setFilename(filename);
+		document.setUrl(url);
 		document.setDocumentPresent(Boolean.TRUE);
 		studentExperienceRepository.save(studentExperience);
 		return document;
@@ -780,6 +802,7 @@ public class RepositoryManager {
 		}
 		document.setContentType(null);
 		document.setFilename(null);
+		document.setUrl(null);
 		document.setDocumentPresent(Boolean.FALSE);
 		studentExperienceRepository.save(studentExperience);
 		return document;
