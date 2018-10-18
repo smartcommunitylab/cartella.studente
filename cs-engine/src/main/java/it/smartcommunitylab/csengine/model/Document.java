@@ -1,10 +1,10 @@
 package it.smartcommunitylab.csengine.model;
 
-import it.smartcommunitylab.csengine.common.Utils;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+
+import it.smartcommunitylab.csengine.common.Utils;
 
 public class Document {
 	private String storageId;
@@ -14,6 +14,7 @@ public class Document {
 	private Boolean documentPresent = Boolean.FALSE;
 	private String contentType;
 	private String filename;
+	private String url;
 	
 	public String getExperienceId() {
 		return experienceId;
@@ -56,6 +57,12 @@ public class Document {
 	}
 	public void setFilename(String filename) {
 		this.filename = filename;
+	}
+	public String getUrl() {
+		return url;
+	}
+	public void setUrl(String url) {
+		this.url = url;
 	}
 	
 	@Override
