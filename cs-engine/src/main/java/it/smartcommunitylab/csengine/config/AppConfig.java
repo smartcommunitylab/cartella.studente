@@ -48,7 +48,6 @@ import it.smartcommunitylab.csengine.model.Registration;
 import it.smartcommunitylab.csengine.model.StudentExperience;
 import it.smartcommunitylab.csengine.model.TeachingUnit;
 import it.smartcommunitylab.csengine.security.AuthorizationManager;
-import it.smartcommunitylab.csengine.storage.DocumentManager;
 import it.smartcommunitylab.csengine.storage.RepositoryManager;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -124,11 +123,6 @@ public class AppConfig extends WebMvcConfigurerAdapter {
 		this.mongoTemplate.indexOps(StudentExperience.class).ensureIndex(textIndex);
 		this.mongoTemplate.indexOps(Institute.class).ensureIndex(new GeospatialIndex("geocode"));
 		return new RepositoryManager(mongoTemplate, defaultLang);
-	}
-	
-	@Bean
-	DocumentManager getDocumentManager() {
-		return new DocumentManager();
 	}
 	
 	@Bean
