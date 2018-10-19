@@ -690,16 +690,16 @@ public class StudentController extends AuthController {
 	
 	private boolean validateAuthorizationByStudentId(String studentId, String dataType, 
 			String action, HttpServletRequest request) throws Exception {
-//		String resourceName = "student-data";
-//		Map<String, String> attributes = new HashMap<String, String>();
-//		attributes.put("student-studentId", studentId);
-//		attributes.put("student-data-dataType", dataType);
-//		AccountAttributeDTO account = getAccountByCF(request);
-//		RequestedAuthorizationDTO authorization = authorizationManager.getReqAuthorization(account, action, 
-//				resourceName, attributes);
-//		if(!authorizationManager.validateAuthorization(authorization)) {
-//			throw new UnauthorizedException("Unauthorized Exception: token not valid or call not authorized");
-//		}
+		String resourceName = "student-data";
+		Map<String, String> attributes = new HashMap<String, String>();
+		attributes.put("student-studentId", studentId);
+		attributes.put("student-data-dataType", dataType);
+		AccountAttributeDTO account = getAccountByCF(request);
+		RequestedAuthorizationDTO authorization = authorizationManager.getReqAuthorization(account, action, 
+				resourceName, attributes);
+		if(!authorizationManager.validateAuthorization(authorization)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid or call not authorized");
+		}
 		return true;
 	}
 		
@@ -734,22 +734,22 @@ public class StudentController extends AuthController {
 	private boolean validateAuthorizationByResource(String studentId, String dataType, 
 			String experienceId, String resourceKey, String resourceValue, String action, 
 			HttpServletRequest request) throws Exception {
-//		String resourceName = "student-data-attr";
-//		Map<String, String> attributes = new HashMap<String, String>();
-//		attributes.put("student-studentId", studentId);
-//		attributes.put("student-data-dataType", dataType);
-//		if(Utils.isNotEmpty(resourceKey)) {
-//			attributes.put("student-data-attr-" + resourceKey, resourceValue);
-//		}
-//		if(Utils.isNotEmpty(experienceId)) {
-//			attributes.put("student-data-attr-experienceId", experienceId);
-//		}
-//		AccountAttributeDTO account = getAccountByCF(request);
-//		RequestedAuthorizationDTO authorization = authorizationManager.getReqAuthorization(account, action, 
-//				resourceName, attributes);
-//		if(!authorizationManager.validateAuthorization(authorization)) {
-//			throw new UnauthorizedException("Unauthorized Exception: token not valid or call not authorized");
-//		}
+		String resourceName = "student-data-attr";
+		Map<String, String> attributes = new HashMap<String, String>();
+		attributes.put("student-studentId", studentId);
+		attributes.put("student-data-dataType", dataType);
+		if(Utils.isNotEmpty(resourceKey)) {
+			attributes.put("student-data-attr-" + resourceKey, resourceValue);
+		}
+		if(Utils.isNotEmpty(experienceId)) {
+			attributes.put("student-data-attr-experienceId", experienceId);
+		}
+		AccountAttributeDTO account = getAccountByCF(request);
+		RequestedAuthorizationDTO authorization = authorizationManager.getReqAuthorization(account, action, 
+				resourceName, attributes);
+		if(!authorizationManager.validateAuthorization(authorization)) {
+			throw new UnauthorizedException("Unauthorized Exception: token not valid or call not authorized");
+		}
 		return true;
 	}
 	
