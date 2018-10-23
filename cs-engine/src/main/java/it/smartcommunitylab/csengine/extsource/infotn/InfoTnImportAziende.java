@@ -18,10 +18,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.HTTPUtils;
 import it.smartcommunitylab.csengine.common.Utils;
+import it.smartcommunitylab.csengine.extsource.infotn.parix.ParixManger;
 import it.smartcommunitylab.csengine.model.Certifier;
 import it.smartcommunitylab.csengine.model.MetaInfo;
 import it.smartcommunitylab.csengine.storage.CertifierRepository;
-import it.smartcommunitylab.csengine.storage.ScheduleUpdateRepository;
 
 @Service
 public class InfoTnImportAziende {
@@ -41,9 +41,9 @@ public class InfoTnImportAziende {
 	@Autowired
 	private APIUpdateManager apiUpdateManager;
 	@Autowired
-	CertifierRepository certifierRepository;
+	private CertifierRepository certifierRepository;
 	@Autowired
-	ScheduleUpdateRepository metaInfoRepository;
+	private ParixManger parixManger;
 
 	public void updateAzienda(MetaInfo metaInfo) throws Exception {
 		logger.info("start importAziendaFromRESTAPI");
@@ -81,26 +81,31 @@ public class InfoTnImportAziende {
 					continue;
 				}
 				
-				logger.info("converting " + azienda.getExtId());
 				Certifier certifierDb = certifierRepository.findByExtId(azienda.getOrigin(), azienda.getExtId());
 				if (certifierDb != null) {
 					logger.warn(String.format("Certifier already exists: %s - %s", azienda.getOrigin(),
 							azienda.getExtId()));
 					continue;
 				}
+				certifierDb = certifierRepository.findByCf(azienda.getPartita_iva());
+				if (certifierDb != null) {
+					logger.warn(String.format("Certifier already exists: %s", azienda.getPartita_iva()));
+					continue;
+				}
+				
+				logger.info("converting " + azienda.getExtId());
 				Certifier certifier = convertToCertifier(azienda);
+				parixManger.updateAzienda(certifier);
 				certifierRepository.save(certifier);
 				stored += 1;
 				logger.info(String.format("Save Azienda: %s - %s - %s", azienda.getOrigin(), azienda.getExtId(),
 						certifier.getId()));
-
 			}
 
 			// update time stamp (if all works fine).
 			metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
 			metaInfo.setTotalRead(total);
 			metaInfo.setTotalStore(stored);
-
 		}
 
 	}

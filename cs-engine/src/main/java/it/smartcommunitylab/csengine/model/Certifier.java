@@ -1,5 +1,8 @@
 package it.smartcommunitylab.csengine.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class Certifier extends BaseObject {
 	private String name;
 	private String description;
@@ -9,6 +12,9 @@ public class Certifier extends BaseObject {
 	private String email;
 	private String pec;
 	private Double[] geocode;
+	private String businessName;
+	private List<String> atecoCode = new ArrayList<>();
+	private List<String> atecoDesc = new ArrayList<>();
 	
 	public String getName() {
 		return name;
@@ -57,6 +63,24 @@ public class Certifier extends BaseObject {
 	}
 	public void setGeocode(Double[] geocode) {
 		this.geocode = geocode;
+	}
+	public String getBusinessName() {
+		return businessName;
+	}
+	public void setBusinessName(String businessName) {
+		this.businessName = businessName;
+	}
+	public List<String> getAtecoCode() {
+		return atecoCode;
+	}
+	public void setAtecoCode(List<String> atecoCode) {
+		this.atecoCode = atecoCode;
+	}
+	public List<String> getAtecoDesc() {
+		return atecoDesc;
+	}
+	public void setAtecoDesc(List<String> atecoDesc) {
+		this.atecoDesc = atecoDesc;
 	}
 	
 }

@@ -13,6 +13,9 @@ public interface CertifierRepository extends MongoRepository<Certifier, String> 
 	@Query(value = "{origin:?0, extId:?1}")
 	Certifier findByExtId(String origin, String extId);
 
+	@Query(value = "{cf:?0}")
+	Certifier findByCf(String cf);
+	
 	@Query("{'creationDate': {$gte: ?0}}")
 	Page<Certifier> fetchAllAfterTime(Date date, Pageable pageable);
 }

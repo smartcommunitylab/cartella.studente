@@ -1,0 +1,11 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:anag="http://InfoTn/2007/AnagraficaImprese">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <anag:DettaglioImpresa>
+         <anag:User>{{user}}</anag:User>
+         <anag:Password>{{password}}</anag:Password>
+         <anag:ProvinciaSede>{{provincia}}</anag:ProvinciaSede>
+         <anag:NumeroREASede>{{rea}}</anag:NumeroREASede>
+      </anag:DettaglioImpresa>
+   </soapenv:Body>
+</soapenv:Envelope>
