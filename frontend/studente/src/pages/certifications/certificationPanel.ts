@@ -10,6 +10,8 @@ import { UserService } from '../../services/user.service'
 import { FileUploader } from 'ng2-file-upload';
 import { WebAPIConnectorService } from '../../services/webAPIConnector.service'
 import { Observable } from 'rxjs/Rx';
+import { ConfigService } from '../../services/config.service';
+
 
 @Component({
   selector: 'certification-panel',
@@ -32,7 +34,8 @@ export class CertificationPanel implements OnInit {
     private alertCtrl: AlertController,
     private translate: TranslateService,
     private webAPIConnectorService: WebAPIConnectorService,
-    private utilsService: UtilsService) {
+    private utilsService: UtilsService,
+    private config: ConfigService) {
   }
 
   ngOnInit(): void {
@@ -58,11 +61,7 @@ export class CertificationPanel implements OnInit {
   }
 
   downloadDocument(document) {
-    return new Promise<any>((resolve, reject) => {
-      this.getFileUrl(document).then(url => {
-        window.open(url, '_blank');
-       });
-    });    
+    window.open(this.config.getConfig('apiUrl') + document.url, '_blank');
   }
 
   deleteDocument(document) {

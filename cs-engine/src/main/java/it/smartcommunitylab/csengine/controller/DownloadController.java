@@ -22,7 +22,7 @@ public class DownloadController {
 	
 	private static final transient Logger logger = LoggerFactory.getLogger(DownloadController.class);
 	
-	@GetMapping("/download/file")
+	@GetMapping("/api/download/file")
 	public void download(@RequestParam String key, HttpServletResponse response) throws Exception {
 		String result[] = documentManager.getFile(key);
 		

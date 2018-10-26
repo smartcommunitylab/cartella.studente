@@ -9,6 +9,8 @@ import { UserService } from '../../services/user.service'
 import { FileUploader } from 'ng2-file-upload';
 import { WebAPIConnectorService } from '../../services/webAPIConnector.service'
 
+import { ConfigService } from '../../services/config.service';
+
 @Component({
   selector: 'job-panel',
   templateUrl: './job.html'
@@ -29,7 +31,8 @@ export class JobPanel implements OnInit {
     private alertCtrl: AlertController,
     private translate: TranslateService,
     private utilsService: UtilsService,
-    private webAPIConnectorService: WebAPIConnectorService) {
+    private webAPIConnectorService: WebAPIConnectorService,
+    private config: ConfigService) {
   }
 
   ngOnInit(): void {
@@ -43,11 +46,7 @@ export class JobPanel implements OnInit {
   }
 
   downloadDocument(document) {
-    return new Promise<any>((resolve, reject) => {
-      this.getFileUrl(document).then(url => {
-        window.open(url, '_blank');
-       });
-    });    
+    window.open(this.config.getConfig('apiUrl') + document.url, '_blank');
   }
 
   toggle() {
