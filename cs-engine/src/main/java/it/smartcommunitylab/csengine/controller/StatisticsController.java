@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.smartcommunitylab.aac.model.AccountProfile;
+import it.smartcommunitylab.csengine.exception.UnauthorizedException;
 import it.smartcommunitylab.csengine.model.statistics.CourseData;
 import it.smartcommunitylab.csengine.model.statistics.KPI;
 import it.smartcommunitylab.csengine.model.statistics.POI;
@@ -53,10 +54,16 @@ public class StatisticsController extends AuthController {
 		
 		if (profile != null) {
 			String cf = this.getCF(profile);
+			
+			if (cf == null) {
+				throw new UnauthorizedException("CF for profile is null");
+			}
+			
 			StudentProfile result = dataManager.getStudentProfile(cf);
 			return result;
+		} else {
+			throw new UnauthorizedException("Profile not found");
 		}
-		return null;
 	}		
 	 
 	
