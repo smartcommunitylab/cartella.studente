@@ -37,11 +37,12 @@ public class DataCompletionController {
 	
 	@RequestMapping(value = "/extsource/user/student/import", method = RequestMethod.GET)
 	public @ResponseBody void importStudent(@RequestParam String filePath, 
+			@RequestParam(required=false, defaultValue="false") boolean addAuth, 
 			HttpServletRequest request) throws Exception {
 		File file = new File(filePath);
 		if(file.exists()) {
 			FileReader fileReader = new FileReader(file);
-			csvManager.importStudent(fileReader);
+			csvManager.importStudent(fileReader, addAuth);
 			logger.warn("importStudent - file imported:" + filePath);
 		} else {
 			logger.warn("importStudent - file doesn't exists:" + filePath);
