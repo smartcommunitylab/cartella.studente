@@ -1,14 +1,5 @@
 package it.smartcommunitylab.csengine.controller;
 
-import it.smartcommunitylab.aac.AACProfileService;
-import it.smartcommunitylab.aac.authorization.beans.AccountAttributeDTO;
-import it.smartcommunitylab.aac.authorization.beans.AuthorizationUserDTO;
-import it.smartcommunitylab.aac.model.AccountProfile;
-import it.smartcommunitylab.csengine.common.Utils;
-import it.smartcommunitylab.csengine.model.User;
-import it.smartcommunitylab.csengine.security.AuthorizationManager;
-import it.smartcommunitylab.csengine.storage.UserRepository;
-
 import java.util.Map;
 
 import javax.annotation.PostConstruct;
@@ -18,6 +9,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+
+import it.smartcommunitylab.aac.AACProfileService;
+import it.smartcommunitylab.aac.authorization.beans.AccountAttributeDTO;
+import it.smartcommunitylab.aac.authorization.beans.AuthorizationUserDTO;
+import it.smartcommunitylab.aac.model.AccountProfile;
+import it.smartcommunitylab.csengine.common.Utils;
+import it.smartcommunitylab.csengine.model.User;
+import it.smartcommunitylab.csengine.security.AuthorizationManager;
+import it.smartcommunitylab.csengine.storage.UserRepository;
 
 public class AuthController {
 	private static final transient Logger logger = LoggerFactory.getLogger(AuthController.class);
@@ -64,6 +64,8 @@ public class AuthController {
 		if(accountProfile != null) {
 			if (accountProfile.getAccounts().containsKey("adc")) {
 				result = accountProfile.getAttribute("adc", "pat_attribute_codicefiscale"); 
+			} else 	if (accountProfile.getAccounts().containsKey("cie")) {
+				result = accountProfile.getAttribute("cie", "fiscalNumberId"); 
 			} else {
 				Map<String, String> accountAttributes = null;
 				if (accountProfile.getAccounts().containsKey("google")) {
