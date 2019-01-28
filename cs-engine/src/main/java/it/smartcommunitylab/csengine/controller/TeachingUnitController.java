@@ -27,6 +27,7 @@ import io.swagger.annotations.ApiParam;
 import it.smartcommunitylab.aac.authorization.beans.AccountAttributeDTO;
 import it.smartcommunitylab.aac.authorization.beans.RequestedAuthorizationDTO;
 import it.smartcommunitylab.csengine.common.Const;
+import it.smartcommunitylab.csengine.common.ErrorLabelManager;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
@@ -50,6 +51,9 @@ public class TeachingUnitController extends AuthController {
 	
 	@Autowired
 	private RepositoryManager dataManager;
+	
+	@Autowired
+	private ErrorLabelManager errorLabelManager;
 	
 	@RequestMapping(value = "/api/tu", method = RequestMethod.GET)
 	public @ResponseBody List<TeachingUnit> getTeachingUnits(
@@ -140,7 +144,7 @@ public class TeachingUnitController extends AuthController {
 			@ApiParam Pageable pageable,
 			HttpServletRequest request) throws Exception {
 		if (!validateTUAuthorization(teachingUnitId, Const.AUTH_ACTION_READ, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		List<Student> result = dataManager.searchStudentByInstitute(teachingUnitId, schoolYear, pageable);
 		if(logger.isInfoEnabled()) {
@@ -161,7 +165,7 @@ public class TeachingUnitController extends AuthController {
 			@ApiParam Pageable pageable,
 			HttpServletRequest request) throws Exception {
 		if (!validateTUAuthorization(teachingUnitId, Const.AUTH_ACTION_READ, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		TeachingUnit teachingUnit = dataManager.getTeachingUnitById(teachingUnitId);
 		List<StudentExperience> result = dataManager.searchStudentExperience(null, expType, true, 
@@ -180,7 +184,7 @@ public class TeachingUnitController extends AuthController {
 			@PathVariable String experienceId,
 			HttpServletRequest request) throws Exception {
 		if (!validateTUAuthorization(teachingUnitId, Const.AUTH_ACTION_READ, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		TeachingUnit teachingUnit = dataManager.getTeachingUnitById(teachingUnitId);
 		List<StudentExperience> result = dataManager.searchStudentExperienceById(null, 
@@ -203,7 +207,7 @@ public class TeachingUnitController extends AuthController {
 			@ApiParam Pageable pageable,
 			HttpServletRequest request) throws Exception {
 		if (!validateTUAuthorization(teachingUnitId, Const.AUTH_ACTION_READ, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		TeachingUnit teachingUnit = dataManager.getTeachingUnitById(teachingUnitId);
 		List<Experience> result = dataManager.searchExperience(expType, true, teachingUnit.getInstituteId(),
@@ -223,7 +227,7 @@ public class TeachingUnitController extends AuthController {
 			@ApiParam Pageable pageable,
 			HttpServletRequest request) throws Exception {
 		if (!validateTUAuthorization(teachingUnitId, Const.AUTH_ACTION_READ, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		List<Registration> result = dataManager.searchRegistration(null, teachingUnitId, schoolYear, 
 				dateFrom, dateTo, pageable);
@@ -286,7 +290,7 @@ public class TeachingUnitController extends AuthController {
 			@RequestBody Experience experience,
 			HttpServletRequest request) throws Exception {
 		if (!validateTUAuthorization(teachingUnitId, Const.AUTH_ACTION_ADD, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		experience.getAttributes().put(Const.ATTR_INSTITUTIONAL, Boolean.TRUE);
 		experience.getAttributes().put(Const.ATTR_TUID, teachingUnitId);
@@ -307,7 +311,7 @@ public class TeachingUnitController extends AuthController {
 			@RequestBody Experience experience,
 			HttpServletRequest request) throws Exception {
 		if (!validateTUAuthorization(teachingUnitId, Const.AUTH_ACTION_UPDATE, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		experience.setId(experienceId);
 		experience.getAttributes().put(Const.ATTR_INSTITUTIONAL, Boolean.TRUE);
@@ -327,7 +331,7 @@ public class TeachingUnitController extends AuthController {
 			@RequestBody List<String> students,
 			HttpServletRequest request) throws Exception {
 		if (!validateTUAuthorization(teachingUnitId, Const.AUTH_ACTION_UPDATE, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		dataManager.certifyIsExperience(experienceId, students);
 		if(logger.isInfoEnabled()) {
@@ -347,7 +351,7 @@ public class TeachingUnitController extends AuthController {
 			@ApiParam Pageable pageable,
 			HttpServletRequest request) throws Exception {
 		if (!validateTUAuthorization(teachingUnitId, Const.AUTH_ACTION_READ, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		List<ExperienceExtended> result = new ArrayList<ExperienceExtended>();
 		Map<String, ExperienceExtended> extendedExpMap = new HashMap<String, ExperienceExtended>();
@@ -381,7 +385,7 @@ public class TeachingUnitController extends AuthController {
 			@ApiParam Pageable pageable,
 			HttpServletRequest request) throws Exception {
 		if (!validateTUAuthorization(teachingUnitId, Const.AUTH_ACTION_READ, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		TeachingUnit teachingUnit = dataManager.getTeachingUnitById(teachingUnitId);
 		List<StudentExperience> studentExperienceList = dataManager.searchStudentExperience(studentId, null, 
@@ -448,7 +452,7 @@ public class TeachingUnitController extends AuthController {
 		RequestedAuthorizationDTO authorization = authorizationManager.getReqAuthorization(account, action, 
 				resourceName, attributes);
 		if(!authorizationManager.validateAuthorization(authorization)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid or call not authorized");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		return true;
 	}

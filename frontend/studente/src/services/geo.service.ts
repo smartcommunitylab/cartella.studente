@@ -26,7 +26,7 @@ export class GeoService {
     getAddressFromString(locationString:string): Promise<any> {
         // var names = [];
         let options = new DefaultRequestOptions();
-        var url = this.config.getConfig('geocoderUrl') + 'address?latlng=' + this.config.getConfig('mapPositionAutocomplete')[0] + "," + this.config.getConfig('mapPositionAutocomplete')[1] + "&distance=" + this.config.getConfig('distanceAutocomplete') + "&address=" + locationString;
+        var url = this.config.getConfig('geocoderUrl') + 'address?address=' + locationString;
         return this.http
             .get(url, options).toPromise()
             .then(response => {

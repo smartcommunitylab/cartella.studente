@@ -10,6 +10,7 @@ import it.smartcommunitylab.aac.authorization.beans.AuthorizationResourceDTO;
 import it.smartcommunitylab.aac.authorization.beans.AuthorizationUserDTO;
 import it.smartcommunitylab.aac.authorization.beans.RequestedAuthorizationDTO;
 import it.smartcommunitylab.aac.model.TokenData;
+import it.smartcommunitylab.csengine.common.ErrorLabelManager;
 import it.smartcommunitylab.csengine.exception.UnauthorizedException;
 
 import java.util.ArrayList;
@@ -53,6 +54,9 @@ public class AuthorizationManager {
 	@Value("${authorization.userType}")	
 	private String userType;
 	
+	@Autowired
+	private ErrorLabelManager errorLabelManager;
+	
 	private TokenData tokenData = null;
 	
 	private HttpClient httpClient = null;
@@ -78,7 +82,7 @@ public class AuthorizationManager {
       try {
       	tokenData = aacService.generateClientToken(null);
 	    } catch (Exception e) {
-	    	throw new UnauthorizedException("error connectiong to oauth/token:" + e.getMessage());
+	    	throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 			}
 		}
 		return tokenData.getAccess_token();

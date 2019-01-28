@@ -1,0 +1,13 @@
+{
+	"error.generale": "Errore del sistema",
+	"certifier.not.allowed": "certifier non consentita",
+	"modify.not.allowed": "modifica non consentita",
+	"istituto.error.notfound": "Istituto non trovato",
+	"studente.error.notfound": "Studente non trovato",
+	"doc.error.notfound": "Documento non trovato",
+	"ent.error.notfound": "Entità non trovata",
+	"esp.error.notfound": "Esperienza non trovata",
+	"metainfo.error.notfound": "Metainfo non trovato",
+	"cert.error.notfound": "Certificato non trovata",
+	"api.access.error" : "Utente non autorizato all'operazione.<br/>Si prega di effettuare nuovamente il login con un account registrato nel sistema.<br/>Contattare il supporto tecnico cartella-help@smartcommunitylab.it in caso di problemi.<br/>"
+}

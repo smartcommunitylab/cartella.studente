@@ -12,6 +12,7 @@ import { ExperienceContainer } from '../classes/ExperienceContainer.class'
 import { ExperienceTypes } from '../assets/conf/expTypes'
 import { Curriculum } from '../classes/Curriculum.class'
 import { FileUploader } from 'ng2-file-upload';
+import { AlertController, Backdrop } from 'ionic-angular';
 
 @Injectable()
 export class DefaultRequestOptions extends BaseRequestOptions {
@@ -30,7 +31,7 @@ export const requestOptionsProvider = { provide: RequestOptions, useClass: Defau
 @Injectable()
 export class WebAPIConnectorService {
 
-  constructor(private http: Http, private config: ConfigService) {
+  constructor(private http: Http, private config: ConfigService, private alertCtrl: AlertController) {
 
   }
   //get the host url from configuration
@@ -53,7 +54,7 @@ export class WebAPIConnectorService {
         return response.json()
       }
       ).catch(response => {
-        return this.handleError
+        return this.handleError(response)
       });
   }
   consent(studentId: string): Promise<any> {
@@ -74,7 +75,7 @@ export class WebAPIConnectorService {
 
     return this.http.get(url)
       .toPromise()
-      .then(response => response.json()).catch(response => this.handleError);
+      .then(response => response.json()).catch(response => this.handleError(response));
   }
   getRegistrations(studentId: string): Promise<any[]> {
     let options = new DefaultRequestOptions();
@@ -87,7 +88,7 @@ export class WebAPIConnectorService {
         return response.json()
       }
       ).catch(response => {
-        return this.handleError
+        return this.handleError(response)
       });
   }
   getSubjectsByRegistration(studentId: string, registrationId: string): Promise<any[]> {
@@ -96,7 +97,7 @@ export class WebAPIConnectorService {
     return this.http.get(url, options)
       .toPromise()
       .then(response => response.json())
-      .catch(response => this.handleError);
+      .catch(response => this.handleError(response));
   }
 
   getExperiences(studentId: string, typeExp: string): Promise<any[]> {
@@ -104,7 +105,7 @@ export class WebAPIConnectorService {
 
     return this.http.get(url)
       .toPromise()
-      .then(response => response.json()).catch(response => this.handleError);
+      .then(response => response.json()).catch(response => this.handleError(response));
   }
   addExperience(experience: Experience, studentId: string, typeExp: string): Promise<any> {
     let body = {
@@ -115,7 +116,7 @@ export class WebAPIConnectorService {
 
     return this.http.post(url, body)
       .toPromise()
-      .then(response => response.json()).catch(response => this.handleError);
+      .then(response => response.json()).catch(response => this.handleError(response));
   }
   updateExperience(experience: StudentExperience, studentId: string): Promise<any> {
     let body = experience.experience
@@ -124,21 +125,21 @@ export class WebAPIConnectorService {
 
     return this.http.put(url, body, )
       .toPromise()
-      .then(response => response.json()).catch(response => this.handleError);
+      .then(response => response.json()).catch(response => this.handleError(response));
   }
   deleteExperience(expId: string, studentId: string): Promise<any> {
     let url: string = this.getApiUrl() + 'student/' + studentId + '/my/experience/' + expId;
 
     return this.http.delete(url)
       .toPromise()
-      .then(response => response.json()).catch(response => this.handleError);
+      .then(response => response.json()).catch(response => this.handleError(response));
   }
   getUserInfo(studentId: string): Promise<any> {
     let url: string = this.getApiUrl() + 'student/' + studentId;
 
     return this.http.get(url)
       .toPromise()
-      .then(response => response.json()).catch(response => this.handleError);
+      .then(response => response.json()).catch(response => this.handleError(response));
   }
   updateUserInfo(student: Student, studentId: string): Promise<any> {
     let body = student
@@ -146,7 +147,7 @@ export class WebAPIConnectorService {
 
     return this.http.put(url, body)
       .toPromise()
-      .then(response => response.json()).catch(response => this.handleError);
+      .then(response => response.json()).catch(response => this.handleError(response));
   }
   createDocument(experience: ExperienceContainer, studentId: string): Promise<any> {
     let body = experience.attributes;
@@ -156,7 +157,7 @@ export class WebAPIConnectorService {
 
     return this.http.post(url, body)
       .toPromise()
-      .then(response => response.json()).catch(response => this.handleError);
+      .then(response => response.json()).catch(response => this.handleError(response));
   }
   deleteDocument(experience: StudentExperience, studentId: string): Promise<any> {
     let body = {}
@@ -165,7 +166,7 @@ export class WebAPIConnectorService {
 
     return this.http.delete(url)
       .toPromise()
-      .then(response => response.json()).catch(response => this.handleError);
+      .then(response => response.json()).catch(response => this.handleError(response));
   }
 
 
@@ -176,7 +177,7 @@ export class WebAPIConnectorService {
 
     return this.http.delete(url)
       .toPromise()
-      .then(response => response.json()).catch(response => this.handleError);
+      .then(response => response.json()).catch(response => this.handleError(response));
   }
 
   uploadDocument(uploader: FileUploader, userId: string, experienceId: string, item, storageId?: string): void {
@@ -239,7 +240,7 @@ export class WebAPIConnectorService {
     return this.http.get(url)
       .toPromise()
       .then(response => response.text()
-      ).catch(response => this.handleError);
+      ).catch(response => this.handleError(response));
   }
   getUserImage(studentId: string): Promise<any> {
     let url: string = this.getApiUrl() + 'student/' + studentId + '/photo';
@@ -250,7 +251,7 @@ export class WebAPIConnectorService {
 
         response.text()
 
-      ).catch(response => this.handleError);
+      ).catch(response => this.handleError(response));
   }
   sendUserImage(uploader: FileUploader, image, studentId: string) {
     var newUrl = this.config.getConfig('apiUrl') + 'student/' + studentId + '/photo/file';
@@ -264,7 +265,7 @@ export class WebAPIConnectorService {
 
     return this.http.get(url)
       .toPromise()
-      .then(response => response.json()).catch(response => this.handleError);
+      .then(response => response.json()).catch(response => this.handleError(response));
   }
 
   updateUserCV(curriculum, studentId): Promise<any> {
@@ -274,7 +275,7 @@ export class WebAPIConnectorService {
 
     return this.http.put(url, body)
       .toPromise()
-      .then(response => response.json()).catch(response => this.handleError);
+      .then(response => response.json()).catch(response => this.handleError(response));
   }
 
   addUserCV(curriculum, studentId): Promise<any> {
@@ -284,7 +285,7 @@ export class WebAPIConnectorService {
 
     return this.http.post(url, body)
       .toPromise()
-      .then(response => response.json()).catch(response => this.handleError);
+      .then(response => response.json()).catch(response => this.handleError(response));
   }
 
   downloadCVInODTFormat(studentId: string): Promise<any> {
@@ -295,7 +296,7 @@ export class WebAPIConnectorService {
 
       FileSaver.saveAs(downloadedCV.blob(), "curriculum.odt");
 
-    }).catch(error => this.handleError);
+    }).catch(error => this.handleError(error));
 
   }
 
@@ -326,11 +327,50 @@ export class WebAPIConnectorService {
 
     return this.http.post(url, body)
       .toPromise()
-      .then(response => response.json()).catch(response => this.handleError);
+      .then(response => response.json()).catch(response => this.handleError(response));
   }
 
   private handleError(error: any): Promise<any> {
-    console.error('An error occurred', error);
-    return Promise.reject(error);
+
+    return new Promise<string>((resolve, reject) => {
+      console.error('An error occurred', error);
+
+      if ((error.status == 401) || (error.status == 403)) {
+        // display toast and redirect to logout.
+        var errorObj = JSON.parse(error._body)
+        var errorMsg = 'Per favore accedi di nuovo.';
+        if (errorObj.errorMsg) {
+          errorMsg = errorObj.errorMsg;
+        }
+        let alert = this.alertCtrl.create({
+          enableBackdropDismiss: false,
+          message: errorMsg,
+          buttons: [
+            {
+              text: 'OK',
+              cssClass: 'pop-up-button',
+              handler: () => {
+                this.logout(errorMsg);
+                // Promise.reject(errorMsg);
+              }
+            }
+          ]
+        },
+        
+        );
+        alert.present();
+      } else {
+        Promise.reject(error);
+      }
+    });
+
   }
+
+  logout(errMsg) {
+    var aacUrl = this.config.getConfig('aacUrl');
+    var targetUrl = this.config.getConfig('redirectUrl');
+    var logoutUrl = aacUrl + '/logout?target=' + targetUrl + '/#/login?errMsg=' + errMsg;
+    window.location.href = logoutUrl;
+  }
+
 }

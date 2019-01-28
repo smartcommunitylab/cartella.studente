@@ -24,7 +24,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
+import it.smartcommunitylab.csengine.common.ErrorLabelManager;
 import it.smartcommunitylab.csengine.exception.StorageException;
+import it.smartcommunitylab.csengine.exception.UnauthorizedException;
 import it.smartcommunitylab.csengine.model.Document;
 import it.smartcommunitylab.csengine.model.Student;
 import it.smartcommunitylab.csengine.model.StudentExperience;
@@ -54,6 +56,9 @@ public class LocalDocumentManager {
     private IvParameterSpec ivParameterSpec;
     private SecretKeySpec secretKeySpec;
     private Cipher cipher;	
+    
+	@Autowired
+	private ErrorLabelManager errorLabelManager;
 
 	@PostConstruct
 	public void init() throws Exception {
@@ -66,7 +71,7 @@ public class LocalDocumentManager {
 			String storageId, String filename, MultipartFile file) throws Exception {
 		Document document = dataManager.getDocument(experienceId, studentId, storageId);
 		if(document == null) {
-			throw new StorageException("certificate not present");
+			throw new StorageException(errorLabelManager.get("doc.error.notfound"));			
 		}
 		
 		StudentExperience studentExperience = dataManager.getStudentExperience(experienceId, studentId);
@@ -90,7 +95,7 @@ public class LocalDocumentManager {
 			String storageId) throws Exception {
 		Document document = dataManager.getDocument(experienceId, studentId, storageId);
 		if(document == null) {
-			throw new StorageException("document not present");
+			throw new StorageException(errorLabelManager.get("doc.error.notfound"));
 		}
 
 		Document result = dataManager.removeFileToDocument(experienceId, studentId, storageId);
@@ -103,7 +108,7 @@ public class LocalDocumentManager {
 	public void addFileToProfile(String studentId, MultipartFile file) throws Exception {
 		Student student = dataManager.getStudent(studentId);
 		if(student == null) {
-			throw new StorageException("certificate not present");
+			throw new StorageException(errorLabelManager.get("studente.error.notfound"));
 		}
 		String contentType = file.getContentType();
 		

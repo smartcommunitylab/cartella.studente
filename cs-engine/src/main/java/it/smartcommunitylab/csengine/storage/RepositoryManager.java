@@ -34,6 +34,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 
 import it.smartcommunitylab.csengine.common.Const;
+import it.smartcommunitylab.csengine.common.ErrorLabelManager;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
@@ -120,6 +121,9 @@ public class RepositoryManager {
 	
 	@Autowired
 	private ProfessoriClassiRepository professoriClassiRepository;
+	
+	@Autowired
+	private ErrorLabelManager errorLabelManager;
 
 	private MongoTemplate mongoTemplate;
 	private String defaultLang;
@@ -218,13 +222,15 @@ public class RepositoryManager {
 			StudentExperience studentExperienceDb = studentExperienceRepository.findByStudentAndExperience(studentId,
 					experienceId);
 			if (Utils.isCertified(studentExperienceDb)) {
-				throw new StorageException("modify is not allowed");
+//				throw new StorageException("modify is not allowed");
+				throw new StorageException(errorLabelManager.get("modify.not.allowed"));
 			}
 			experienceDb.setAttributes(experience.getAttributes());
 			experienceRepository.save(experienceDb);
 			updateExperienceAttributes(experienceId, studentId, experience.getAttributes());
 		} else {
-			throw new EntityNotFoundException("entity not found");
+//			throw new EntityNotFoundException("entity not found");
+			throw new EntityNotFoundException(errorLabelManager.get("esp.error.notfound"));
 		}
 		return experienceDb;
 	}
@@ -291,7 +297,8 @@ public class RepositoryManager {
 				}
 			}
 		} else {
-			throw new EntityNotFoundException("entity not found");
+//			throw new EntityNotFoundException("entity not found");
+			throw new EntityNotFoundException(errorLabelManager.get("esp.error.notfound"));
 		}
 		return null;
 	}
@@ -299,7 +306,8 @@ public class RepositoryManager {
 	public Experience removeExperience(String experienceId) throws EntityNotFoundException, StorageException {
 		Experience experienceDb = experienceRepository.findOne(experienceId);
 		if (experienceDb == null) {
-			throw new EntityNotFoundException("entity not found");
+//			throw new EntityNotFoundException("entity not found");
+			throw new EntityNotFoundException(errorLabelManager.get("esp.error.notfound"));
 		}
 		experienceRepository.delete(experienceDb);
 		List<StudentExperience> list = studentExperienceRepository.findByExperienceId(experienceId);
@@ -310,7 +318,8 @@ public class RepositoryManager {
 	public Student getStudent(String studentId) throws EntityNotFoundException {
 		Student result = studentRepository.findOne(studentId);
 		if (result == null) {
-			throw new EntityNotFoundException("entity not found");
+//			throw new EntityNotFoundException("entity not found");
+			throw new EntityNotFoundException(errorLabelManager.get("studente.error.notfound"));
 		}
 		return result;
 	}
@@ -318,7 +327,8 @@ public class RepositoryManager {
 	public List<Document> getDocuments(String experienceId, String studentId) throws EntityNotFoundException {
 		StudentExperience result = studentExperienceRepository.findByStudentAndExperience(studentId, experienceId);
 		if (result == null) {
-			throw new EntityNotFoundException("entity not found");
+//			throw new EntityNotFoundException("entity not found");
+			throw new EntityNotFoundException(errorLabelManager.get("esp.error.notfound"));
 		}
 		return result.getDocuments();
 	}
@@ -328,11 +338,12 @@ public class RepositoryManager {
 		StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(studentId,
 				experienceId);
 		if (studentExperience == null) {
-			throw new EntityNotFoundException("experience not found");
+			throw new EntityNotFoundException(errorLabelManager.get("esp.error.notfound"));
 		}
 		Document document = Utils.findDocument(studentExperience, storageId);
 		if (document == null) {
-			throw new EntityNotFoundException("document not found");
+//			throw new EntityNotFoundException("document not found");
+			throw new EntityNotFoundException(errorLabelManager.get("doc.error.notfound"));
 		}
 		return document;
 	}
@@ -341,7 +352,8 @@ public class RepositoryManager {
 			throws EntityNotFoundException {
 		StudentExperience studentExperience = studentExperienceRepository.findOne(id);
 		if (studentExperience == null) {
-			throw new EntityNotFoundException("experience not found");
+//			throw new EntityNotFoundException("experience not found");
+			throw new EntityNotFoundException(errorLabelManager.get("esp.error.notfound"));
 		}
 		
 		return studentExperience;
@@ -352,7 +364,8 @@ public class RepositoryManager {
 		StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(studentId,
 				experienceId);
 		if (studentExperience == null) {
-			throw new EntityNotFoundException("experience not found");
+//			throw new EntityNotFoundException("experience not found");
+			throw new EntityNotFoundException(errorLabelManager.get("esp.error.notfound"));
 		}
 		
 		return studentExperience;
@@ -363,11 +376,12 @@ public class RepositoryManager {
 		StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(studentId,
 				experienceId);
 		if (studentExperience == null) {
-			throw new EntityNotFoundException("entity not found");
+//			throw new EntityNotFoundException("entity not found");
+			throw new EntityNotFoundException(errorLabelManager.get("esp.error.notfound"));
 		}
 		Document document = Utils.findDocument(studentExperience, storageId);
 		if (document == null) {
-			throw new StorageException("document fot found");
+			throw new StorageException(errorLabelManager.get("doc.error.notfound"));
 		}
 		document.setAttributes(attributes);
 		studentExperienceRepository.save(studentExperience);
@@ -378,7 +392,8 @@ public class RepositoryManager {
 		StudentExperience studentExperience = studentExperienceRepository
 				.findByStudentAndExperience(document.getStudentId(), document.getExperienceId());
 		if (studentExperience == null) {
-			throw new EntityNotFoundException("entity not found");
+//			throw new EntityNotFoundException("entity not found");
+			throw new EntityNotFoundException(errorLabelManager.get("esp.error.notfound"));
 		}
 		document.setStorageId(Utils.getUUID());
 		document.setDocumentPresent(Boolean.FALSE);
@@ -392,11 +407,12 @@ public class RepositoryManager {
 		StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(studentId,
 				experienceId);
 		if (studentExperience == null) {
-			throw new EntityNotFoundException("entity not found");
+//			throw new EntityNotFoundException("entity not found");
+			throw new EntityNotFoundException(errorLabelManager.get("esp.error.notfound"));
 		}
 		Document document = Utils.findDocument(studentExperience, storageId);
 		if (document == null) {
-			throw new StorageException("document does not exist");
+			throw new StorageException(errorLabelManager.get("doc.error.notfound"));
 		}
 		studentExperience.getDocuments().remove(document);
 		studentExperienceRepository.save(studentExperience);
@@ -409,17 +425,20 @@ public class RepositoryManager {
 				experienceId);
 		if (studentExperienceDb != null) {
 			if (Utils.isCertified(studentExperienceDb)) {
-				throw new StorageException("modify is not allowed");
+//				throw new StorageException("modify is not allowed");
+				throw new StorageException(errorLabelManager.get("modify.not.allowed"));
 			}
 			String refCertifierId = (String) studentExperienceDb.getExperience().getAttributes()
 					.get(Const.ATTR_CERTIFIERID);
 			if (Utils.isEmpty(refCertifierId) || refCertifierId.equals(certifierId)) {
-				throw new StorageException("ceritfier not allowed");
+//				throw new StorageException("ceritfier not allowed");
+				throw new StorageException(errorLabelManager.get("certifier.not.allowed"));
 			}
 			studentExperienceDb.getExperience().getAttributes().put(Const.ATTR_CERTIFIED, Boolean.TRUE);
 			studentExperienceRepository.save(studentExperienceDb);
 		} else {
-			throw new EntityNotFoundException("entity not found");
+//			throw new EntityNotFoundException("entity not found");
+			throw new EntityNotFoundException(errorLabelManager.get("esp.error.notfound"));
 		}
 		return studentExperienceDb;
 	}
@@ -459,8 +478,11 @@ public class RepositoryManager {
 		certificationRequest.setId(Utils.getUUID());
 		Experience experience = experienceRepository.findOne(certificationRequest.getExperienceId());
 		Student student = studentRepository.findOne(certificationRequest.getStudentId());
-		if ((experience == null) || (student == null)) {
-			throw new StorageException("experience or student not found");
+		if (experience == null){
+			throw new StorageException(errorLabelManager.get("esp.error.notfound"));
+		}
+		if (student == null) {
+			throw new StorageException(errorLabelManager.get("studente.error.notfound"));
 		}
 		certificationRequest.setExperience(experience);
 		certificationRequest.setExperience(experience);
@@ -471,7 +493,8 @@ public class RepositoryManager {
 	public CertificationRequest removeCertificationRequest(String certificationId) throws EntityNotFoundException {
 		CertificationRequest certificationRequestDB = certificationRequestRepository.findOne(certificationId);
 		if (certificationRequestDB == null) {
-			throw new EntityNotFoundException("entity not found");
+//			throw new EntityNotFoundException("entity not found");
+			throw new EntityNotFoundException(errorLabelManager.get("cert.error.notfound"));
 		}
 		certificationRequestRepository.delete(certificationId);
 		return certificationRequestDB;
@@ -637,8 +660,11 @@ public class RepositoryManager {
 		String teachingUnitId = registration.getTeachingUnitId();
 		Student student = studentRepository.findOne(studentId);
 		Institute institute = instituteRepository.findOne(teachingUnitId);
-		if ((student == null) || (institute == null)) {
-			throw new StorageException("student or institute not found");
+		if (student == null) {
+			throw new StorageException(errorLabelManager.get("studente.error.notfound"));
+		}
+		if (institute == null) {
+			throw new StorageException(errorLabelManager.get("istituto.error.notfound"));
 		}
 		registration.setStudent(student);
 		registration.setInstitute(institute);
@@ -682,7 +708,8 @@ public class RepositoryManager {
 	public Consent removeAuthorization(String studentId) throws EntityNotFoundException {
 		Consent consentDb = consentRepository.findByStudent(studentId);
 		if (consentDb == null) {
-			throw new EntityNotFoundException("entity not found");
+//			throw new EntityNotFoundException("entity not found");
+			throw new EntityNotFoundException(errorLabelManager.get("ent.error.notfound"));		
 		}
 		Date now = new Date();
 		consentDb.setAuthorized(Boolean.FALSE);
@@ -694,7 +721,8 @@ public class RepositoryManager {
 	public Consent addAuthorization(String studentId) throws EntityNotFoundException {
 		Consent consentDb = consentRepository.findByStudent(studentId);
 		if (consentDb == null) {
-			throw new EntityNotFoundException("entity not found");
+//			throw new EntityNotFoundException("entity not found");
+			throw new EntityNotFoundException(errorLabelManager.get("ent.error.notfound"));			
 		}
 		Date now = new Date();
 		consentDb.setAuthorized(Boolean.TRUE);
@@ -726,7 +754,8 @@ public class RepositoryManager {
 	public Student updateStudentContact(Student student) throws EntityNotFoundException {
 		Student studentDb = studentRepository.findOne(student.getId());
 		if (studentDb == null) {
-			throw new EntityNotFoundException("entity not found");
+//			throw new EntityNotFoundException("entity not found");
+			throw new EntityNotFoundException(errorLabelManager.get("ent.error.notfound"));
 		}
 		studentDb.setAddress(student.getAddress());
 		studentDb.setEmail(student.getEmail());
@@ -742,7 +771,8 @@ public class RepositoryManager {
 	public CV getStudentCV(String studentId) throws EntityNotFoundException {
 		CV cv = cvRepository.findByStudent(studentId);
 		if (cv == null) {
-			throw new EntityNotFoundException("entity not found");
+//			throw new EntityNotFoundException("entity not found");
+			throw new EntityNotFoundException(errorLabelManager.get("ent.error.notfound"));
 		}
 		return cv;
 	}
@@ -760,7 +790,8 @@ public class RepositoryManager {
 		Date now = new Date();
 		CV cvDb = cvRepository.findOne(cv.getId());
 		if (cvDb == null) {
-			throw new EntityNotFoundException("entity not found");
+//			throw new EntityNotFoundException("entity not found");
+			throw new EntityNotFoundException(errorLabelManager.get("ent.error.notfound"));
 		}
 		cvDb.setStudentExperienceIdMap(cv.getStudentExperienceIdMap());
 		cvDb.setRegistrationIdList(cv.getRegistrationIdList());
@@ -775,11 +806,12 @@ public class RepositoryManager {
 		StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(studentId,
 				experienceId);
 		if (studentExperience == null) {
-			throw new EntityNotFoundException("entity not found");
+//			throw new EntityNotFoundException("entity not found");
+			throw new EntityNotFoundException(errorLabelManager.get("esp.error.notfound"));
 		}
 		Document document = Utils.findDocument(studentExperience, storageId);
 		if (document == null) {
-			throw new StorageException("document does not exist");
+			throw new StorageException(errorLabelManager.get("doc.error.notfound"));
 		}
 		document.setContentType(contentType);
 		document.setFilename(filename);
@@ -794,11 +826,12 @@ public class RepositoryManager {
 		StudentExperience studentExperience = studentExperienceRepository.findByStudentAndExperience(studentId,
 				experienceId);
 		if (studentExperience == null) {
-			throw new EntityNotFoundException("entity not found");
+//			throw new EntityNotFoundException("entity not found");
+			throw new EntityNotFoundException(errorLabelManager.get("esp.error.notfound"));
 		}
 		Document document = Utils.findDocument(studentExperience, storageId);
 		if (document == null) {
-			throw new StorageException("document does not exist");
+			throw new StorageException(errorLabelManager.get("doc.error.notfound"));
 		}
 		document.setContentType(null);
 		document.setFilename(null);
@@ -840,7 +873,8 @@ public class RepositoryManager {
 	public TeachingUnit getTeachingUnitById(String teachingUnitId) throws EntityNotFoundException {
 		TeachingUnit result = teachingUnitRepository.findOne(teachingUnitId);
 		if (result == null) {
-			throw new EntityNotFoundException("entity not found");
+//			throw new EntityNotFoundException("entity not found");
+			throw new EntityNotFoundException(errorLabelManager.get("ent.error.notfound"));
 		}
 		return result;
 	}
@@ -848,7 +882,8 @@ public class RepositoryManager {
 	public Registration getRegistrationById(String registrationId) throws EntityNotFoundException {
 		Registration result = registrationRepository.findOne(registrationId);
 		if (result == null) {
-			throw new EntityNotFoundException("entity not found");
+//			throw new EntityNotFoundException("entity not found");
+			throw new EntityNotFoundException(errorLabelManager.get("ent.error.notfound"));
 		}
 		return result;
 	}
@@ -856,7 +891,8 @@ public class RepositoryManager {
 	public Experience getExperienceById(String experienceId) throws EntityNotFoundException {
 		Experience result = experienceRepository.findOne(experienceId);
 		if (result == null) {
-			throw new EntityNotFoundException("entity not found");
+//			throw new EntityNotFoundException("entity not found");
+			throw new EntityNotFoundException(errorLabelManager.get("esp.error.notfound"));
 		}
 		return result;
 	}
@@ -874,7 +910,8 @@ public class RepositoryManager {
 	public Student updateStudentContentType(String studentId, String contentType) throws EntityNotFoundException {
 		Student studentDb = studentRepository.findOne(studentId);
 		if (studentDb == null) {
-			throw new EntityNotFoundException("entity not found");
+//			throw new EntityNotFoundException("entity not found");
+			throw new EntityNotFoundException(errorLabelManager.get("ent.error.notfound"));
 		}
 		studentDb.setContentType(contentType);
 		Date now = new Date();
@@ -886,7 +923,8 @@ public class RepositoryManager {
 	public StudentAuth getStudentAuthById(String authId) throws EntityNotFoundException {
 		StudentAuth studentAuthDB = studentAuthRepository.findOne(authId);
 		if (studentAuthDB == null) {
-			throw new EntityNotFoundException("entity not found");
+//			throw new EntityNotFoundException("entity not found");
+			throw new EntityNotFoundException(errorLabelManager.get("ent.error.notfound"));
 		}
 		return studentAuthDB;
 	}
@@ -907,7 +945,8 @@ public class RepositoryManager {
 	public StudentAuth removeStudentAuth(String authId) throws EntityNotFoundException {
 		StudentAuth studentAuthDB = studentAuthRepository.findOne(authId);
 		if (studentAuthDB == null) {
-			throw new EntityNotFoundException("entity not found");
+//			throw new EntityNotFoundException("entity not found");
+			throw new EntityNotFoundException(errorLabelManager.get("ent.error.notfound"));
 		}
 		studentAuthRepository.delete(studentAuthDB);
 		return studentAuthDB;
@@ -1223,12 +1262,14 @@ public class RepositoryManager {
 			sr.setClassroom(registration.getClassroom());
 			Institute institute = instituteRepository.findOne(registration.getInstituteId());
 			if (institute == null) {
-				throw new EntityNotFoundException("entity not found: Institute");
+//				throw new EntityNotFoundException("entity not found: Institute");
+				throw new EntityNotFoundException(errorLabelManager.get("istituto.error.notfound"));
 			}
 			sr.setInstitute(institute.getName());
 			CourseMetaInfo course = courseMetaInfoRepo.findOne(registration.getCourseId());
 			if (course == null) {
-				throw new EntityNotFoundException("entity not found: CourseMetaInfo");
+//				throw new EntityNotFoundException("entity not found: CourseMetaInfo");
+				throw new EntityNotFoundException(errorLabelManager.get("metainfo.error.notfound"));
 			}			
 			sr.setCourse(course.getCourse());
 			profile.getRegistrations().add(sr);

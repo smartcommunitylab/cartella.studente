@@ -28,6 +28,7 @@ import io.swagger.annotations.ApiParam;
 import it.smartcommunitylab.aac.authorization.beans.AccountAttributeDTO;
 import it.smartcommunitylab.aac.authorization.beans.RequestedAuthorizationDTO;
 import it.smartcommunitylab.csengine.common.Const;
+import it.smartcommunitylab.csengine.common.ErrorLabelManager;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
@@ -53,6 +54,9 @@ public class CertifierController extends AuthController {
 
 	@Autowired
 	private LocalDocumentManager documentManager;
+	
+	@Autowired
+	private ErrorLabelManager errorLabelManager;
 
 	@RequestMapping(value = "/extsource/aziende", method = RequestMethod.GET)
 	public @ResponseBody Page<Certifier> getAllAziende(@ApiParam Pageable pageable, @RequestParam(required = false) Long timestamp) {
@@ -73,7 +77,7 @@ public class CertifierController extends AuthController {
 	public @ResponseBody List<Student> getStudentsByCertifier(@PathVariable String certifierId,
 			@ApiParam Pageable pageable, HttpServletRequest request) throws Exception {
 		if (!validateCertifierAuthorization(certifierId, Const.AUTH_ACTION_READ, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		List<Student> result = dataManager.searchStudentByCertifier(certifierId, pageable);
 		if (logger.isInfoEnabled()) {
@@ -86,7 +90,7 @@ public class CertifierController extends AuthController {
 	public @ResponseBody List<CertificationRequest> getCertificationRequest(@PathVariable String certifierId,
 			@ApiParam Pageable pageable, HttpServletRequest request) throws Exception {
 		if (!validateCertifierAuthorization(certifierId, Const.AUTH_ACTION_READ, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		List<CertificationRequest> result = dataManager.getCertificationRequestByCertifier(certifierId, pageable);
 		if (logger.isInfoEnabled()) {
@@ -99,7 +103,7 @@ public class CertifierController extends AuthController {
 	public @ResponseBody CertificationRequest addCertificationRequest(@PathVariable String certifierId,
 			@RequestBody CertificationRequest certificationRequest, HttpServletRequest request) throws Exception {
 		if (!validateCertifierAuthorization(certifierId, Const.AUTH_ACTION_ADD, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		certificationRequest.setCertifierId(certifierId);
 		CertificationRequest result = dataManager.addCertificationRequest(certificationRequest);
@@ -113,7 +117,7 @@ public class CertifierController extends AuthController {
 	public @ResponseBody CertificationRequest deleteCertificationRequest(@PathVariable String certifierId,
 			@PathVariable String certificationId, HttpServletRequest request) throws Exception {
 		if (!validateCertifierAuthorization(certifierId, Const.AUTH_ACTION_DELETE, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		CertificationRequest result = dataManager.removeCertificationRequest(certificationId);
 		if (logger.isInfoEnabled()) {
@@ -127,7 +131,7 @@ public class CertifierController extends AuthController {
 			@PathVariable String experienceId, @RequestParam String certifierId, HttpServletRequest request)
 			throws Exception {
 		if (!validateCertifierAuthorization(certifierId, Const.AUTH_ACTION_UPDATE, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		StudentExperience result = dataManager.certifyMyExperience(experienceId, studentId, certifierId);
 		if (logger.isInfoEnabled()) {
@@ -142,7 +146,7 @@ public class CertifierController extends AuthController {
 			@PathVariable String studentId, @PathVariable String storageId, @RequestParam("file") MultipartFile file,
 			@RequestParam("filename") String filename, HttpServletRequest request) throws Exception {
 		if (!validateCertifierAuthorization(certifierId, Const.AUTH_ACTION_UPDATE, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		Document result = documentManager.addFileToDocument(experienceId, studentId, storageId, filename, file);
 		if (logger.isInfoEnabled()) {
@@ -156,7 +160,7 @@ public class CertifierController extends AuthController {
 			@PathVariable String experienceId, @PathVariable String studentId, @PathVariable String storageId,
 			HttpServletRequest request) throws Exception {
 		if (!validateCertifierAuthorization(certifierId, Const.AUTH_ACTION_UPDATE, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		Document result = documentManager.removeFileFromDocument(experienceId, studentId, storageId);
 		if (logger.isInfoEnabled()) {
@@ -174,7 +178,7 @@ public class CertifierController extends AuthController {
 		RequestedAuthorizationDTO authorization = authorizationManager.getReqAuthorization(account, action,
 				resourceName, attributes);
 		if (!authorizationManager.validateAuthorization(authorization)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid or call not authorized");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		return true;
 	}

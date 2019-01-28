@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import it.smartcommunitylab.csengine.common.ErrorLabelManager;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
@@ -45,11 +46,14 @@ public class ProfileController extends AuthController {
 	@Autowired
 	private RepositoryManager dataManager;
 	
+	@Autowired
+	private ErrorLabelManager errorLabelManager;
+	
 	@RequestMapping(value = "/api/profile", method = RequestMethod.GET)
 	public @ResponseBody Profile getProfileByToken(HttpServletRequest request) throws Exception {
 		String cf = getCF(getAccoutProfile(request));  
 		if(Utils.isEmpty(cf)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		Profile result = new Profile();
 		result.setSubject(cf);
@@ -63,7 +67,7 @@ public class ProfileController extends AuthController {
 			result.setStudentIds(personInCharge.getStudentIds());
 		}
 		if((student == null) && (personInCharge == null)) {
-			throw new UnauthorizedException("Unauthorized Exception: user not present");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		Consent consent = dataManager.getConsentByStudent(student.getId());
 		if(consent != null) {

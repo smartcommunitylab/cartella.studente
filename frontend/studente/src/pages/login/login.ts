@@ -2,6 +2,7 @@ import { Component,OnInit } from '@angular/core';
 import { NavController } from 'ionic-angular';
 import {LoginService} from '../../services/login.service';
 import {HomePage } from '../home/home';
+
 @Component({
   selector: 'page-login',
   templateUrl: 'login.html'
@@ -9,6 +10,7 @@ import {HomePage } from '../home/home';
 export class LoginPage implements OnInit {
 
   types: any = [];
+  errorMsg: any;
   constructor(public navCtrl: NavController, private loginService: LoginService) {
 
   }
@@ -17,7 +19,8 @@ export class LoginPage implements OnInit {
   }
 
   // get all the providers when the component is created
- ngOnInit(): void {
+  ngOnInit(): void {
+    this.checkErrorMsg();
     this.getTypes();
   }
 
@@ -31,5 +34,18 @@ export class LoginPage implements OnInit {
     this.navCtrl.setRoot(HomePage);
     
   }
+
+  checkErrorMsg() {
+    var queryString = location.hash.substring(1);
+    var params = {};
+    var regex = /login\?([^&=]+)=([^&]*)/g, m;
+    while (m = regex.exec(queryString)) {
+      params[decodeURIComponent(m[1])] = decodeURIComponent(m[2]);
+      // Try to exchange the param values for an access token.
+      if (params['errMsg']) {
+        this.errorMsg = params['errMsg'];        
+      }
+    }
+  } 
 
 }

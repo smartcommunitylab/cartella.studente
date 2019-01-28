@@ -49,6 +49,7 @@ import it.smartcommunitylab.aac.authorization.beans.AuthorizationDTO;
 import it.smartcommunitylab.aac.authorization.beans.AuthorizationUserDTO;
 import it.smartcommunitylab.aac.authorization.beans.RequestedAuthorizationDTO;
 import it.smartcommunitylab.csengine.common.Const;
+import it.smartcommunitylab.csengine.common.ErrorLabelManager;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.cv.CVTransformer;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
@@ -87,13 +88,16 @@ public class StudentController extends AuthController {
 	
 	@Autowired
 	private ResourceLoader resourceLoader;
+	
+	@Autowired
+	private ErrorLabelManager errorLabelManager;
 
 	@RequestMapping(value = "/api/student/{studentId}", method = RequestMethod.GET)
 	public @ResponseBody Student getStudentById(@PathVariable String studentId,
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByStudentId(studentId, "Student", 
 				Const.AUTH_ACTION_READ, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		Student result = dataManager.getStudent(studentId);
 		result.setImageUrl(documentManager.getPhotoSignedUrl(studentId));
@@ -109,7 +113,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		 if (!validateAuthorizationByStudentId(cf, "Student",
 		 Const.AUTH_ACTION_READ, request)) {
-		 throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		 }
 		Student result = dataManager.getStudentByCF(cf);
 		if (foto) {
@@ -133,7 +137,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByStudentId(studentId, "Student", 
 				Const.AUTH_ACTION_UPDATE, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		student.setId(studentId);
 		Student result = dataManager.updateStudentContact(student);
@@ -152,7 +156,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByStudentId(studentId, "PhotoProfile", 
 				Const.AUTH_ACTION_UPDATE, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		documentManager.addFileToProfile(studentId, file);
 		String url = documentManager.getPhotoSignedUrl(studentId);
@@ -168,7 +172,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByStudentId(studentId, "PhotoProfile", 
 				Const.AUTH_ACTION_READ, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		String url = documentManager.getPhotoSignedUrl(studentId);
 		if(logger.isInfoEnabled()) {
@@ -229,7 +233,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByExp(studentId, "Experience", null, null, null, Boolean.FALSE, 
 				Const.AUTH_ACTION_ADD, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		experience.getAttributes().put(Const.ATTR_INSTITUTIONAL, Boolean.FALSE);
 		if(Utils.isNotEmpty(certifierId)) {
@@ -251,7 +255,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByExp(studentId, "Experience", experienceId, null, null, Boolean.FALSE, 
 				Const.AUTH_ACTION_UPDATE, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		experience.setId(experienceId);
 		experience.getAttributes().put(Const.ATTR_INSTITUTIONAL, Boolean.FALSE);
@@ -272,7 +276,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByExp(studentId, "Experience", experienceId, null, null, Boolean.FALSE, 
 				Const.AUTH_ACTION_DELETE, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		Experience result = dataManager.removeExperience(experienceId);
 		if(logger.isInfoEnabled()) {
@@ -287,7 +291,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByResource(studentId, "Registration", null, null, null, 
 				Const.AUTH_ACTION_READ, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		//convert to StudentRegistration
 		Map<TeachingUnit, List<Registration>> registrationMap = new HashMap<TeachingUnit, List<Registration>>();
@@ -322,7 +326,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByResource(studentId, "Registration", null, "registrationId", registrationId, 
 				Const.AUTH_ACTION_READ, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		Registration registration = dataManager.getRegistrationById(registrationId);
 		List<StudentExperience> result = dataManager.searchStudentExperience(studentId, Const.EXP_TYPE_SUBJECT, 
@@ -341,7 +345,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByResource(studentId, "CV", null, null, null, 
 				Const.AUTH_ACTION_READ, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		CV result = dataManager.getStudentCV(studentId);
 		if(logger.isInfoEnabled()) {
@@ -357,7 +361,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByResource(studentId, "CV", null, null, null, 
 				Const.AUTH_ACTION_ADD, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		cv.setStudentId(studentId);
 		CV result = dataManager.addStudentCV(cv);
@@ -374,7 +378,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByResource(studentId, "CV", null, null, null, 
 				Const.AUTH_ACTION_UPDATE, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		cv.setStudentId(studentId);
 		CV result = dataManager.updateStudentCV(cv);
@@ -390,7 +394,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByResource(studentId, "CV", null, null, null, 
 				Const.AUTH_ACTION_READ, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		CV result = dataManager.getStudentCV(studentId);
 		cvTransformer.getCvTemplate(result);
@@ -407,7 +411,7 @@ public class StudentController extends AuthController {
 			HttpServletResponse response) throws Exception {
 		if (!validateAuthorizationByResource(studentId, "CV", null, null, null, 
 				Const.AUTH_ACTION_READ, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		CV result = dataManager.getStudentCV(studentId);
 		cvTransformer.getCvTemplate(result);
@@ -456,7 +460,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByResource(studentId, "Document", experienceId, null, null, 
 				Const.AUTH_ACTION_ADD, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		document.setExperienceId(experienceId);
 		document.setStudentId(studentId);
@@ -477,7 +481,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByResource(studentId, "Document", experienceId, "storageId", storageId, 
 				Const.AUTH_ACTION_UPDATE, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		Document result = dataManager.updateDocumentAttributes(experienceId, studentId, storageId, attributes);
 		if(logger.isInfoEnabled()) {
@@ -495,7 +499,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByResource(studentId, "Document", experienceId, "storageId", storageId, 
 				Const.AUTH_ACTION_DELETE, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		documentManager.removeFileFromDocument(experienceId, studentId, storageId);
 		Document result = dataManager.removeDocument(experienceId, studentId, storageId);
@@ -516,7 +520,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByResource(studentId, "Document", experienceId, "storageId", storageId, 
 				Const.AUTH_ACTION_UPDATE, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		Document result = documentManager.addFileToDocument(experienceId, studentId,storageId, filename, file);
 		if(logger.isInfoEnabled()) {
@@ -534,7 +538,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByResource(studentId, "Document", experienceId, "storageId", storageId, 
 				Const.AUTH_ACTION_UPDATE, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		Document result = documentManager.removeFileFromDocument(experienceId, studentId, storageId);
 		if(logger.isInfoEnabled()) {
@@ -551,7 +555,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByResource(studentId, "Document", experienceId, "storageId", storageId, 
 				Const.AUTH_ACTION_READ, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		Document document = dataManager.getDocument(experienceId, studentId, storageId);
 		StudentExperience studentExperience = dataManager.getStudentExperience(experienceId, studentId);
@@ -569,7 +573,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByResource(studentId, "Certification", null, null, null, 
 				Const.AUTH_ACTION_READ, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		List<CertificationRequest> result = dataManager.getCertificationRequestByStudent(studentId, pageable);
 		if(logger.isInfoEnabled()) {
@@ -585,7 +589,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByResource(studentId, "Certification", null, null, null, 
 				Const.AUTH_ACTION_ADD, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		certificationRequest.setStudentId(studentId);
 		CertificationRequest result = dataManager.addCertificationRequest(certificationRequest);
@@ -602,7 +606,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByResource(studentId, "Certification", null, "certificationId", certificationId, 
 				Const.AUTH_ACTION_DELETE, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		CertificationRequest result = dataManager.removeCertificationRequest(certificationId);
 		if(logger.isInfoEnabled()) {
@@ -617,7 +621,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByResource(studentId, "Authorization", null, null, null, 
 				Const.AUTH_ACTION_READ, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		List<StudentAuth> result = dataManager.getStudentAuthByStudent(studentId);
 		if(logger.isInfoEnabled()) {
@@ -633,7 +637,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByResource(studentId, "Authorization", null, null, null, 
 				Const.AUTH_ACTION_ADD, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		AuthorizationUserDTO subjectDTO = getUserByCF(request);
 		AuthorizationUserDTO entityDTO = getUserByCF(authCF.getCf());
@@ -660,7 +664,7 @@ public class StudentController extends AuthController {
 			HttpServletRequest request) throws Exception {
 		if (!validateAuthorizationByResource(studentId, "Authorization", null, "authId", authId, 
 				Const.AUTH_ACTION_DELETE, request)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		StudentAuth result = dataManager.getStudentAuthById(authId);
 		authorizationManager.deleteAuthorization(result.getAuth().getId());
@@ -698,7 +702,7 @@ public class StudentController extends AuthController {
 		RequestedAuthorizationDTO authorization = authorizationManager.getReqAuthorization(account, action, 
 				resourceName, attributes);
 		if(!authorizationManager.validateAuthorization(authorization)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid or call not authorized");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		return true;
 	}
@@ -726,7 +730,7 @@ public class StudentController extends AuthController {
 		RequestedAuthorizationDTO authorization = authorizationManager.getReqAuthorization(account, action, 
 				resourceName, attributes);
 		if(!authorizationManager.validateAuthorization(authorization)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid or call not authorized");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		return true;
 	}
@@ -748,7 +752,7 @@ public class StudentController extends AuthController {
 		RequestedAuthorizationDTO authorization = authorizationManager.getReqAuthorization(account, action, 
 				resourceName, attributes);
 		if(!authorizationManager.validateAuthorization(authorization)) {
-			throw new UnauthorizedException("Unauthorized Exception: token not valid or call not authorized");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 		return true;
 	}

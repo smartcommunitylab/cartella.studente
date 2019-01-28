@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import it.smartcommunitylab.aac.model.AccountProfile;
+import it.smartcommunitylab.csengine.common.ErrorLabelManager;
 import it.smartcommunitylab.csengine.exception.UnauthorizedException;
 import it.smartcommunitylab.csengine.model.statistics.CourseData;
 import it.smartcommunitylab.csengine.model.statistics.KPI;
@@ -23,6 +24,9 @@ public class StatisticsController extends AuthController {
 
 	@Autowired
 	private RepositoryManager dataManager;
+	
+	@Autowired
+	private ErrorLabelManager errorLabelManager;
 	
 	@GetMapping("/api/statistics/teachingUnits")
 	public List<POI> getTeachingUnits(@RequestParam(required=false) String ordine, @RequestParam(required=false) String tipologia, @RequestParam(required=false) Double[] coordinates, @RequestParam(required=false) Double radius, @RequestParam(required=false) String schoolYear) throws Exception {
@@ -56,13 +60,13 @@ public class StatisticsController extends AuthController {
 			String cf = this.getCF(profile);
 			
 			if (cf == null) {
-				throw new UnauthorizedException("CF for profile is null");
+				throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 			}
 			
 			StudentProfile result = dataManager.getStudentProfile(cf);
 			return result;
 		} else {
-			throw new UnauthorizedException("Profile not found");
+			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
 		}
 	}		
 	 

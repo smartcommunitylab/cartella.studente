@@ -15,6 +15,9 @@
         <div class="login-label">{{'app_name'|translate}}</div>
       </ion-col>
     </ion-row>
+    
+    <div padding *ngIf="errorMsg" class="login-error" [innerHTML]="errorMsg"></div>
+    
     <ion-row>
       <ion-col>
         <div class="login-subtitle-label">{{'login_subtitle'|translate}}</div>
