@@ -27,11 +27,11 @@ public class DownloadController {
 		String result[] = documentManager.getFile(key);
 		
 		if (result != null) {
-			Long expiration = Long.parseLong(result[2]);
-			if (System.currentTimeMillis() > expiration) {
-				logger.error("Url expired");
-				response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT);
-			}			
+//			Long expiration = Long.parseLong(result[2]);
+//			if (System.currentTimeMillis() > expiration) {
+//				logger.error("Url expired");
+//				response.sendError(HttpServletResponse.SC_REQUEST_TIMEOUT);
+//			}			
 			
 			File file = documentManager.loadFile(result[0]);
 
