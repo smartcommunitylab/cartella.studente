@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import it.smartcommunitylab.aac.model.AccountProfile;
 import it.smartcommunitylab.csengine.common.ErrorLabelManager;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
@@ -51,9 +52,10 @@ public class ProfileController extends AuthController {
 	
 	@RequestMapping(value = "/api/profile", method = RequestMethod.GET)
 	public @ResponseBody Profile getProfileByToken(HttpServletRequest request) throws Exception {
-		String cf = getCF(getAccoutProfile(request));  
+		AccountProfile accoutProfile = getAccoutProfile(request);
+		String cf = getCF(accoutProfile);  
 		if(Utils.isEmpty(cf)) {
-			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
+			throw new UnauthorizedException(String.format(errorLabelManager.get("user.notfound"), accoutProfile.getName(), accoutProfile.getSurname()));
 		}
 		Profile result = new Profile();
 		result.setSubject(cf);
@@ -67,7 +69,7 @@ public class ProfileController extends AuthController {
 			result.setStudentIds(personInCharge.getStudentIds());
 		}
 		if((student == null) && (personInCharge == null)) {
-			throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
+			throw new UnauthorizedException(String.format(errorLabelManager.get("user.notfound"), accoutProfile.getName(), accoutProfile.getSurname()));
 		}
 		Consent consent = dataManager.getConsentByStudent(student.getId());
 		if(consent != null) {

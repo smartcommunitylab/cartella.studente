@@ -9,5 +9,6 @@
 	"esp.error.notfound": "Esperienza non trovata",
 	"metainfo.error.notfound": "Metainfo non trovato",
 	"cert.error.notfound": "Certificato non trovata",
-	"api.access.error" : "Utente non autorizato all'operazione.<br/>Si prega di effettuare nuovamente il login con un account registrato nel sistema.<br/>Contattare il supporto tecnico cartella-help@smartcommunitylab.it in caso di problemi.<br/>"
+	"api.access.error" : "Utente non autorizato all'operazione.<br/>Si prega di effettuare nuovamente il login con un account registrato nel sistema.<br/>Contattare il supporto tecnico cartella-help@smartcommunitylab.it in caso di problemi.<br/>",
+	"user.notfound": "Gentile %s %s,<br/>L'accesso è andato a buon fine, tuttavia non sei abilitato/a a fruire di questo servizio. <br/>Per richiedere l'abilitazione all'accesso al sistema invia una mail a cartella-help@smartcommunitylab.it.<br/>Cordiali saluti.<br/>Staff Cartella dello Studente"
 }
