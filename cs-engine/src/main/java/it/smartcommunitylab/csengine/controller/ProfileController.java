@@ -55,7 +55,12 @@ public class ProfileController extends AuthController {
 		AccountProfile accoutProfile = getAccoutProfile(request);
 		String cf = getCF(accoutProfile);  
 		if(Utils.isEmpty(cf)) {
-			throw new UnauthorizedException(String.format(errorLabelManager.get("user.notfound"), accoutProfile.getName(), accoutProfile.getSurname()));
+			if (accoutProfile != null) {
+				throw new UnauthorizedException(String.format(errorLabelManager.get("user.notfound"), accoutProfile.getName(), accoutProfile.getSurname()));	
+			} else {
+				throw new UnauthorizedException(errorLabelManager.get("api.access.error"));
+			}
+			
 		}
 		Profile result = new Profile();
 		result.setSubject(cf);
