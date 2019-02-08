@@ -110,6 +110,9 @@ public class InfoTnImportIscrizioneCorsi {
 				if (registrationDb != null) {
 					logger.warn(String.format("Registration already exists: %s - %s", iscrizione.getOrigin(),
 							iscrizione.getExtId()));
+					registrationDb.setDateFrom(sdf.parse(iscrizione.getStudent().getDateFrom()));
+					registrationDb.setDateTo(sdf.parse(iscrizione.getStudent().getDateTo()));
+					registrationRepository.save(registrationDb);
 					continue;
 				}
 				CourseMetaInfo courseMetaInfoDb = courseMetaInfoRepository
