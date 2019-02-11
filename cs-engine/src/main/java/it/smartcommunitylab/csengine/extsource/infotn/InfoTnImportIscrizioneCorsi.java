@@ -112,6 +112,7 @@ public class InfoTnImportIscrizioneCorsi {
 							iscrizione.getExtId()));
 					registrationDb.setDateFrom(sdf.parse(iscrizione.getStudent().getDateFrom()));
 					registrationDb.setDateTo(sdf.parse(iscrizione.getStudent().getDateTo()));
+					registrationDb.setLastUpdate(new Date());
 					registrationRepository.save(registrationDb);
 					continue;
 				}
