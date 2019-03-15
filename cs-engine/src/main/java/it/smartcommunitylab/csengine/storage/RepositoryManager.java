@@ -544,7 +544,7 @@ public class RepositoryManager {
 	
 	public Page<Registration> fetchRegistrationsAfterTimestamp(Pageable pageable, Long unixTime) {
 		Date date = new Date ();
-		date.setTime((long)unixTime*1000);
+		date.setTime(unixTime);
 		Page<Registration> result = registrationRepository.fetchAllAfterTime(date, pageable);
 		return result;
 	}
@@ -556,7 +556,7 @@ public class RepositoryManager {
 	
 	public Page<Student> fetchStudentsAfterTimestamp(Pageable pageable, Long unixTime) {
 		Date date = new Date ();
-		date.setTime((long)unixTime*1000);
+		date.setTime(unixTime);
 		Page<Student> result = studentRepository.fetchAllAfterTime(date, pageable);
 		return result;
 	}
@@ -568,7 +568,7 @@ public class RepositoryManager {
 	
 	public Page<Institute> fetchInstituteAfterTimestamp(Pageable pageable, Long unixTime) {
 		Date date = new Date ();
-		date.setTime((long)unixTime*1000);
+		date.setTime(unixTime);
 		Page<Institute> result = instituteRepository.fetchAllAfterTime(date, pageable);
 		return result;
 	}
@@ -580,7 +580,7 @@ public class RepositoryManager {
 	
 	public Page<Certifier> fetchCertifierAfterTimestamp(Pageable pageable, Long unixTime) {
 		Date date = new Date ();
-		date.setTime((long)unixTime*1000);
+		date.setTime(unixTime);
 		Page<Certifier> result = certifierRepository.fetchAllAfterTime(date, pageable);
 		return result;
 	}
@@ -592,7 +592,7 @@ public class RepositoryManager {
 	
 	public Page<CourseMetaInfo> fetchCourseMetaInfoAfterTimestamp(Pageable pageable, Long unixTime) {
 		Date date = new Date ();
-		date.setTime((long)unixTime*1000);
+		date.setTime(unixTime);
 		Page<CourseMetaInfo> result = courseMetaInfoRepo.fetchAllAfterTime(date, pageable);
 		return result;
 	}
@@ -604,7 +604,7 @@ public class RepositoryManager {
 	
 	public Page<Course> fetchCourseAfterTimestamp(Pageable pageable, Long unixTime) {
 		Date date = new Date ();
-		date.setTime((long)unixTime*1000);
+		date.setTime(unixTime);
 		Page<Course> result = courseRepository.fetchAllAfterTime(date, pageable);
 		return result;
 	}
@@ -616,7 +616,7 @@ public class RepositoryManager {
 	
 	public Page<Professor> fetchProfessorAfterTimestamp(Pageable pageable, Long unixTime) {
 		Date date = new Date ();
-		date.setTime((long)unixTime*1000);
+		date.setTime(unixTime);
 		Page<Professor> result = professoriRepository.fetchAllAfterTime(date, pageable);
 		return result;
 	}
@@ -628,7 +628,7 @@ public class RepositoryManager {
 	
 	public Page<ProfessoriClassi> fetchProfessoriClassiAfterTimestamp(Pageable pageable, Long unixTime) {
 		Date date = new Date ();
-		date.setTime((long)unixTime*1000);
+		date.setTime(unixTime);
 		Page<ProfessoriClassi> result = professoriClassiRepository.fetchAllAfterTime(date, pageable);
 		return result;
 	}

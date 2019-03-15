@@ -2,6 +2,7 @@ package it.smartcommunitylab.csengine.extsource.infotn;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -10,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import it.smartcommunitylab.csengine.model.MetaInfo;
@@ -115,9 +117,24 @@ public class APIUpdateManager {
 		this.scheduleUpdate = scheduleUpdate;
 	}
 
-	// @Scheduled(cron = "0 58 23 * * ?")
+	/**
+	 * SCHEDULED TASK FOR REGISTRATION.
+	 * RUN DAILY AT 22:58
+	 * @throws Exception
+	 */
+	@Scheduled(cron = "0 58 22 * * ?")
+	public void importCartellaRegistration() throws Exception {
+
+		if (logger.isInfoEnabled()) {
+			logger.info("start ScheduledTask.importInfoTNRegistration(" + new Date() + ")");
+		}
+		// registration.
+		importInfoTNIscrizioniCorsi.importIscrizioneCorsiFromRESTAPI();
+
+	}
+
 	public String importAll() throws Exception {
-	
+
 		if (logger.isInfoEnabled()) {
 			logger.info("start InfoTnScheduledTask.importAll");
 		}
@@ -153,9 +170,9 @@ public class APIUpdateManager {
 
 		return "ok";
 	}
-	
+
 	public List<MetaInfo> createMetaInfoForAPI(String apiKey, boolean multipleYears) {
-		
+
 		// init.
 		List<MetaInfo> metaInfos = new ArrayList<MetaInfo>();
 

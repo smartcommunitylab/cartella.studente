@@ -104,7 +104,6 @@ public class InfoTnImportIscrizioneCorsi {
 			while (jp.nextToken() != JsonToken.END_ARRAY) {
 				total += 1;
 				IscrizioneCorso iscrizione = jp.readValueAs(IscrizioneCorso.class);
-				logger.info("converting " + iscrizione.getExtId());
 				Registration registrationDb = registrationRepository.findByExtId(iscrizione.getOrigin(),
 						iscrizione.getExtId());
 				if (registrationDb != null) {
@@ -113,9 +112,11 @@ public class InfoTnImportIscrizioneCorsi {
 					registrationDb.setDateFrom(sdf.parse(iscrizione.getStudent().getDateFrom()));
 					registrationDb.setDateTo(sdf.parse(iscrizione.getStudent().getDateTo()));
 					registrationDb.setLastUpdate(new Date());
+					registrationDb.setClassroom(iscrizione.getStudent().getClassRoom());
 					registrationRepository.save(registrationDb);
 					continue;
 				}
+				
 				CourseMetaInfo courseMetaInfoDb = courseMetaInfoRepository
 						.findByExtId(iscrizione.getCourseRef().getOrigin(), iscrizione.getCourseRef().getExtId());
 				if (courseMetaInfoDb == null) {
@@ -144,6 +145,8 @@ public class InfoTnImportIscrizioneCorsi {
 					continue;
 				}
 
+				logger.info("converting " + iscrizione.getExtId());
+				
 				Registration registration = convertToRegistration(iscrizione, schoolYear);
 				registration.setInstituteId(instituteDb.getId());
 				registration.setInstitute(instituteDb);
@@ -160,7 +163,7 @@ public class InfoTnImportIscrizioneCorsi {
 			}
 
 			// update time stamp (if all works fine).
-			metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
+			metaInfo.setEpocTimestamp(System.currentTimeMillis());
 			metaInfo.setTotalRead(total);
 			metaInfo.setTotalStore(stored);
 

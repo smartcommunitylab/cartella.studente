@@ -105,7 +105,7 @@ public class InfoTnImportProfessoriClassi {
 						profClassi.getExtId(), profClassi.getId()));
 			}
 			// update time stamp (if all works fine).
-			metaInfo.setEpocTimestamp(System.currentTimeMillis() / 1000);
+			metaInfo.setEpocTimestamp(System.currentTimeMillis());
 			metaInfo.setTotalRead(total);
 			metaInfo.setTotalStore(stored);
 		}
