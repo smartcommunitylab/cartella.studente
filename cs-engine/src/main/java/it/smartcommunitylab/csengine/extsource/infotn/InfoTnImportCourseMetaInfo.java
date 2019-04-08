@@ -49,6 +49,9 @@ public class InfoTnImportCourseMetaInfo {
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
+		if (metaInfo.getEpocTimestamp() < 0) {
+			metaInfo.setEpocTimestamp(System.currentTimeMillis()); //set it for the first time.
+		}
 		String url = infoTNAPIUrl + "/corsi";
 		int stored = 0;
 		int total = 0;

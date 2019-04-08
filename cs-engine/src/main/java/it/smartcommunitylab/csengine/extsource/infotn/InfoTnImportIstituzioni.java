@@ -57,6 +57,7 @@ public class InfoTnImportIstituzioni {
 		if (metaInfo.getEpocTimestamp() > 0) {
 			url = infoTNAPIUrl + "/istituti?timestamp=" + metaInfo.getEpocTimestamp();
 		} else {
+			metaInfo.setEpocTimestamp(System.currentTimeMillis()); //set it for the first time.
 			url = infoTNAPIUrl + "/istituti";
 		}
 

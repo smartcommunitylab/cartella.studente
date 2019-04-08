@@ -85,6 +85,7 @@ public class InfoTnImportIscrizioneStage {
 			url = infoTNAPIUrl + "/partecipazionestage?schoolYear=" + schoolYear + "&timestamp="
 					+ metaInfo.getEpocTimestamp();
 		} else {
+			metaInfo.setEpocTimestamp(System.currentTimeMillis()); //set it for the first time.
 			url = infoTNAPIUrl + "/partecipazionestage?schoolYear=" + schoolYear;
 		}
 		logger.info("start importIscirzioneStageUsingRESTAPI for year " + schoolYear);

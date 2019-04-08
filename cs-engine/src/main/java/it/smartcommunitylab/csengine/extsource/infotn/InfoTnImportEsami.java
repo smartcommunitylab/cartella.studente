@@ -69,6 +69,7 @@ public class InfoTnImportEsami {
 		if (metaInfo.getEpocTimestamp() > 0) {
 			url = infoTNAPIUrl + "/esami?schoolYear=" + schoolYear + "&timestamp=" + metaInfo.getEpocTimestamp();
 		} else {
+			metaInfo.setEpocTimestamp(System.currentTimeMillis()); //set it for the first time.
 			url = infoTNAPIUrl + "/esami?schoolYear=" + schoolYear;
 		}
 		logger.info("start importEsamiFromRESTAPI");

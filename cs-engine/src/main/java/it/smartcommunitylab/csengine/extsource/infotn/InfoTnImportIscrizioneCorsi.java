@@ -85,6 +85,7 @@ public class InfoTnImportIscrizioneCorsi {
 		if (metaInfo.getEpocTimestamp() > 0) {
 			url = infoTNAPIUrl + "/iscrizioni?schoolYear=" + schoolYear + "&timestamp=" + metaInfo.getEpocTimestamp();
 		} else {
+			metaInfo.setEpocTimestamp(System.currentTimeMillis()); //set it for the first time.
 			url = infoTNAPIUrl + "/iscrizioni?schoolYear=" + schoolYear;
 		}
 		logger.info("start importIscirzioneCorsiUsingRESTAPI for year " + schoolYear);

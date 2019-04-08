@@ -79,6 +79,7 @@ public class InfoTnImportCorsi {
 		if (metaInfo.getEpocTimestamp() > 0) {
 			url = infoTNAPIUrl + "/offerte?schoolYear=" + year + "&timestamp=" + metaInfo.getEpocTimestamp();
 		} else {
+			metaInfo.setEpocTimestamp(System.currentTimeMillis()); //set it for the first time.
 			url = infoTNAPIUrl + "/offerte?schoolYear=" + year;
 		}
 

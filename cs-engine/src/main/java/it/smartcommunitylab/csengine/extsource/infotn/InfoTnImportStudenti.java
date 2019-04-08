@@ -87,6 +87,7 @@ public class InfoTnImportStudenti {
 		if (metaInfo.getEpocTimestamp() > 0) {
 			url = infoTNAPIUrl + "/studenti?schoolYear=" + year + "&timestamp=" + metaInfo.getEpocTimestamp();
 		} else {
+			metaInfo.setEpocTimestamp(System.currentTimeMillis()); //set it for the first time.
 			url = infoTNAPIUrl + "/studenti?schoolYear=" + year;
 		}
 		logger.info("start importStudentiUsingRESTAPI for year " + year);

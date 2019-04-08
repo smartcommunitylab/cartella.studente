@@ -69,6 +69,7 @@ public class InfoTnImportProfessoriClassi {
 			url = infoTNAPIUrl + "/professoriclassi?schoolYear=" + schoolYear + "&timestamp="
 					+ metaInfo.getEpocTimestamp();
 		} else {
+			metaInfo.setEpocTimestamp(System.currentTimeMillis()); //set it for the first time.
 			url = infoTNAPIUrl + "/professoriclassi?schoolYear=" + schoolYear;
 		}
 		logger.info("start importProfessoriClassiUsingRESTAPI for year " + schoolYear);

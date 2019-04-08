@@ -82,6 +82,7 @@ public class InfoTnImportCertificazioni {
 			url = infoTNAPIUrl + "/certificazione?schoolYear=" + schoolYear + "&timestamp="
 					+ metaInfo.getEpocTimestamp();
 		} else {
+			metaInfo.setEpocTimestamp(System.currentTimeMillis()); //set it for the first time.
 			url = infoTNAPIUrl + "/certificazione?schoolYear=" + schoolYear;
 		}
 		logger.info("start importIscrizioneCertificazioneUsingRESTAPI for year " + schoolYear);

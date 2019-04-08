@@ -77,6 +77,7 @@ public class InfoTnImportMobilita {
 		if (metaInfo.getEpocTimestamp() > 0) {
 			url = infoTNAPIUrl + "/mobilita?schoolYear=" + schoolYear + "&timestamp=" + metaInfo.getEpocTimestamp();
 		} else {
+			metaInfo.setEpocTimestamp(System.currentTimeMillis()); //set it for the first time.
 			url = infoTNAPIUrl + "/mobilita?schoolYear=" + schoolYear;
 		}
 		logger.info("start importIscrizioneMobilitaRESTAPI for year " + schoolYear);

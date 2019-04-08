@@ -74,6 +74,7 @@ public class InfoTnImportStage {
 		if (metaInfo.getEpocTimestamp() > 0) {
 			url = infoTNAPIUrl + "/stage?schoolYear=" + schoolYear + "&timestamp=" + metaInfo.getEpocTimestamp();
 		} else {
+			metaInfo.setEpocTimestamp(System.currentTimeMillis()); //set it for the first time.
 			url = infoTNAPIUrl + "/stage?schoolYear=" + schoolYear;
 		}
 		logger.info("start importStageFromRESTAPI");

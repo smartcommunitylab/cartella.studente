@@ -2,7 +2,7 @@ package it.smartcommunitylab.csengine.model;
 
 public class MetaInfo {
 	private String name;
-	private long epocTimestamp;
+	private long epocTimestamp = -1;
 	private int totalRead;
 	private int totalStore;
 	private int schoolYear = -1;

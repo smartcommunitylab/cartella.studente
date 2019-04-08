@@ -73,6 +73,7 @@ public class InfoTnImportIscrizioneEsami {
 		if (metaInfo.getEpocTimestamp() > 0) {
 			url = infoTNAPIUrl + "/esitiesami?schoolYear=" + schoolYear + "&timestamp=" + metaInfo.getEpocTimestamp();
 		} else {
+			metaInfo.setEpocTimestamp(System.currentTimeMillis()); //set it for the first time.
 			url = infoTNAPIUrl + "/esitiesami?schoolYear=" + schoolYear;
 		}
 		logger.info("start importIscrizioneEsamiRESTAPI for year " + schoolYear);
