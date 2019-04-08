@@ -93,6 +93,13 @@ public class InfoTnController {
 	public @ResponseBody String importAllFromEmpty() throws Exception {
 		return apiUpdateManager.importAll();
 	}
+	
+	@RequestMapping(value = "/extsource/infotn/studenti/registration/empty", method = RequestMethod.GET)
+	public @ResponseBody String importStudentiRegistrationFromEmpty() throws Exception {
+		logger.info("Start student/registration update procedure.");
+		importStudenti.importStudentiFromRESTAPI();
+		return importIscrizioneCorsi.importIscrizioneCorsiFromRESTAPI();
+	}
 
 	@RequestMapping(value = "/extsource/infotn/istituzioni/empty", method = RequestMethod.GET)
 	public @ResponseBody String importIstituzioniFromEmpty() throws Exception {
