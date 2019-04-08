@@ -118,7 +118,7 @@ public class InfoTnImportUnita {
 			}
 
 			// update time stamp (if all works fine).
-			metaInfo.setEpocTimestamp(System.currentTimeMillis());
+			metaInfo.setEpocTimestamp(metaInfo.getEpocTimestamp() + 1);
 			metaInfo.setTotalRead(total);
 			metaInfo.setTotalStore(stored);
 		}
