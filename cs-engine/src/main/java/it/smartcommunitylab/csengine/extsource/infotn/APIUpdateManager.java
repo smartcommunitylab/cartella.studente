@@ -122,7 +122,7 @@ public class APIUpdateManager {
 	 * RUN DAILY AT 22:58
 	 * @throws Exception
 	 */
-//	@Scheduled(cron = "0 58 22 * * ?")
+	@Scheduled(cron = "0 58 22 * * ?")
 	public void importCartellaRegistration() throws Exception {
 
 		if (logger.isInfoEnabled()) {
