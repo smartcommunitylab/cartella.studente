@@ -282,6 +282,21 @@ public class TeachingUnitController extends AuthController {
 		return result;
 	}
 	
+	@RequestMapping(value = "/api/unita", method = RequestMethod.GET)
+	public @ResponseBody Page<TeachingUnit> getAllTeachingUnit(@ApiParam Pageable pageable, @RequestParam(required=false) Long timestamp) {
+
+		Page<TeachingUnit> result;
+		if (timestamp != null) {
+			result = dataManager.fetchTeachingUnitAfterTimestamp(pageable, timestamp);
+		} else {
+			result = dataManager.fetchTeachingUnit(pageable);
+		}
+		if (logger.isInfoEnabled()) {
+			logger.info(String.format("getAllTeachingUnit: %s", result.getNumberOfElements()));
+		}
+		return result;
+	}
+	
 	@RequestMapping(value = "/api/tu/{teachingUnitId}/year/{schoolYear}/is/experience", method = RequestMethod.POST)
 	public @ResponseBody Experience addIsExperience(
 			@PathVariable String teachingUnitId,

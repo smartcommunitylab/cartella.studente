@@ -11,6 +11,7 @@ public class TeachingUnit {
 	private String tipoScuola;
 	private String name;
 	private String description;
+	private String codiceMiur;
 
 	public String getExtId() {
 		return extId;
@@ -82,6 +83,14 @@ public class TeachingUnit {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getCodiceMiur() {
+		return codiceMiur;
+	}
+
+	public void setCodiceMiur(String codiceMiur) {
+		this.codiceMiur = codiceMiur;
 	}
 
 }

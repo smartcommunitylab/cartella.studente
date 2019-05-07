@@ -632,6 +632,18 @@ public class RepositoryManager {
 		Page<ProfessoriClassi> result = professoriClassiRepository.fetchAllAfterTime(date, pageable);
 		return result;
 	}
+	
+	public Page<TeachingUnit> fetchTeachingUnit(Pageable pageable) {
+		Page<TeachingUnit> result = teachingUnitRepository.findAll(pageable);
+		return result;
+	}
+	
+	public Page<TeachingUnit> fetchTeachingUnitAfterTimestamp(Pageable pageable, Long unixTime) {
+		Date date = new Date ();
+		date.setTime(unixTime);
+		Page<TeachingUnit> result = teachingUnitRepository.fetchAllAfterTime(date, pageable);
+		return result;
+	}
 
 	public Institute addInstitute(Institute institute) {
 		Date now = new Date();

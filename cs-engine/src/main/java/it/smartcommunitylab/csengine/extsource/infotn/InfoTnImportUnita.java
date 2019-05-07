@@ -1,6 +1,5 @@
 package it.smartcommunitylab.csengine.extsource.infotn;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -23,7 +22,6 @@ import it.smartcommunitylab.csengine.common.HTTPUtils;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.model.Institute;
 import it.smartcommunitylab.csengine.model.MetaInfo;
-import it.smartcommunitylab.csengine.model.ScheduleUpdate;
 import it.smartcommunitylab.csengine.model.TeachingUnit;
 import it.smartcommunitylab.csengine.model.Typology;
 import it.smartcommunitylab.csengine.storage.InstituteRepository;
@@ -100,6 +98,9 @@ public class InfoTnImportUnita {
 				TeachingUnit teachingUnitDb = teachingUnitRepository.findByExtId(unita.getOrigin(), unita.getExtId());
 				if (teachingUnitDb != null) {
 					logger.warn(String.format("TU already exists: %s - %s", unita.getOrigin(), unita.getExtId()));
+					if (Utils.isNotEmpty(unita.getTeachingUnit().getCodiceMiur())) {
+						teachingUnitDb.setCodiceMiur(unita.getTeachingUnit().getCodiceMiur());
+					}
 					continue;
 				}
 				Institute instituteDb = instituteRepository.findByExtId(unita.getInstituteRef().getOrigin(),
@@ -153,6 +154,9 @@ public class InfoTnImportUnita {
 			typology.setName(unita.getTeachingUnit().getMgIndirizzoDidattico());
 			classifications.put(Const.TYPOLOGY_QNAME_INDIRIZZO, typology);
 		}
+		if (Utils.isNotEmpty(unita.getTeachingUnit().getCodiceMiur())) {
+			result.setCodiceMiur(unita.getTeachingUnit().getCodiceMiur());
+		}
 		if (classifications.size() > 0) {
 			result.setClassifications(classifications);
 		}
@@ -168,7 +172,7 @@ public class InfoTnImportUnita {
 				logger.warn("error converting geocode:" + e.getMessage());
 			}
 		}
-		
+
 		Date now = new Date();
 		result.setCreationDate(now);
 		result.setLastUpdate(now);
