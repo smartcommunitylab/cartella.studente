@@ -100,6 +100,7 @@ public class InfoTnImportUnita {
 					logger.warn(String.format("TU already exists: %s - %s", unita.getOrigin(), unita.getExtId()));
 					if (Utils.isNotEmpty(unita.getTeachingUnit().getCodiceMiur())) {
 						teachingUnitDb.setCodiceMiur(unita.getTeachingUnit().getCodiceMiur());
+						teachingUnitRepository.save(teachingUnitDb);
 					}
 					continue;
 				}
