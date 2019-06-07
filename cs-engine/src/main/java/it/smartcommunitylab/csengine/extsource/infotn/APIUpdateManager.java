@@ -132,6 +132,10 @@ public class APIUpdateManager {
 		importInfoTNStudenti.importStudentiFromRESTAPI();
 		// registration.
 		importInfoTNIscrizioniCorsi.importIscrizioneCorsiFromRESTAPI();
+		// teaching unit.
+//		importInfoTNUnitaManager.importUnitaFromRESTAPI();
+		// azienda.
+		importInfoTNAziende.importAziendaFromRESTAPI();
 
 	}
 

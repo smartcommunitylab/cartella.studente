@@ -12,6 +12,7 @@ public class Azienda {
 	private String phone;
 	private String datefrom;
 	private String datefrom_headquarter;
+	private int idTipoAzienda;
 
 	public String getOrigin() {
 		return origin;
@@ -99,6 +100,14 @@ public class Azienda {
 
 	public void setPec(String pec) {
 		this.pec = pec;
+	}
+
+	public int getIdTipoAzienda() {
+		return idTipoAzienda;
+	}
+
+	public void setIdTipoAzienda(int idTipoAzienda) {
+		this.idTipoAzienda = idTipoAzienda;
 	}
 
 }

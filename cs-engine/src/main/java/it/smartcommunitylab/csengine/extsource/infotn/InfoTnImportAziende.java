@@ -86,6 +86,8 @@ public class InfoTnImportAziende {
 				if (certifierDb != null) {
 					logger.warn(String.format("Certifier already exists: %s - %s", azienda.getOrigin(),
 							azienda.getExtId()));
+					certifierDb.setIdTipoAzienda(azienda.getIdTipoAzienda());
+					certifierRepository.save(certifierDb);
 					continue;
 				}
 				certifierDb = certifierRepository.findByCf(azienda.getPartita_iva());
@@ -124,6 +126,7 @@ public class InfoTnImportAziende {
 		Date now = new Date();
 		result.setCreationDate(now);
 		result.setLastUpdate(now);
+		result.setIdTipoAzienda(azienda.getIdTipoAzienda());
 		return result;
 	}
 
