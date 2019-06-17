@@ -97,6 +97,9 @@ public class InfoTnController {
 	@RequestMapping(value = "/extsource/infotn/studenti/registration/empty", method = RequestMethod.GET)
 	public @ResponseBody String importStudentiRegistrationFromEmpty() throws Exception {
 		logger.info("Start student/registration update procedure.");
+		importAziende.importAziendaFromRESTAPI();
+		importCourseMetaInfo.importCourseMetaInfoFromRESTAPI();
+		importCorsi.importCorsiFromRESTAPI();
 		importStudenti.importStudentiFromRESTAPI();
 		return importIscrizioneCorsi.importIscrizioneCorsiFromRESTAPI();
 	}
