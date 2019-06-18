@@ -119,24 +119,21 @@ public class APIUpdateManager {
 
 	/**
 	 * SCHEDULED TASK FOR REGISTRATION.
-	 * RUN DAILY AT 22:58
+	 * RUN DAILY AT 22:00
 	 * @throws Exception
 	 */
-//	@Scheduled(cron = "0 58 22 * * ?")
+	@Scheduled(cron = "0 00 22 * * ?")
 	public void importCartellaRegistration() throws Exception {
-
 		if (logger.isInfoEnabled()) {
 			logger.info("start ScheduledTask.importInfoTNRegistration(" + new Date() + ")");
-		}
+		}		
+		// azienda.
+		importInfoTNAziende.importAziendaFromRESTAPI();
 		// student.
 		importInfoTNStudenti.importStudentiFromRESTAPI();
 		// registration.
-		importInfoTNIscrizioniCorsi.importIscrizioneCorsiFromRESTAPI();
-		// teaching unit.
-//		importInfoTNUnitaManager.importUnitaFromRESTAPI();
-		// azienda.
-		importInfoTNAziende.importAziendaFromRESTAPI();
-
+		importInfoTNIscrizioniCorsi.importIscrizioneCorsiFromRESTAPI();		
+		
 	}
 
 	public String importAll() throws Exception {
