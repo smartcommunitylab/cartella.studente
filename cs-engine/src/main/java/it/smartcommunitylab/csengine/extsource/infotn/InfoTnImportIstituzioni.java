@@ -82,6 +82,11 @@ public class InfoTnImportIstituzioni {
 				if (instituteDb != null) {
 					logger.warn(String.format("Institute already exists: %s - %s", istituzione.getOrigin(),
 							istituzione.getExtId()));
+					// update CF as it was introduced in later stages of project.
+					if (Utils.isNotEmpty(istituzione.getCf())) {
+						instituteDb.setCf(istituzione.getCf());
+						instituteRepository.save(instituteDb);	
+					}					
 					continue;
 				}
 				Institute institute = convertToInstitute(istituzione);
@@ -110,6 +115,7 @@ public class InfoTnImportIstituzioni {
 		result.setPhone(istituzione.getPhone());
 		result.setPec(istituzione.getPec());
 		result.setEmail(istituzione.getEmail());
+		result.setCf(istituzione.getCf());
 		Date now = new Date();
 		result.setCreationDate(now);
 		result.setLastUpdate(now);

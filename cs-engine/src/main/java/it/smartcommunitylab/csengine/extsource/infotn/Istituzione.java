@@ -10,6 +10,7 @@ public class Istituzione {
 	private String phone;
 	private String pec;
 	private String email;
+	private String cf;
 
 	public String getOrigin() {
 		return origin;
@@ -81,6 +82,14 @@ public class Istituzione {
 
 	public void setEmail(String email) {
 		this.email = email;
+	}
+
+	public String getCf() {
+		return cf;
+	}
+
+	public void setCf(String cf) {
+		this.cf = cf;
 	}
 
 }
