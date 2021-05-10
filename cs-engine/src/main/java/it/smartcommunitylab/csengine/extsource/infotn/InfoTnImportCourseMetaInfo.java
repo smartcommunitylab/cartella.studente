@@ -70,9 +70,17 @@ public class InfoTnImportCourseMetaInfo {
 			while (jp.nextToken() != JsonToken.END_ARRAY) {
 				total += 1;
 				CorsoMetaInfo temp = jp.readValueAs(CorsoMetaInfo.class);
+				if(temp.getYears() != 4) {
+					temp.setYears(5);
+				}
 				logger.info("processing " + temp.getExtId());
 				CourseMetaInfo courseMetaInfo = courseMetaInfoRepository.findByExtId(temp.getOrigin(), temp.getExtId());
 				if (courseMetaInfo != null) {
+					if(courseMetaInfo.getYears() == null) {
+						courseMetaInfo.setYears(temp.getYears());
+						courseMetaInfo.setLastUpdate(new Date());
+						courseMetaInfoRepository.save(courseMetaInfo);
+					}
 					logger.warn(String.format("CMI already exists: %s - %s", courseMetaInfo.getOrigin(),
 							courseMetaInfo.getExtId()));
 					continue;
@@ -99,6 +107,7 @@ public class InfoTnImportCourseMetaInfo {
 		result.setOrigin(corso.getOrigin());
 		result.setExtId(corso.getExtId());
 		result.setCourse(corso.getCourse());
+		result.setYears(corso.getYears());
 		result.setId(Utils.getUUID());
 		if (corso.getCodMiur() != null)
 			result.setCodMiur(corso.getCodMiur());

@@ -14,6 +14,6 @@ public interface CourseMetaInfoRepository extends MongoRepository<CourseMetaInfo
 	@Query(value = "{origin:?0, extId:?1}")
 	CourseMetaInfo findByExtId(String origin, String extId);
 
-	@Query("{'creationDate': {$gte: ?0}}")
+	@Query("{'lastUpdate': {$gte: ?0}}")
 	Page<CourseMetaInfo> fetchAllAfterTime(Date date, Pageable pageable);
 }
