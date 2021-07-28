@@ -86,7 +86,24 @@ public class InfoTnImportIstituzioni {
 					if (Utils.isNotEmpty(istituzione.getCf())) {
 						instituteDb.setCf(istituzione.getCf());
 						instituteRepository.save(instituteDb);	
-					}					
+					}	
+					// update rdp infos
+					if(Utils.isNotEmpty(istituzione.getRdpName())) {
+						instituteDb.setRdpName(istituzione.getRdpName());
+						instituteRepository.save(instituteDb);
+					}
+					if(Utils.isNotEmpty(istituzione.getRdpEmail())) {
+						instituteDb.setRdpEmail(istituzione.getRdpEmail());
+						instituteRepository.save(instituteDb);
+					}
+					if(Utils.isNotEmpty(istituzione.getRdpAddress())) {
+						instituteDb.setRdpAddress(istituzione.getRdpAddress());
+						instituteRepository.save(instituteDb);
+					}
+					if(Utils.isNotEmpty(istituzione.getRdpPhoneFax())) {
+						instituteDb.setRdpPhoneFax(istituzione.getRdpPhoneFax());
+						instituteRepository.save(instituteDb);
+					}
 					continue;
 				}
 				Institute institute = convertToInstitute(istituzione);
@@ -116,6 +133,10 @@ public class InfoTnImportIstituzioni {
 		result.setPec(istituzione.getPec());
 		result.setEmail(istituzione.getEmail());
 		result.setCf(istituzione.getCf());
+		result.setRdpName(istituzione.getRdpName());
+		result.setRdpEmail(istituzione.getRdpEmail());
+		result.setRdpAddress(istituzione.getRdpAddress());
+		result.setRdpPhoneFax(istituzione.getRdpPhoneFax());
 		Date now = new Date();
 		result.setCreationDate(now);
 		result.setLastUpdate(now);
