@@ -1,6 +1,11 @@
 package it.smartcommunitylab.csengine.storage;
 
-import static org.springframework.data.mongodb.core.aggregation.Aggregation.*;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.group;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.lookup;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.match;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.newAggregation;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.project;
+import static org.springframework.data.mongodb.core.aggregation.Aggregation.sort;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -9,6 +14,13 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.collect.ArrayListMultimap;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Maps;
+import com.google.common.collect.Multimap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,19 +37,14 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
-
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.collect.ArrayListMultimap;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Maps;
-import com.google.common.collect.Multimap;
+import org.springframework.data.util.CloseableIterator;
 
 import it.smartcommunitylab.csengine.common.Const;
 import it.smartcommunitylab.csengine.common.ErrorLabelManager;
 import it.smartcommunitylab.csengine.common.Utils;
 import it.smartcommunitylab.csengine.exception.EntityNotFoundException;
 import it.smartcommunitylab.csengine.exception.StorageException;
+import it.smartcommunitylab.csengine.model.ActiveInstitute;
 import it.smartcommunitylab.csengine.model.CV;
 import it.smartcommunitylab.csengine.model.CertificationRequest;
 import it.smartcommunitylab.csengine.model.Certifier;
@@ -121,7 +128,10 @@ public class RepositoryManager {
 	
 	@Autowired
 	private ProfessoriClassiRepository professoriClassiRepository;
-	
+
+	@Autowired
+	private ActiveInstituteRepository activeInstituteRepository;
+
 	@Autowired
 	private ErrorLabelManager errorLabelManager;
 
@@ -1303,6 +1313,92 @@ public class RepositoryManager {
 		profile.setStages(stages);
 		
 		return profile;
+	}
+	
+	public void deleteNonActiveInstitute() {	
+		List<String> activeIds = getActiveInstituteIds();
+		if(activeIds.size() > 0) {
+			Criteria criteria = new Criteria("id").nin(activeIds);
+			Query query = new Query(criteria);
+			mongoTemplate.findAllAndRemove(query, Institute.class);
+		}
+	}
+
+	public void deleteNonActiveTeachingUnit() {
+		List<String> activeIds = getActiveInstituteIds();
+		if(activeIds.size() > 0) {
+			Criteria criteria = new Criteria("instituteId").nin(activeIds);
+			Query query = new Query(criteria);
+			mongoTemplate.findAllAndRemove(query, TeachingUnit.class);
+		}
+	}
+
+	public void deleteNonActiveCourse() {
+		List<String> activeIds = getActiveInstituteIds();
+		if(activeIds.size() > 0) {
+			Criteria criteria = new Criteria("instituteId").nin(activeIds);
+			Query query = new Query(criteria);
+			mongoTemplate.findAllAndRemove(query, Course.class);
+		}
+	}
+
+	public void deleteNonActiveRegistration() {
+		List<String> activeIds = getActiveInstituteIds();
+		if(activeIds.size() > 0) {
+			Criteria criteria = new Criteria("instituteId").nin(activeIds);
+			Query query = new Query(criteria);
+			mongoTemplate.findAllAndRemove(query, Registration.class);
+		}
+	}
+
+	public void deleteNonActiveStudent() {
+		List<String> activeIds = getActiveInstituteIds();
+		List<String> studentIds = new ArrayList<>();
+		if(activeIds.size() > 0) {
+			CloseableIterator<Student> studentStream = mongoTemplate.stream(new Query(), Student.class);
+			while(studentStream.hasNext()) {
+				Student student = studentStream.next();
+				long num = getStudentRegistrationNum(student.getId());
+				if(num == 0) {
+					studentIds.add(student.getId());
+				}
+			}
+			int count = 1;
+			List<String> studentToDelete = new ArrayList<>();
+			for(String studentId : studentIds) {
+				studentToDelete.add(studentId);
+				count++;
+				if(count > 5000) {
+					Criteria criteria = new Criteria("id").in(studentToDelete);
+					Query query = new Query(criteria);
+					mongoTemplate.findAllAndRemove(query, Student.class);
+					logger.info("removed " + studentToDelete.size() + " students");
+					studentToDelete.clear();
+					count = 1;
+				}
+			}
+			if(studentToDelete.size() > 0) {
+				Criteria criteria = new Criteria("id").in(studentToDelete);
+				Query query = new Query(criteria);
+				mongoTemplate.findAllAndRemove(query, Student.class);			
+				logger.info("removed " + studentToDelete.size() + " students");
+			}
+		}
+	}
+
+	private long getStudentRegistrationNum(String studentId) {
+		Criteria criteria = new Criteria("studentId").is(studentId);
+		Query query = new Query(criteria);
+		return mongoTemplate.count(query, Registration.class);
+	}
+
+	private List<String> getActiveInstituteIds() {
+		List<ActiveInstitute> activeList = activeInstituteRepository.findAll();
+		List<String> activeIds = new ArrayList<>();
+		activeList.forEach(e -> {
+			activeIds.add(e.getInstituteId());
+		});
+		return activeIds;
 	}
 
 //	public void countOrphansTeachingUnits() {
