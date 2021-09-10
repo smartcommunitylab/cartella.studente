@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.geo.Circle;
@@ -1355,14 +1356,21 @@ public class RepositoryManager {
 		List<String> activeIds = getActiveInstituteIds();
 		List<String> studentIds = new ArrayList<>();
 		if(activeIds.size() > 0) {
-			CloseableIterator<Student> studentStream = mongoTemplate.stream(new Query(), Student.class);
-			while(studentStream.hasNext()) {
-				Student student = studentStream.next();
-				long num = getStudentRegistrationNum(student.getId());
-				if(num == 0) {
-					studentIds.add(student.getId());
+			int page = 0;
+			List<Student> studentList = new ArrayList<>();
+			do {
+				Pageable pageable = new PageRequest(page, 500, new Sort("id"));
+				studentList = mongoTemplate.find(new Query().with(pageable), Student.class);
+				logger.info(String.format("page %s - %s", page, studentList.size()));
+				for(Student student : studentList) {
+					long num = getStudentRegistrationNum(student.getId());
+					//logger.info(String.format("student %s - %s", student.getId(), num));
+					if(num == 0) {
+						studentIds.add(student.getId());
+					}
 				}
-			}
+				page++;
+			} while (!studentList.isEmpty()); 
 			int count = 1;
 			List<String> studentToDelete = new ArrayList<>();
 			for(String studentId : studentIds) {
